@@ -42,7 +42,7 @@ body {
 /* ----- Главная страница (index.html) ----- */
 .hero-header {
   /* увеличиваем/уменьшаем padding, чтобы поднять/опустить логотип */
-  padding: 20px 20px;
+  padding: 15px 20px;
 }
 .hero-header img {
   margin-bottom: 20px;
@@ -97,7 +97,7 @@ body {
 /* ----- Страница покупки (buy.html) ----- */
 .buy-header {
   /* уменьшаем/увеличиваем padding, чтобы поднять/опустить логотип */
-  padding: 20px 20px;
+  padding: 15px 20px;
 }
 .buy-header img {
   margin-bottom: 20px;
