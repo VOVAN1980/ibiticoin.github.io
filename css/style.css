@@ -19,7 +19,7 @@ body {
 .corner-box {
   position: absolute;
   /* меняем top, чтобы опустить/поднять кнопки */
-  top: 50px; 
+  top: 80px; 
   padding: 10px 15px;
   background: rgba(0, 0, 0, 0.8);
   border: 2px solid gold;
@@ -42,7 +42,7 @@ body {
 /* ----- Главная страница (index.html) ----- */
 .hero-header {
   /* увеличиваем/уменьшаем padding, чтобы поднять/опустить логотип */
-  padding: 60px 20px;
+  padding: 20px 20px;
 }
 .hero-header img {
   margin-bottom: 20px;
