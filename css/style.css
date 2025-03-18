@@ -19,7 +19,7 @@ body {
 .corner-box {
   position: absolute;
   /* меняем top, чтобы опустить/поднять кнопки */
-  top: 40px; 
+  top: 20px; 
   padding: 10px 15px;
   background: rgba(0, 0, 0, 0.8);
   border: 2px solid gold;
