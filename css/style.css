@@ -1,6 +1,7 @@
 /* Подключаем футуристичный шрифт */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
+/* Базовые стили */
 body {
   margin: 0;
   font-family: 'Orbitron', sans-serif;
@@ -16,81 +17,53 @@ body {
   to { opacity: 1; }
 }
 
-/* ----- «Окошки» в углах ----- */
-.corner-box {
-  position: absolute;
-  top: 20px;
-  padding: 10px 15px;
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid gold;
-  border-radius: 5px;
-  z-index: 999; /* поверх всего */
+/* ----- Главная страница (index.html) ----- */
+.hero-header {
+  padding: 80px 20px; /* Большие отступы, чтобы логотип был высоко */
+  background: rgba(0, 0, 0, 0); 
 }
 
-/* Левое окошко */
-.corner-box-left {
-  left: 20px;
-}
-
-/* Правое окошко */
-.corner-box-right {
-  right: 20px;
-}
-
-/* Ссылки внутри «окошек» */
-.corner-box a {
-  color: gold;
-  text-decoration: none;
-  font-weight: bold;
-  margin: 0 5px;
-}
-.corner-box a:hover {
-  text-decoration: underline;
-}
-
-/* ----- Шапка (логотип, заголовок) ----- */
-header {
-  padding: 60px 20px;
-  background: rgba(0, 0, 0, 0);
-}
-
-header img {
+.hero-header img {
   margin-bottom: 20px;
 }
 
-header h1 {
+.hero-header h1 {
   margin: 0;
   font-size: 3em;
   letter-spacing: 2px;
   color: gold;
 }
 
-header p {
+.hero-header p {
   margin: 10px 0 0;
   font-size: 1.5em;
   color: #fff;
 }
 
-/* ----- Основной контент ----- */
-section {
+/* Золотой блок под "Why choose IBITIcoin?" */
+.gold-section {
+  background: #111; /* Тёмный фон, можно заменить на полупрозрачный */
+  border-top: 2px solid gold;
+  border-bottom: 2px solid gold;
   padding: 60px 20px;
 }
 
-section h2 {
+.gold-section h2 {
   font-size: 2.5em;
   margin-bottom: 20px;
   color: gold;
   text-transform: uppercase;
 }
 
-section p, section ol, section ul {
+.gold-section p {
   font-size: 1.2em;
   line-height: 1.6;
   max-width: 800px;
   margin: 0 auto 20px auto;
-  text-align: left;
+  text-align: center;
 }
 
+/* ----- Кнопка Buy ----- */
 .btn {
   background: linear-gradient(135deg, gold, #c0a000);
   color: #000;
@@ -106,13 +79,79 @@ section p, section ol, section ul {
   transform: scale(1.1);
 }
 
-/* ----- Видео ----- */
+/* ----- Страница покупки (buy.html) ----- */
+.buy-header {
+  padding: 40px 20px; /* Меньше отступов, чтобы логотип был выше */
+  background: rgba(0, 0, 0, 0);
+}
+
+.buy-header img {
+  margin-bottom: 20px;
+}
+
+.buy-header h1 {
+  margin: 0;
+  font-size: 3em;
+  letter-spacing: 2px;
+  color: gold;
+}
+
+.buy-header p {
+  margin: 10px 0 0;
+  font-size: 1.3em;
+  color: #fff;
+}
+
+/* Секция с инструкциями */
+.buy-section {
+  padding: 40px 20px;
+}
+
+/* Центрируем список шагов */
+.buy-steps {
+  list-style: decimal; /* 1,2,3,4 */
+  display: inline-block; /* чтобы text-align: center применялся к списку */
+  text-align: left;      /* внутри списка можно выравнять по левому краю */
+  margin: 0 auto 20px auto;
+  padding-left: 20px;    /* небольшой отступ для цифр */
+}
+
+/* Видео по центру */
 iframe {
   display: block;
   margin: 30px auto;
 }
 
-/* ----- Футер ----- */
+/* ----- Окошки в углах (только buy.html) ----- */
+.corner-box {
+  position: absolute;
+  top: 20px;
+  padding: 10px 15px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid gold;
+  border-radius: 5px;
+  z-index: 999;
+}
+
+.corner-box-left {
+  left: 20px;
+}
+
+.corner-box-right {
+  right: 20px;
+}
+
+.corner-box a {
+  color: gold;
+  text-decoration: none;
+  font-weight: bold;
+  margin: 0 5px;
+}
+.corner-box a:hover {
+  text-decoration: underline;
+}
+
+/* ----- Футер (общий) ----- */
 footer {
   padding: 20px;
   background: rgba(0, 0, 0, 0.8);
