@@ -26,6 +26,10 @@ header {
   border-bottom: 2px solid gold;
 }
 
+header img {
+  margin-bottom: 20px;
+}
+
 header h1 {
   margin: 0;
   font-size: 3em;
