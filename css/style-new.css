@@ -1,0 +1,60 @@
+/* Примерная стилизация для шапки с меню */
+.top-menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: rgba(0, 0, 0, 0.9);
+  border-bottom: 2px solid gold;
+}
+
+.menu-left, .menu-center, .menu-right {
+  display: flex;
+  align-items: center;
+}
+
+.menu-left .home-btn,
+.menu-right .lang-switch {
+  color: gold;
+  text-decoration: none;
+  margin: 0 5px;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.menu-left .home-btn:hover,
+.menu-right .lang-switch:hover {
+  color: #c0a000;
+}
+
+.logo {
+  width: 50px;
+  margin-right: 10px;
+}
+
+.top-menu h1 {
+  color: gold;
+  margin: 0;
+  font-size: 1.8em;
+}
+
+/* Стиль для заголовка (Tagline) под шапкой */
+.tagline {
+  margin: 20px 0;
+  font-size: 1.2em;
+  color: #ccc;
+}
+
+/* Стиль списка шагов покупки */
+.buy-steps {
+  text-align: left; /* чтобы пункты шли слева направо */
+  max-width: 600px;
+  margin: 20px auto;
+  line-height: 1.6;
+}
+
+/* Контейнер для видео */
+.video-container {
+  margin: 30px auto;
+  max-width: 560px; /* ширина iframe 560px */
+}
