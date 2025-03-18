@@ -1,7 +1,6 @@
-/* Подключаем шрифт из Google Fonts для футуристичного эффекта */
+/* Подключаем футуристичный шрифт */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
-/* Базовые стили */
 body {
   margin: 0;
   font-family: 'Orbitron', sans-serif;
@@ -12,18 +11,51 @@ body {
   animation: fadeIn 1s ease-in-out;
 }
 
-/* Анимация появления страницы */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-/* Стили для шапки сайта */
+/* ----- Кнопки в углах ----- */
+.top-left-corner,
+.top-right-corner {
+  position: absolute;
+  top: 20px;
+  z-index: 999; /* Чтобы кнопки были поверх всего */
+}
+
+/* Левая кнопка */
+.top-left-corner {
+  left: 20px;
+}
+
+/* Правая кнопка */
+.top-right-corner {
+  right: 20px;
+}
+
+/* Стиль самих ссылок-кнопок */
+.corner-btn {
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid gold;
+  border-radius: 5px;
+  padding: 8px 12px;
+  margin: 0 5px;
+  color: gold;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s, color 0.3s;
+}
+.corner-btn:hover {
+  background: gold;
+  color: #000;
+}
+
+/* ----- Заголовок и логотип ----- */
 header {
   padding: 60px 20px;
-  background: rgba(0, 0, 0, 0.8);
-  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
-  border-bottom: 2px solid gold;
+  background: rgba(0, 0, 0, 0);
+  /* Можно убрать или оставить небольшую прозрачность */
 }
 
 header img {
@@ -43,7 +75,7 @@ header p {
   color: #fff;
 }
 
-/* Стили для основного раздела */
+/* ----- Основной контент ----- */
 section {
   padding: 60px 20px;
 }
@@ -55,15 +87,16 @@ section h2 {
   text-transform: uppercase;
 }
 
-section p {
+section p, section ol, section ul {
   font-size: 1.2em;
   line-height: 1.6;
   max-width: 800px;
-  margin: 0 auto;
+  margin: 0 auto 20px auto;
+  text-align: left; /* чтобы текст был удобнее читать */
 }
 
-/* Стиль кнопки */
-a.btn {
+/* Кнопка Buy IBITIcoin */
+.btn {
   background: linear-gradient(135deg, gold, #c0a000);
   color: #000;
   padding: 15px 30px;
@@ -74,17 +107,23 @@ a.btn {
   display: inline-block;
   transition: transform 0.3s ease;
 }
-
-a.btn:hover {
+.btn:hover {
   transform: scale(1.1);
 }
 
-/* Стили для футера */
+/* ----- Видео ----- */
+iframe {
+  display: block;
+  margin: 30px auto;
+}
+
+/* ----- Футер ----- */
 footer {
   padding: 20px;
   background: rgba(0, 0, 0, 0.8);
   border-top: 2px solid gold;
   font-size: 0.9em;
+  text-align: center;
 }
 
 footer p, footer a {
