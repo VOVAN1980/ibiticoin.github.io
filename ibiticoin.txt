@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBITIcoin - The Future of Digital Finance</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            padding: 50px;
+        }
+        .logo {
+            width: 200px;
+        }
+        .btn {
+            background-color: gold;
+            color: black;
+            padding: 15px 30px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 20px;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: #c0a000;
+        }
+        .socials a {
+            color: gold;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="logo.png" alt="IBITIcoin Logo" class="logo">
+        <h1>IBITIcoin - The Future of Digital Finance</h1>
+        <p>Secure, fast, and innovative cryptocurrency for the modern world.</p>
+        <a href="#buy" class="btn">Buy IBITIcoin</a>
+        <a href="#about" class="btn">Learn More</a>
+        <h2>Join Our Community</h2>
+        <div class="socials">
+            <a href="https://twitter.com/IBITIcoin">Twitter</a> |
+            <a href="https://t.me/IBITIcoin">Telegram</a> |
+            <a href="https://instagram.com/IBITIcoin">Instagram</a> |
+            <a href="https://facebook.com/IBITIcoin">Facebook</a>
+        </div>
+        <h3>Secure - Fast - Accessible</h3>
+    </div>
+</body>
+</html>
