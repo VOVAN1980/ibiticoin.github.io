@@ -1,6 +1,7 @@
 /* Подключаем шрифт Orbitron */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
+/* ===== Глобальные стили ===== */
 body {
   margin: 0;
   font-family: 'Orbitron', sans-serif;
@@ -15,10 +16,9 @@ body {
   to { opacity: 1; }
 }
 
-/* ----- Окошки в углах (на обеих страницах) ----- */
+/* ===== Окошки в углах (общие для всех страниц) ===== */
 .corner-box {
   position: absolute;
-  /* меняем top, чтобы опустить/поднять кнопки */
   top: 20px; 
   padding: 10px 15px;
   background: rgba(0, 0, 0, 0.8);
@@ -39,9 +39,24 @@ body {
   text-decoration: underline;
 }
 
-/* ----- Главная страница (index.html) ----- */
+/* ===== Общие стили для заголовков и кнопок ===== */
+.btn {
+  background: linear-gradient(135deg, gold, #c0a000);
+  color: #000;
+  padding: 15px 30px;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 5px;
+  margin-top: 30px;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+.btn:hover {
+  transform: scale(1.1);
+}
+
+/* ===== Стили для главной страницы (index.html) ===== */
 .hero-header {
-  /* увеличиваем/уменьшаем padding, чтобы поднять/опустить логотип */
   padding: 15px 20px;
 }
 .hero-header img {
@@ -59,7 +74,6 @@ body {
   color: #fff;
 }
 
-/* Золотой блок */
 .gold-section {
   background: #111;
   border-top: 2px solid gold;
@@ -76,27 +90,12 @@ body {
   font-size: 1.2em;
   line-height: 1.6;
   max-width: 800px;
-  margin: 0 auto 20px auto;
+  margin: 0 auto 20px;
   text-align: center;
 }
-.btn {
-  background: linear-gradient(135deg, gold, #c0a000);
-  color: #000;
-  padding: 15px 30px;
-  text-decoration: none;
-  font-weight: bold;
-  border-radius: 5px;
-  margin-top: 30px;
-  display: inline-block;
-  transition: transform 0.3s ease;
-}
-.btn:hover {
-  transform: scale(1.1);
-}
 
-/* ----- Страница покупки (buy.html) ----- */
+/* ===== Стили для страницы покупки (buy.html) ===== */
 .buy-header {
-  /* уменьшаем/увеличиваем padding, чтобы поднять/опустить логотип */
   padding: 15px 20px;
 }
 .buy-header img {
@@ -126,17 +125,17 @@ body {
   list-style: decimal;
   display: inline-block;
   text-align: left;
-  margin: 0 auto 20px auto;
+  margin: 0 auto 20px;
   padding-left: 20px;
 }
 
-/* Видео по центру */
+/* ===== Стили для видео ===== */
 iframe {
   display: block;
   margin: 30px auto;
 }
 
-/* ----- Футер ----- */
+/* ===== Стили для футера ===== */
 footer {
   padding: 20px;
   background: rgba(0, 0, 0, 0.8);
@@ -151,6 +150,8 @@ footer p, footer a {
 footer a:hover {
   text-decoration: underline;
 }
+
+/* ===== Стили для Roadmap раздела ===== */
 .roadmap {
   background: #111;
   padding: 40px 20px;
@@ -169,7 +170,9 @@ footer a:hover {
   border: 1px solid gold;
   border-radius: 10px;
 }
- .blog {
+
+/* ===== Стили для Блога (blog) ===== */
+.blog {
   background: #222;
   padding: 40px 20px;
   color: gold;
@@ -192,32 +195,11 @@ footer a:hover {
   margin-top: 0;
   color: gold;
 }
-.btn {
-  /* Используйте уже существующий стиль кнопки */
-  margin-top: 10px;
-  display: inline-block;
-}
- /* Общие стили для corner-box (как у вас уже есть) */
-.corner-box {
-  position: absolute;
-  top: 20px;
-  padding: 10px 15px;
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid gold;
-  border-radius: 5px;
-  z-index: 999;
-}
 
-.corner-box-left {
-  left: 20px;
-}
-
-/* Стили для выпадающего меню */
+/* ===== Стили для выпадающего меню (Dropdown) ===== */
 .dropdown {
-  position: relative; /* чтобы меню позиционировалось относительно блока */
+  position: relative;
 }
-
-/* Кнопка (ссылка) «Главная», которая открывает меню */
 .dropdown-toggle {
   color: gold;
   text-decoration: none;
@@ -225,50 +207,34 @@ footer a:hover {
   display: inline-block;
   transition: color 0.3s;
 }
-
-/* Контейнер для выпадающего списка */
 .dropdown-menu {
   position: absolute;
-  top: 100%;    /* под кнопкой */
-  left: 0;      /* выравниваем по левому краю */
+  top: 100%;
+  left: 0;
   background: rgba(0, 0, 0, 0.9);
   border: 2px solid gold;
   border-radius: 5px;
   padding: 10px;
-  min-width: 120px; /* ширина выпадающего меню */
+  min-width: 120px;
   overflow: hidden;
-  
-  /* Анимация раскрытия */
-  max-height: 0;        /* изначально скрыто */
-  transition: max-height 0.3s ease;
-  
-  /* По умолчанию не видно */
+  max-height: 0;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
   opacity: 0;
-  pointer-events: none;  /* чтобы нельзя было кликнуть, когда скрыто */
+  pointer-events: none;
 }
-
-/* Ссылки внутри выпадающего меню */
 .dropdown-menu a {
-  display: block;       /* каждая ссылка на отдельной строке */
+  display: block;
   color: gold;
   text-decoration: none;
   margin: 5px 0;
   font-weight: normal;
   transition: color 0.3s;
 }
-
 .dropdown-menu a:hover {
   color: #c0a000;
 }
-
-/* 
-   При наведении на весь блок .dropdown 
-   (или при клике, если будет JS), 
-   раскрываем меню
-*/
 .dropdown:hover .dropdown-menu {
-  max-height: 500px;    /* или любое большое число */
+  max-height: 500px;
   opacity: 1;
-  pointer-events: auto; /* теперь можно кликать */
+  pointer-events: auto;
 }
-
