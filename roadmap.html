@@ -4,17 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Roadmap IBITIcoin</title>
-  <!-- Подключаем основной стиль -->
+
+  <!-- Подключаем основной стиль (если нужен) -->
   <link rel="stylesheet" href="css/style.css">
+
   <!-- Подключаем библиотеку AOS для анимаций -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
 </head>
 <body>
 
-  <header class="hero-header">
-    <img src="img/logo.png" alt="IBITIcoin Logo" width="200">
-    <h1>IBITIcoin</h1>
-    <p>Stability | Innovation | Accessibility</p>
+  <header>
+    <h1>IBITIcoin Roadmap</h1>
   </header>
 
   <section class="roadmap">
@@ -37,10 +37,12 @@
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
   </footer>
 
-  <!-- Подключаем AOS скрипт и инициализацию -->
+  <!-- Подключаем скрипт AOS перед </body> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
-    AOS.init();
+    AOS.init({
+      once: true // анимация сработает при первой загрузке без скролла
+    });
   </script>
 </body>
 </html>
