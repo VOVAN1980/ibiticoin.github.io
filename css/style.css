@@ -467,22 +467,22 @@ iframe {
 /* ===== Ссылки внутри .policy-section ===== */
 .policy-section a:link,
 .policy-section a:visited {
-  color: gold;                /* основной цвет ссылки */
-  text-decoration: underline; /* или none, если не хотите подчёркивание */
+  color: gold;                /* ссылки золотые */
+  text-decoration: underline; /* подчёркивание */
   transition: color 0.3s;
 }
 .policy-section a:hover {
-  color: #c0a000;             /* цвет при наведении */
+  color: #c0a000;             /* при наведении темнее */
   text-decoration: underline;
 }
 .policy-section a:active {
-  color: #c0a000;             /* цвет при нажатии */
+  color: #c0a000;
 }
 
-/* ===== Пример стилей для .policy-section (фон, цвет и т. д.) ===== */
+/* ===== Пример стилей для .policy-section (фон и белый текст) ===== */
 .policy-section {
-  background: #111;
-  color: gold;
+  background: #111;    /* фон */
+  color: #fff;         /* белый текст */
   padding: 40px 20px;
   max-width: 800px;
   margin: 40px auto;
