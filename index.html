@@ -8,31 +8,29 @@
 </head>
 <body>
 
-  <!-- Кнопка «Главная» -->
+  <!-- Левая сторона: кнопки «Главная», «Блог» -->
   <div class="corner-box corner-box-left">
     <a href="index.html">Главная</a>
   </div>
-
-  <!-- Кнопка «Блог», расположена чуть ниже (см. CSS) -->
   <div class="corner-box corner-box-left2">
     <a href="blog.html">Блог</a>
   </div>
 
-  <!-- Правый угол: Roadmap + язык -->
+  <!-- Правая сторона: Roadmap + язык -->
   <div class="corner-box corner-box-right">
     <a href="roadmap.html">Roadmap</a> | 
     <a href="?lang=ru">RU</a> | 
     <a href="?lang=en">EN</a>
   </div>
 
-  <!-- Шапка -->
+  <!-- Шапка с логотипом -->
   <header class="hero-header">
     <img src="img/logo.png" alt="IBITIcoin Logo" width="200">
     <h1>IBITIcoin</h1>
     <p>Stability | Innovation | Accessibility</p>
   </header>
 
-  <!-- Золотой блок с описанием -->
+  <!-- Золотой блок с описанием (WHY CHOOSE) -->
   <section class="gold-section">
     <h2>WHY CHOOSE IBITIcoin?</h2>
     <p>
@@ -41,39 +39,59 @@
     </p>
     <a class="btn" href="buy.html">Buy IBITIcoin</a>
   </section>
+  
+  <!-- КАЛЬКУЛЯТОР -->
+  <section class="calc-section">
+    <h2>Калькулятор инвестиций</h2>
+    <p>Введите сумму для инвестиций (USD):</p>
+    <input type="number" id="investment" placeholder="Сумма">
+    <button onclick="calculate()">Рассчитать</button>
+    <p id="result"></p>
+  </section>
 
-<section class="social-feed">
-  <h2>Новости из Twitter</h2>
-  <a class="twitter-timeline" data-theme="dark" data-chrome="noheader nofooter noborders" href="https://twitter.com/IBITIcoin?ref_src=twsrc%5Etfw">Tweets by IBITIcoin</a>
-  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-</section>
+  <!-- ВИДЕО-ГАЙДЫ -->
+  <section class="video-guides">
+    <h2>Видео-гайды</h2>
+    <div class="video-item">
+      <h3>Как купить IBITIcoin</h3>
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/VIDEO_ID1" 
+              title="Как купить IBITIcoin" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowfullscreen></iframe>
+    </div>
+    <div class="video-item">
+      <h3>Как настроить криптокошелёк</h3>
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/VIDEO_ID2" 
+              title="Как настроить кошелёк" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowfullscreen></iframe>
+    </div>
+  </section>
 
-<section class="subscribe">
-  <h2>Подпишитесь на новости IBITIcoin</h2>
-  <form action="https://yourdomain.usX.list-manage.com/subscribe/post?u=YOUR_UNIQUE_ID&amp;id=YOUR_LIST_ID" method="post" target="_blank">
-    <input type="email" name="EMAIL" placeholder="Введите ваш email" required>
-    <button type="submit">Подписаться</button>
-  </form>
-</section>
+  <!-- Блок для Twitter или других соцсетей (если есть) -->
+  <!--
+  <section class="social-feed">
+    <h2>Новости из Twitter</h2>
+    <a class="twitter-timeline" data-theme="dark" href="https://twitter.com/IBITIcoin">Tweets by IBITIcoin</a>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </section>
+  -->
 
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
-    <p>
-      <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> |
-      <a href="https://t.me/IBITIcoin_chat" target="_blank">Telegram</a> |
-      <a href="https://instagram.com/IBITIcoin_official" target="_blank">Instagram</a> |
-      <a href="https://facebook.com/IBITIcoin" target="_blank">Facebook</a>
-    </p>
-    <p>
-      <a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a>
-    </p>
   </footer>
 
-<!-- Дополнительные кнопки в левом нижнем углу -->
-<div class="corner-box corner-box-bottom">
-  <a href="calculator.html">Калькулятор</a> | 
-  <a href="video-guides.html">Видео-гайды</a>
-</div>
+  <!-- Скрипт для калькулятора -->
+  <script>
+    function calculate() {
+      const val = parseFloat(document.getElementById('investment').value);
+      if (isNaN(val) || val <= 0) {
+        document.getElementById('result').innerText = "Введите корректную сумму.";
+        return;
+      }
+      // Пример: доходность 10%
+      const profit = val * 0.10;
+      document.getElementById('result').innerText = 'Ожидаемая прибыль: $' + profit.toFixed(2);
+    }
+  </script>
 
 </body>
 </html>
