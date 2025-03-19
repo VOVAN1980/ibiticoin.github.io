@@ -62,11 +62,14 @@
     <!-- Правая боковая панель (комментарии Disqus или другое) -->
     <aside class="blog-sidebar-right">
       <h2>Комментарии</h2>
+      <!-- Ссылка на политику комментариев -->
+      <a href="comment-policy.html" class="btn-small comment-policy-link">Правила комментариев</a>
+
       <div id="disqus_thread"></div>
       <script>
         var disqus_config = function () {
-          // При необходимости можно задать уникальные значения для каждой страницы
-          // Например: this.page.url = window.location.href; this.page.identifier = document.title;
+          // this.page.url = window.location.href; // при необходимости
+          // this.page.identifier = "blog-main";    // уникальный идентификатор
         };
         (function() {
           var d = document, s = d.createElement('script');
