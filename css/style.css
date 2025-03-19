@@ -379,7 +379,7 @@ iframe {
 
 /* Левая боковая панель (контактная форма) */
 .blog-sidebar-left {
-  width: 25%; /* Увеличили с 20% до 25% */
+  width: 30%; /* Увеличили с 20% до 30% */
   background: #222;
   color: gold;
   padding: 20px;
@@ -391,7 +391,7 @@ iframe {
 
 /* Центральная колонка (новости) */
 .blog-content {
-  width: 45%; /* Уменьшили с 50% до 45% */
+  width: 40%; /* Уменьшили с 50% до 40% */
   background: #111;
   color: gold;
   padding: 20px;
@@ -402,7 +402,7 @@ iframe {
 
 /* Правая боковая панель (комментарии) */
 .blog-sidebar-right {
-  width: 25%; /* Увеличили с 20% до 25% */
+  width: 30%; /* Увеличили с 20% до 30% */
   background: #222;
   color: gold;
   padding: 20px;
