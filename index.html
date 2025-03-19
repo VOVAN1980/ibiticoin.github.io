@@ -37,61 +37,27 @@
       IBITIcoin – это инновационная криптовалюта, созданная для быстрой, безопасной 
       и доступной работы в цифровой экономике...
     </p>
+    <!-- Кнопка «Buy IBITIcoin» -->
     <a class="btn" href="buy.html">Buy IBITIcoin</a>
-  </section>
-  
-  <!-- КАЛЬКУЛЯТОР -->
-  <section class="calc-section">
-    <h2>Калькулятор инвестиций</h2>
-    <p>Введите сумму для инвестиций (USD):</p>
-    <input type="number" id="investment" placeholder="Сумма">
-    <button onclick="calculate()">Рассчитать</button>
-    <p id="result"></p>
-  </section>
 
-  <!-- ВИДЕО-ГАЙДЫ -->
-  <section class="video-guides">
-    <h2>Видео-гайды</h2>
-    <div class="video-item">
-      <h3>Как купить IBITIcoin</h3>
-      <iframe width="560" height="315" src="https://www.youtube.com/embed/VIDEO_ID1" 
-              title="Как купить IBITIcoin" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen></iframe>
-    </div>
-    <div class="video-item">
-      <h3>Как настроить криптокошелёк</h3>
-      <iframe width="560" height="315" src="https://www.youtube.com/embed/VIDEO_ID2" 
-              title="Как настроить кошелёк" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen></iframe>
+    <!-- Две маленькие кнопки под Buy -->
+    <div class="extra-buttons">
+      <a class="btn-small" href="calculator.html">Калькулятор</a>
+      <a class="btn-small" href="video-guides.html">Видео-гайды</a>
     </div>
   </section>
 
-  <!-- Блок для Twitter или других соцсетей (если есть) -->
+  <!-- Блок для соцсетей или других разделов (опционально) -->
   <!--
   <section class="social-feed">
     <h2>Новости из Twitter</h2>
-    <a class="twitter-timeline" data-theme="dark" href="https://twitter.com/IBITIcoin">Tweets by IBITIcoin</a>
-    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    ...
   </section>
   -->
 
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
   </footer>
-
-  <!-- Скрипт для калькулятора -->
-  <script>
-    function calculate() {
-      const val = parseFloat(document.getElementById('investment').value);
-      if (isNaN(val) || val <= 0) {
-        document.getElementById('result').innerText = "Введите корректную сумму.";
-        return;
-      }
-      // Пример: доходность 10%
-      const profit = val * 0.10;
-      document.getElementById('result').innerText = 'Ожидаемая прибыль: $' + profit.toFixed(2);
-    }
-  </script>
 
 </body>
 </html>
