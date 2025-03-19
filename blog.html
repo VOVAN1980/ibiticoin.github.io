@@ -1,12 +1,30 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Новости IBITIcoin</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+
+  <!-- Левая сторона: Dropdown (Главная + Блог) -->
+  <div class="corner-box corner-box-left dropdown">
+    <a href="#" class="dropdown-toggle">Меню</a>
+    <div class="dropdown-menu">
+      <a href="index.html">Главная</a>
+      <a href="blog.html">Блог</a>
+      <!-- при желании можно добавить ещё ссылки -->
+    </div>
+  </div>
+
+  <!-- Правая сторона: Roadmap + язык -->
+  <div class="corner-box corner-box-right">
+    <a href="roadmap.html">Roadmap</a> | 
+    <a href="?lang=ru">RU</a> | 
+    <a href="?lang=en">EN</a>
+  </div>
+
   <header class="hero-header">
     <img src="img/logo.png" alt="IBITIcoin Logo" width="200">
     <h1>IBITIcoin</h1>
@@ -21,11 +39,12 @@
       <p>Мы рады сообщить о новой интеграции, которая откроет доступ к стейкингу и DeFi-услугам...</p>
       <a class="btn" href="#">Читать далее</a>
     </article>
-    <!-- Добавьте больше постов -->
+    <!-- Добавьте другие посты по аналогии -->
   </section>
 
   <footer>
-    <!-- Футер, как и раньше -->
+    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
   </footer>
+
 </body>
 </html>
