@@ -19,17 +19,14 @@ body {
   padding: 10px 15px;
   z-index: 999;
 }
-/* Первая кнопка */
 .corner-box-left {
   top: 20px;
   left: 20px;
 }
-/* Вторая кнопка (ниже на 50-60px) */
 .corner-box-left2 {
-  top: 80px;
+  top: 80px; /* Расположение второй кнопки ниже первой */
   left: 20px;
 }
-/* Правая сторона */
 .corner-box-right {
   top: 20px;
   right: 20px;
@@ -159,4 +156,65 @@ footer a:hover {
 .blog-post h3 {
   margin-top: 0;
   color: gold;
+}
+
+/* ===== Стили для списка шагов (buy-steps) ===== */
+.buy-steps {
+  list-style: decimal;      /* Нумерация */
+  display: inline-block;    /* Чтобы можно было центрировать */
+  margin: 0 auto;           /* Центрируем список по горизонтали */
+  text-align: left;         /* Текст пунктов выравниваем по левому краю */
+  padding-left: 30px;       /* Отступ слева для цифр */
+}
+.buy-steps li {
+  margin-bottom: 10px;
+}
+
+/* ===== Стили для видео ===== */
+iframe {
+  display: block;
+  margin: 30px auto;
+}
+
+/* ===== Стили для выпадающего меню (Dropdown) ===== */
+.dropdown {
+  position: relative;
+}
+.dropdown-toggle {
+  color: gold;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  transition: color 0.3s;
+}
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(0, 0, 0, 0.9);
+  border: 2px solid gold; /* Золотая рамка для выпадающего меню */
+  border-radius: 5px;
+  padding: 10px;
+  min-width: 120px;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+.dropdown-menu a {
+  display: block;
+  color: gold;
+  text-decoration: none;
+  margin: 5px 0;
+  font-weight: normal;
+  transition: color 0.3s;
+}
+.dropdown-menu a:hover {
+  color: #c0a000;
+}
+.dropdown:hover .dropdown-menu {
+  max-height: 500px;
+  opacity: 1;
+  pointer-events: auto;
 }
