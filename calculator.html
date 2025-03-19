@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Калькулятор инвестиций IBITIcoin</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Вы можете добавить угловые кнопки навигации, если нужно -->
+  <div class="corner-box corner-box-left">
+    <a href="index.html">Главная</a>
+  </div>
+  <div class="corner-box corner-box-right">
+    <a href="roadmap.html">Roadmap</a> | 
+    <a href="?lang=ru">RU</a> | 
+    <a href="?lang=en">EN</a>
+  </div>
+
+  <header class="hero-header">
+    <h1>Калькулятор инвестиций</h1>
+  </header>
+
+  <section class="calculator">
+    <h2>Калькулятор инвестиций IBITIcoin</h2>
+    <p>Введите сумму для инвестиций (в USD):</p>
+    <input type="number" id="investment" placeholder="Сумма">
+    <button onclick="calculate()">Рассчитать</button>
+    <p id="result"></p>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
+  </footer>
+
+  <script>
+    function calculate() {
+      const investment = parseFloat(document.getElementById('investment').value);
+      if (isNaN(investment) || investment <= 0) {
+        document.getElementById('result').innerText = "Введите корректную сумму.";
+        return;
+      }
+      // Пример: доходность 10%
+      const profit = investment * 0.10;
+      document.getElementById('result').innerText = 'Ожидаемая прибыль: $' + profit.toFixed(2);
+    }
+  </script>
+</body>
+</html>
