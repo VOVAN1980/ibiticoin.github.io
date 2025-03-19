@@ -365,3 +365,94 @@ iframe {
 .btn-small:visited {
   color: #000; 
 }
+/* Контейнер, содержащий левую панель, контент и правую панель */
+.blog-layout {
+  display: flex;
+  justify-content: space-between; /* Чтобы боковые панели располагались по бокам */
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+/* Левая боковая панель */
+.blog-sidebar-left {
+  width: 20%;
+  background: #222;
+  color: gold;
+  padding: 20px;
+  margin-right: 20px;
+  border: 1px solid gold;
+  border-radius: 10px;
+}
+
+/* Контент (новости) по центру */
+.blog-content {
+  width: 50%;
+  background: #111;
+  color: gold;
+  padding: 20px;
+  border: 1px solid gold;
+  border-radius: 10px;
+}
+
+/* Правая боковая панель */
+.blog-sidebar-right {
+  width: 20%;
+  background: #222;
+  color: gold;
+  padding: 20px;
+  margin-left: 20px;
+  border: 1px solid gold;
+  border-radius: 10px;
+}
+
+/* Стили для формы в левой панели */
+.blog-sidebar-left form {
+  display: flex;
+  flex-direction: column;
+}
+.blog-sidebar-left form input,
+.blog-sidebar-left form textarea {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid gold;
+  border-radius: 5px;
+  background: #111;
+  color: gold;
+}
+.blog-sidebar-left form button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background: gold;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.blog-sidebar-left form button:hover {
+  background: #c0a000;
+}
+
+/* Настройки для статей в контенте */
+.blog-post {
+  background: #222;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid gold;
+  border-radius: 10px;
+}
+
+/* Адаптивность (при узком экране боковые панели под контентом) */
+@media (max-width: 900px) {
+  .blog-layout {
+    flex-direction: column;
+    align-items: center;
+  }
+  .blog-sidebar-left,
+  .blog-sidebar-right,
+  .blog-content {
+    width: 90%;
+    margin: 10px 0;
+  }
+}
