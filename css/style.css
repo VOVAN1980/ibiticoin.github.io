@@ -22,7 +22,8 @@ body {
   top: 20px; 
   padding: 10px 15px;
   background: rgba(0, 0, 0, 0.8);
-  border: 2px solid gold;
+  /* Убрана золотая рамка */
+  border: none; 
   border-radius: 5px;
   z-index: 999;
 }
@@ -39,7 +40,7 @@ body {
   text-decoration: underline;
 }
 
-/* ===== Общие стили для заголовков и кнопок ===== */
+/* ===== Общие стили для кнопок ===== */
 .btn {
   background: linear-gradient(135deg, gold, #c0a000);
   color: #000;
@@ -164,7 +165,8 @@ footer a:hover {
   margin: 20px auto;
   max-width: 800px;
   padding: 20px;
-  border: 1px solid gold;
+  /* Убрана золотая рамка */
+  border: none;
   border-radius: 10px;
 }
 
@@ -181,7 +183,8 @@ footer a:hover {
 }
 .blog-post {
   background: #111;
-  border: 1px solid gold;
+  /* Убрана золотая рамка */
+  border: none;
   border-radius: 10px;
   padding: 20px;
   margin: 20px auto;
@@ -203,6 +206,22 @@ footer a:hover {
   font-weight: bold;
   display: inline-block;
   transition: color 0.3s;
+}
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(0, 0, 0, 0.9);
+  /* Убрана золотая рамка */
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  min-width: 120px;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
 }
 .dropdown-menu a {
   display: block;
