@@ -28,17 +28,26 @@
     <p>Stability | Innovation | Accessibility</p>
   </header>
 
-  <!-- Контейнер для боковых панелей и контента -->
   <div class="blog-layout">
     <!-- Левая боковая панель (контактная форма) -->
     <aside class="blog-sidebar-left">
       <h2>Напишите нам</h2>
-      <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-        <input type="text" name="name" placeholder="Ваше имя" required>
-        <input type="email" name="email" placeholder="Ваш Email" required>
-        <textarea name="message" placeholder="Ваше сообщение" required></textarea>
+      <!-- Начало кода Formspree -->
+      <form
+        action="https://formspree.io/f/mdkeadvl"
+        method="POST"
+      >
+        <label>
+          Ваш email:
+          <input type="email" name="email" required>
+        </label>
+        <label>
+          Ваше сообщение:
+          <textarea name="message" required></textarea>
+        </label>
         <button type="submit">Отправить</button>
       </form>
+      <!-- Конец кода Formspree -->
     </aside>
 
     <!-- Основной контент блога (новости, посты) -->
@@ -53,22 +62,23 @@
       <!-- Добавьте другие посты аналогично -->
     </main>
 
-    <!-- Правая боковая панель (комментарии) -->
+    <!-- Правая боковая панель (комментарии Disqus или другое) -->
     <aside class="blog-sidebar-right">
       <h2>Комментарии</h2>
       <div id="disqus_thread"></div>
       <script>
-      var disqus_config = function () {
-        // Опционально задать URL/identifier
-      };
-      (function() {
-        var d = document, s = d.createElement('script');
-        s.src = 'https://YOUR_DISQUS_SHORTNAME.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-      })();
+        var disqus_config = function () {};
+        (function() {
+          var d = document, s = d.createElement('script');
+          s.src = 'https://ВАШ_SHORTNAME.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+        })();
       </script>
-      <noscript>Пожалуйста, включите JavaScript для просмотра <a href="https://disqus.com/?ref_noscript">комментариев Disqus.</a></noscript>
+      <noscript>
+        Пожалуйста, включите JavaScript для просмотра 
+        <a href="https://disqus.com/?ref_noscript">комментариев Disqus</a>.
+      </noscript>
     </aside>
   </div>
 
