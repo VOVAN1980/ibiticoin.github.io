@@ -3,46 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Roadmap IBITIcoin</title>
-
-  <!-- Подключаем основной стиль (если нужен) -->
+  <title>IBITIcoin Roadmap</title>
+  <!-- Подключаем основной стиль сайта -->
   <link rel="stylesheet" href="css/style.css">
-
-  <!-- Подключаем библиотеку AOS для анимаций -->
+  <!-- Подключаем стили AOS для анимации -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
 </head>
 <body>
 
-  <header>
+  <!-- Кнопка «Главная» в левом верхнем углу -->
+  <div class="corner-box corner-box-left">
+    <a href="index.html">Главная</a>
+  </div>
+
+  <!-- Шапка -->
+  <header class="hero-header">
+    <img src="img/logo.png" alt="IBITIcoin Logo" width="200">
     <h1>IBITIcoin Roadmap</h1>
+    <p>Stability | Innovation | Accessibility</p>
   </header>
 
-  <section class="roadmap">
-    <h2>Roadmap</h2>
+  <!-- Раздел Roadmap -->
+  <section class="roadmap" style="margin-bottom: 300px;"> 
+    <!-- margin-bottom: 300px даёт дополнительное пространство, чтобы была прокрутка -->
+    <h2 data-aos="fade-up">Roadmap</h2>
+
     <div class="roadmap-item" data-aos="fade-up">
       <h3>Q2 2025</h3>
       <p>Запуск бета-версии платформы</p>
     </div>
+
     <div class="roadmap-item" data-aos="fade-up">
       <h3>Q3 2025</h3>
       <p>Листинг на биржах и запуск мобильного приложения</p>
     </div>
+
     <div class="roadmap-item" data-aos="fade-up">
       <h3>Q4 2025</h3>
       <p>Интеграция с DeFi и запуск стейкинг-платформы</p>
     </div>
   </section>
 
+  <!-- Футер -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
   </footer>
 
-  <!-- Подключаем скрипт AOS перед </body> -->
+  <!-- Подключаем скрипт AOS и инициализацию -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
     AOS.init({
-      once: true // анимация сработает при первой загрузке без скролла
+      once: true  // Анимация срабатывает один раз при загрузке
     });
   </script>
 </body>
 </html>
+
