@@ -463,4 +463,21 @@ iframe {
     width: 90%;
     margin: 10px 0;
   }
+
+/* Ссылки внутри .policy-section */
+.policy-section a {
+  color: gold;             /* цвет ссылок */
+  text-decoration: underline;  /* подчеркивание или можно none */
+  transition: color 0.3s;
+}
+
+.policy-section a:hover {
+  color: #c0a000;          /* цвет при наведении */
+  text-decoration: underline; 
+}
+
+/* Если хотите, чтобы visited-ссылки тоже были gold */
+.policy-section a:visited {
+  color: gold;
+}
 }
