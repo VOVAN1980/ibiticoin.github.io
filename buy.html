@@ -1,24 +1,30 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>How to Buy IBITIcoin</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <!-- «Окошко» слева (Главная) -->
+  <!-- Кнопка «Главная» (если нужна) -->
   <div class="corner-box corner-box-left">
     <a href="index.html">Главная</a>
   </div>
 
-  <!-- «Окошко» справа (Язык) -->
-  <div class="corner-box corner-box-right">
-    <a href="?lang=ru">RU</a> | <a href="?lang=en">EN</a>
+  <!-- Кнопка «Блог» (если нужна) -->
+  <div class="corner-box corner-box-left2">
+    <a href="blog.html">Блог</a>
   </div>
 
-  <!-- Шапка, где уменьшаем/увеличиваем отступы -->
+  <!-- Кнопки справа (Roadmap + язык) -->
+  <div class="corner-box corner-box-right">
+    <a href="roadmap.html">Roadmap</a> | 
+    <a href="?lang=ru">RU</a> | 
+    <a href="?lang=en">EN</a>
+  </div>
+
   <header class="buy-header">
     <img src="img/logo.png" alt="IBITIcoin Logo" width="200">
     <h1>IBITIcoin</h1>
@@ -27,6 +33,8 @@
 
   <section class="buy-section">
     <h2>How to Buy IBITIcoin</h2>
+
+    <!-- Список шагов: используем <ol> для нумерации -->
     <ol class="buy-steps">
       <li>Создайте криптокошелёк (MetaMask, Trust Wallet)</li>
       <li>Пополните баланс (BNB, ETH, USDT)</li>
@@ -34,35 +42,19 @@
       <li>Храните, инвестируйте и пользуйтесь всеми преимуществами IBITIcoin</li>
     </ol>
 
-    <iframe 
-      width="560"
-      height="315"
-      src="https://www.youtube.com/embed/VIDEO_ID"
-      title="How to Buy IBITIcoin"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    <!-- Видео, если нужно -->
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/VIDEO_ID" 
+      title="How to Buy IBITIcoin" frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
       allowfullscreen>
     </iframe>
 
-    <p>
-      В этом коротком ролике вы увидите, как мультяшный персонаж легко покупает IBITIcoin
-      и наслаждается финансовой свободой!
-    </p>
+    <p>В этом коротком ролике вы увидите, как мультяшный персонаж легко покупает IBITIcoin!</p>
   </section>
 
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
-    <p>
-      <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> |
-      <a href="https://t.me/IBITIcoin_chat" target="_blank">Telegram</a> |
-      <a href="https://instagram.com/IBITIcoin_official" target="_blank">Instagram</a> |
-      <a href="https://facebook.com/IBITIcoin" target="_blank">Facebook</a>
-    </p>
-    <p>
-      <a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a>
-    </p>
   </footer>
 
 </body>
 </html>
-
