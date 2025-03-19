@@ -218,3 +218,14 @@ iframe {
   opacity: 1;
   pointer-events: auto;
 }
+.social-feed {
+  background: #111;
+  padding: 40px 20px;
+  color: gold;
+  text-align: center;
+  margin-top: 40px;
+}
+.social-feed h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
