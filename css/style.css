@@ -151,3 +151,21 @@ footer p, footer a {
 footer a:hover {
   text-decoration: underline;
 }
+.roadmap {
+  background: #111;
+  padding: 40px 20px;
+  color: gold;
+  text-align: center;
+  margin-top: 40px;
+}
+.roadmap h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+.roadmap-item {
+  margin: 20px auto;
+  max-width: 800px;
+  padding: 20px;
+  border: 1px solid gold;
+  border-radius: 10px;
+}
