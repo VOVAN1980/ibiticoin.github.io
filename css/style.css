@@ -8,28 +8,32 @@ body {
   background: linear-gradient(135deg, #000000, #333333);
   color: #fff;
   text-align: center;
-  animation: fadeIn 1s ease-in-out;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* ===== Окошки в углах (общие для всех страниц) ===== */
+/* ===== Окошки в углах (corner-box) ===== */
 .corner-box {
   position: absolute;
-  top: 20px; 
-  padding: 10px 15px;
   background: rgba(0, 0, 0, 0.8);
-  /* Убрана золотая рамка */
-  border: none; 
+  border: 2px solid gold; /* Золотая рамка */
   border-radius: 5px;
+  padding: 10px 15px;
   z-index: 999;
 }
-.corner-box-left { left: 20px; }
-.corner-box-right { right: 20px; }
-
+/* Первая кнопка */
+.corner-box-left {
+  top: 20px;
+  left: 20px;
+}
+/* Вторая кнопка (ниже на 50-60px) */
+.corner-box-left2 {
+  top: 80px;
+  left: 20px;
+}
+/* Правая сторона */
+.corner-box-right {
+  top: 20px;
+  right: 20px;
+}
 .corner-box a {
   color: gold;
   text-decoration: none;
@@ -40,7 +44,7 @@ body {
   text-decoration: underline;
 }
 
-/* ===== Общие стили для кнопок ===== */
+/* ===== Кнопки (btn) ===== */
 .btn {
   background: linear-gradient(135deg, gold, #c0a000);
   color: #000;
@@ -56,7 +60,7 @@ body {
   transform: scale(1.1);
 }
 
-/* ===== Стили для главной страницы (index.html) ===== */
+/* ===== Шапка (hero-header) ===== */
 .hero-header {
   padding: 15px 20px;
 }
@@ -75,8 +79,11 @@ body {
   color: #fff;
 }
 
+/* ===== Золотой блок (gold-section) с рамками сверху и снизу ===== */
 .gold-section {
   background: #111;
+  border-top: 2px solid gold;    /* Верхняя золотая линия */
+  border-bottom: 2px solid gold; /* Нижняя золотая линия */
   padding: 60px 20px;
 }
 .gold-section h2 {
@@ -93,51 +100,11 @@ body {
   text-align: center;
 }
 
-/* ===== Стили для страницы покупки (buy.html) ===== */
-.buy-header {
-  padding: 15px 20px;
-}
-.buy-header img {
-  margin-bottom: 20px;
-}
-.buy-header h1 {
-  margin: 0;
-  font-size: 3em;
-  letter-spacing: 2px;
-  color: gold;
-}
-.buy-header p {
-  margin: 10px 0 0;
-  font-size: 1.3em;
-  color: #fff;
-}
-.buy-section {
-  padding: 40px 20px;
-}
-.buy-section h2 {
-  font-size: 2em;
-  margin-bottom: 20px;
-  color: gold;
-  text-transform: uppercase;
-}
-.buy-steps {
-  list-style: decimal;
-  display: inline-block;
-  text-align: left;
-  margin: 0 auto 20px;
-  padding-left: 20px;
-}
-
-/* ===== Стили для видео ===== */
-iframe {
-  display: block;
-  margin: 30px auto;
-}
-
-/* ===== Стили для футера ===== */
+/* ===== Футер с верхней золотой линией ===== */
 footer {
   padding: 20px;
   background: rgba(0, 0, 0, 0.8);
+  border-top: 2px solid gold; /* Верхняя золотая линия */
   font-size: 0.9em;
   text-align: center;
 }
@@ -149,7 +116,7 @@ footer a:hover {
   text-decoration: underline;
 }
 
-/* ===== Стили для Roadmap раздела ===== */
+/* ===== Roadmap (каждый item с золотой рамкой) ===== */
 .roadmap {
   background: #111;
   padding: 40px 20px;
@@ -165,12 +132,11 @@ footer a:hover {
   margin: 20px auto;
   max-width: 800px;
   padding: 20px;
-  /* Убрана золотая рамка */
-  border: none;
+  border: 1px solid gold; /* Золотая рамка */
   border-radius: 10px;
 }
 
-/* ===== Стили для Блога (blog) ===== */
+/* ===== Блог (каждый пост с золотой рамкой) ===== */
 .blog {
   background: #222;
   padding: 40px 20px;
@@ -183,8 +149,7 @@ footer a:hover {
 }
 .blog-post {
   background: #111;
-  /* Убрана золотая рамка */
-  border: none;
+  border: 1px solid gold; /* Золотая рамка */
   border-radius: 10px;
   padding: 20px;
   margin: 20px auto;
@@ -194,48 +159,4 @@ footer a:hover {
 .blog-post h3 {
   margin-top: 0;
   color: gold;
-}
-
-/* ===== Стили для выпадающего меню (Dropdown) ===== */
-.dropdown {
-  position: relative;
-}
-.dropdown-toggle {
-  color: gold;
-  text-decoration: none;
-  font-weight: bold;
-  display: inline-block;
-  transition: color 0.3s;
-}
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: rgba(0, 0, 0, 0.9);
-  /* Убрана золотая рамка */
-  border: none;
-  border-radius: 5px;
-  padding: 10px;
-  min-width: 120px;
-  overflow: hidden;
-  max-height: 0;
-  transition: max-height 0.3s ease, opacity 0.3s ease;
-  opacity: 0;
-  pointer-events: none;
-}
-.dropdown-menu a {
-  display: block;
-  color: gold;
-  text-decoration: none;
-  margin: 5px 0;
-  font-weight: normal;
-  transition: color 0.3s;
-}
-.dropdown-menu a:hover {
-  color: #c0a000;
-}
-.dropdown:hover .dropdown-menu {
-  max-height: 500px;
-  opacity: 1;
-  pointer-events: auto;
 }
