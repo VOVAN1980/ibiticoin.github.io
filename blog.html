@@ -1,91 +1,80 @@
-/* Контейнер, содержащий левую панель, контент и правую панель */
-.blog-layout {
-  display: flex;
-  justify-content: space-between; /* Чтобы боковые панели располагались по бокам */
-  max-width: 1200px;
-  margin: 40px auto;
-  padding: 0 20px;
-}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IBITIcoin – Блог</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
 
-/* Левая боковая панель */
-.blog-sidebar-left {
-  width: 20%;
-  background: #222;
-  color: gold;
-  padding: 20px;
-  margin-right: 20px;
-  border: 1px solid gold;
-  border-radius: 10px;
-}
+  <!-- Левая панель (Главная, Блог) -->
+  <div class="corner-box corner-box-left">
+    <a href="index.html">Главная</a>
+  </div>
+  <div class="corner-box corner-box-left2">
+    <a href="blog.html">Блог</a>
+  </div>
 
-/* Контент (новости) по центру */
-.blog-content {
-  width: 50%;
-  background: #111;
-  color: gold;
-  padding: 20px;
-  border: 1px solid gold;
-  border-radius: 10px;
-}
+  <!-- Правая панель (Roadmap + язык) -->
+  <div class="corner-box corner-box-right">
+    <a href="roadmap.html">Roadmap</a> | 
+    <a href="?lang=ru">RU</a> | 
+    <a href="?lang=en">EN</a>
+  </div>
 
-/* Правая боковая панель */
-.blog-sidebar-right {
-  width: 20%;
-  background: #222;
-  color: gold;
-  padding: 20px;
-  margin-left: 20px;
-  border: 1px solid gold;
-  border-radius: 10px;
-}
+  <header class="hero-header">
+    <h1>IBITIcoin – Блог</h1>
+    <p>Stability | Innovation | Accessibility</p>
+  </header>
 
-/* Стили для формы в левой панели */
-.blog-sidebar-left form {
-  display: flex;
-  flex-direction: column;
-}
-.blog-sidebar-left form input,
-.blog-sidebar-left form textarea {
-  margin-bottom: 10px;
-  padding: 10px;
-  border: 1px solid gold;
-  border-radius: 5px;
-  background: #111;
-  color: gold;
-}
-.blog-sidebar-left form button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  background: gold;
-  color: #000;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-.blog-sidebar-left form button:hover {
-  background: #c0a000;
-}
+  <!-- Контейнер для боковых панелей и контента -->
+  <div class="blog-layout">
+    <!-- Левая боковая панель (контактная форма) -->
+    <aside class="blog-sidebar-left">
+      <h2>Напишите нам</h2>
+      <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <input type="text" name="name" placeholder="Ваше имя" required>
+        <input type="email" name="email" placeholder="Ваш Email" required>
+        <textarea name="message" placeholder="Ваше сообщение" required></textarea>
+        <button type="submit">Отправить</button>
+      </form>
+    </aside>
 
-/* Настройки для статей в контенте */
-.blog-post {
-  background: #222;
-  padding: 20px;
-  margin-bottom: 20px;
-  border: 1px solid gold;
-  border-radius: 10px;
-}
+    <!-- Основной контент блога (новости, посты) -->
+    <main class="blog-content">
+      <h2>Последние новости</h2>
+      <article class="blog-post">
+        <h3>Новая интеграция с DeFi-платформой</h3>
+        <p>Дата публикации: 15.04.2025</p>
+        <p>Мы рады сообщить о новой интеграции, которая откроет доступ к стейкингу и DeFi-услугам...</p>
+        <a class="btn" href="#">Читать далее</a>
+      </article>
+      <!-- Добавьте другие посты аналогично -->
+    </main>
 
-/* Адаптивность (при узком экране боковые панели под контентом) */
-@media (max-width: 900px) {
-  .blog-layout {
-    flex-direction: column;
-    align-items: center;
-  }
-  .blog-sidebar-left,
-  .blog-sidebar-right,
-  .blog-content {
-    width: 90%;
-    margin: 10px 0;
-  }
-}
+    <!-- Правая боковая панель (комментарии) -->
+    <aside class="blog-sidebar-right">
+      <h2>Комментарии</h2>
+      <div id="disqus_thread"></div>
+      <script>
+      var disqus_config = function () {
+        // Опционально задать URL/identifier
+      };
+      (function() {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://YOUR_DISQUS_SHORTNAME.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+      </script>
+      <noscript>Пожалуйста, включите JavaScript для просмотра <a href="https://disqus.com/?ref_noscript">комментариев Disqus.</a></noscript>
+    </aside>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
