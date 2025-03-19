@@ -8,13 +8,9 @@
 </head>
 <body>
 
-  <!-- Левый угол: Dropdown (Главная + Блог) -->
-  <div class="corner-box corner-box-left dropdown">
-    <a href="#" class="dropdown-toggle">Главная</a>
-    <div class="dropdown-menu">
-      <a href="index.html">Главная</a>
-      <a href="blog.html">Блог</a>
-    </div>
+  <!-- Левый угол: одна кнопка «Главная» -->
+  <div class="corner-box corner-box-left">
+    <a href="index.html">Главная</a>
   </div>
 
   <!-- Правый угол: Roadmap + язык -->
@@ -56,26 +52,5 @@
     </p>
   </footer>
 
-  <!-- Скрипт для клика по кнопке «Главная» (убирает hover) -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const dropdown = document.querySelector('.dropdown');
-      const toggle = document.querySelector('.dropdown-toggle');
-      const menu = document.querySelector('.dropdown-menu');
-
-      toggle.addEventListener('click', function(e) {
-        e.preventDefault();
-        // Переключаем класс .active, чтобы открывать/закрывать меню
-        dropdown.classList.toggle('active');
-      });
-
-      // Закрываем меню, если клик вне меню
-      document.addEventListener('click', function(e) {
-        if (!dropdown.contains(e.target)) {
-          dropdown.classList.remove('active');
-        }
-      });
-    });
-  </script>
 </body>
 </html>
