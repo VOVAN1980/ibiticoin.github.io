@@ -379,7 +379,7 @@ iframe {
 
 /* Левая боковая панель (контактная форма) */
 .blog-sidebar-left {
-  width: 30%; /* Увеличили с 20% до 30% */
+  width: 40%; /* Увеличили с 20% до 30% */
   background: #222;
   color: gold;
   padding: 20px;
@@ -402,7 +402,7 @@ iframe {
 
 /* Правая боковая панель (комментарии) */
 .blog-sidebar-right {
-  width: 30%; /* Увеличили с 20% до 30% */
+  width: 40%; /* Увеличили с 20% до 30% */
   background: #222;
   color: gold;
   padding: 20px;
