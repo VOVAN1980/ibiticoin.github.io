@@ -229,3 +229,34 @@ iframe {
   font-size: 2.5em;
   margin-bottom: 20px;
 }
+.subscribe {
+  background: #222;
+  padding: 40px 20px;
+  color: gold;
+  text-align: center;
+  margin-top: 40px;
+}
+.subscribe h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+.subscribe input[type="email"] {
+  padding: 10px;
+  width: 250px;
+  border: 1px solid gold;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+.subscribe button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background: gold;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.subscribe button:hover {
+  background: #c0a000;
+}
