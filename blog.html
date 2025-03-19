@@ -33,10 +33,7 @@
     <aside class="blog-sidebar-left">
       <h2>Напишите нам</h2>
       <!-- Начало кода Formspree -->
-      <form
-        action="https://formspree.io/f/mdkeadvl"
-        method="POST"
-      >
+      <form action="https://formspree.io/f/mdkeadvl" method="POST">
         <label>
           Ваш email:
           <input type="email" name="email" required>
@@ -67,10 +64,13 @@
       <h2>Комментарии</h2>
       <div id="disqus_thread"></div>
       <script>
-        var disqus_config = function () {};
+        var disqus_config = function () {
+          // При необходимости можно задать уникальные значения для каждой страницы
+          // Например: this.page.url = window.location.href; this.page.identifier = document.title;
+        };
         (function() {
           var d = document, s = d.createElement('script');
-          s.src = 'https://ВАШ_SHORTNAME.disqus.com/embed.js';
+          s.src = 'https://https-vovan1980-github-io-ibiticoin-github-io.disqus.com/embed.js';
           s.setAttribute('data-timestamp', +new Date());
           (d.head || d.body).appendChild(s);
         })();
