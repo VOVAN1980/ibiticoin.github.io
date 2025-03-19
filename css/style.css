@@ -465,19 +465,20 @@ iframe {
   }
 
 /* Ссылки внутри .policy-section */
-.policy-section a {
-  color: gold;             /* цвет ссылок */
-  text-decoration: underline;  /* подчеркивание или можно none */
+.policy-section a:link,
+.policy-section a:visited {
+  color: gold;              /* основной цвет ссылки */
+  text-decoration: underline; /* или none, если не хотите подчёркивание */
   transition: color 0.3s;
 }
 
 .policy-section a:hover {
-  color: #c0a000;          /* цвет при наведении */
-  text-decoration: underline; 
+  color: #c0a000;           /* более тёмный золотой при наведении */
+  text-decoration: underline;
 }
 
-/* Если хотите, чтобы visited-ссылки тоже были gold */
-.policy-section a:visited {
-  color: gold;
+.policy-section a:active {
+  color: #c0a000;           /* цвет при нажатии */
 }
 }
+
