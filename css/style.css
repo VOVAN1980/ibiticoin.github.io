@@ -197,4 +197,78 @@ footer a:hover {
   margin-top: 10px;
   display: inline-block;
 }
+ /* Общие стили для corner-box (как у вас уже есть) */
+.corner-box {
+  position: absolute;
+  top: 20px;
+  padding: 10px 15px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid gold;
+  border-radius: 5px;
+  z-index: 999;
+}
+
+.corner-box-left {
+  left: 20px;
+}
+
+/* Стили для выпадающего меню */
+.dropdown {
+  position: relative; /* чтобы меню позиционировалось относительно блока */
+}
+
+/* Кнопка (ссылка) «Главная», которая открывает меню */
+.dropdown-toggle {
+  color: gold;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  transition: color 0.3s;
+}
+
+/* Контейнер для выпадающего списка */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;    /* под кнопкой */
+  left: 0;      /* выравниваем по левому краю */
+  background: rgba(0, 0, 0, 0.9);
+  border: 2px solid gold;
+  border-radius: 5px;
+  padding: 10px;
+  min-width: 120px; /* ширина выпадающего меню */
+  overflow: hidden;
+  
+  /* Анимация раскрытия */
+  max-height: 0;        /* изначально скрыто */
+  transition: max-height 0.3s ease;
+  
+  /* По умолчанию не видно */
+  opacity: 0;
+  pointer-events: none;  /* чтобы нельзя было кликнуть, когда скрыто */
+}
+
+/* Ссылки внутри выпадающего меню */
+.dropdown-menu a {
+  display: block;       /* каждая ссылка на отдельной строке */
+  color: gold;
+  text-decoration: none;
+  margin: 5px 0;
+  font-weight: normal;
+  transition: color 0.3s;
+}
+
+.dropdown-menu a:hover {
+  color: #c0a000;
+}
+
+/* 
+   При наведении на весь блок .dropdown 
+   (или при клике, если будет JS), 
+   раскрываем меню
+*/
+.dropdown:hover .dropdown-menu {
+  max-height: 500px;    /* или любое большое число */
+  opacity: 1;
+  pointer-events: auto; /* теперь можно кликать */
+}
 
