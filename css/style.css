@@ -24,7 +24,7 @@ body {
   left: 20px;
 }
 .corner-box-left2 {
-  top: 80px; /* Расположение второй кнопки ниже первой */
+  top: 80px; /* Вторая кнопка чуть ниже первой */
   left: 20px;
 }
 .corner-box-right {
@@ -161,9 +161,9 @@ footer a:hover {
 /* ===== Стили для списка шагов (buy-steps) ===== */
 .buy-steps {
   list-style: decimal;      /* Нумерация */
-  display: inline-block;    /* Чтобы можно было центрировать */
-  margin: 0 auto;           /* Центрируем список по горизонтали */
-  text-align: left;         /* Текст пунктов выравниваем по левому краю */
+  display: inline-block;    /* Центрируем список */
+  margin: 0 auto;           /* Центрирование по горизонтали */
+  text-align: left;         /* Текст пунктов выровненный по левому краю */
   padding-left: 30px;       /* Отступ слева для цифр */
 }
 .buy-steps li {
@@ -192,7 +192,7 @@ iframe {
   top: 100%;
   left: 0;
   background: rgba(0, 0, 0, 0.9);
-  border: 2px solid gold; /* Золотая рамка для выпадающего меню */
+  border: 2px solid gold; /* Золотая рамка */
   border-radius: 5px;
   padding: 10px;
   min-width: 120px;
@@ -218,6 +218,8 @@ iframe {
   opacity: 1;
   pointer-events: auto;
 }
+
+/* ===== Стили для социальных сетей (social-feed) ===== */
 .social-feed {
   background: #111;
   padding: 40px 20px;
@@ -229,6 +231,8 @@ iframe {
   font-size: 2.5em;
   margin-bottom: 20px;
 }
+
+/* ===== Стили для формы подписки (subscribe) ===== */
 .subscribe {
   background: #222;
   padding: 40px 20px;
@@ -260,6 +264,8 @@ iframe {
 .subscribe button:hover {
   background: #c0a000;
 }
+
+/* ===== Стили для калькулятора ===== */
 .calculator {
   background: #222;
   padding: 40px 20px;
@@ -291,6 +297,8 @@ iframe {
 .calculator button:hover {
   background: #c0a000;
 }
+
+/* ===== Стили для видео-гайдов ===== */
 .video-guides {
   background: #111;
   padding: 40px 20px;
@@ -309,26 +317,25 @@ iframe {
 .video-item h3 {
   margin-bottom: 10px;
 }
-/* ===== Дополнительные кнопки в нижнем углу ===== */
+
+/* ===== Дополнительные кнопки в нижнем углу (если нужны) ===== */
 .corner-box-bottom {
   position: absolute;
-  bottom: 20px;         /* отступ от нижней границы */
-  left: 20px;           /* отступ от левой границы */
+  bottom: 20px;
+  left: 20px;
   background: rgba(0, 0, 0, 0.8);
-  border: 2px solid gold;  /* золотая рамка, как и у остальных corner-box */
+  border: 2px solid gold;
   border-radius: 5px;
-  padding: 5px 10px;    /* меньшие отступы для маленьких кнопок */
+  padding: 5px 10px;
   z-index: 999;
 }
-
 .corner-box-bottom a {
   color: gold;
   text-decoration: none;
   font-weight: bold;
   margin: 0 5px;
-  font-size: 0.9em;    /* немного уменьшенный шрифт */
+  font-size: 0.9em;
 }
-
 .corner-box-bottom a:hover {
   text-decoration: underline;
 }
