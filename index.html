@@ -22,12 +22,15 @@
   <meta name="twitter:title" content="IBITIcoin – Будущее цифровых финансов">
   <meta name="twitter:description" content="Узнайте, как IBITIcoin делает криптовалюту доступной и безопасной для всех.">
   <meta name="twitter:image" content="https://yourdomain.com/img/og-image.png">
-
+  
   <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Подключаем AOS для анимаций (если планируете использовать) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
 </head>
 <body>
 
-  <!-- Левая сторона: кнопки «Главная», «Блог» -->
+  <!-- Левая сторона: кнопки «Главная» и «Блог» -->
   <div class="corner-box corner-box-left">
     <a href="index.html">Главная</a>
   </div>
@@ -50,7 +53,7 @@
   </header>
 
   <!-- Золотой блок с описанием (WHY CHOOSE) -->
-  <section class="gold-section">
+  <section class="gold-section" data-aos="fade-up">
     <h2>WHY CHOOSE IBITIcoin?</h2>
     <p>
       IBITIcoin – это инновационная криптовалюта, созданная для быстрой, безопасной 
@@ -59,7 +62,7 @@
     <a class="btn" href="buy.html">Buy IBITIcoin</a>
   </section>
   
-  <!-- Секция с дополнительными кнопками (Калькулятор и Видео-гайды) -->
+  <!-- Секция с дополнительными кнопками под золотым блоком -->
   <section class="extra-buttons-section">
     <a class="btn-small" href="calculator.html">Калькулятор</a>
     <a class="btn-small" href="video-guides.html">Видео-гайды</a>
@@ -77,6 +80,14 @@
       <a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a>
     </p>
   </footer>
+
+  <!-- Подключаем AOS скрипт и инициализируем анимации -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script>
+    AOS.init({
+      once: true
+    });
+  </script>
 
 </body>
 </html>
