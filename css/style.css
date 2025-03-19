@@ -365,16 +365,19 @@ iframe {
 .btn-small:visited {
   color: #000; 
 }
-/* Контейнер, содержащий левую панель, контент и правую панель */
+
+/* ===== Трёхколоночная верстка блога (левая панель, контент, правая панель) ===== */
 .blog-layout {
   display: flex;
   justify-content: space-between; /* Чтобы боковые панели располагались по бокам */
   max-width: 1200px;
   margin: 40px auto;
   padding: 0 20px;
+  /* Добавим минимальную высоту, чтобы страница выглядела длиннее */
+  min-height: 800px;
 }
 
-/* Левая боковая панель */
+/* Левая боковая панель (контактная форма) */
 .blog-sidebar-left {
   width: 20%;
   background: #222;
@@ -383,9 +386,11 @@ iframe {
   margin-right: 20px;
   border: 1px solid gold;
   border-radius: 10px;
+  /* Добавим тень */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Контент (новости) по центру */
+/* Центральная колонка (новости) */
 .blog-content {
   width: 50%;
   background: #111;
@@ -393,9 +398,10 @@ iframe {
   padding: 20px;
   border: 1px solid gold;
   border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Правая боковая панель */
+/* Правая боковая панель (комментарии) */
 .blog-sidebar-right {
   width: 20%;
   background: #222;
@@ -404,6 +410,7 @@ iframe {
   margin-left: 20px;
   border: 1px solid gold;
   border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 /* Стили для формы в левой панели */
@@ -448,6 +455,7 @@ iframe {
   .blog-layout {
     flex-direction: column;
     align-items: center;
+    min-height: auto; /* Убираем фиксированную высоту на мобильных */
   }
   .blog-sidebar-left,
   .blog-sidebar-right,
