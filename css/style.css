@@ -169,3 +169,32 @@ footer a:hover {
   border: 1px solid gold;
   border-radius: 10px;
 }
+ .blog {
+  background: #222;
+  padding: 40px 20px;
+  color: gold;
+  text-align: center;
+}
+.blog h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+.blog-post {
+  background: #111;
+  border: 1px solid gold;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 800px;
+  text-align: left;
+}
+.blog-post h3 {
+  margin-top: 0;
+  color: gold;
+}
+.btn {
+  /* Используйте уже существующий стиль кнопки */
+  margin-top: 10px;
+  display: inline-block;
+}
+
