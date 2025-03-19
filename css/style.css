@@ -76,8 +76,9 @@ body {
 
 .gold-section {
   background: #111;
-  border-top: 2px solid gold;
-  border-bottom: 2px solid gold;
+  /* Убираем линии сверху и снизу:
+     border-top: 2px solid gold;
+     border-bottom: 2px solid gold; */
   padding: 60px 20px;
 }
 .gold-section h2 {
@@ -139,7 +140,8 @@ iframe {
 footer {
   padding: 20px;
   background: rgba(0, 0, 0, 0.8);
-  border-top: 2px solid gold;
+  /* Убираем золотую линию сверху:
+     border-top: 2px solid gold; */
   font-size: 0.9em;
   text-align: center;
 }
