@@ -51,10 +51,11 @@ body {
   border-radius: 5px;
   margin-top: 30px;
   display: inline-block;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, background 0.3s ease;
 }
 .btn:hover {
   transform: scale(1.1);
+  background: #c0a000;
 }
 
 /* ===== Шапка (hero-header) ===== */
@@ -95,33 +96,6 @@ body {
   max-width: 800px;
   margin: 0 auto 20px;
   text-align: center;
-}
-
-/* ===== Дополнительная секция для двух кнопок под gold-section ===== */
-.extra-buttons-section {
-  background: #000;       /* или #111, если хотите более тёмный фон */
-  padding: 40px 0;
-  text-align: center;
-}
-
-/* Кнопки чуть меньше, чем .btn */
-.btn-small {
-  display: inline-block;
-  background: gold;
-  color: #000;
-  padding: 12px 25px;
-  border-radius: 5px;
-  text-decoration: none;
-  margin: 0 10px;
-  font-weight: bold;
-  transition: background 0.3s, color 0.3s;
-}
-.btn-small:hover {
-  background: #c0a000;
-  color: #000;
-}
-.btn-small:visited {
-  color: #000; 
 }
 
 /* ===== Футер с верхней золотой линией ===== */
@@ -365,4 +339,29 @@ iframe {
 }
 .corner-box-bottom a:hover {
   text-decoration: underline;
+}
+
+/* ===== Секция для дополнительных кнопок (Калькулятор и Видео-гайды) ===== */
+.extra-buttons-section {
+  background: #000;       /* Можно изменить фон по вкусу */
+  padding: 40px 0;
+  text-align: center;
+}
+.btn-small {
+  display: inline-block;
+  background: gold;
+  color: #000;
+  padding: 12px 25px;
+  border-radius: 5px;
+  text-decoration: none;
+  margin: 0 10px;
+  font-weight: bold;
+  transition: background 0.3s, color 0.3s;
+}
+.btn-small:hover {
+  background: #c0a000;
+  color: #000;
+}
+.btn-small:visited {
+  color: #000; 
 }
