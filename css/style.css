@@ -369,17 +369,16 @@ iframe {
 /* ===== Трёхколоночная верстка блога (левая панель, контент, правая панель) ===== */
 .blog-layout {
   display: flex;
-  justify-content: space-between; /* Чтобы боковые панели располагались по бокам */
-  max-width: 1200px;
+  justify-content: space-between;
+  max-width: 1400px; /* Чтобы не было горизонтальной прокрутки */
   margin: 40px auto;
   padding: 0 20px;
-  /* Добавим минимальную высоту, чтобы страница выглядела длиннее */
   min-height: 800px;
 }
 
-/* Левая боковая панель (контактная форма) */
+/* Левая боковая панель */
 .blog-sidebar-left {
-  width: 30%; /* Увеличили с 20% до 30% */
+  width: 30%;
   background: #222;
   color: gold;
   padding: 20px;
@@ -387,11 +386,14 @@ iframe {
   border: 1px solid gold;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+
+  /* Если нужно, чтобы Disqus влезал, можно увеличить min-height */
+  /* min-height: 800px; */
 }
 
 /* Центральная колонка (новости) */
 .blog-content {
-  width: 40%; /* Уменьшили с 50% до 40% */
+  width: 40%;
   background: #111;
   color: gold;
   padding: 20px;
@@ -400,9 +402,9 @@ iframe {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Правая боковая панель (комментарии) */
+/* Правая боковая панель */
 .blog-sidebar-right {
-  width: 30%; /* Увеличили с 20% до 30% */
+  width: 30%;
   background: #222;
   color: gold;
   padding: 20px;
@@ -410,6 +412,9 @@ iframe {
   border: 1px solid gold;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+
+  /* Чтобы Disqus влезал полностью */
+  min-height: 800px; /* Или 900px, 1000px, если нужно ещё больше */
 }
 
 /* Стили для формы в левой панели */
