@@ -52,22 +52,58 @@
   </header>
 
   <section class="news-section">
-    <article class="news-item">
-      <h2>Заголовок новости 1</h2>
-      <p>Краткое описание новости или анонс, который заинтересует посетителей.</p>
-      <a class="btn-small" href="#">Читать далее</a>
-    </article>
-    <article class="news-item">
-      <h2>Заголовок новости 2</h2>
-      <p>Краткое описание второй новости, подробности которой можно узнать на отдельной странице.</p>
-      <a class="btn-small" href="#">Читать далее</a>
-    </article>
-    <!-- Добавьте дополнительные новости аналогичным образом -->
+    <div id="news-container">
+      <!-- Новости будут динамически подгружаться сюда -->
+    </div>
   </section>
 
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
   </footer>
+
+  <script>
+    // API ключ и URL для запроса новостей по теме криптовалют
+    const API_KEY = 'f210f84964a9499b86786073260b1d02';
+    const url = `https://newsapi.org/v2/everything?q=cryptocurrency OR crypto&language=ru&sortBy=publishedAt&apiKey=${API_KEY}`;
+
+    // Функция для загрузки новостей
+    async function loadCryptoNews() {
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.status === "ok") {
+          displayNews(data.articles);
+        } else {
+          document.getElementById('news-container').innerHTML = `<p>Ошибка при получении новостей.</p>`;
+        }
+      } catch (error) {
+        console.error('Ошибка:', error);
+        document.getElementById('news-container').innerHTML = `<p>Ошибка загрузки новостей.</p>`;
+      }
+    }
+
+    // Функция для отображения новостей
+    function displayNews(articles) {
+      const container = document.getElementById('news-container');
+      container.innerHTML = ''; // Очистка контейнера
+
+      articles.forEach(article => {
+        const newsItem = document.createElement('article');
+        newsItem.className = 'news-item';
+        newsItem.innerHTML = `
+          <h2>${article.title}</h2>
+          <p>${article.description || 'Нет описания.'}</p>
+          <p><em>${new Date(article.publishedAt).toLocaleString()}</em></p>
+          <a class="btn-small" href="${article.url}" target="_blank">Читать далее</a>
+        `;
+        container.appendChild(newsItem);
+      });
+    }
+
+    // Загружаем новости при загрузке страницы
+    loadCryptoNews();
+  </script>
 </body>
 </html>
