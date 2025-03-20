@@ -370,13 +370,13 @@ iframe {
 .blog-layout {
   display: flex;
   justify-content: space-between;
-  max-width: 1400px; /* Чтобы не было горизонтальной прокрутки */
+  max-width: 1400px; /* Увеличиваем ширину для ПК */
   margin: 40px auto;
   padding: 0 20px;
   min-height: 800px;
 }
 
-/* Левая боковая панель */
+/* Левая боковая панель (контактная форма) */
 .blog-sidebar-left {
   width: 30%;
   background: #222;
@@ -388,39 +388,7 @@ iframe {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
-.blog-sidebar-left form {
-  display: flex;
-  flex-direction: column;  /* Ставим элементы в столбик */
-  align-items: center;     /* Центрируем по горизонтали */
-}
-
-.blog-sidebar-left form label {
-  width: 80%;             /* Чтобы текст был в той же ширине, что и поля */
-  margin-bottom: 10px;    /* Отступ между меткой и полем */
-  text-align: left;       /* Или center, если хотите центрировать и текст метки */
-}
-
-.blog-sidebar-left form input,
-.blog-sidebar-left form textarea {
-  width: 80%;             /* Ширина полей 80% от контейнера */
-  margin-bottom: 10px;    /* Отступ между полями */
-  padding: 10px;
-  border: 1px solid gold;
-  border-radius: 5px;
-  background: #111;
-  color: gold;
-}
-
-.blog-sidebar-left form button {
-  /* Остальные стили кнопки (фон, hover) остаются */
-  margin-top: 10px;       /* Небольшой отступ сверху */
-}
-
- /* Если нужно, чтобы Disqus влезал, можно увеличить min-height */
-  /* min-height: 800px; */
-}
-
-/* Центральная колонка (новости) */
+/* Центр (новости) */
 .blog-content {
   width: 40%;
   background: #111;
@@ -431,7 +399,7 @@ iframe {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Правая боковая панель */
+/* Правая боковая панель (комментарии) */
 .blog-sidebar-right {
   width: 30%;
   background: #222;
@@ -442,17 +410,23 @@ iframe {
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 
-  /* Чтобы Disqus влезал полностью */
-  min-height: 800px; /* Или 900px, 1000px, если нужно ещё больше */
+  min-height: 800px; /* Увеличенная высота, чтобы Disqus поместился */
 }
 
-/* Стили для формы в левой панели */
+/* Стили для формы в левой панели (центрируем поля) */
 .blog-sidebar-left form {
   display: flex;
   flex-direction: column;
+  align-items: center; /* Центрируем поля по горизонтали */
+}
+.blog-sidebar-left form label {
+  width: 80%;       /* Метки тоже 80%, чтобы совпадали с полями */
+  margin-bottom: 10px;
+  text-align: left; /* Или center, если хотите */
 }
 .blog-sidebar-left form input,
 .blog-sidebar-left form textarea {
+  width: 80%;
   margin-bottom: 10px;
   padding: 10px;
   border: 1px solid gold;
@@ -461,6 +435,7 @@ iframe {
   color: gold;
 }
 .blog-sidebar-left form button {
+  margin-top: 10px; /* Отступ сверху у кнопки */
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -501,12 +476,12 @@ iframe {
 /* ===== Ссылки внутри .policy-section ===== */
 .policy-section a:link,
 .policy-section a:visited {
-  color: gold;                /* ссылки золотые */
-  text-decoration: underline; /* подчёркивание */
+  color: gold;                
+  text-decoration: underline;
   transition: color 0.3s;
 }
 .policy-section a:hover {
-  color: #c0a000;             /* при наведении темнее */
+  color: #c0a000;
   text-decoration: underline;
 }
 .policy-section a:active {
@@ -515,8 +490,8 @@ iframe {
 
 /* ===== Пример стилей для .policy-section (фон и белый текст) ===== */
 .policy-section {
-  background: #111;    /* фон */
-  color: #fff;         /* белый текст */
+  background: #111;   
+  color: #fff;        
   padding: 40px 20px;
   max-width: 800px;
   margin: 40px auto;
