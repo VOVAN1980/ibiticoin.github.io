@@ -386,8 +386,35 @@ iframe {
   border: 1px solid gold;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+.blog-sidebar-left form {
+  display: flex;
+  flex-direction: column;  /* Ставим элементы в столбик */
+  align-items: center;     /* Центрируем по горизонтали */
+}
 
-  /* Если нужно, чтобы Disqus влезал, можно увеличить min-height */
+.blog-sidebar-left form label {
+  width: 80%;             /* Чтобы текст был в той же ширине, что и поля */
+  margin-bottom: 10px;    /* Отступ между меткой и полем */
+  text-align: left;       /* Или center, если хотите центрировать и текст метки */
+}
+
+.blog-sidebar-left form input,
+.blog-sidebar-left form textarea {
+  width: 80%;             /* Ширина полей 80% от контейнера */
+  margin-bottom: 10px;    /* Отступ между полями */
+  padding: 10px;
+  border: 1px solid gold;
+  border-radius: 5px;
+  background: #111;
+  color: gold;
+}
+
+.blog-sidebar-left form button {
+  /* Остальные стили кнопки (фон, hover) остаются */
+  margin-top: 10px;       /* Небольшой отступ сверху */
+}
+
+ /* Если нужно, чтобы Disqus влезал, можно увеличить min-height */
   /* min-height: 800px; */
 }
 
