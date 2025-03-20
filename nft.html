@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NFT Галерея IBITIcoin</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Стили для NFT-галереи */
+    .nft-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .nft-item {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid gold;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s;
+    }
+    .nft-item:hover {
+      transform: scale(1.02);
+    }
+    .nft-item img {
+      width: 100%;
+      display: block;
+    }
+    .rarity-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.7);
+      color: gold;
+      font-size: 1.5em;
+      font-weight: bold;
+      padding: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header class="hero-header">
+    <h1>NFT Галерея IBITIcoin</h1>
+    <p>Normal: 1%, 2%, 3% &mdash; Rare: 4%, 5% &mdash; Legendary: 6%, 7% &mdash; Epic: 50%, 75%, 100%</p>
+  </header>
+
+  <section class="nft-gallery">
+    <!-- Normal NFTs -->
+    <div class="nft-item">
+      <img src="img/normal1.webp" alt="Normal NFT 1">
+      <div class="rarity-label">1% NFT</div>
+    </div>
+    <div class="nft-item">
+      <img src="img/normal2.webp" alt="Normal NFT 2">
+      <div class="rarity-label">2% NFT</div>
+    </div>
+    <div class="nft-item">
+      <img src="img/normal3.webp" alt="Normal NFT 3">
+      <div class="rarity-label">3% NFT</div>
+    </div>
+
+    <!-- Rare NFTs -->
+    <div class="nft-item">
+      <img src="img/rare1.webp" alt="Rare NFT 1">
+      <div class="rarity-label">4% NFT</div>
+    </div>
+    <div class="nft-item">
+      <img src="img/rare2.webp" alt="Rare NFT 2">
+      <div class="rarity-label">5% NFT</div>
+    </div>
+
+    <!-- Legendary NFTs -->
+    <div class="nft-item">
+      <img src="img/legendary1.webp" alt="Legendary NFT 1">
+      <div class="rarity-label">6% NFT</div>
+    </div>
+    <div class="nft-item">
+      <img src="img/legendary2.webp" alt="Legendary NFT 2">
+      <div class="rarity-label">7% NFT</div>
+    </div>
+
+    <!-- Epic NFTs -->
+    <div class="nft-item">
+      <img src="img/epic1.webp" alt="Epic NFT 1">
+      <div class="rarity-label">50% NFT</div>
+    </div>
+    <div class="nft-item">
+      <img src="img/epic2.webp" alt="Epic NFT 2">
+      <div class="rarity-label">75% NFT</div>
+    </div>
+    <div class="nft-item">
+      <img src="img/epic3.webp" alt="Epic NFT 3">
+      <div class="rarity-label">100% NFT</div>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
+    <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
+  </footer>
+</body>
+</html>
