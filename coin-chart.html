@@ -15,6 +15,14 @@
       border-radius: 10px;
       overflow: hidden;
     }
+    
+    /* Стили для кнопок в футере (дополнительная кнопка «Поделиться») */
+    .footer-buttons {
+      margin-top: 20px;
+    }
+    .footer-buttons a {
+      margin: 0 10px;
+    }
   </style>
 </head>
 <body>
@@ -48,7 +56,27 @@
 
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
-    <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
+    <div class="footer-buttons">
+      <a class="btn-small" href="index.html">Вернуться на главную</a>
+      <a class="btn-small" href="#" onclick="shareChart()">Поделиться</a>
+    </div>
   </footer>
+
+  <script>
+    function shareChart() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'График курса IBITIcoin',
+          text: 'Посмотрите график курса IBITIcoin!',
+          url: window.location.href
+        })
+        .then(() => console.log('Успешный шаринг'))
+        .catch((error) => console.log('Ошибка при шаринге', error));
+      } else {
+        // Если браузер не поддерживает navigator.share, можно показать модальное окно или просто скопировать URL
+        alert('Ваш браузер не поддерживает нативный шаринг.');
+      }
+    }
+  </script>
 </body>
 </html>
