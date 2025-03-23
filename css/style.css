@@ -343,7 +343,7 @@ iframe {
 
 /* ===== Секция для дополнительных кнопок (Калькулятор и Видео-гайды) ===== */
 .extra-buttons-section {
-  background: #000;       
+  background: transparent;       /* Заменили черный фон на прозрачный */
   padding: 40px 0;
   text-align: center;
 }
@@ -499,5 +499,3 @@ iframe {
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
-
-/* Все стили, связанные с Turn.js (flipbook, body.book и т.п.) – УДАЛЕНЫ */
