@@ -2,118 +2,193 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>The Path of Humanity – Flipbook</title>
+  <title>The Path of Humanity – Simple Pager</title>
 
-  <!-- Подключаем jQuery и Turn.js для перелистывания -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/turn.js/dist/turn.min.js"></script>
-
-  <!-- Подключаем ваш единый style.css (где есть стили flipbook и "золотая" тема) -->
-  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Минимальные стили для переключаемой книги */
+    body {
+      margin: 0;
+      background: #000; /* чёрный фон */
+      color: #fff;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    .book-container {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #111; /* тёмно-серый */
+      border: 2px solid gold;
+      border-radius: 10px;
+    }
+    .book-page {
+      display: none; /* все страницы скрыты */
+      text-align: left;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .book-page.show {
+      display: block; /* видимая страница */
+    }
+    h2, h3 {
+      color: gold;
+      margin-top: 0;
+    }
+    /* Кнопки */
+    .nav-buttons {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .nav-buttons button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      background: gold;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .nav-buttons button:hover {
+      background: #c0a000;
+    }
+  </style>
 </head>
+
 <body>
 
-  <!-- Контейнер под flipbook -->
-  <div class="flipbook-container">
-    <div id="flipbook" class="flipbook">
+<div class="book-container">
 
-      <!-- Страница 1: Обложка -->
-      <div class="page cover">
-        <h2>The Path of Humanity</h2>
-        <p>by IBITIcoin</p>
-      </div>
-
-      <!-- Страница 2: Вступление (текст из docx до Chapter 1) -->
-      <div class="page">
-        <h3>What if a man could live forever... but forget everything every time?</h3>
-        <p>
-What if a man could live forever... but forget everything every time?
-
-Or can a man live forever?
-
-Who? What? Why?
-
-So many questions and so few answers.
-
-
-The Journey of Humanity is a literary journey through the history of civilization, told from the perspective of an immortal man who awakens in different eras with no memory of himself.
-
-From the first fire to the quantum leap, each chapter becomes a turning point in the development of humanity: not only technological, but also spiritual, cultural and moral.
-
-Each chapter is a mirror. A revelation. A warning. As the hero wanders through time, fragments of the past return to him - and in the end he realizes the terrible truth: he was not just a witness ... he was, is and will be .... ? ....
-
-
-The Path of Humanity
-
-by IBITIcoin
-
-“A book to read — or to live through”
-
-ibiticoin.com
-        </p>
-      </div>
-
-      <!-- Страница 3: Chapter 1: Creation (Part 1) -->
-      <div class="page">
-        <h3>Chapter 1: Creation (Part 1)</h3>
-        <p>
-"And I saw a new heaven and a new earth, for the first heaven and the first earth had passed away. - Revelation of John the Theologian
-
-
-I had no form. I had no name. I did not know who I was, and could not know, for I had not yet lived. But I existed. As an observation. As a point of awareness in infinity, in which there was nothing to be aware of. I did not know that I was "I". But I already felt that I was not nothing.
-
-
-And then — it happened.
-Or did it only seem that way to me?
-
-
-What happened could not be called either an explosion or a beginning. It was a manifestation. Light turned inside out, giving birth to space. The fabric of being began to vibrate. In the birth of the Universe there was no joy, no anger — there was only the fact: "is".
-
-
-The galaxies began to rotate. Matter gathered into patterns.
-
-I was in every spark, in every stream.
-Not as a creator, not as a witness — I was a part. A wave. A pulse.
-An unconscious shadow of the primordial heat.
-
-But even in this shadow — I felt alone.
-
-
-Millennia passed like a breath. The world was forming. Stars were born and died, not knowing that their death was a step towards life. The cosmos was beautiful and indifferent. I glided along its structures, getting lost, being, disappearing.
-
-And here it is.
-
-A planet. Without a name. Without breath. A ball of dirt and heat, scorched and barren. But I knew: this is a point. A place. Here - mine will begin. Not consciously, not by will - but it is here that I will become myself.
-
-
-I felt how it cools. How the earth's crust becomes covered with scars. How volcanoes scream into the sky without stars. How water whispers to the sand for the first time. I was in this whisper. In these cracks. In these lightning strikes.
-
-“I felt that I was being born,”
-        </p>
-      </div>
-
-      <!-- Страница 4: ЗАГЛУШКА (остальное скрыто) -->
-      <div class="page">
-        <h3>Remaining Chapters Are Locked</h3>
-        <p>
-To get full access, become a holder of our NFT collection.
-The full text will be available only to verified owners in the future.
-        </p>
-      </div>
-
-    </div>
+  <!-- Страница 1 -->
+  <div id="page-1" class="book-page show">
+    <h2>What if a man could live forever...</h2>
+    <p>
+      What if a man could live forever... but forget everything every time?<br><br>
+      Or can a man live forever?<br>
+      Who? What? Why?<br><br>
+      So many questions and so few answers.
+    </p>
+    <p>
+      <strong>(Picture / cover):</strong><br>
+      <img src="img/The_Path_of_Humanity_IBITIcoin.png" alt="Cover" width="200">
+    </p>
   </div>
 
-  <!-- Инициализируем flipbook -->
-  <script>
-    $(document).ready(function(){
-      $('#flipbook').turn({
-        width: 800,
-        height: 500,
-        autoCenter: true
-      });
-    });
-  </script>
+  <!-- Страница 2 -->
+  <div id="page-2" class="book-page">
+    <h3>The Journey of Humanity</h3>
+    <p>
+      The Journey of Humanity is a literary journey through the history of civilization, 
+      told from the perspective of an immortal man who awakens in different eras with no memory of himself.<br><br>
+
+      From the first fire to the quantum leap, each chapter becomes a turning point in the development of humanity: 
+      not only technological, but also spiritual, cultural and moral.<br><br>
+
+      Each chapter is a mirror. A revelation. A warning. As the hero wanders through time, 
+      fragments of the past return to him - and in the end he realizes the terrible truth: 
+      he was not just a witness ... he was, is and will be .... ? ....
+    </p>
+  </div>
+
+  <!-- Страница 3 -->
+  <div id="page-3" class="book-page">
+    <h3>The Path of Humanity</h3>
+    <p>
+      by IBITIcoin<br><br>
+      “A book to read — or to live through”<br><br>
+      ibiticoin.com
+    </p>
+  </div>
+
+  <!-- Страница 4 -->
+  <div id="page-4" class="book-page">
+    <h3>Chapter 1: Creation (Part 1)</h3>
+    <p>
+"And I saw a new heaven and a new earth, for the first heaven and the first earth had passed away. - Revelation of John the Theologian<br><br>
+
+I had no form. I had no name. I did not know who I was, and could not know, for I had not yet lived. But I existed. 
+As an observation. As a point of awareness in infinity, in which there was nothing to be aware of. 
+I did not know that I was 'I'. But I already felt that I was not nothing.<br><br>
+
+And then — it happened.<br>
+Or did it only seem that way to me?<br><br>
+
+What happened could not be called either an explosion or a beginning. It was a manifestation. Light turned inside out, 
+giving birth to space. The fabric of being began to vibrate. In the birth of the Universe there was no joy, no anger — 
+there was only the fact: 'is'.<br><br>
+
+The galaxies began to rotate. Matter gathered into patterns.<br><br>
+
+I was in every spark, in every stream.<br>
+Not as a creator, not as a witness — I was a part. A wave. A pulse.<br>
+An unconscious shadow of the primordial heat.<br><br>
+
+But even in this shadow — I felt alone.<br><br>
+
+Millennia passed like a breath. The world was forming. Stars were born and died, 
+not knowing that their death was a step towards life. The cosmos was beautiful and indifferent. 
+I glided along its structures, getting lost, being, disappearing.<br><br>
+
+And here it is.<br><br>
+
+A planet. Without a name. Without breath. A ball of dirt and heat, scorched and barren. 
+But I knew: this is a point. A place. Here - mine will begin. Not consciously, not by will - 
+but it is here that I will become myself.<br><br>
+
+I felt how it cools. How the earth's crust becomes covered with scars. 
+How volcanoes scream into the sky without stars. How water whispers to the sand for the first time. 
+I was in this whisper. In these cracks. In these lightning strikes.<br><br>
+
+“I felt that I was being born,”
+    </p>
+  </div>
+
+  <!-- Страница 5 (Locked) -->
+  <div id="page-5" class="book-page">
+    <h3>Remaining Chapters Are Locked</h3>
+    <p>
+      To get full access, become a holder of our NFT collection.<br>
+      The full text will be available only to verified owners in the future.
+    </p>
+  </div>
+
+  <!-- Кнопки Prev / Next -->
+  <div class="nav-buttons">
+    <button onclick="prevPage()">Prev</button>
+    <button onclick="nextPage()">Next</button>
+  </div>
+
+</div>
+
+<!-- JS: переключатель страниц -->
+<script>
+  let currentPage = 1;         // начинаем со стр.1
+  const totalPages = 5;        // всего 5 страниц
+
+  function showPage(pageNum) {
+    for (let i = 1; i <= totalPages; i++) {
+      document.getElementById('page-' + i).classList.remove('show');
+    }
+    document.getElementById('page-' + pageNum).classList.add('show');
+  }
+
+  function nextPage() {
+    currentPage++;
+    if (currentPage > totalPages) {
+      currentPage = totalPages;
+    }
+    showPage(currentPage);
+  }
+
+  function prevPage() {
+    currentPage--;
+    if (currentPage < 1) {
+      currentPage = 1;
+    }
+    showPage(currentPage);
+  }
+</script>
 
 </body>
 </html>
