@@ -2,164 +2,95 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>The Path of Humanity – Book</title>
+  <title>The Path of Humanity – Two-page layout</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- Подключаем jQuery через CDN (или локально, если предпочитаете) -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-  <!-- Глобальные стили (фон, кнопки и т.д.) -->
-  <link rel="stylesheet" href="css/style.css">
 
   <style>
-    /* Общий фон сайта – чёрный, но здесь фон для страниц зададим отдельно */
+    /* Общий фон – чёрный */
     body {
       margin: 0;
       padding: 0;
-      background: #000;
-      color: gold;
+      background: #000; /* чёрный */
+      color: #fff;      /* текст по умолчанию – белый */
       font-family: "Times New Roman", serif;
-      position: relative;
     }
 
-    /* Контейнер для книги */
-    .book-container {
-      width: 90%;
-      max-width: 800px;
-      margin: 80px auto;
-      position: relative;
+    /* Контейнер для «разворота» (двух страниц) */
+    .double-page {
+      display: flex;               /* две страницы рядом */
+      justify-content: center;     /* центрируем */
+      max-width: 1600px;          /* ограничиваем ширину */
+      margin: 40px auto;          /* отступы сверху/снизу */
     }
 
-    /* Страницы книги */
+    /* Каждая «страница» */
     .page {
-      display: none;
-      width: 100%;
-      min-height: 500px;
-      /* Используем светлый фон для листов, как у последней обложки */
-      background: #f4f4f4;
-      color: #000;
-      padding: 40px;
+      flex: 0 0 50%;               /* каждая страница занимает 50% ширины контейнера */
       box-sizing: border-box;
-      text-align: center;
-      white-space: pre-line;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-    .page.active {
-      display: flex;
+      padding: 40px;
+      background: #f4f4f4;        /* светлый фон (как в Word) */
+      color: #000;                /* чёрный текст */
+      margin: 0 10px;             /* небольшой отступ между страницами */
+      white-space: pre-line;      /* сохраняем переносы строк */
     }
 
-    /* Стили для изображений (обложки, логотип, иллюстрации) */
+    /* Изображения внутри «страниц» */
     .page img {
       max-width: 100%;
       height: auto;
+      display: block;
+      margin: 0 auto 20px;
+    }
+
+    /* Пример заголовков */
+    .page h2, .page h3 {
+      color: #000;
+      margin: 10px 0;
+      text-align: center;
+    }
+
+    .page p {
+      line-height: 1.6;
       margin-bottom: 20px;
     }
-
-    /* Кнопки навигации (← и →) – перемещены вниз */
-    .nav-button {
-      position: fixed;
-      bottom: 20px;
-      background: rgba(0, 0, 0, 0.7);
-      border: 2px solid gold;
-      color: gold;
-      padding: 10px 15px;
-      cursor: pointer;
-      font-weight: bold;
-      z-index: 1000;
-    }
-    #prevButton {
-      left: 20px;
-    }
-    #nextButton {
-      right: 20px;
-    }
-
-    /* Угловые кнопки сайта (если нужны) */
-    .corner-box {
-      position: absolute;
-      background: rgba(0, 0, 0, 0.8);
-      border: 2px solid gold;
-      border-radius: 5px;
-      padding: 10px 15px;
-      z-index: 999;
-    }
-    .corner-box-left { top: 20px; left: 20px; }
-    .corner-box-left2 { top: 80px; left: 20px; }
-    .corner-box-right { top: 20px; right: 20px; }
-    .corner-box a {
-      color: gold;
-      text-decoration: none;
-      font-weight: bold;
-      margin: 0 5px;
-    }
-    .corner-box a:hover {
-      text-decoration: underline;
-    }
   </style>
-
-  <script>
-    $(document).ready(function(){
-      var currentPage = 1;
-      var totalPages = $(".page").length;
-      
-      // Показываем первую страницу
-      $(".page[data-page='1']").show().addClass("active");
-      
-      $("#prevButton").click(function(){
-         if(currentPage > 1){
-            $(".page[data-page='" + currentPage + "']").hide().removeClass("active");
-            currentPage--;
-            $(".page[data-page='" + currentPage + "']").fadeIn(300).addClass("active");
-         }
-      });
-      
-      $("#nextButton").click(function(){
-         if(currentPage < totalPages){
-            $(".page[data-page='" + currentPage + "']").hide().removeClass("active");
-            currentPage++;
-            $(".page[data-page='" + currentPage + "']").fadeIn(300).addClass("active");
-         }
-      });
-    });
-  </script>
 </head>
 <body>
 
-  <!-- Угловые кнопки сайта (если нужны) -->
-  <div class="corner-box corner-box-left">
-    <a href="index.html">Главная</a>
-  </div>
-  <div class="corner-box corner-box-left2">
-    <a href="blog.html">Блог</a>
-  </div>
-  <div class="corner-box corner-box-right">
-    <a href="roadmap.html">Roadmap</a> | 
-    <a href="?lang=ru">RU</a> | 
-    <a href="?lang=en">EN</a>
-  </div>
+  <!-- Разворот 1: Левая страница (What if a man...), Правая страница (The Path of Humanity...) -->
+  <div class="double-page">
+    <!-- Левая страница -->
+    <div class="page">
+      <p>
+What if a man could live forever... but forget everything every time?
+Or can a man live forever?
+Who? What? Why?
+So many questions and so few answers.
 
-  <!-- Контейнер книги -->
-  <div class="book-container">
-    <!-- Страница 1: Лицевая обложка -->
-    <div class="page active" data-page="1">
-      <img src="img/cover-front.jpg" alt="Cover Front">
+The Journey of Humanity is a literary journey through the history of civilization, told from the perspective of an immortal man who awakens in different eras with no memory of himself.
+From the first fire to the quantum leap, each chapter becomes a turning point in the development of humanity: not only technological, but also spiritual, cultural and moral.
+Each chapter is a mirror. A revelation. A warning. As the hero wanders through time, fragments of the past return to him - and in the end he realizes the terrible truth: he was not just a witness ... he was, is and will be .... ? ....
+      </p>
     </div>
-    
-    <!-- Страница 2: Внутренняя сторона обложки с логотипом и заголовком -->
-    <div class="page" data-page="2">
-      <img src="img/ibi-coin.jpg" alt="IBI Coin" style="max-width:200px;">
+    <!-- Правая страница -->
+    <div class="page">
+      <!-- Логотип (опционально) -->
+      <img src="img/ibi-coin.jpg" alt="IBI Coin" style="max-width:150px;">
       <h2>The Path of Humanity</h2>
       <h3>by IBITIcoin</h3>
-      <p><em>“A book to read — or to live through”</em><br>ibiticoin.com</p>
+      <p>
+        “A book to read — or to live through”<br>
+        ibiticoin.com
+      </p>
     </div>
-    
-    <!-- Страница 3: Заголовок и начало главы под звёздной картинкой -->
-    <div class="page" data-page="3">
-      <!-- Здесь можно вставить звёздное изображение, если требуется (например, cosmic-stars.jpg) -->
-      <img src="img/cosmic-stars.jpg" alt="Cosmic Stars">
+  </div>
+
+  <!-- Разворот 2: Левая страница (Картинка + Chapter 1...), Правая страница (Остальной текст главы) -->
+  <div class="double-page">
+    <!-- Левая страница -->
+    <div class="page">
+      <!-- Звёздное изображение (cosmic-stars.jpg) -->
+      <img src="img/cosmic-stars.jpg" alt="Cosmic Stars" style="max-width:250px;">
       <p>
 Chapter 1: Creation
 
@@ -170,9 +101,8 @@ Chapter 1: Creation (Part 1)
 "And I saw a new heaven and a new earth, for the first heaven and the first earth had passed away. - Revelation of John the Theologian
       </p>
     </div>
-    
-    <!-- Страница 4: Текст главы (оставшийся текст) -->
-    <div class="page" data-page="4">
+    <!-- Правая страница -->
+    <div class="page">
       <p>
 I had no form. I had no name. I did not know who I was, and could not know, for I had not yet lived. But I existed. As an observation. As a point of awareness in infinity, in which there was nothing to be aware of. I did not know that I was "I". But I already felt that I was not nothing.
 
@@ -180,7 +110,6 @@ And then — it happened.
 Or did it only seem that way to me?
 
 What happened could not be called either an explosion or a beginning. It was a manifestation. Light turned inside out, giving birth to space. The fabric of being began to vibrate. In the birth of the Universe there was no joy, no anger — there was only the fact: "is".
-
 The galaxies began to rotate. Matter gathered into patterns.
 
 I was in every spark, in every stream.
@@ -188,17 +117,30 @@ Not as a creator, not as a witness — I was a part. A wave. A pulse.
 An unconscious shadow of the primordial heat.
 
 But even in this shadow — I felt alone.
+
+Millennia passed like a breath. The world was forming. Stars were born and died, not knowing that their death was a step towards life. The cosmos was beautiful and indifferent. I glided along its structures, getting lost, being, disappearing.
+
+And here it is.
+
+A planet. Without a name. Without breath. A ball of dirt and heat, scorched and barren. But I knew: this is a point. A place. Here - mine will begin. Not consciously, not by will - but it is here that I will become myself.
+
+I felt how it cools. How the earth's crust becomes covered with scars. How volcanoes scream into the sky without stars. How water whispers to the sand for the first time. I was in this whisper. In these cracks. In these lightning strikes.
+
+                                           ,,I felt that I was being born,,
       </p>
-    </div>
-    
-    <!-- Страница 5: Задняя обложка -->
-    <div class="page" data-page="5">
-      <img src="img/cover-back.jpg" alt="Cover Back" style="width:100%; height:auto;">
     </div>
   </div>
 
-  <!-- Навигационные кнопки (перемещены вниз) -->
-  <div id="prevButton" class="nav-button" style="left: 20px; bottom: 20px;">←</div>
-  <div id="nextButton" class="nav-button" style="right: 20px; bottom: 20px;">→</div>
+  <!-- Если нужно продолжение (3-й разворот), добавляйте аналогично:
+  <div class="double-page">
+    <div class="page">
+      ...
+    </div>
+    <div class="page">
+      ...
+    </div>
+  </div>
+  -->
+
 </body>
 </html>
