@@ -2,73 +2,78 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>The Path of Humanity – 5 Pages</title>
+  <title>The Path of Humanity – 6 Pages</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Подключаем jQuery (через CDN или локально) -->
+  <!-- Подключаем jQuery (через CDN) -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-  <!-- Подключаем общий CSS (если у вас есть style.css с общим фоном/золотыми кнопками) -->
+  <!-- Подключаем общий CSS (с глобальными стилями, золотыми кнопками и т.д.) -->
   <link rel="stylesheet" href="css/style.css">
 
   <style>
-    /* Общий фон сайта – чёрный, текст – золотой */
+    /* Общий фон сайта - чёрный градиент (если хотите), 
+       но сами "страницы" будут светлые (#f4f4f4). */
     body {
-      background: #000;
-      color: gold;
       margin: 0;
       padding: 0;
+      background: #000; /* общий фон */
+      color: #fff;      /* общий цвет текста */
       font-family: "Times New Roman", serif;
-      position: relative;
     }
 
-    /* Контейнер "книги" (условно) – для декоративного переплёта */
-    .flipbook-container {
+    /* Контейнер для "книги" */
+    .book-container {
       width: 90%;
-      max-width: 800px; 
-      height: 90vh;
-      margin: 80px auto;
+      max-width: 800px;
+      margin: 60px auto; 
       position: relative;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      background: url("img/binding.png") center center no-repeat; /* декоративный переплёт */
-      background-size: contain;
     }
 
-    /* Каждая страница – по умолчанию скрыта */
+    /* Каждая страница */
     .page {
-      display: none;
+      display: none;            /* по умолчанию скрыта */
       width: 100%;
-      height: 100%;
+      min-height: 500px;
+      background: #f4f4f4;      /* светлый фон, как у последней обложки */
+      color: #000;              /* текст чёрный */
+      margin-bottom: 40px;
       box-sizing: border-box;
       padding: 40px;
-      /* Убираем фон, чтобы был чёрный общий */
-      background: none;
-      color: gold;
-      /* Центрируем текст и изображения */
+      text-align: center;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
-      text-align: center;
-      white-space: pre-line; /* чтобы переносы в тексте сохранялись */
+      justify-content: center;
+      white-space: pre-line;    /* чтобы переносы строк отображались */
     }
     .page.active {
-      display: flex; /* только активная страница видна */
+      display: flex;            /* только активная страница видна */
     }
 
-    /* Изображения на страницах */
+    /* Стилизуем текст внутри страниц */
+    .page h2, .page h3 {
+      margin: 10px 0;
+      color: #000;
+    }
+    .page p {
+      max-width: 600px;
+      margin: 20px auto;
+      line-height: 1.6;
+      color: #000;
+    }
+
+    /* Изображения внутри страниц */
     .page img {
       max-width: 100%;
       height: auto;
-      display: block;
-      margin: 0 auto;
+      margin-bottom: 20px;
     }
 
-    /* Кнопки навигации (← и →) */
+    /* Кнопки навигации (← и →) - в верхних углах */
     .nav-button {
       position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
+      top: 20px;
       background: rgba(0, 0, 0, 0.7);
       border: 2px solid gold;
       color: gold;
@@ -78,13 +83,13 @@
       z-index: 1000;
     }
     #prevButton {
-      left: 20px;
+      left: 60px; /* отступ от левого края */
     }
     #nextButton {
-      right: 20px;
+      right: 60px; /* отступ от правого края */
     }
 
-    /* Пример стилей для угловых кнопок сайта (Главная, Блог, Roadmap) */
+    /* Угловые кнопки сайта (Главная, Блог, Roadmap) */
     .corner-box {
       position: absolute;
       background: rgba(0, 0, 0, 0.8);
@@ -113,9 +118,9 @@
       var totalPages = $(".page").length;
 
       // Показываем первую страницу
-      $(".page").hide();
       $(".page[data-page='1']").show().addClass("active");
 
+      // Кнопка «←»
       $("#prevButton").click(function(){
         if(currentPage > 1){
           $(".page[data-page='" + currentPage + "']").hide().removeClass("active");
@@ -124,6 +129,7 @@
         }
       });
 
+      // Кнопка «→»
       $("#nextButton").click(function(){
         if(currentPage < totalPages){
           $(".page[data-page='" + currentPage + "']").hide().removeClass("active");
@@ -136,7 +142,7 @@
 </head>
 <body>
 
-  <!-- Угловые кнопки (пример) -->
+  <!-- Угловые кнопки сайта -->
   <div class="corner-box corner-box-left">
     <a href="index.html">Главная</a>
   </div>
@@ -149,11 +155,17 @@
     <a href="?lang=en">EN</a>
   </div>
 
-  <!-- Контейнер "книги" -->
-  <div class="flipbook-container">
+  <!-- Контейнер для страниц -->
+  <div class="book-container">
 
-    <!-- 1) Страница 1: Текст, по центру (черный фон) -->
+    <!-- Страница 1: Лицевая обложка -->
     <div class="page active" data-page="1">
+      <img src="img/cover-front.jpg" alt="Cover Front">
+    </div>
+
+    <!-- Страница 2: Текст "What if a man could live forever..." -->
+    <div class="page" data-page="2">
+      <p>
 What if a man could live forever... but forget everything every time?
 Or can a man live forever?
 Who? What? Why?
@@ -162,27 +174,27 @@ So many questions and so few answers.
 The Journey of Humanity is a literary journey through the history of civilization, told from the perspective of an immortal man who awakens in different eras with no memory of himself.
 From the first fire to the quantum leap, each chapter becomes a turning point in the development of humanity: not only technological, but also spiritual, cultural and moral.
 Each chapter is a mirror. A revelation. A warning. As the hero wanders through time, fragments of the past return to him - and in the end he realizes the terrible truth: he was not just a witness ... he was, is and will be .... ? ....
-    </div>
-
-    <!-- 2) Страница 2: The Path of Humanity -->
-    <div class="page" data-page="2">
-      <h1 style="margin-bottom: 20px;">The Path of Humanity</h1>
-      <h2 style="margin-bottom: 20px;">by IBITIcoin</h2>
-      <p style="margin-bottom: 20px;">
-        <em>“A book to read — or to live through”</em><br>
-        ibiticoin.com
       </p>
     </div>
 
-    <!-- 3) Страница 3: cosmic swirl image -->
+    <!-- Страница 3: The Path of Humanity + логотип (опционально) -->
     <div class="page" data-page="3">
-      <!-- Поменяйте "cosmic-swirl.jpg" на нужное имя файла -->
-      <img src="img/cosmic-swirl.jpg" alt="Cosmic Swirl" />
+      <h2>The Path of Humanity</h2>
+      <h3>by IBITIcoin</h3>
+      <p>
+        “A book to read — or to live through”<br>
+        ibiticoin.com
+      </p>
+      <!-- Если нужен логотип: -->
+      <!-- <img src="img/ibi-coin.jpg" alt="IBI Coin" style="max-width:200px;"> -->
     </div>
 
-    <!-- 4) Страница 4: Chapter 1 text -->
+    <!-- Страница 4: Космическая картинка + текст (Chapter 1: Creation) -->
     <div class="page" data-page="4">
-Chapter 1: Creation
+      <!-- Замените cosmic-swirl.jpg на нужное имя -->
+      <img src="img/cosmic-swirl.jpg" alt="Cosmic Swirl">
+      <p>
+Chapter 1: Creation (Part 1)
 
 "I had no form. I had no name. I did not know who I was, and could not know, for I had not yet lived. But I existed. As an observation. As a point of awareness in infinity, in which there was nothing to be aware of. I did not know that I was 'I'. But I already felt that I was not nothing.
 
@@ -198,16 +210,22 @@ Not as a creator, not as a witness — I was a part. A wave. A pulse.
 An unconscious shadow of the primordial heat.
 
 But even in this shadow — I felt alone."
+      </p>
     </div>
 
-    <!-- 5) Страница 5: Закрытая книга (обложка), выровненная "от верха до низа" -->
+    <!-- Страница 5: Задняя обложка (монета) -->
     <div class="page" data-page="5">
-      <img src="img/cover-back.jpg" alt="Cover Back" style="object-fit: cover; height: 100%; width: auto;">
+      <img src="img/cover-back.jpg" alt="Cover Back" style="max-height: 70vh; object-fit: contain;">
     </div>
+
+    <!-- Страница 6 (если нужно, можно добавить) -->
+    <!-- <div class="page" data-page="6">
+      ...
+    </div> -->
 
   </div>
 
-  <!-- Кнопки навигации -->
+  <!-- Кнопки «←» и «→» -->
   <div id="prevButton" class="nav-button">←</div>
   <div id="nextButton" class="nav-button">→</div>
 
