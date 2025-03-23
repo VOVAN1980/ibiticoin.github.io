@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The Path of Humanity – Flipbook Fragment</title>
+
+  <!-- Подключаем jQuery и Turn.js для эффекта перелистывания -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/turn.js/dist/turn.min.js"></script>
+
+  <!-- Подключаем единый CSS (тот же, что и для index.html) -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Контейнер для flipbook (обратите внимание, 
+       что стили .flipbook-container и .page cover и т.д. 
+       уже есть в style.css) -->
+  <div class="flipbook-container">
+    <div id="flipbook" class="flipbook">
+
+      <!-- 1) Обложка (страница 1) -->
+      <div class="page cover">
+        <h2>The Path of Humanity</h2>
+        <p>by IBITIcoin</p>
+      </div>
+
+      <!-- 2) Первая страница с фрагментом (страница 2) -->
+      <div class="page">
+        <h3>Chapter 1: Creation (Part 1)</h3>
+        <p>
+          “What if a man could live forever... but forget everything every time?”<br><br>
+          I had no form. I had no name. I did not know who I was, and could not know, 
+          for I had not yet lived. But I existed...<br><br>
+          (Здесь вставляете ещё несколько абзацев фрагмента)
+        </p>
+      </div>
+
+      <!-- 3) Страница-заглушка (остальные главы скрыты) -->
+      <div class="page">
+        <h3>Remaining Chapters Are Locked</h3>
+        <p>
+          To get full access, become a holder of our NFT collection.<br>
+          The full text will be available only to verified owners in the future.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JS-инициализация Turn.js (создаём flipbook) -->
+  <script>
+    $(document).ready(function(){
+      $('#flipbook').turn({
+        width: 800,
+        height: 500,
+        autoCenter: true
+      });
+    });
+  </script>
+
+</body>
+</html>
