@@ -38,6 +38,46 @@
     gtag('config', 'G-T5DF4BLR5S');
   </script>
 
+  <!-- Добавляем адаптивные стили для блока .extra-buttons-section -->
+  <style>
+    .extra-buttons-section {
+      display: flex;              /* Используем флекс */
+      flex-wrap: wrap;            /* Разрешаем перенос */
+      justify-content: center;    /* Центрируем кнопки */
+      gap: 10px;                  /* Расстояние между кнопками */
+      margin: 40px auto;          /* Пример отступов сверху/снизу */
+      max-width: 1200px;          /* Можно ограничить ширину */
+      text-align: center;         /* На случай если что-то ломается */
+    }
+    .extra-buttons-section .btn-small {
+      display: inline-block;
+      background: gold;
+      color: #000;
+      padding: 12px 25px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s, color 0.3s;
+    }
+    .extra-buttons-section .btn-small:hover {
+      background: #c0a000;
+      color: #000;
+    }
+
+    /* Адаптив: при узком экране (<= 600px) делаем кнопки в столбик */
+    @media (max-width: 600px) {
+      .extra-buttons-section {
+        flex-direction: column;   /* Вертикальный столбик */
+        align-items: center;      /* Центрируем по горизонтали */
+      }
+      .extra-buttons-section .btn-small {
+        width: 80%;              /* Пусть кнопки занимают 80% ширины */
+        max-width: 300px;        /* Но не больше 300px */
+        margin: 5px 0;           /* Небольшой отступ между кнопками */
+      }
+    }
+  </style>
+
 </head>
 <body>
 
