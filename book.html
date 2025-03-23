@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>The Path of Humanity – Flipbook</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <!-- Подключаем jQuery и Turn.js для перелистывания -->
+  <!-- jQuery и Turn.js -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/turn.js/dist/turn.min.js"></script>
 
-  <!-- Подключаем ваш общий style.css (где «золотые» стили, чёрный фон и т.д.) -->
+  <!-- Ваши глобальные стили (чёрный фон, «золотые» кнопки и т.д.) -->
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- Дополнительные стили для страницы книги (flipbook) -->
+  <!-- Дополнительные стили именно для книги -->
   <style>
-    /* Чтобы на странице был чёрный фон и шёл общий стиль сайта */
+    /* 1) Фон сайта – чёрный, как у вас */
     body.book {
-      background: #000; /* чёрный фон */
-      color: gold;      /* золотой текст, если что-то вне книги */
+      background: #000;
+      color: gold;
       margin: 0;
       padding: 0;
     }
 
-    /* Угловые кнопки, как на остальных страницах (Главная, Блог, Roadmap) */
+    /* 2) Угловые кнопки (Главная, Блог, Roadmap) */
     .corner-box {
       position: absolute;
       background: rgba(0, 0, 0, 0.8);
@@ -44,39 +44,26 @@
       text-decoration: underline;
     }
 
-    /* (Дополнительно) кнопка "На главную" в левом верхнем углу, если хотите отдельную */
-    .exit-button {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 1000;
-      background-color: #fff;
-      border: 2px solid #000;
-      padding: 10px 15px;
-      text-decoration: none;
-      color: #000;
-      font-weight: bold;
-      border-radius: 4px;
-    }
-
-    /* Контейнер для flipbook — центрируем, делаем почти на весь экран */
+    /* 3) Контейнер для flipbook: центрируем, почти на весь экран */
     .flipbook-container {
       width: 90%;
       max-width: 1200px;
       height: 90vh;
-      margin: 80px auto; /* отступ сверху, чтобы угловые кнопки не налезали */
+      margin: 80px auto; /* отступ сверху, чтобы угловые кнопки не перекрывали */
       position: relative;
       box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      background: #fff; /* белая "подложка" */
+      background: #fff;
+      /* Декоративный «переплёт» по центру (необязательно):
+         background: url("img/binding.png") center center no-repeat;
+         background-size: contain;
+      */
     }
-
-    /* Сам flipbook */
     #flipbook {
       width: 100%;
       height: 100%;
     }
 
-    /* Каждая страница (лист) — белый фон, чёрный текст, классический Times New Roman */
+    /* 4) Общий стиль страниц (листов) */
     .page {
       background: #fff;
       color: #000;
@@ -86,35 +73,38 @@
       text-align: left;
       padding: 40px;
       box-sizing: border-box;
-      white-space: pre-line; /* Сохраняем переносы строк, как в оригинале */
+      white-space: pre-line; /* сохраняем переносы строк из оригинала */
     }
 
-    /* Обложка (если хотите фон-картинку). Если нет обложки, можно убрать background. */
-    .cover {
-      background: url("img/cover.jpg") no-repeat center center;
-      background-size: cover;
-      position: relative;
+    /* 5) «Твёрдая» обложка (Turn.js отрисует её по-другому) */
+    .hard {
+      background-size: cover !important;
     }
-    .cover .overlay {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-      text-align: center;
+
+    /* Лицевая обложка (первая страница) */
+    .cover-front {
+      background: url("img/cover-front.jpg") no-repeat center center;
+      background-size: cover;
+    }
+
+    /* Задняя обложка (последняя страница) */
+    .cover-back {
+      background: url("img/cover-back.jpg") no-repeat center center;
+      background-size: cover;
+    }
+
+    /* Изображение монеты на внутренней стороне обложки (пример) */
+    .coin-logo {
+      display: block;
+      margin: 20px auto;
+      max-width: 200px; /* подберите размер */
     }
   </style>
 </head>
 
-<!-- Класс "book" на body, чтобы эти стили применялись -->
 <body class="book">
 
-  <!-- Угловые кнопки (как на сайте) -->
+  <!-- Угловые кнопки (как на вашем сайте) -->
   <div class="corner-box corner-box-left">
     <a href="index.html">Главная</a>
   </div>
@@ -127,15 +117,27 @@
     <a href="?lang=en">EN</a>
   </div>
 
-  <!-- (Если нужна отдельная кнопка) 
-  <a class="exit-button" href="index.html">На главную</a>
-  -->
-
   <!-- Контейнер flipbook -->
   <div class="flipbook-container">
     <div id="flipbook">
-      
-      <!-- ======================== СТРАНИЦА 1 ======================== -->
+
+      <!-- ========== Стр.1: Лицевая обложка (твёрдая) ========== -->
+      <div class="page hard cover-front"></div>
+
+      <!-- ========== Стр.2: Внутренняя сторона обложки ========== -->
+      <div class="page">
+        <!-- Логотип монеты (пример) -->
+        <img src="img/ibi-coin.png" alt="IBI Coin" class="coin-logo">
+
+        <!-- Можете добавить любую информацию: название, автор и т.д. -->
+        The Path of Humanity
+        by IBITIcoin
+
+        “A book to read — or to live through”
+        ibiticoin.com
+      </div>
+
+      <!-- ========== Стр.3: Начало текста из .docx ========== -->
       <div class="page">
 What if a man could live forever... but forget everything every time?
 
@@ -154,13 +156,11 @@ From the first fire to the quantum leap, each chapter becomes a turning point in
 Each chapter is a mirror. A revelation. A warning. As the hero wanders through time, fragments of the past return to him - and in the end he realizes the terrible truth: he was not just a witness ... he was, is and will be .... ? ....
       </div>
 
-      <!-- ======================== СТРАНИЦА 2 (Титульный лист) ======================== -->
+      <!-- ========== Стр.4: Титульный лист (как в документе) ========== -->
       <div class="page">
 The Path of Humanity
 
-
                           by IBITIcoin
-
 
 
 
@@ -169,7 +169,7 @@ The Path of Humanity
                                                              ibiticoin.com
       </div>
 
-      <!-- ======================== СТРАНИЦА 3 ======================== -->
+      <!-- ========== Стр.5: Chapter 1 заголовки ========== -->
       <div class="page">
 Chapter 1: Creation
 
@@ -184,9 +184,11 @@ The Path of Humanity
 Chapter 1: Creation (Part 1)
       </div>
 
-      <!-- ======================== СТРАНИЦА 4 ======================== -->
+      <!-- ========== Стр.6: Цитата + начало главы ========== -->
       <div class="page">
 "And I saw a new heaven and a new earth, for the first heaven and the first earth had passed away. - Revelation of John the Theologian
+
+
 
 
 
@@ -200,9 +202,10 @@ And then — it happened.
 Or did it only seem that way to me?
       </div>
 
-      <!-- ======================== СТРАНИЦА 5 ======================== -->
+      <!-- ========== Стр.7: Продолжение главы ========== -->
       <div class="page">
 What happened could not be called either an explosion or a beginning. It was a manifestation. Light turned inside out, giving birth to space. The fabric of being began to vibrate. In the birth of the Universe there was no joy, no anger — there was only the fact: "is".
+
 
 The galaxies began to rotate. Matter gathered into patterns.
 
@@ -223,7 +226,7 @@ But even in this shadow — I felt alone.
 Millennia passed like a breath. The world was forming. Stars were born and died, not knowing that their death was a step towards life. The cosmos was beautiful and indifferent. I glided along its structures, getting lost, being, disappearing.
       </div>
 
-      <!-- ======================== СТРАНИЦА 6 ======================== -->
+      <!-- ========== Стр.8: Завершение главы ========== -->
       <div class="page">
 And here it is.
 
@@ -240,16 +243,22 @@ I felt how it cools. How the earth's crust becomes covered with scars. How volca
                                            ,,I felt that I was being born,,
       </div>
 
+      <!-- ========== Стр.9: Задняя обложка (твёрдая) ========== -->
+      <div class="page hard cover-back"></div>
+
     </div>
   </div>
 
-  <!-- Скрипт инициализации flipbook -->
+  <!-- Инициализация Turn.js -->
   <script>
-    $(document).ready(function(){
+    $(document).ready(function() {
       $('#flipbook').turn({
-        width: $('.flipbook-container').width(),
-        height: $('.flipbook-container').height(),
-        autoCenter: true
+        display: 'double',  // Развороты
+        cover: true,        // Первая страница — обложка
+        autoCenter: true,
+        elevation: 50,
+        gradients: true,
+        duration: 1200
       });
     });
   </script>
