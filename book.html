@@ -2,134 +2,116 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>The Path of Humanity – Flipbook</title>
+  <title>The Path of Humanity – Book Navigation</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <!-- Подключаем jQuery через CDN -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <!-- Подключаем локальную копию Turn.js из папки js/turn.js-master -->
-  <script src="js/turn.js-master/turn.min.js"></script>
-
-  <!-- Глобальные стили (фон, кнопки и т.д.) -->
+  
+  <!-- Подключаем общий CSS (где, например, прописаны базовые стили сайта) -->
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- Дополнительные стили для книги -->
+  <!-- Дополнительные стили для страницы книги -->
   <style>
-    /* Фон страницы – чёрный, как на сайте */
+    /* Фон страницы – чёрный, как у сайта */
     body.book {
       background: #000;
       color: gold;
       margin: 0;
       padding: 0;
-    }
-
-    /* Угловые кнопки */
-    .corner-box {
-      position: absolute;
-      background: rgba(0, 0, 0, 0.8);
-      border: 2px solid gold;
-      border-radius: 5px;
-      padding: 10px 15px;
-      z-index: 999;
-    }
-    .corner-box-left { top: 20px; left: 20px; }
-    .corner-box-left2 { top: 80px; left: 20px; }
-    .corner-box-right { top: 20px; right: 20px; }
-    .corner-box a {
-      color: gold;
-      text-decoration: none;
-      font-weight: bold;
-      margin: 0 5px;
-    }
-    .corner-box a:hover {
-      text-decoration: underline;
-    }
-
-    /* Контейнер для flipbook — центрирован, почти на весь экран */
-    .flipbook-container {
-      width: 90%;
-      max-width: 1200px;
-      height: 90vh;
-      margin: 80px auto;
+      font-family: "Times New Roman", serif;
       position: relative;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      /* Декоративный переплёт */
-      background: url("img/binding.png") center center no-repeat;
-      background-size: contain;
     }
-    #flipbook {
-      width: 100%;
-      height: 100%;
-    }
-
-    /* Страницы книги */
+    /* Стили для каждой страницы книги */
     .page {
+      display: none;
       background: #fff;
       color: #000;
-      font-family: "Times New Roman", serif;
-      font-size: 1.2em;
-      line-height: 1.8;
-      text-align: left;
       padding: 40px;
+      margin: 80px auto;
+      max-width: 1200px;
       box-sizing: border-box;
       white-space: pre-line;
     }
-
-    /* Твёрдая обложка (для Turn.js) */
-    .hard {
-      background-size: cover !important;
-    }
-
-    /* Лицевая обложка */
-    .cover-front {
-      background: url("img/cover-front.jpg") no-repeat center center;
-      background-size: cover;
-    }
-
-    /* Задняя обложка */
-    .cover-back {
-      background: url("img/cover-back.jpg") no-repeat center center;
-      background-size: cover;
-    }
-
-    /* Логотип монеты */
-    .coin-logo {
+    .page.active {
       display: block;
-      margin: 20px auto;
-      max-width: 200px;
+    }
+    /* Изображения в страницах */
+    .page img {
+      display: block;
+      margin: 0 auto;
+      max-width: 100%;
+      height: auto;
+    }
+    /* Кнопки навигации */
+    .nav-button {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid gold;
+      color: gold;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 1000;
+    }
+    #prevButton {
+      left: 20px;
+    }
+    #nextButton {
+      right: 20px;
+    }
+    /* Дополнительные стили для обложек, если нужно */
+    .cover {
+      padding: 0;
+      margin: 0 auto;
+      max-width: 100%;
     }
   </style>
+  
+  <script>
+    $(document).ready(function(){
+      var currentPage = 1;
+      var totalPages = $(".page").length;
+      
+      // Показываем первую страницу (лицевая обложка)
+      $(".page").hide();
+      $(".page[data-page='1']").show().addClass("active");
+      
+      $("#prevButton").click(function(){
+         if(currentPage > 1){
+            $(".page[data-page='" + currentPage + "']").hide().removeClass("active");
+            currentPage--;
+            $(".page[data-page='" + currentPage + "']").fadeIn(300).addClass("active");
+         }
+      });
+      
+      $("#nextButton").click(function(){
+         if(currentPage < totalPages){
+            $(".page[data-page='" + currentPage + "']").hide().removeClass("active");
+            currentPage++;
+            $(".page[data-page='" + currentPage + "']").fadeIn(300).addClass("active");
+         }
+      });
+    });
+  </script>
 </head>
 <body class="book">
 
-  <!-- Угловые кнопки -->
-  <div class="corner-box corner-box-left">
-    <a href="index.html">Главная</a>
+  <!-- Страницы книги -->
+  <div class="page" data-page="1">
+    <!-- Лицевая обложка -->
+    <img src="img/cover-front.jpg" alt="Cover Front" class="cover">
   </div>
-  <div class="corner-box corner-box-left2">
-    <a href="blog.html">Блог</a>
+  <div class="page" data-page="2">
+    <!-- Внутренняя сторона обложки с логотипом -->
+    <img src="img/ibi-coin.jpg" alt="IBI Coin" class="coin-logo">
+    <h3 style="text-align: center;">The Path of Humanity<br>by IBITIcoin</h3>
+    <p style="text-align: center;"><em>“A book to read — or to live through”</em><br>ibiticoin.com</p>
   </div>
-  <div class="corner-box corner-box-right">
-    <a href="roadmap.html">Roadmap</a> | 
-    <a href="?lang=ru">RU</a> | 
-    <a href="?lang=en">EN</a>
-  </div>
-
-  <!-- Контейнер flipbook -->
-  <div class="flipbook-container">
-    <div id="flipbook">
-      <!-- Стр.1: Лицевая обложка (твёрдая) -->
-      <div class="page hard cover-front"></div>
-
-      <!-- Стр.2: Внутренняя сторона обложки с логотипом и заголовком -->
-      <div class="page">
-        <img src="img/ibi-coin.jpg" alt="IBI Coin" class="coin-logo">
-        <h3 style="text-align: center;">The Path of Humanity<br>by IBITIcoin</h3>
-        <p style="text-align: center;"><em>“A book to read — or to live through”</em><br>ibiticoin.com</p>
-      </div>
-
-      <!-- Стр.3: Первая страница текста (вступление) -->
-      <div class="page">
+  <div class="page" data-page="3">
+    <!-- Вступительный текст -->
 What if a man could live forever... but forget everything every time?
 
 Or can a man live forever?
@@ -143,10 +125,9 @@ The Journey of Humanity is a literary journey through the history of civilizatio
 From the first fire to the quantum leap, each chapter becomes a turning point in the development of humanity: not only technological, but also spiritual, cultural and moral.
 
 Each chapter is a mirror. A revelation. A warning. As the hero wanders through time, fragments of the past return to him - and in the end he realizes the terrible truth: he was not just a witness ... he was, is and will be .... ? ....
-      </div>
-
-      <!-- Стр.4: Вторая страница текста (начало Chapter 1) -->
-      <div class="page">
+  </div>
+  <div class="page" data-page="4">
+    <!-- Начало Chapter 1 -->
 Chapter 1: Creation
 
 The Path of Humanity
@@ -169,31 +150,18 @@ Not as a creator, not as a witness — I was a part. A wave. A pulse.
 An unconscious shadow of the primordial heat.
 
 But even in this shadow — I felt alone.
-      </div>
-
-      <!-- Стр.5: Пустая страница (внутренняя сторона задней обложки) -->
-      <div class="page">
-        <!-- Можно оставить пустой для эффекта пустой стороны -->
-      </div>
-
-      <!-- Стр.6: Задняя обложка (твёрдая) -->
-      <div class="page hard cover-back"></div>
-    </div>
+  </div>
+  <div class="page" data-page="5">
+    <!-- Пустая страница (для эффекта внутренней стороны задней обложки) -->
+  </div>
+  <div class="page" data-page="6">
+    <!-- Задняя обложка -->
+    <img src="img/cover-back.jpg" alt="Cover Back" class="cover">
   </div>
 
-  <!-- Инициализация Turn.js -->
-  <script>
-    $(document).ready(function() {
-      $('#flipbook').turn({
-        display: 'double', // Развороты по 2 страницы
-        cover: true,       // Первая и последняя страницы – обложки
-        autoCenter: true,
-        elevation: 50,
-        gradients: true,
-        duration: 1200
-      });
-    });
-  </script>
+  <!-- Кнопки навигации -->
+  <div id="prevButton" class="nav-button">←</div>
+  <div id="nextButton" class="nav-button">→</div>
 
 </body>
 </html>
