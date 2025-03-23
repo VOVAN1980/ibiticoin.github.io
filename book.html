@@ -2,21 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>The Path of Humanity – Book Navigation</title>
+  <title>The Path of Humanity – 5 Pages</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- Подключаем jQuery через CDN -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <!-- Локальное подключение Turn.js (если понадобится в будущем) -->
-  <script src="js/turn.js-master/turn.min.js"></script>
 
-  <!-- Глобальные стили (например, фон, кнопки и т.д.) -->
+  <!-- Подключаем jQuery (через CDN или локально) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Подключаем общий CSS (если у вас есть style.css с общим фоном/золотыми кнопками) -->
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- Дополнительные стили для книги с кнопочной навигацией -->
   <style>
-    /* Фон страницы – чёрный, чтобы соответствовать стилю сайта */
-    body.book {
+    /* Общий фон сайта – чёрный, текст – золотой */
+    body {
       background: #000;
       color: gold;
       margin: 0;
@@ -24,23 +21,70 @@
       font-family: "Times New Roman", serif;
       position: relative;
     }
-    /* Кнопка "На главную" */
-    .home-button {
+
+    /* Контейнер "книги" (условно) – для декоративного переплёта */
+    .flipbook-container {
+      width: 90%;
+      max-width: 800px; 
+      height: 90vh;
+      margin: 80px auto;
+      position: relative;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      background: url("img/binding.png") center center no-repeat; /* декоративный переплёт */
+      background-size: contain;
+    }
+
+    /* Каждая страница – по умолчанию скрыта */
+    .page {
+      display: none;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 40px;
+      /* Убираем фон, чтобы был чёрный общий */
+      background: none;
+      color: gold;
+      /* Центрируем текст и изображения */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      white-space: pre-line; /* чтобы переносы в тексте сохранялись */
+    }
+    .page.active {
+      display: flex; /* только активная страница видна */
+    }
+
+    /* Изображения на страницах */
+    .page img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* Кнопки навигации (← и →) */
+    .nav-button {
       position: fixed;
-      top: 20px;
-      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
       background: rgba(0, 0, 0, 0.7);
       border: 2px solid gold;
       color: gold;
       padding: 10px 15px;
-      text-decoration: none;
+      cursor: pointer;
       font-weight: bold;
       z-index: 1000;
     }
-    .home-button:hover {
-      background: rgba(0, 0, 0, 0.9);
+    #prevButton {
+      left: 20px;
     }
-    /* Угловые кнопки для навигации сайта */
+    #nextButton {
+      right: 20px;
+    }
+
+    /* Пример стилей для угловых кнопок сайта (Главная, Блог, Roadmap) */
     .corner-box {
       position: absolute;
       background: rgba(0, 0, 0, 0.8);
@@ -61,93 +105,38 @@
     .corner-box a:hover {
       text-decoration: underline;
     }
-    /* Контейнер книги – ограниченная ширина (800px) и центральное позиционирование */
-    .flipbook-container {
-      width: 90%;
-      max-width: 800px;
-      height: 90vh;
-      margin: 80px auto;
-      position: relative;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      /* Декоративный переплёт */
-      background: url("img/binding.png") center center no-repeat;
-      background-size: contain;
-    }
-    /* Страницы книги */
-    .page {
-      display: none; /* по умолчанию скрыты */
-      background: none; /* прозрачный, чтобы видеть общий фон */
-      color: gold;
-      padding: 40px;
-      margin: 80px auto;
-      max-width: 800px;
-      box-sizing: border-box;
-      white-space: pre-line;
-    }
-    .page.active {
-      display: block;
-    }
-    /* Изображения внутри страниц */
-    .page img {
-      display: block;
-      margin: 0 auto;
-      max-width: 100%;
-      height: auto;
-    }
-    /* Навигационные кнопки для переключения страниц */
-    .nav-button {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0, 0, 0, 0.7);
-      border: 2px solid gold;
-      color: gold;
-      padding: 10px 15px;
-      cursor: pointer;
-      font-weight: bold;
-      z-index: 1000;
-    }
-    #prevButton {
-      left: 20px;
-    }
-    #nextButton {
-      right: 20px;
-    }
   </style>
-  
+
   <script>
     $(document).ready(function(){
       var currentPage = 1;
       var totalPages = $(".page").length;
-      
-      // Показываем первую страницу (лицевая обложка)
+
+      // Показываем первую страницу
       $(".page").hide();
       $(".page[data-page='1']").show().addClass("active");
-      
+
       $("#prevButton").click(function(){
-         if(currentPage > 1){
-            $(".page[data-page='" + currentPage + "']").hide().removeClass("active");
-            currentPage--;
-            $(".page[data-page='" + currentPage + "']").fadeIn(300).addClass("active");
-         }
+        if(currentPage > 1){
+          $(".page[data-page='" + currentPage + "']").hide().removeClass("active");
+          currentPage--;
+          $(".page[data-page='" + currentPage + "']").fadeIn(300).addClass("active");
+        }
       });
-      
+
       $("#nextButton").click(function(){
-         if(currentPage < totalPages){
-            $(".page[data-page='" + currentPage + "']").hide().removeClass("active");
-            currentPage++;
-            $(".page[data-page='" + currentPage + "']").fadeIn(300).addClass("active");
-         }
+        if(currentPage < totalPages){
+          $(".page[data-page='" + currentPage + "']").hide().removeClass("active");
+          currentPage++;
+          $(".page[data-page='" + currentPage + "']").fadeIn(300).addClass("active");
+        }
       });
     });
   </script>
 </head>
-<body class="book">
+<body>
 
-  <!-- Кнопка "На главную" -->
-  <a class="home-button" href="index.html">На главную</a>
-
-  <!-- Угловые кнопки для навигации сайта -->
+  <!-- Угловые кнопки (пример) -->
   <div class="corner-box corner-box-left">
     <a href="index.html">Главная</a>
   </div>
@@ -160,36 +149,47 @@
     <a href="?lang=en">EN</a>
   </div>
 
-  <!-- Контейнер книги -->
+  <!-- Контейнер "книги" -->
   <div class="flipbook-container">
-    <!-- Страница 1: Лицевая обложка -->
+
+    <!-- 1) Страница 1: Текст, по центру (черный фон) -->
     <div class="page active" data-page="1">
-      <img src="img/cover-front.jpg" alt="Cover Front">
+What if a man could live forever... but forget everything every time?
+Or can a man live forever?
+Who? What? Why?
+So many questions and so few answers.
+
+The Journey of Humanity is a literary journey through the history of civilization, told from the perspective of an immortal man who awakens in different eras with no memory of himself.
+From the first fire to the quantum leap, each chapter becomes a turning point in the development of humanity: not only technological, but also spiritual, cultural and moral.
+Each chapter is a mirror. A revelation. A warning. As the hero wanders through time, fragments of the past return to him - and in the end he realizes the terrible truth: he was not just a witness ... he was, is and will be .... ? ....
     </div>
-    
-    <!-- Страница 2: Внутренняя сторона обложки с логотипом и заголовком -->
+
+    <!-- 2) Страница 2: The Path of Humanity -->
     <div class="page" data-page="2">
-      <img src="img/ibi-coin.jpg" alt="IBI Coin" class="coin-logo">
-      <h3 style="text-align: center;">The Path of Humanity<br>by IBITIcoin</h3>
-      <p style="text-align: center;"><em>“A book to read — or to live through”</em><br>ibiticoin.com</p>
+      <h1 style="margin-bottom: 20px;">The Path of Humanity</h1>
+      <h2 style="margin-bottom: 20px;">by IBITIcoin</h2>
+      <p style="margin-bottom: 20px;">
+        <em>“A book to read — or to live through”</em><br>
+        ibiticoin.com
+      </p>
     </div>
-    
-    <!-- Страница 3: Текст первой главы (Chapter 1, Part 1) -->
+
+    <!-- 3) Страница 3: cosmic swirl image -->
     <div class="page" data-page="3">
+      <!-- Поменяйте "cosmic-swirl.jpg" на нужное имя файла -->
+      <img src="img/cosmic-swirl.jpg" alt="Cosmic Swirl" />
+    </div>
+
+    <!-- 4) Страница 4: Chapter 1 text -->
+    <div class="page" data-page="4">
 Chapter 1: Creation
 
-The Path of Humanity
-
-Chapter 1: Creation (Part 1)
-
-"And I saw a new heaven and a new earth, for the first heaven and the first earth had passed away. - Revelation of John the Theologian
-
-I had no form. I had no name. I did not know who I was, and could not know, for I had not yet lived. But I existed. As an observation. As a point of awareness in infinity, in which there was nothing to be aware of. I did not know that I was "I". But I already felt that I was not nothing.
+"I had no form. I had no name. I did not know who I was, and could not know, for I had not yet lived. But I existed. As an observation. As a point of awareness in infinity, in which there was nothing to be aware of. I did not know that I was 'I'. But I already felt that I was not nothing.
 
 And then — it happened.
 Or did it only seem that way to me?
 
-What happened could not be called either an explosion or a beginning. It was a manifestation. Light turned inside out, giving birth to space. The fabric of being began to vibrate. In the birth of the Universe there was no joy, no anger — there was only the fact: "is".
+What happened could not be called either an explosion or a beginning. It was a manifestation. Light turned inside out, giving birth to space. The fabric of being began to vibrate. In the birth of the Universe there was no joy, no anger — there was only the fact: 'is'.
 
 The galaxies began to rotate. Matter gathered into patterns.
 
@@ -197,21 +197,17 @@ I was in every spark, in every stream.
 Not as a creator, not as a witness — I was a part. A wave. A pulse.
 An unconscious shadow of the primordial heat.
 
-But even in this shadow — I felt alone.
+But even in this shadow — I felt alone."
     </div>
-    
-    <!-- Страница 4: Пустая страница (внутренняя сторона задней обложки) -->
-    <div class="page" data-page="4">
-      <!-- Оставляем пустой для эффекта пустой стороны -->
-    </div>
-    
-    <!-- Страница 5: Задняя обложка -->
+
+    <!-- 5) Страница 5: Закрытая книга (обложка), выровненная "от верха до низа" -->
     <div class="page" data-page="5">
-      <img src="img/cover-back.jpg" alt="Cover Back">
+      <img src="img/cover-back.jpg" alt="Cover Back" style="object-fit: cover; height: 100%; width: auto;">
     </div>
+
   </div>
 
-  <!-- Навигационные кнопки -->
+  <!-- Кнопки навигации -->
   <div id="prevButton" class="nav-button">←</div>
   <div id="nextButton" class="nav-button">→</div>
 
