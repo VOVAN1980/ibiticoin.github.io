@@ -9,22 +9,20 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/turn.js/dist/turn.min.js"></script>
 
-  <!-- Подключаем ваш общий style.css (если есть). 
-       Если в style.css есть общий темный фон, можно оставить.
-       В противном случае переопределим ниже. -->
+  <!-- Подключаем единый style.css (с общими стилями для сайта и книги) -->
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- Встроенные стили, чтобы книга была на темном фоне сайта -->
+  <!-- Дополнительные стили для книги -->
   <style>
-    /* 1. Темный фон для всей страницы */
+    /* Фон страницы – тёмный, чтобы книга выделялась */
     body {
       margin: 0;
       padding: 0;
-      background: #000; /* Можно сделать градиент, если хотите */
+      background: #000;
       font-family: 'Times New Roman', serif;
       color: #fff;
     }
-    /* 2. Кнопка "На главную" (если нужна) */
+    /* Кнопка "На главную" – фиксированная в левом верхнем углу */
     .exit-button {
       position: fixed;
       top: 20px;
@@ -38,101 +36,137 @@
       font-weight: bold;
       border-radius: 4px;
     }
-    /* 3. Контейнер для книги: центрируем, задаём размер, фон может быть прозрачным */
+    /* Контейнер книги – центрирован, занимает почти весь экран, как на столе */
     .flipbook-container {
-      width: 1000px;     /* Ширина книги (двух разворотов) */
-      height: 600px;     /* Высота книги */
-      margin: 60px auto; /* Отступ сверху/снизу */
+      width: 90%;
+      max-width: 1200px;
+      height: 90vh;
+      margin: 80px auto;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      background: #fff;
       position: relative;
     }
-    /* 4. Сам flipbook */
+    /* Flipbook занимает весь контейнер */
     #flipbook {
       width: 100%;
       height: 100%;
-      margin: 0 auto;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      background: #fff; /* Цвет "задника" книги */
     }
-    /* 5. Каждая страница книги (лист) */
+    /* Стили для страниц книги – белые листы, классический вид печатного издания */
     .page {
-      background: #fff;  /* Белый фон страницы */
-      color: #000;       /* Чёрный текст */
+      background: #fff;
+      color: #000;
       text-align: left;
       padding: 40px;
       box-sizing: border-box;
-      /* Доп. стили, чтобы выглядело как лист */
+      overflow: hidden;
+      font-size: 1.2em;
+      line-height: 1.8;
     }
-    /* 6. Обложка */
+    /* Обложка книги с изображением */
     .cover {
       background: url("img/cover.jpg") no-repeat center center;
       background-size: cover;
       position: relative;
     }
-    /* Текст на обложке, если нужно */
+    .cover h2,
+    .cover p {
+      color: #fff;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+    }
     .cover .overlay {
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.3);
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      color: #fff;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+      text-align: center;
     }
   </style>
 </head>
-<body>
+<body class="book">
 
-  <!-- Если нужна кнопка "На главную" -->
+  <!-- Кнопка "На главную" -->
   <a class="exit-button" href="index.html">На главную</a>
 
-  <!-- Контейнер для книги -->
+  <!-- Контейнер для flipbook -->
   <div class="flipbook-container">
-    <div id="flipbook">
-      
-      <!-- Страница 1: Обложка -->
+    <div id="flipbook" class="flipbook">
+      <!-- Страница 1: Вступительный блок -->
+      <div class="page">
+        <p>
+          What if a man could live forever... but forget everything every time?<br><br>
+          Or can a man live forever?<br><br>
+          Who? What? Why?<br><br>
+          So many questions and so few answers?<br><br>
+          The Journey of Humanity is a literary journey through the history of civilization, told from the perspective of an immortal man who awakens in different eras with no memory of himself.<br><br>
+          From the first fire to the quantum leap, each chapter becomes a turning point in the development of humanity: not only technological, but also spiritual, cultural and moral.<br><br>
+          Each chapter is a mirror. A revelation. A warning. As the hero wanders through time, fragments of the past return to him - and in the end he realizes the terrible truth: he was not just a witness ... he was, is and will be .... ? ....
+        </p>
+      </div>
+
+      <!-- Страница 2: Обложка с названием книги -->
       <div class="page cover">
         <div class="overlay">
           <h2>The Path of Humanity</h2>
           <p>by IBITIcoin</p>
+          <p>“A book to read — or to live through”<br>ibiticoin.com</p>
         </div>
       </div>
 
-      <!-- Страница 2: Вступление -->
+      <!-- Страница 3: Начало Chapter 1 -->
       <div class="page">
-        <h3>What if a man could live forever...?</h3>
         <p>
-          Здесь ваш текст вступления...
+          Chapter 1: Creation<br><br>
+          The Path of Humanity<br><br>
+          Chapter 1: Creation (Part 1)<br><br>
+          "And I saw a new heaven and a new earth, for the first heaven and the first earth had passed away. - Revelation of John the Theologian"<br><br>
+          I had no form. I had no name. I did not know who I was, and could not know, for I had not yet lived. But I existed. As an observation. As a point of awareness in infinity, in which there was nothing to be aware of. I did not know that I was "I". But I already felt that I was not nothing.<br><br>
+          And then — it happened.<br>
+          Or did it only seem that way to me?
         </p>
       </div>
 
-      <!-- Страница 3: Chapter 1 -->
+      <!-- Страница 4: Продолжение Chapter 1 -->
       <div class="page">
-        <h3>Chapter 1: Creation (Part 1)</h3>
         <p>
-          Текст главы...
+          What happened could not be called either an explosion or a beginning. It was a manifestation. Light turned inside out, giving birth to space. The fabric of being began to vibrate. In the birth of the Universe there was no joy, no anger — there was only the fact: "is".<br><br>
+          The galaxies began to rotate. Matter gathered into patterns.<br><br>
+          I was in every spark, in every stream. Not as a creator, not as a witness — I was a part. A wave. A pulse. An unconscious shadow of the primordial heat.<br><br>
+          But even in this shadow — I felt alone.
         </p>
       </div>
 
-      <!-- Страница 4: Заглушка или продолжение -->
+      <!-- Страница 5: Завершение Chapter 1 (переломный момент) -->
       <div class="page">
-        <h3>Locked Chapters</h3>
-        <p>Остальной текст недоступен...</p>
+        <p>
+          Millennia passed like a breath. The world was forming. Stars were born and died, not knowing that their death was a step towards life. The cosmos was beautiful and indifferent. I glided along its structures, getting lost, being, disappearing.<br><br>
+          And here it is.<br><br>
+          A planet. Without a name. Without breath. A ball of dirt and heat, scorched and barren. But I knew: this is a point. A place. Here - mine will begin. Not consciously, not by will - but it is here that I will become myself.
+        </p>
       </div>
-      
+
+      <!-- Страница 6: Заключительный отрывок -->
+      <div class="page">
+        <p>
+          I felt how it cools. How the earth's crust becomes covered with scars. How volcanoes scream into the sky without stars. How water whispers to the sand for the first time. I was in this whisper. In these cracks. In these lightning strikes.<br><br>
+          ,,I felt that I was being born,,
+        </p>
+      </div>
     </div>
   </div>
 
-  <!-- Скрипт инициализации Turn.js -->
+  <!-- Инициализация flipbook -->
   <script>
     $(document).ready(function(){
       $('#flipbook').turn({
-        width: 1000,      // Ширина книги
-        height: 600,      // Высота книги
-        autoCenter: true, // Центрировать при перелистывании
-        // display: 'double' // По умолчанию 'double' (разворот)
+        width: $('#flipbook').parent().width(),
+        height: $('#flipbook').parent().height(),
+        autoCenter: true
       });
     });
   </script>
