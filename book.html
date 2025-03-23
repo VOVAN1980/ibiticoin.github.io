@@ -7,13 +7,15 @@
   
   <!-- Подключаем jQuery через CDN -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  
-  <!-- Подключаем общий CSS (где, например, прописаны базовые стили сайта) -->
+  <!-- Локальное подключение Turn.js (если понадобится в будущем) -->
+  <script src="js/turn.js-master/turn.min.js"></script>
+
+  <!-- Глобальные стили (например, фон, кнопки и т.д.) -->
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- Дополнительные стили для страницы книги -->
+  <!-- Дополнительные стили для книги с кнопочной навигацией -->
   <style>
-    /* Фон страницы – чёрный, как у сайта */
+    /* Фон страницы – чёрный, чтобы соответствовать стилю сайта */
     body.book {
       background: #000;
       color: gold;
@@ -22,28 +24,77 @@
       font-family: "Times New Roman", serif;
       position: relative;
     }
-    /* Стили для каждой страницы книги */
+    /* Кнопка "На главную" */
+    .home-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid gold;
+      color: gold;
+      padding: 10px 15px;
+      text-decoration: none;
+      font-weight: bold;
+      z-index: 1000;
+    }
+    .home-button:hover {
+      background: rgba(0, 0, 0, 0.9);
+    }
+    /* Угловые кнопки для навигации сайта */
+    .corner-box {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid gold;
+      border-radius: 5px;
+      padding: 10px 15px;
+      z-index: 999;
+    }
+    .corner-box-left { top: 20px; left: 20px; }
+    .corner-box-left2 { top: 80px; left: 20px; }
+    .corner-box-right { top: 20px; right: 20px; }
+    .corner-box a {
+      color: gold;
+      text-decoration: none;
+      font-weight: bold;
+      margin: 0 5px;
+    }
+    .corner-box a:hover {
+      text-decoration: underline;
+    }
+    /* Контейнер книги – ограниченная ширина (800px) и центральное позиционирование */
+    .flipbook-container {
+      width: 90%;
+      max-width: 800px;
+      height: 90vh;
+      margin: 80px auto;
+      position: relative;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      /* Декоративный переплёт */
+      background: url("img/binding.png") center center no-repeat;
+      background-size: contain;
+    }
+    /* Страницы книги */
     .page {
-      display: none;
-      background: #fff;
-      color: #000;
+      display: none; /* по умолчанию скрыты */
+      background: none; /* прозрачный, чтобы видеть общий фон */
+      color: gold;
       padding: 40px;
       margin: 80px auto;
-      max-width: 1200px;
+      max-width: 800px;
       box-sizing: border-box;
       white-space: pre-line;
     }
     .page.active {
       display: block;
     }
-    /* Изображения в страницах */
+    /* Изображения внутри страниц */
     .page img {
       display: block;
       margin: 0 auto;
       max-width: 100%;
       height: auto;
     }
-    /* Кнопки навигации */
+    /* Навигационные кнопки для переключения страниц */
     .nav-button {
       position: fixed;
       top: 50%;
@@ -61,12 +112,6 @@
     }
     #nextButton {
       right: 20px;
-    }
-    /* Дополнительные стили для обложек, если нужно */
-    .cover {
-      padding: 0;
-      margin: 0 auto;
-      max-width: 100%;
     }
   </style>
   
@@ -99,35 +144,38 @@
 </head>
 <body class="book">
 
-  <!-- Страницы книги -->
-  <div class="page" data-page="1">
-    <!-- Лицевая обложка -->
-    <img src="img/cover-front.jpg" alt="Cover Front" class="cover">
+  <!-- Кнопка "На главную" -->
+  <a class="home-button" href="index.html">На главную</a>
+
+  <!-- Угловые кнопки для навигации сайта -->
+  <div class="corner-box corner-box-left">
+    <a href="index.html">Главная</a>
   </div>
-  <div class="page" data-page="2">
-    <!-- Внутренняя сторона обложки с логотипом -->
-    <img src="img/ibi-coin.jpg" alt="IBI Coin" class="coin-logo">
-    <h3 style="text-align: center;">The Path of Humanity<br>by IBITIcoin</h3>
-    <p style="text-align: center;"><em>“A book to read — or to live through”</em><br>ibiticoin.com</p>
+  <div class="corner-box corner-box-left2">
+    <a href="blog.html">Блог</a>
   </div>
-  <div class="page" data-page="3">
-    <!-- Вступительный текст -->
-What if a man could live forever... but forget everything every time?
-
-Or can a man live forever?
-
-Who? What? Why?
-
-So many questions and so few answers.
-
-The Journey of Humanity is a literary journey through the history of civilization, told from the perspective of an immortal man who awakens in different eras with no memory of himself.
-
-From the first fire to the quantum leap, each chapter becomes a turning point in the development of humanity: not only technological, but also spiritual, cultural and moral.
-
-Each chapter is a mirror. A revelation. A warning. As the hero wanders through time, fragments of the past return to him - and in the end he realizes the terrible truth: he was not just a witness ... he was, is and will be .... ? ....
+  <div class="corner-box corner-box-right">
+    <a href="roadmap.html">Roadmap</a> | 
+    <a href="?lang=ru">RU</a> | 
+    <a href="?lang=en">EN</a>
   </div>
-  <div class="page" data-page="4">
-    <!-- Начало Chapter 1 -->
+
+  <!-- Контейнер книги -->
+  <div class="flipbook-container">
+    <!-- Страница 1: Лицевая обложка -->
+    <div class="page active" data-page="1">
+      <img src="img/cover-front.jpg" alt="Cover Front">
+    </div>
+    
+    <!-- Страница 2: Внутренняя сторона обложки с логотипом и заголовком -->
+    <div class="page" data-page="2">
+      <img src="img/ibi-coin.jpg" alt="IBI Coin" class="coin-logo">
+      <h3 style="text-align: center;">The Path of Humanity<br>by IBITIcoin</h3>
+      <p style="text-align: center;"><em>“A book to read — or to live through”</em><br>ibiticoin.com</p>
+    </div>
+    
+    <!-- Страница 3: Текст первой главы (Chapter 1, Part 1) -->
+    <div class="page" data-page="3">
 Chapter 1: Creation
 
 The Path of Humanity
@@ -150,16 +198,20 @@ Not as a creator, not as a witness — I was a part. A wave. A pulse.
 An unconscious shadow of the primordial heat.
 
 But even in this shadow — I felt alone.
-  </div>
-  <div class="page" data-page="5">
-    <!-- Пустая страница (для эффекта внутренней стороны задней обложки) -->
-  </div>
-  <div class="page" data-page="6">
-    <!-- Задняя обложка -->
-    <img src="img/cover-back.jpg" alt="Cover Back" class="cover">
+    </div>
+    
+    <!-- Страница 4: Пустая страница (внутренняя сторона задней обложки) -->
+    <div class="page" data-page="4">
+      <!-- Оставляем пустой для эффекта пустой стороны -->
+    </div>
+    
+    <!-- Страница 5: Задняя обложка -->
+    <div class="page" data-page="5">
+      <img src="img/cover-back.jpg" alt="Cover Back">
+    </div>
   </div>
 
-  <!-- Кнопки навигации -->
+  <!-- Навигационные кнопки -->
   <div id="prevButton" class="nav-button">←</div>
   <div id="nextButton" class="nav-button">→</div>
 
