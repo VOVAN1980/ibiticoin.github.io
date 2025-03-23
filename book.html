@@ -42,7 +42,7 @@
       width: 1600px;      /* ширина "книги" */
       height: 1000px;     /* высота "книги" */
       margin: 0 auto;     /* книга поднята выше (0 сверху) */
-      display: none;      /* по умолчанию скрыто */
+      display: none;      /* по умолчанию скрыт */
       position: relative;
     }
     .double-page.active {
@@ -74,7 +74,7 @@
       object-fit: cover;
     }
 
-    /* Заголовки/параграфы – шрифт чуть меньше, line-height чуть меньше */
+    /* Заголовки/параграфы – шрифт чуть меньше, line-height чуть меньше (по умолчанию) */
     .page h2, .page h3 {
       margin: 10px 0;
       font-size: 1.3em;   /* чуть поменьше */
@@ -112,6 +112,13 @@
     /* Для красной цитаты (Revelation...) */
     .red-quote {
       color: #900;
+    }
+
+    /* ===== Особые стили для первой страницы текста (правая страница разворота 1) ===== */
+    .first-text p {
+      font-size: 1.4em;         /* чуть больше, как в примере */
+      text-align: center !important;  /* выравниваем по центру */
+      white-space: pre-line;    /* переносы строк, как на скриншоте */
     }
   </style>
 
@@ -154,8 +161,8 @@
     <div class="page">
       <img src="img/cover-front.jpg" alt="Cover Front" style="width:100%; height:100%;">
     </div>
-    <!-- Правая страница: текст "What if a man...", выравнивание по ширине -->
-    <div class="page">
+    <!-- Правая страница: текст "What if a man...", по центру, более крупный -->
+    <div class="page first-text">
       <p>
 What if a man could live forever... but forget everything every time?
 Or can a man live forever?
@@ -197,7 +204,7 @@ Chapter 1: Creation (Part 1)<br><br>
 
   <!-- ========== Разворот 3 ========== -->
   <div class="double-page" data-spread="3">
-    <!-- Левая страница: остальной текст главы (justified) -->
+    <!-- Левая страница: остальной текст главы, выравнивание по ширине -->
     <div class="page">
       <p>
 I had no form. I had no name. I did not know who I was, and could not know, for I had not yet lived. But I existed. As an observation. As a point of awareness in infinity, in which there was nothing to be aware of. I did not know that I was "I". But I already felt that I was not nothing.
