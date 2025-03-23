@@ -37,64 +37,63 @@
       background: rgba(0,0,0,0.9);
     }
 
-    /* Контейнер для разворотов (3 разворота => 6 страниц) */
+    /* Контейнер для 3 разворотов (каждый разворот – 2 страницы) */
     .double-page {
-      width: 1400px;       /* увеличили ширину */
-      height: 900px;       /* увеличили высоту */
-      margin: 60px auto;   /* центрируем по горизонтали, отступ сверху */
+      width: 1400px;       /* ширина "книги" */
+      height: 900px;       /* высота "книги" */
+      margin: 20px auto;   /* отступ сверху = 20px, чтобы книга была выше */
       display: none;       /* по умолчанию скрыт */
       position: relative;
     }
     .double-page.active {
-      display: flex;       /* только текущий разворот виден */
+      display: flex;       /* показываем текущий разворот */
     }
 
     /* Каждая страница (левая/правая) */
     .page {
-      width: 50%;           /* половина разворота */
-      height: 100%;         /* 900px */
+      width: 50%;
+      height: 100%;        /* 900px */
       box-sizing: border-box;
-      background: #f4f4f4;  /* светлый фон (как в Word) */
-      color: #000;          /* чёрный текст */
+      background: #f4f4f4; /* светлый фон (как Word) */
+      color: #000;         /* чёрный текст */
       display: flex;
       flex-direction: column;
-      justify-content: center;  /* центрируем по вертикали */
-      align-items: center;      /* центрируем по горизонтали */
+      justify-content: center; /* по центру по вертикали */
+      align-items: center;     /* по центру по горизонтали */
       padding: 40px;
-      overflow: hidden;         /* убираем скролл, текст должен уместиться */
-      white-space: pre-line;    /* переносы строк */
+      overflow: hidden;        /* без прокрутки – текст должен уместиться */
+      white-space: pre-line;   /* переносы строк */
     }
 
     /* Изображения (обложки, лого, звёздная картинка) */
     .page img {
       max-width: 100%;
-      max-height: 100%;   /* чтобы не вылезало за страницу */
+      max-height: 100%;
       display: block;
       margin-bottom: 20px;
       object-fit: cover;
     }
 
-    /* Заголовки и параграфы */
+    /* Заголовки/параграфы: делаем шрифт крупнее, жирнее, и уменьшаем межстрочный интервал */
     .page h2, .page h3 {
       margin: 10px 0;
       text-align: center;
+      font-size: 1.4em;    /* крупнее */
+      font-weight: bold;
     }
     .page p {
-      line-height: 1.6;
+      font-size: 1.2em;    /* крупнее */
+      font-weight: bold;   /* жирнее */
+      line-height: 1.3;    /* уменьшили межстрочный интервал */
       margin: 0;
-      text-align: center;  /* выравниваем по центру */
-      width: 80%;          /* немного сужаем, чтобы текст не растягивался */
-    }
-
-    /* Специально для второй страницы – делаем текст жирнее */
-    .page.bold-text p {
-      font-weight: bold;
+      text-align: center;
+      width: 80%;          /* немного уже, чтобы всё влезло */
     }
 
     /* Кнопки «←» и «→» – внизу */
     .nav-button {
       position: fixed;
-      bottom: 20px;       /* отступ снизу */
+      bottom: 20px;
       background: rgba(0, 0, 0, 0.7);
       border: 2px solid gold;
       color: gold;
@@ -104,7 +103,7 @@
       z-index: 1000;
     }
     #prevButton {
-      left: 80px; /* чтоб не наезжать на кнопку "На главную" */
+      left: 80px; /* отступ, чтобы не наезжать на кнопку "На главную" */
     }
     #nextButton {
       right: 20px;
@@ -146,11 +145,11 @@
 
   <!-- Разворот 1 -->
   <div class="double-page active" data-spread="1">
-    <!-- Левая страница: Лицевая обложка (на всю страницу) -->
+    <!-- Левая страница: лицевая обложка (на всю страницу) -->
     <div class="page">
       <img src="img/cover-front.jpg" alt="Cover Front" style="width:100%; height:100%;">
     </div>
-    <!-- Правая страница: «What if a man...», по центру, чуть ниже -->
+    <!-- Правая страница: «What if a man...», крупнее/жирнее, по центру -->
     <div class="page">
       <p>
 What if a man could live forever... but forget everything every time?
@@ -167,17 +166,17 @@ Each chapter is a mirror. A revelation. A warning. As the hero wanders through t
 
   <!-- Разворот 2 -->
   <div class="double-page" data-spread="2">
-    <!-- Левая страница: «The Path of Humanity... + логотип», текст жирнее -->
-    <div class="page bold-text">
+    <!-- Левая страница: «The Path of Humanity... + логотип» -->
+    <div class="page">
       <img src="img/ibi-coin.jpg" alt="IBI Coin" style="max-width:200px;">
       <h2>The Path of Humanity</h2>
       <h3>by IBITIcoin</h3>
       <p>
-“A book to read — or to live through”<br>
+“A book to read — or to live through”
 ibiticoin.com
       </p>
     </div>
-    <!-- Правая страница: Звёздная картинка + Chapter 1: Creation + цитата -->
+    <!-- Правая страница: Звёздная картинка + Chapter 1 -->
     <div class="page">
       <img src="img/cosmic-stars.jpg" alt="Cosmic Stars" style="max-width:300px;">
       <p>
@@ -222,7 +221,7 @@ I felt how it cools. How the earth's crust becomes covered with scars. How volca
                                            ,,I felt that I was being born,,
       </p>
     </div>
-    <!-- Правая страница: Задняя обложка (на всю страницу) -->
+    <!-- Правая страница: задняя обложка (на всю страницу) -->
     <div class="page">
       <img src="img/cover-back.jpg" alt="Cover Back" style="width:100%; height:100%;">
     </div>
