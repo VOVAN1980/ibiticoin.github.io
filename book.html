@@ -9,10 +9,10 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/turn.js/dist/turn.min.js"></script>
 
-  <!-- Подключаем единый style.css (в нём должны быть стили для flipbook, книги, шрифтов, лого, картинок и пр.) -->
+  <!-- Подключаем единый style.css (с общими стилями для сайта и книги) -->
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- Дополнительные стили для верстки книги -->
+  <!-- Дополнительные стили для книги -->
   <style>
     /* Кнопка "На главную" – фиксированная в левом верхнем углу */
     .exit-button {
@@ -28,12 +28,12 @@
       font-weight: bold;
       border-radius: 4px;
     }
-    /* Контейнер книги – центрирован, занимает почти весь экран, но с отступами */
+    /* Контейнер книги – центрирован, занимает почти весь экран, с отступами как на столе */
     .flipbook-container {
       width: 90%;
       max-width: 1200px;
       height: 90vh;
-      margin: 80px auto; /* отступ сверху, чтобы не мешала кнопка */
+      margin: 80px auto; /* отступ сверху для кнопки "На главную" */
       box-shadow: 0 0 20px rgba(0,0,0,0.3);
       background: #fff;
       position: relative;
@@ -49,7 +49,7 @@
       padding: 40px;
       box-sizing: border-box;
       overflow: hidden;
-      font-family: 'Times New Roman', serif; /* пример шрифта для книги */
+      font-family: 'Times New Roman', serif;
       color: #000;
     }
     /* Стили для обложки книги */
@@ -78,7 +78,7 @@
     }
   </style>
 </head>
-<body>
+<body class="book">
 
   <!-- Кнопка "На главную" в левом верхнем углу -->
   <a class="exit-button" href="index.html">На главную</a>
@@ -131,7 +131,7 @@
         </p>
       </div>
 
-      <!-- Страница 4: ЗАГЛУШКА (остальное скрыто) -->
+      <!-- Страница 4: Заглушка (остальное скрыто) -->
       <div class="page">
         <h3>Remaining Chapters Are Locked</h3>
         <p>
