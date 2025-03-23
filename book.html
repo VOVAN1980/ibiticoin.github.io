@@ -39,23 +39,23 @@
 
     /* Контейнер для 3 разворотов => 6 страниц */
     .double-page {
-      width: 1600px;      /* ширина "книги" */
-      height: 1000px;     /* высота "книги" */
-      margin: 0 auto;     /* книга поднята выше (0 сверху) */
-      display: none;      /* по умолчанию скрыт */
+      width: 1500px;    /* слегка уменьшили ширину книги (было 1600px) */
+      height: 1000px;   /* высота книги */
+      margin: 0 auto;   /* убираем все отступы сверху/снизу, чтобы книга была "поднята" */
+      display: none;    /* по умолчанию скрыто */
       position: relative;
     }
     .double-page.active {
-      display: flex;      /* показываем текущий разворот */
+      display: flex;    /* показываем текущий разворот */
     }
 
     /* Каждая страница (левая/правая) */
     .page {
       width: 50%;
-      height: 100%;         /* 1000px */
+      height: 100%;      /* 1000px */
       box-sizing: border-box;
-      background: #f4f4f4;  /* светлый фон */
-      color: #000;          /* чёрный текст */
+      background: #f4f4f4; /* светлый фон */
+      color: #000;         /* чёрный текст */
       display: flex;
       flex-direction: column;
       justify-content: center; /* вертикальное центрирование */
@@ -182,7 +182,7 @@ Each chapter is a mirror. A revelation. A warning. As the hero wanders through t
     <div class="page">
       <h2>The Path of Humanity</h2>
       <h3>by IBITIcoin</h3>
-      <img src="img/ibi-coin.png" alt="IBI Coin" style="max-width:250px;">
+      <img src="img/ibi-coin.jpg" alt="IBI Coin" style="max-width:250px;">
       <p style="text-align:center;">
 “A book to read — or to live through”<br>
 ibiticoin.com
