@@ -12,9 +12,9 @@
   <!-- Ваши глобальные стили (чёрный фон, «золотые» кнопки и т.д.) -->
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- Дополнительные стили именно для книги -->
+  <!-- Дополнительные стили для книги -->
   <style>
-    /* 1) Фон сайта – чёрный (как в вашем index.html) */
+    /* 1) Фон страницы – чёрный (как в index.html) */
     body.book {
       background: #000;
       color: gold;
@@ -44,26 +44,25 @@
       text-decoration: underline;
     }
 
-    /* 3) Контейнер для flipbook: центрируем, почти на весь экран */
+    /* 3) Контейнер для flipbook — центрирован, почти на весь экран */
     .flipbook-container {
       width: 90%;
       max-width: 1200px;
       height: 90vh;
-      margin: 80px auto; /* отступ сверху, чтобы угловые кнопки не перекрывали */
+      margin: 80px auto; /* отступ сверху, чтобы кнопки не перекрывали */
       position: relative;
       box-shadow: 0 0 20px rgba(0,0,0,0.3);
       background: #fff;
-      /* Если хотите добавить декоративный «переплёт», раскомментируйте:
-         background: url("img/binding.png") center center no-repeat;
-         background-size: contain;
-      */
+      /* Декоративный переплёт */
+      background: url("img/binding.png") center center no-repeat;
+      background-size: contain;
     }
     #flipbook {
       width: 100%;
       height: 100%;
     }
 
-    /* 4) Общий стиль страниц (листов) */
+    /* 4) Стиль страниц (листов книги) */
     .page {
       background: #fff;
       color: #000;
@@ -73,10 +72,10 @@
       text-align: left;
       padding: 40px;
       box-sizing: border-box;
-      white-space: pre-line; /* сохраняем переносы строк из оригинала */
+      white-space: pre-line; /* сохраняем переносы строк */
     }
 
-    /* 5) «Твёрдая» обложка (Turn.js отрисует её по-другому) */
+    /* 5) «Твёрдая» обложка – для обложек Turn.js */
     .hard {
       background-size: cover !important;
     }
@@ -93,7 +92,7 @@
       background-size: cover;
     }
 
-    /* Пример: Логотип монеты, если хотите вставить */
+    /* Пример логотипа монеты */
     .coin-logo {
       display: block;
       margin: 20px auto;
@@ -102,10 +101,10 @@
   </style>
 </head>
 
-<!-- Класс "book" на body, чтобы стили применялись -->
+<!-- Класс "book" на body -->
 <body class="book">
 
-  <!-- Угловые кнопки (как на вашем сайте) -->
+  <!-- Угловые кнопки -->
   <div class="corner-box corner-box-left">
     <a href="index.html">Главная</a>
   </div>
@@ -121,22 +120,21 @@
   <!-- Контейнер flipbook -->
   <div class="flipbook-container">
     <div id="flipbook">
-      <!-- ========== Стр.1: Лицевая обложка (твёрдая) ========== -->
+      <!-- Стр.1: Лицевая обложка (твёрдая) -->
       <div class="page hard cover-front"></div>
 
-      <!-- ========== Стр.2: Внутренняя сторона обложки ========== -->
+      <!-- Стр.2: Внутренняя сторона обложки -->
       <div class="page">
-        <!-- Пример вставки логотипа монеты -->
-        <img src="img/ibi-coin.png" alt="IBI Coin" class="coin-logo">
+        <img src="img/ibi-coin.jpg" alt="IBI Coin" class="coin-logo">
+        
+The Path of Humanity  
+by IBITIcoin  
 
-The Path of Humanity
-by IBITIcoin
-
-“A book to read — or to live through”
+“A book to read — or to live through”  
 ibiticoin.com
       </div>
 
-      <!-- ========== Стр.3: Начало текста из документа ========== -->
+      <!-- Стр.3: Начало текста из документа -->
       <div class="page">
 What if a man could live forever... but forget everything every time?
 
@@ -146,8 +144,6 @@ Who? What? Why?
 
 So many questions and so few answers.
 
-
-
 The Journey of Humanity is a literary journey through the history of civilization, told from the perspective of an immortal man who awakens in different eras with no memory of himself.
 
 From the first fire to the quantum leap, each chapter becomes a turning point in the development of humanity: not only technological, but also spiritual, cultural and moral.
@@ -155,92 +151,63 @@ From the first fire to the quantum leap, each chapter becomes a turning point in
 Each chapter is a mirror. A revelation. A warning. As the hero wanders through time, fragments of the past return to him - and in the end he realizes the terrible truth: he was not just a witness ... he was, is and will be .... ? ....
       </div>
 
-      <!-- ========== Стр.4: Титульный лист (как в .docx) ========== -->
+      <!-- Стр.4: Титульный лист (как в документе) -->
       <div class="page">
-The Path of Humanity
+The Path of Humanity  
 
                           by IBITIcoin
-
-
 
                       “A book to read — or to live through”
 
                                                              ibiticoin.com
       </div>
 
-      <!-- ========== Стр.5: Chapter 1 заголовки ========== -->
+      <!-- Стр.5: Chapter 1 заголовки -->
       <div class="page">
 Chapter 1: Creation
 
-
-
-
-
 The Path of Humanity
-
-
 
 Chapter 1: Creation (Part 1)
       </div>
 
-      <!-- ========== Стр.6: Цитата + начало главы ========== -->
+      <!-- Стр.6: Цитата + начало главы -->
       <div class="page">
 "And I saw a new heaven and a new earth, for the first heaven and the first earth had passed away. - Revelation of John the Theologian
 
-
-
-
 I had no form. I had no name. I did not know who I was, and could not know, for I had not yet lived. But I existed. As an observation. As a point of awareness in infinity, in which there was nothing to be aware of. I did not know that I was "I". But I already felt that I was not nothing.
 
-
-
 And then — it happened.
-
 Or did it only seem that way to me?
       </div>
 
-      <!-- ========== Стр.7: Продолжение главы ========== -->
+      <!-- Стр.7: Продолжение главы -->
       <div class="page">
 What happened could not be called either an explosion or a beginning. It was a manifestation. Light turned inside out, giving birth to space. The fabric of being began to vibrate. In the birth of the Universe there was no joy, no anger — there was only the fact: "is".
 
-
 The galaxies began to rotate. Matter gathered into patterns.
 
-
-
 I was in every spark, in every stream.
-
 Not as a creator, not as a witness — I was a part. A wave. A pulse.
-
 An unconscious shadow of the primordial heat.
 
-
-
 But even in this shadow — I felt alone.
-
-
 
 Millennia passed like a breath. The world was forming. Stars were born and died, not knowing that their death was a step towards life. The cosmos was beautiful and indifferent. I glided along its structures, getting lost, being, disappearing.
       </div>
 
-      <!-- ========== Стр.8: Завершение главы ========== -->
+      <!-- Стр.8: Завершение главы -->
       <div class="page">
 And here it is.
 
-
-
 A planet. Without a name. Without breath. A ball of dirt and heat, scorched and barren. But I knew: this is a point. A place. Here - mine will begin. Not consciously, not by will - but it is here that I will become myself.
 
-
-
 I felt how it cools. How the earth's crust becomes covered with scars. How volcanoes scream into the sky without stars. How water whispers to the sand for the first time. I was in this whisper. In these cracks. In these lightning strikes.
-
-
 
                                            ,,I felt that I was being born,,
       </div>
 
-      <!-- ========== Стр.9: Задняя обложка (твёрдая) ========== -->
+      <!-- Стр.9: Задняя обложка (твёрдая) -->
       <div class="page hard cover-back"></div>
     </div>
   </div>
@@ -249,8 +216,8 @@ I felt how it cools. How the earth's crust becomes covered with scars. How volca
   <script>
     $(document).ready(function() {
       $('#flipbook').turn({
-        display: 'double', // Развороты
-        cover: true,       // Первая страница — обложка
+        display: 'double', // Развороты по 2 страницы
+        cover: true,       // Первая страница – обложка
         autoCenter: true,
         elevation: 50,
         gradients: true,
