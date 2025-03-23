@@ -16,7 +16,7 @@
       background: #000;  /* Чёрный фон сайта */
       color: #fff;
       font-family: "Times New Roman", serif;
-      overflow-x: hidden; /* чтобы не было горизонтальной прокрутки */
+      overflow-x: hidden; /* убираем горизонтальную прокрутку */
     }
 
     /* Кнопка "На главную" (в левом верхнем углу) */
@@ -37,35 +37,35 @@
       background: rgba(0,0,0,0.9);
     }
 
-    /* Контейнер для 3 разворотов (каждый разворот – 2 страницы) */
+    /* Контейнер для 3 разворотов => 6 страниц */
     .double-page {
-      width: 1400px;       /* ширина "книги" */
-      height: 900px;       /* высота "книги" */
-      margin: 20px auto;   /* отступ сверху = 20px, чтобы книга была выше */
-      display: none;       /* по умолчанию скрыт */
+      width: 1600px;      /* увеличили ширину */
+      height: 1000px;     /* увеличили высоту */
+      margin: 20px auto;  /* отступ сверху 20px, чтобы книга была выше */
+      display: none;      /* по умолчанию скрыт */
       position: relative;
     }
     .double-page.active {
-      display: flex;       /* показываем текущий разворот */
+      display: flex;      /* показываем текущий разворот */
     }
 
     /* Каждая страница (левая/правая) */
     .page {
-      width: 50%;
-      height: 100%;        /* 900px */
+      width: 50%;              /* половина разворота */
+      height: 100%;            /* 1000px */
       box-sizing: border-box;
-      background: #f4f4f4; /* светлый фон (как Word) */
-      color: #000;         /* чёрный текст */
+      background: #f4f4f4;     /* светлый фон */
+      color: #000;             /* чёрный текст */
       display: flex;
       flex-direction: column;
-      justify-content: center; /* по центру по вертикали */
-      align-items: center;     /* по центру по горизонтали */
+      justify-content: center; /* вертикальное центрирование */
+      align-items: center;     /* горизонтальное центрирование */
       padding: 40px;
-      overflow: hidden;        /* без прокрутки – текст должен уместиться */
+      overflow: hidden;        /* без прокрутки – текст должен поместиться */
       white-space: pre-line;   /* переносы строк */
     }
 
-    /* Изображения (обложки, лого, звёздная картинка) */
+    /* Изображения */
     .page img {
       max-width: 100%;
       max-height: 100%;
@@ -74,20 +74,25 @@
       object-fit: cover;
     }
 
-    /* Заголовки/параграфы: делаем шрифт крупнее, жирнее, и уменьшаем межстрочный интервал */
+    /* Заголовки/параграфы – шрифт побольше и жирнее */
     .page h2, .page h3 {
       margin: 10px 0;
       text-align: center;
-      font-size: 1.4em;    /* крупнее */
+      font-size: 1.4em;   /* крупнее */
       font-weight: bold;
     }
     .page p {
-      font-size: 1.2em;    /* крупнее */
-      font-weight: bold;   /* жирнее */
-      line-height: 1.3;    /* уменьшили межстрочный интервал */
+      font-size: 1.2em;   /* крупнее */
+      font-weight: bold;  /* жирнее */
+      line-height: 1.3;   /* уменьшенный межстрочный интервал */
       margin: 0;
-      text-align: center;
-      width: 80%;          /* немного уже, чтобы всё влезло */
+      text-align: center; /* центр по умолчанию */
+      width: 80%;         /* немного уже */
+    }
+
+    /* Для страницы с логотипом монеты, но левое выравнивание текста */
+    .page.left-align p {
+      text-align: left;   /* левое выравнивание */
     }
 
     /* Кнопки «←» и «→» – внизу */
@@ -103,7 +108,7 @@
       z-index: 1000;
     }
     #prevButton {
-      left: 80px; /* отступ, чтобы не наезжать на кнопку "На главную" */
+      left: 80px; /* чтобы не наезжать на кнопку "На главную" */
     }
     #nextButton {
       right: 20px;
@@ -112,8 +117,8 @@
 
   <script>
     $(document).ready(function(){
-      var currentSpread = 1;    // текущий разворот (1..3)
-      var totalSpreads = 3;    // всего 3 разворота => 6 страниц
+      var currentSpread = 1;  // текущий разворот (1..3)
+      var totalSpreads = 3;  // всего 3 разворота => 6 страниц
 
       // Показываем первый разворот
       $(".double-page[data-spread='1']").addClass("active");
@@ -149,7 +154,7 @@
     <div class="page">
       <img src="img/cover-front.jpg" alt="Cover Front" style="width:100%; height:100%;">
     </div>
-    <!-- Правая страница: «What if a man...», крупнее/жирнее, по центру -->
+    <!-- Правая страница: «What if a man...», центрированный текст -->
     <div class="page">
       <p>
 What if a man could live forever... but forget everything every time?
@@ -166,8 +171,8 @@ Each chapter is a mirror. A revelation. A warning. As the hero wanders through t
 
   <!-- Разворот 2 -->
   <div class="double-page" data-spread="2">
-    <!-- Левая страница: «The Path of Humanity... + логотип» -->
-    <div class="page">
+    <!-- Левая страница: «The Path of Humanity... + логотип», но с левым выравниванием -->
+    <div class="page left-align">
       <img src="img/ibi-coin.jpg" alt="IBI Coin" style="max-width:200px;">
       <h2>The Path of Humanity</h2>
       <h3>by IBITIcoin</h3>
@@ -193,7 +198,7 @@ Chapter 1: Creation (Part 1)
 
   <!-- Разворот 3 -->
   <div class="double-page" data-spread="3">
-    <!-- Левая страница: остальной текст главы -->
+    <!-- Левая страница: остальной текст главы (по центру) -->
     <div class="page">
       <p>
 I had no form. I had no name. I did not know who I was, and could not know, for I had not yet lived. But I existed. As an observation. As a point of awareness in infinity, in which there was nothing to be aware of. I did not know that I was "I". But I already felt that I was not nothing.
