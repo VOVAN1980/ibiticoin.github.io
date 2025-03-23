@@ -2,262 +2,118 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>The Path of Humanity – Final Cover</title>
+  <title>The Path of Humanity – Flipbook</title>
 
-  <!-- Google Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Подключаем jQuery и Turn.js для перелистывания -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/turn.js/dist/turn.min.js"></script>
 
-  <style>
-    * {
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box;
-    }
-    html, body {
-      width: 100%;
-      height: 100%;
-      background: #000;   /* общий чёрный фон */
-      color: #fff;
-      font-family: 'Open Sans', sans-serif;
-      overflow: hidden;   /* скрываем скролл */
-    }
-    /* Каждая страница на весь экран */
-    .fullscreen {
-      width: 100%;
-      height: 100vh;
-      display: none;      /* скрыта, кроме .show */
-      position: relative; 
-      justify-content: center; /* по центру горизонтали */
-      align-items: center;     /* по центру вертикали */
-      text-align: center;
-      padding: 40px 20px;
-    }
-    .show {
-      display: flex;
-    }
-    /* Логотип по центру сверху */
-    .page-logo {
-      position: absolute;
-      top: 15px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 120px; 
-      height: auto;
-    }
-    /* Кнопка «Back to Main» (corner-box) в правом верхнем углу */
-    .corner-box-right-top {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background: rgba(0,0,0,0.7);
-      border: 2px solid gold;
-      border-radius: 5px;
-      padding: 5px 10px;
-    }
-    .corner-box-right-top a {
-      color: gold;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    /* Кнопки Prev / Next внизу */
-    .nav-area {
-      position: absolute;
-      bottom: 15px;
-      width: 100%;
-      text-align: center;
-    }
-    .nav-area button {
-      padding: 10px 20px;
-      margin: 0 5px;
-      background: gold;
-      color: #000;
-      border: none;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .nav-area button:hover {
-      background: #c0a000;
-    }
-
-    /* Стиль для текста на страницах 2..5 */
-    .text-box {
-      max-width: 800px;
-      margin: 0 auto;
-      line-height: 1.5;
-      font-size: 16px;
-    }
-    .text-box h2, .text-box h3 {
-      color: #ffd700;
-      margin-bottom: 10px;
-    }
-    .text-box p {
-      margin: 10px 0;
-    }
-
-    /* Первая страница (обложка) */
-    .cover {
-      /* нет background-image, 
-         вместо этого обычное <img> в центре */
-    }
-    /* Класс для обложки (картинка + текст под ней) */
-    .cover-content {
-      display: flex;
-      flex-direction: column; 
-      align-items: center;
-      justify-content: center;
-    }
-    .cover-img {
-      width: 600px; /* размер обложки, меняйте по вкусу */
-      max-width: 90%; /* чтобы влезал на мобильных */
-      height: auto;
-      margin-bottom: 20px;
-    }
-    .cover-title {
-      font-size: 1.8rem;
-      color: #ffd700;
-      margin-bottom: 5px;
-    }
-    .cover-subtitle {
-      font-size: 1.2rem;
-      color: #ffd700;
-    }
-    .cover-sub2 {
-      font-size: 1rem;
-      color: #ffd700;
-      margin-top: 10px;
-    }
-  </style>
+  <!-- Подключаем ваш единый style.css (где есть стили flipbook и "золотая" тема) -->
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<!-- ================ Page 1: Cover ================ -->
-<div id="page-1" class="fullscreen cover show">
-  <!-- Логотип -->
-  <img src="img/logo.png" alt="Logo" class="page-logo">
-  <!-- Back to Main -->
-  <div class="corner-box-right-top">
-    <a href="index.html">Back to Main</a>
+  <!-- Контейнер под flipbook -->
+  <div class="flipbook-container">
+    <div id="flipbook" class="flipbook">
+
+      <!-- Страница 1: Обложка -->
+      <div class="page cover">
+        <h2>The Path of Humanity</h2>
+        <p>by IBITIcoin</p>
+      </div>
+
+      <!-- Страница 2: Вступление (текст из docx до Chapter 1) -->
+      <div class="page">
+        <h3>What if a man could live forever... but forget everything every time?</h3>
+        <p>
+What if a man could live forever... but forget everything every time?
+
+Or can a man live forever?
+
+Who? What? Why?
+
+So many questions and so few answers.
+
+
+The Journey of Humanity is a literary journey through the history of civilization, told from the perspective of an immortal man who awakens in different eras with no memory of himself.
+
+From the first fire to the quantum leap, each chapter becomes a turning point in the development of humanity: not only technological, but also spiritual, cultural and moral.
+
+Each chapter is a mirror. A revelation. A warning. As the hero wanders through time, fragments of the past return to him - and in the end he realizes the terrible truth: he was not just a witness ... he was, is and will be .... ? ....
+
+
+The Path of Humanity
+
+by IBITIcoin
+
+“A book to read — or to live through”
+
+ibiticoin.com
+        </p>
+      </div>
+
+      <!-- Страница 3: Chapter 1: Creation (Part 1) -->
+      <div class="page">
+        <h3>Chapter 1: Creation (Part 1)</h3>
+        <p>
+"And I saw a new heaven and a new earth, for the first heaven and the first earth had passed away. - Revelation of John the Theologian
+
+
+I had no form. I had no name. I did not know who I was, and could not know, for I had not yet lived. But I existed. As an observation. As a point of awareness in infinity, in which there was nothing to be aware of. I did not know that I was "I". But I already felt that I was not nothing.
+
+
+And then — it happened.
+Or did it only seem that way to me?
+
+
+What happened could not be called either an explosion or a beginning. It was a manifestation. Light turned inside out, giving birth to space. The fabric of being began to vibrate. In the birth of the Universe there was no joy, no anger — there was only the fact: "is".
+
+
+The galaxies began to rotate. Matter gathered into patterns.
+
+I was in every spark, in every stream.
+Not as a creator, not as a witness — I was a part. A wave. A pulse.
+An unconscious shadow of the primordial heat.
+
+But even in this shadow — I felt alone.
+
+
+Millennia passed like a breath. The world was forming. Stars were born and died, not knowing that their death was a step towards life. The cosmos was beautiful and indifferent. I glided along its structures, getting lost, being, disappearing.
+
+And here it is.
+
+A planet. Without a name. Without breath. A ball of dirt and heat, scorched and barren. But I knew: this is a point. A place. Here - mine will begin. Not consciously, not by will - but it is here that I will become myself.
+
+
+I felt how it cools. How the earth's crust becomes covered with scars. How volcanoes scream into the sky without stars. How water whispers to the sand for the first time. I was in this whisper. In these cracks. In these lightning strikes.
+
+“I felt that I was being born,”
+        </p>
+      </div>
+
+      <!-- Страница 4: ЗАГЛУШКА (остальное скрыто) -->
+      <div class="page">
+        <h3>Remaining Chapters Are Locked</h3>
+        <p>
+To get full access, become a holder of our NFT collection.
+The full text will be available only to verified owners in the future.
+        </p>
+      </div>
+
+    </div>
   </div>
 
-  <div class="cover-content">
-    <!-- Обложка-картинка -->
-    <img src="img/cover.png" alt="Cover" class="cover-img">
-
-    <!-- Текст под картинкой -->
-    <div class="cover-title">The Path of Humanity</div>
-    <div class="cover-subtitle">by IBITIcoin</div>
-    <div class="cover-sub2">“A book to read — or to live through”<br>ibiticoin.com</div>
-  </div>
-</div>
-
-<!-- ================ Page 2 ================ -->
-<div id="page-2" class="fullscreen" style="background:#000;">
-  <img src="img/logo.png" alt="Logo" class="page-logo">
-  <div class="corner-box-right-top">
-    <a href="index.html">Back to Main</a>
-  </div>
-  <div class="text-box">
-    <h2>What if a man could live forever...</h2>
-    <p>
-      What if a man could live forever... but forget everything every time?<br>
-      Or can a man live forever?<br>
-      Who? What? Why?<br>
-      So many questions and so few answers
-    </p>
-  </div>
-</div>
-
-<!-- ================ Page 3 ================ -->
-<div id="page-3" class="fullscreen" style="background:#000;">
-  <img src="img/logo.png" alt="Logo" class="page-logo">
-  <div class="corner-box-right-top">
-    <a href="index.html">Back to Main</a>
-  </div>
-  <div class="text-box">
-    <p><strong>The Path of Humanity<br>
-    by IBITIcoin<br>
-    “A book to read — or to live through”<br>
-    ibiticoin.com</strong></p>
-
-    <h3>The Journey of Humanity</h3>
-    <p>
-      The Journey of Humanity is a literary journey through the history of civilization,
-      told from the perspective of an immortal man who awakens in different eras with no memory of himself.
-    </p>
-    <p>
-      From the first fire to the quantum leap, each chapter becomes a turning point in the development of humanity:
-      not only technological, but also spiritual, cultural and moral.
-    </p>
-    <p>
-      Each chapter is a mirror. A revelation. A warning. As the hero wanders through time,
-      fragments of the past return to him - and in the end he realizes the terrible truth:
-      he was not just a witness ... he was, is and will be .... ? ....
-    </p>
-  </div>
-</div>
-
-<!-- ================ Page 4 ================ -->
-<div id="page-4" class="fullscreen" style="background:#000;">
-  <img src="img/logo.png" alt="Logo" class="page-logo">
-  <div class="corner-box-right-top">
-    <a href="index.html">Back to Main</a>
-  </div>
-  <div class="text-box">
-    <h3>Chapter 1: Creation (Part 1)</h3>
-    <p>
-      "And I saw a new heaven and a new earth, for the first heaven and the first earth had passed away...
-      (Вставить текст до “I felt that I was being born,”)
-    </p>
-  </div>
-</div>
-
-<!-- ================ Page 5 LOCKED ================ -->
-<div id="page-5" class="fullscreen" style="background:#000;">
-  <img src="img/logo.png" alt="Logo" class="page-logo">
-  <div class="corner-box-right-top">
-    <a href="index.html">Back to Main</a>
-  </div>
-  <div class="text-box">
-    <h2>Remaining Chapters Are Locked</h2>
-    <p>
-      To get full access, become a holder of our NFT collection.<br>
-      The full text will be available only to verified owners in the future.
-    </p>
-  </div>
-</div>
-
-<!-- Buttons Prev / Next -->
-<div class="nav-area">
-  <button onclick="prevPage()">Prev</button>
-  <button onclick="nextPage()">Next</button>
-</div>
-
-<script>
-  let currentPage = 1;
-  const totalPages = 5;
-
-  function showPage(num) {
-    for(let i=1; i<=totalPages; i++){
-      document.getElementById('page-'+i).classList.remove('show');
-    }
-    document.getElementById('page-'+num).classList.add('show');
-  }
-
-  function nextPage(){
-    currentPage++;
-    if(currentPage>totalPages) currentPage=totalPages;
-    showPage(currentPage);
-  }
-
-  function prevPage(){
-    currentPage--;
-    if(currentPage<1) currentPage=1;
-    showPage(currentPage);
-  }
-</script>
+  <!-- Инициализируем flipbook -->
+  <script>
+    $(document).ready(function(){
+      $('#flipbook').turn({
+        width: 800,
+        height: 500,
+        autoCenter: true
+      });
+    });
+  </script>
 
 </body>
 </html>
