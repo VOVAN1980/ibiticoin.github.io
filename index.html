@@ -38,16 +38,16 @@
     gtag('config', 'G-T5DF4BLR5S');
   </script>
 
-  <!-- Добавляем адаптивные стили для блока .extra-buttons-section -->
+  <!-- Адаптивные стили для блока с дополнительными кнопками -->
   <style>
     .extra-buttons-section {
       display: flex;              /* Используем флекс */
       flex-wrap: wrap;            /* Разрешаем перенос */
       justify-content: center;    /* Центрируем кнопки */
       gap: 10px;                  /* Расстояние между кнопками */
-      margin: 40px auto;          /* Пример отступов сверху/снизу */
-      max-width: 1200px;          /* Можно ограничить ширину */
-      text-align: center;         /* На случай если что-то ломается */
+      margin: 40px auto;          /* Отступы сверху/снизу */
+      max-width: 1200px;          /* Ограничиваем ширину */
+      text-align: center;
     }
     .extra-buttons-section .btn-small {
       display: inline-block;
@@ -63,21 +63,20 @@
       background: #c0a000;
       color: #000;
     }
-
-    /* Адаптив: при узком экране (<= 600px) делаем кнопки в столбик */
+    /* Адаптивное поведение для мобильных устройств */
     @media (max-width: 600px) {
       .extra-buttons-section {
-        flex-direction: column;   /* Вертикальный столбик */
-        align-items: center;      /* Центрируем по горизонтали */
+        flex-direction: column;   /* Кнопки располагаются вертикально */
+        align-items: center;
       }
       .extra-buttons-section .btn-small {
-        width: 80%;              /* Пусть кнопки занимают 80% ширины */
-        max-width: 300px;        /* Но не больше 300px */
-        margin: 5px 0;           /* Небольшой отступ между кнопками */
+        width: 80%;
+        max-width: 300px;
+        margin: 5px 0;
       }
     }
   </style>
-
+  
 </head>
 <body>
 
@@ -98,7 +97,6 @@
 
   <!-- Шапка с логотипом -->
   <header class="hero-header">
-    <!-- Убедись, что logo.png лежит в папке img/ -->
     <img src="img/logo.png" alt="IBITIcoin Logo" width="200">
     <h1>IBITIcoin</h1>
     <p>Stability | Innovation | Accessibility</p>
@@ -108,8 +106,7 @@
   <section class="gold-section" data-aos="fade-up">
     <h2>WHY CHOOSE IBITIcoin?</h2>
     <p>
-      IBITIcoin – это инновационная криптовалюта, созданная для быстрой, безопасной 
-      и доступной работы в цифровой экономике...
+      IBITIcoin – это инновационная криптовалюта для быстрой, безопасной и доступной работы в цифровой экономике...
     </p>
     <a class="btn" href="buy.html">Buy IBITIcoin</a>
   </section>
@@ -122,7 +119,6 @@
     <a class="btn-small" href="coin-chart.html">График</a>
     <a class="btn-small" href="nft.html">NFT Галерея</a>
     <a class="btn-small" href="shop.html">Магазин</a>
-    <!-- Новая кнопка «Книга» (ведёт на book.html) -->
     <a class="btn-small" href="book.html">Книга</a>
   </section>
 
