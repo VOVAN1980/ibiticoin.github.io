@@ -2,36 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>The Path of Humanity – 3 Double-Pages</title>
+  <title>The Path of Humanity – Double Page</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- Подключаем jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
   <style>
-    /* Общий фон — чёрный */
+    /* Общий фон – чёрный */
     body {
       margin: 0;
       padding: 0;
-      background: #000;      /* чёрный фон сайта */
-      color: #fff;           /* текст по умолчанию — белый */
+      background: #000;  /* Чёрный фон */
+      color: #fff;
       font-family: "Times New Roman", serif;
+      overflow-x: hidden; /* чтобы не было горизонтальной прокрутки */
     }
 
-    /* Каждый «двойной разворот» */
+    /* Кнопка "На главную" (в левом верхнем углу) */
+    .exit-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid gold;
+      color: gold;
+      padding: 10px 15px;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 5px;
+      z-index: 1000;
+    }
+    .exit-button:hover {
+      background: rgba(0,0,0,0.9);
+    }
+
+    /* Контейнер для разворотов (каждый разворот – 2 страницы) */
     .double-page {
-      display: flex;          /* две страницы в ряд */
-      justify-content: center;
-      max-width: 1600px;      /* ограничиваем общую ширину */
-      margin: 40px auto;      /* отступы сверху/снизу */
+      width: 1200px;        /* фиксированная ширина для "разворота" */
+      height: 800px;        /* фиксированная высота */
+      margin: 60px auto;    /* центрируем */
+      display: none;        /* по умолчанию скрыто */
+      position: relative;
+    }
+    .double-page.active {
+      display: flex;        /* только активный разворот виден */
     }
 
     /* Каждая страница (левая/правая) */
     .page {
-      flex: 0 0 50%;          /* каждая страница = 50% контейнера */
+      width: 50%;           /* половина разворота */
+      height: 100%;         /* высота = 800px */
       box-sizing: border-box;
+      background: #f4f4f4;  /* светлый фон, как в Word */
+      color: #000;          /* чёрный текст */
       padding: 40px;
-      background: #f4f4f4;    /* светлый фон, как в документе Word */
-      color: #000;            /* чёрный текст */
-      margin: 0 10px;         /* небольшой отступ между страницами */
-      white-space: pre-line;  /* сохраняем переносы строк */
+      overflow-y: auto;     /* если текст не помещается, будет прокрутка */
+      white-space: pre-line;/* сохраняем переносы строк */
     }
 
     /* Изображения внутри страницы */
@@ -51,17 +78,67 @@
       line-height: 1.6;
       margin-bottom: 20px;
     }
+
+    /* Кнопки навигации (← и →) – вверху справа/слева */
+    .nav-button {
+      position: fixed;
+      top: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid gold;
+      color: gold;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 1000;
+    }
+    #prevButton {
+      left: 80px; /* чтоб не наезжать на кнопку "На главную" */
+    }
+    #nextButton {
+      right: 20px;
+    }
   </style>
+
+  <script>
+    $(document).ready(function(){
+      var currentSpread = 1;      // текущий разворот (1..3)
+      var totalSpreads = 3;      // всего 3 разворота
+
+      // Показываем первый разворот
+      $(".double-page[data-spread='1']").addClass("active");
+
+      // Кнопка «←»
+      $("#prevButton").click(function(){
+        if(currentSpread > 1){
+          $(".double-page[data-spread='" + currentSpread + "']").removeClass("active");
+          currentSpread--;
+          $(".double-page[data-spread='" + currentSpread + "']").addClass("active");
+        }
+      });
+
+      // Кнопка «→»
+      $("#nextButton").click(function(){
+        if(currentSpread < totalSpreads){
+          $(".double-page[data-spread='" + currentSpread + "']").removeClass("active");
+          currentSpread++;
+          $(".double-page[data-spread='" + currentSpread + "']").addClass("active");
+        }
+      });
+    });
+  </script>
 </head>
 <body>
 
+  <!-- Кнопка "На главную" -->
+  <a class="exit-button" href="index.html">На главную</a>
+
   <!-- Разворот 1 -->
-  <div class="double-page">
-    <!-- Левая страница: Лицевая обложка -->
+  <div class="double-page active" data-spread="1">
+    <!-- Левая страница (лицевая обложка) -->
     <div class="page">
       <img src="img/cover-front.jpg" alt="Cover Front">
     </div>
-    <!-- Правая страница: «What if a man could live forever…» -->
+    <!-- Правая страница ("What if a man...") -->
     <div class="page">
       <p>
 What if a man could live forever... but forget everything every time?
@@ -77,18 +154,18 @@ Each chapter is a mirror. A revelation. A warning. As the hero wanders through t
   </div>
 
   <!-- Разворот 2 -->
-  <div class="double-page">
-    <!-- Левая страница: «The Path of Humanity» + логотип -->
+  <div class="double-page" data-spread="2">
+    <!-- Левая страница ("The Path of Humanity..." + логотип) -->
     <div class="page">
-      <img src="img/ibi-coin.jpg" alt="IBI Coin" style="max-width:200px;">
+      <img src="img/ibi-coin.jpg" alt="IBI Coin" style="max-width:150px;">
       <h2>The Path of Humanity</h2>
       <h3>by IBITIcoin</h3>
       <p>
-"A book to read — or to live through"<br>
+“A book to read — or to live through”<br>
 ibiticoin.com
       </p>
     </div>
-    <!-- Правая страница: космическая картинка + начало Chapter 1 -->
+    <!-- Правая страница (звёздная картинка + начало Chapter 1) -->
     <div class="page">
       <img src="img/cosmic-stars.jpg" alt="Cosmic Stars" style="max-width:300px;">
       <p>
@@ -104,8 +181,8 @@ Chapter 1: Creation (Part 1)
   </div>
 
   <!-- Разворот 3 -->
-  <div class="double-page">
-    <!-- Левая страница: остальной текст главы -->
+  <div class="double-page" data-spread="3">
+    <!-- Левая страница (остальной текст главы) -->
     <div class="page">
       <p>
 I had no form. I had no name. I did not know who I was, and could not know, for I had not yet lived. But I existed. As an observation. As a point of awareness in infinity, in which there was nothing to be aware of. I did not know that I was "I". But I already felt that I was not nothing.
@@ -133,11 +210,15 @@ I felt how it cools. How the earth's crust becomes covered with scars. How volca
                                            ,,I felt that I was being born,,
       </p>
     </div>
-    <!-- Правая страница: Задняя обложка -->
+    <!-- Правая страница (задняя обложка) -->
     <div class="page">
       <img src="img/cover-back.jpg" alt="Cover Back">
     </div>
   </div>
+
+  <!-- Кнопки навигации "←" и "→" (вверху) -->
+  <div id="prevButton" class="nav-button">←</div>
+  <div id="nextButton" class="nav-button">→</div>
 
 </body>
 </html>
