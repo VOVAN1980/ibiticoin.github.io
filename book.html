@@ -2,39 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>The Path of Humanity – Two-page layout</title>
+  <title>The Path of Humanity – 3 Double-Pages</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    /* Общий фон – чёрный */
+    /* Общий фон — чёрный */
     body {
       margin: 0;
       padding: 0;
-      background: #000; /* чёрный */
-      color: #fff;      /* текст по умолчанию – белый */
+      background: #000;      /* чёрный фон сайта */
+      color: #fff;           /* текст по умолчанию — белый */
       font-family: "Times New Roman", serif;
     }
 
-    /* Контейнер для «разворота» (двух страниц) */
+    /* Каждый «двойной разворот» */
     .double-page {
-      display: flex;               /* две страницы рядом */
-      justify-content: center;     /* центрируем */
-      max-width: 1600px;          /* ограничиваем ширину */
-      margin: 40px auto;          /* отступы сверху/снизу */
+      display: flex;          /* две страницы в ряд */
+      justify-content: center;
+      max-width: 1600px;      /* ограничиваем общую ширину */
+      margin: 40px auto;      /* отступы сверху/снизу */
     }
 
-    /* Каждая «страница» */
+    /* Каждая страница (левая/правая) */
     .page {
-      flex: 0 0 50%;               /* каждая страница занимает 50% ширины контейнера */
+      flex: 0 0 50%;          /* каждая страница = 50% контейнера */
       box-sizing: border-box;
       padding: 40px;
-      background: #f4f4f4;        /* светлый фон (как в Word) */
-      color: #000;                /* чёрный текст */
-      margin: 0 10px;             /* небольшой отступ между страницами */
-      white-space: pre-line;      /* сохраняем переносы строк */
+      background: #f4f4f4;    /* светлый фон, как в документе Word */
+      color: #000;            /* чёрный текст */
+      margin: 0 10px;         /* небольшой отступ между страницами */
+      white-space: pre-line;  /* сохраняем переносы строк */
     }
 
-    /* Изображения внутри «страниц» */
+    /* Изображения внутри страницы */
     .page img {
       max-width: 100%;
       height: auto;
@@ -42,9 +42,7 @@
       margin: 0 auto 20px;
     }
 
-    /* Пример заголовков */
     .page h2, .page h3 {
-      color: #000;
       margin: 10px 0;
       text-align: center;
     }
@@ -57,9 +55,13 @@
 </head>
 <body>
 
-  <!-- Разворот 1: Левая страница (What if a man...), Правая страница (The Path of Humanity...) -->
+  <!-- Разворот 1 -->
   <div class="double-page">
-    <!-- Левая страница -->
+    <!-- Левая страница: Лицевая обложка -->
+    <div class="page">
+      <img src="img/cover-front.jpg" alt="Cover Front">
+    </div>
+    <!-- Правая страница: «What if a man could live forever…» -->
     <div class="page">
       <p>
 What if a man could live forever... but forget everything every time?
@@ -72,25 +74,23 @@ From the first fire to the quantum leap, each chapter becomes a turning point in
 Each chapter is a mirror. A revelation. A warning. As the hero wanders through time, fragments of the past return to him - and in the end he realizes the terrible truth: he was not just a witness ... he was, is and will be .... ? ....
       </p>
     </div>
-    <!-- Правая страница -->
+  </div>
+
+  <!-- Разворот 2 -->
+  <div class="double-page">
+    <!-- Левая страница: «The Path of Humanity» + логотип -->
     <div class="page">
-      <!-- Логотип (опционально) -->
-      <img src="img/ibi-coin.jpg" alt="IBI Coin" style="max-width:150px;">
+      <img src="img/ibi-coin.jpg" alt="IBI Coin" style="max-width:200px;">
       <h2>The Path of Humanity</h2>
       <h3>by IBITIcoin</h3>
       <p>
-        “A book to read — or to live through”<br>
-        ibiticoin.com
+"A book to read — or to live through"<br>
+ibiticoin.com
       </p>
     </div>
-  </div>
-
-  <!-- Разворот 2: Левая страница (Картинка + Chapter 1...), Правая страница (Остальной текст главы) -->
-  <div class="double-page">
-    <!-- Левая страница -->
+    <!-- Правая страница: космическая картинка + начало Chapter 1 -->
     <div class="page">
-      <!-- Звёздное изображение (cosmic-stars.jpg) -->
-      <img src="img/cosmic-stars.jpg" alt="Cosmic Stars" style="max-width:250px;">
+      <img src="img/cosmic-stars.jpg" alt="Cosmic Stars" style="max-width:300px;">
       <p>
 Chapter 1: Creation
 
@@ -101,7 +101,11 @@ Chapter 1: Creation (Part 1)
 "And I saw a new heaven and a new earth, for the first heaven and the first earth had passed away. - Revelation of John the Theologian
       </p>
     </div>
-    <!-- Правая страница -->
+  </div>
+
+  <!-- Разворот 3 -->
+  <div class="double-page">
+    <!-- Левая страница: остальной текст главы -->
     <div class="page">
       <p>
 I had no form. I had no name. I did not know who I was, and could not know, for I had not yet lived. But I existed. As an observation. As a point of awareness in infinity, in which there was nothing to be aware of. I did not know that I was "I". But I already felt that I was not nothing.
@@ -129,18 +133,11 @@ I felt how it cools. How the earth's crust becomes covered with scars. How volca
                                            ,,I felt that I was being born,,
       </p>
     </div>
-  </div>
-
-  <!-- Если нужно продолжение (3-й разворот), добавляйте аналогично:
-  <div class="double-page">
+    <!-- Правая страница: Задняя обложка -->
     <div class="page">
-      ...
-    </div>
-    <div class="page">
-      ...
+      <img src="img/cover-back.jpg" alt="Cover Back">
     </div>
   </div>
-  -->
 
 </body>
 </html>
