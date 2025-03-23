@@ -39,9 +39,9 @@
 
     /* Контейнер для 3 разворотов => 6 страниц */
     .double-page {
-      width: 1600px;      /* увеличили ширину */
-      height: 1000px;     /* увеличили высоту */
-      margin: 20px auto;  /* отступ сверху 20px, чтобы книга была выше */
+      width: 1600px;      /* ширина "книги" */
+      height: 1000px;     /* высота "книги" */
+      margin: 10px auto;  /* отступ сверху 10px => "поднято выше" */
       display: none;      /* по умолчанию скрыт */
       position: relative;
     }
@@ -51,11 +51,11 @@
 
     /* Каждая страница (левая/правая) */
     .page {
-      width: 50%;              /* половина разворота */
-      height: 100%;            /* 1000px */
+      width: 50%;
+      height: 100%;        /* 1000px */
       box-sizing: border-box;
-      background: #f4f4f4;     /* светлый фон */
-      color: #000;             /* чёрный текст */
+      background: #f4f4f4; /* светлый фон */
+      color: #000;         /* чёрный текст */
       display: flex;
       flex-direction: column;
       justify-content: center; /* вертикальное центрирование */
@@ -65,7 +65,7 @@
       white-space: pre-line;   /* переносы строк */
     }
 
-    /* Изображения */
+    /* Изображения (обложки, лого, звёздная картинка) */
     .page img {
       max-width: 100%;
       max-height: 100%;
@@ -74,25 +74,20 @@
       object-fit: cover;
     }
 
-    /* Заголовки/параграфы – шрифт побольше и жирнее */
+    /* Заголовки/параграфы – шрифт чуть меньше, line-height чуть меньше */
     .page h2, .page h3 {
       margin: 10px 0;
-      text-align: center;
-      font-size: 1.4em;   /* крупнее */
+      font-size: 1.3em;   /* чуть поменьше */
       font-weight: bold;
+      text-align: center; /* центрируем */
     }
     .page p {
-      font-size: 1.2em;   /* крупнее */
+      font-size: 1.1em;   /* поменьше */
       font-weight: bold;  /* жирнее */
-      line-height: 1.3;   /* уменьшенный межстрочный интервал */
+      line-height: 1.2;   /* чуть уменьшили межстрочный интервал */
       margin: 0;
-      text-align: center; /* центр по умолчанию */
-      width: 80%;         /* немного уже */
-    }
-
-    /* Для страницы с логотипом монеты, но левое выравнивание текста */
-    .page.left-align p {
-      text-align: left;   /* левое выравнивание */
+      width: 80%;
+      text-align: justify; /* выравнивание по ширине */
     }
 
     /* Кнопки «←» и «→» – внизу */
@@ -154,7 +149,7 @@
     <div class="page">
       <img src="img/cover-front.jpg" alt="Cover Front" style="width:100%; height:100%;">
     </div>
-    <!-- Правая страница: «What if a man...», центрированный текст -->
+    <!-- Правая страница: «What if a man...», выравнивание по ширине -->
     <div class="page">
       <p>
 What if a man could live forever... but forget everything every time?
@@ -171,19 +166,19 @@ Each chapter is a mirror. A revelation. A warning. As the hero wanders through t
 
   <!-- Разворот 2 -->
   <div class="double-page" data-spread="2">
-    <!-- Левая страница: «The Path of Humanity... + логотип», но с левым выравниванием -->
-    <div class="page left-align">
-      <img src="img/ibi-coin.jpg" alt="IBI Coin" style="max-width:200px;">
+    <!-- Левая страница: «The Path of Humanity... + лого» -->
+    <div class="page">
       <h2>The Path of Humanity</h2>
       <h3>by IBITIcoin</h3>
+      <img src="img/ibi-coin.jpg" alt="IBI Coin" style="max-width:250px;">
       <p>
 “A book to read — or to live through”
 ibiticoin.com
       </p>
     </div>
-    <!-- Правая страница: Звёздная картинка + Chapter 1 -->
+    <!-- Правая страница: Звёздное изображение (большее) + часть главы -->
     <div class="page">
-      <img src="img/cosmic-stars.jpg" alt="Cosmic Stars" style="max-width:300px;">
+      <img src="img/cosmic-stars.jpg" alt="Cosmic Stars" style="width:80%; height:auto;">
       <p>
 Chapter 1: Creation
 
@@ -198,7 +193,7 @@ Chapter 1: Creation (Part 1)
 
   <!-- Разворот 3 -->
   <div class="double-page" data-spread="3">
-    <!-- Левая страница: остальной текст главы (по центру) -->
+    <!-- Левая страница: остальной текст главы -->
     <div class="page">
       <p>
 I had no form. I had no name. I did not know who I was, and could not know, for I had not yet lived. But I existed. As an observation. As a point of awareness in infinity, in which there was nothing to be aware of. I did not know that I was "I". But I already felt that I was not nothing.
