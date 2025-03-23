@@ -2,42 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>The Path of Humanity – Final Book</title>
+  <title>The Path of Humanity – Final Cover</title>
 
-  <!-- Подключаем Google-шрифт Open Sans -->
+  <!-- Google Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
     * {
-      margin: 0; padding: 0; box-sizing: border-box;
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box;
     }
     html, body {
       width: 100%;
       height: 100%;
-      background: #000;
+      background: #000;   /* общий чёрный фон */
       color: #fff;
       font-family: 'Open Sans', sans-serif;
-      overflow: hidden; /* скрываем прокрутку */
+      overflow: hidden;   /* скрываем скролл */
     }
-
-    /* Общий класс для каждой «страницы» */
+    /* Каждая страница на весь экран */
     .fullscreen {
       width: 100%;
       height: 100vh;
-      display: none;          /* скрыт, кроме .show */
-      position: relative;     /* для позиционирования логотипа / кнопок */
-      justify-content: center;
-      align-items: center;
-      text-align: center;     /* чтобы текст был по центру */
-      padding: 40px 20px;     /* небольшие поля */
+      display: none;      /* скрыта, кроме .show */
+      position: relative; 
+      justify-content: center; /* по центру горизонтали */
+      align-items: center;     /* по центру вертикали */
+      text-align: center;
+      padding: 40px 20px;
     }
-    .show { 
-      display: flex; 
+    .show {
+      display: flex;
     }
-
-    /* Кнопка «На главную» в правом верхнем углу ( corner-box ) */
+    /* Логотип по центру сверху */
+    .page-logo {
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px; 
+      height: auto;
+    }
+    /* Кнопка «Back to Main» (corner-box) в правом верхнем углу */
     .corner-box-right-top {
       position: absolute;
       top: 15px;
@@ -52,17 +61,7 @@
       text-decoration: none;
       font-weight: bold;
     }
-
-    /* Логотип IBITI в левом верхнем, кроме обложки */
-    .page-logo {
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      width: 60px;
-      height: auto;
-    }
-
-    /* Навигация Prev/Next внизу по центру */
+    /* Кнопки Prev / Next внизу */
     .nav-area {
       position: absolute;
       bottom: 15px;
@@ -83,138 +82,144 @@
       background: #c0a000;
     }
 
-    /* ====== Страница 1: ОБЛОЖКА ====== */
-    .cover {
-      background: url("img/cover.png") center/cover no-repeat;
-    }
-    /* Тёмная подложка для названия */
-    .cover-overlay {
-      background: rgba(0,0,0,0.4);
-      padding: 30px 40px;
-      border-radius: 10px;
-      text-align: center;
-    }
-    .cover-title {
-      font-size: 2.5rem;  /* около 40px */
-      color: #ffd700;     /* ярко-золотой */
-      margin-bottom: 10px;
-    }
-    .cover-subtitle {
-      font-size: 1.3rem;  /* около 20px */
-      color: #ffd700;
-    }
-    .cover-sub2 {
-      margin-top: 10px;
-      font-size: 1rem;
-      color: #ffd700;
-    }
-
-    /* ====== Страница 2..5: Текст ==== */
+    /* Стиль для текста на страницах 2..5 */
     .text-box {
-      max-width: 800px;   /* ограничиваем ширину */
+      max-width: 800px;
+      margin: 0 auto;
       line-height: 1.5;
       font-size: 16px;
-      margin: 0 auto;
     }
-    .text-box h2, 
-    .text-box h3 {
+    .text-box h2, .text-box h3 {
       color: #ffd700;
       margin-bottom: 10px;
     }
     .text-box p {
       margin: 10px 0;
     }
+
+    /* Первая страница (обложка) */
+    .cover {
+      /* нет background-image, 
+         вместо этого обычное <img> в центре */
+    }
+    /* Класс для обложки (картинка + текст под ней) */
+    .cover-content {
+      display: flex;
+      flex-direction: column; 
+      align-items: center;
+      justify-content: center;
+    }
+    .cover-img {
+      width: 600px; /* размер обложки, меняйте по вкусу */
+      max-width: 90%; /* чтобы влезал на мобильных */
+      height: auto;
+      margin-bottom: 20px;
+    }
+    .cover-title {
+      font-size: 1.8rem;
+      color: #ffd700;
+      margin-bottom: 5px;
+    }
+    .cover-subtitle {
+      font-size: 1.2rem;
+      color: #ffd700;
+    }
+    .cover-sub2 {
+      font-size: 1rem;
+      color: #ffd700;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
 
-<!-- =============== 1) Обложка  ================== -->
+<!-- ================ Page 1: Cover ================ -->
 <div id="page-1" class="fullscreen cover show">
-  <!-- Кнопка «На главную» -->
+  <!-- Логотип -->
+  <img src="img/logo.png" alt="Logo" class="page-logo">
+  <!-- Back to Main -->
   <div class="corner-box-right-top">
     <a href="index.html">Back to Main</a>
   </div>
-  <!-- Прозрачный блок с названием -->
-  <div class="cover-overlay">
+
+  <div class="cover-content">
+    <!-- Обложка-картинка -->
+    <img src="img/cover.png" alt="Cover" class="cover-img">
+
+    <!-- Текст под картинкой -->
     <div class="cover-title">The Path of Humanity</div>
     <div class="cover-subtitle">by IBITIcoin</div>
     <div class="cover-sub2">“A book to read — or to live through”<br>ibiticoin.com</div>
   </div>
 </div>
 
-<!-- =============== 2) What if a man could live forever... ================= -->
+<!-- ================ Page 2 ================ -->
 <div id="page-2" class="fullscreen" style="background:#000;">
-  <!-- Логотип слева вверху -->
   <img src="img/logo.png" alt="Logo" class="page-logo">
-  <!-- Кнопка «На главную» -->
   <div class="corner-box-right-top">
     <a href="index.html">Back to Main</a>
   </div>
-
   <div class="text-box">
     <h2>What if a man could live forever...</h2>
     <p>
       What if a man could live forever... but forget everything every time?<br>
       Or can a man live forever?<br>
       Who? What? Why?<br>
-      So many questions and so few answers.
+      So many questions and so few answers
     </p>
   </div>
 </div>
 
-<!-- =============== 3) The Journey of Humanity ================ -->
+<!-- ================ Page 3 ================ -->
 <div id="page-3" class="fullscreen" style="background:#000;">
   <img src="img/logo.png" alt="Logo" class="page-logo">
   <div class="corner-box-right-top">
     <a href="index.html">Back to Main</a>
   </div>
-
   <div class="text-box">
-      The Path of Humanity<br>
-      by IBITIcoin<br>
-      “A book to read — or to live through”<br>
-      ibiticoin.com
-    </p>
+    <p><strong>The Path of Humanity<br>
+    by IBITIcoin<br>
+    “A book to read — or to live through”<br>
+    ibiticoin.com</strong></p>
+
     <h3>The Journey of Humanity</h3>
     <p>
       The Journey of Humanity is a literary journey through the history of civilization,
       told from the perspective of an immortal man who awakens in different eras with no memory of himself.
     </p>
     <p>
-      From the first fire to the quantum leap, each chapter becomes a turning point 
-      in the development of humanity: not only technological, but also spiritual, cultural and moral.
+      From the first fire to the quantum leap, each chapter becomes a turning point in the development of humanity:
+      not only technological, but also spiritual, cultural and moral.
     </p>
     <p>
-      Each chapter is a mirror. A revelation. A warning. As the hero wanders through time, 
-      fragments of the past return to him - and in the end he realizes the terrible truth: 
+      Each chapter is a mirror. A revelation. A warning. As the hero wanders through time,
+      fragments of the past return to him - and in the end he realizes the terrible truth:
       he was not just a witness ... he was, is and will be .... ? ....
     </p>
   </div>
 </div>
 
-<!-- =============== 4) Chapter 1 ================ -->
+<!-- ================ Page 4 ================ -->
 <div id="page-4" class="fullscreen" style="background:#000;">
   <img src="img/logo.png" alt="Logo" class="page-logo">
   <div class="corner-box-right-top">
     <a href="index.html">Back to Main</a>
   </div>
-
   <div class="text-box">
     <h3>Chapter 1: Creation (Part 1)</h3>
     <p>
       "And I saw a new heaven and a new earth, for the first heaven and the first earth had passed away...
-      (вставьте весь текст до “I felt that I was being born,”)
+      (Вставить текст до “I felt that I was being born,”)
     </p>
   </div>
 </div>
 
-<!-- =============== 5) Locked Page ================ -->
+<!-- ================ Page 5 LOCKED ================ -->
 <div id="page-5" class="fullscreen" style="background:#000;">
   <img src="img/logo.png" alt="Logo" class="page-logo">
   <div class="corner-box-right-top">
     <a href="index.html">Back to Main</a>
   </div>
-
   <div class="text-box">
     <h2>Remaining Chapters Are Locked</h2>
     <p>
@@ -224,7 +229,7 @@
   </div>
 </div>
 
-<!-- Кнопки Prev/Next внизу -->
+<!-- Buttons Prev / Next -->
 <div class="nav-area">
   <button onclick="prevPage()">Prev</button>
   <button onclick="nextPage()">Next</button>
