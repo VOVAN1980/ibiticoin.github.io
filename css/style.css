@@ -163,8 +163,8 @@ footer a:hover {
 .buy-steps {
   list-style: decimal;      /* Нумерация */
   display: inline-block;    /* Центрируем список */
-  margin: 0 auto;           /* Центрирование по горизонтали */
-  text-align: left;         /* Текст пунктов выровненный по левому краю */
+  margin: 0 auto;           /* Центрирование */
+  text-align: left;         /* Текст пунктов слева */
   padding-left: 30px;       /* Отступ слева для цифр */
 }
 .buy-steps li {
@@ -343,7 +343,7 @@ iframe {
 
 /* ===== Секция для дополнительных кнопок (Калькулятор и Видео-гайды) ===== */
 .extra-buttons-section {
-  background: #000;       /* Можно изменить фон по вкусу */
+  background: #000;       
   padding: 40px 0;
   text-align: center;
 }
@@ -409,19 +409,19 @@ iframe {
   border: 1px solid gold;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  min-height: 800px; /* Увеличенная высота, если нужно */
+  min-height: 800px;
 }
 
 /* Стили для формы в левой панели (центрируем поля) */
 .blog-sidebar-left form {
   display: flex;
   flex-direction: column;
-  align-items: center; 
+  align-items: center;
 }
 .blog-sidebar-left form label {
-  width: 80%; 
+  width: 80%;
   margin-bottom: 10px;
-  text-align: left; 
+  text-align: left;
 }
 .blog-sidebar-left form input,
 .blog-sidebar-left form textarea {
@@ -462,7 +462,7 @@ iframe {
   .blog-layout {
     flex-direction: column;
     align-items: center;
-    min-height: auto; 
+    min-height: auto;
   }
   .blog-sidebar-left,
   .blog-sidebar-right,
@@ -500,3 +500,44 @@ iframe {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
+/* ===== Ниже стили для flipbook-книги ===== */
+.flipbook-container {
+  width: 800px;   /* Ширина книги */
+  height: 500px;  /* Высота книги */
+  margin: 50px auto;
+  position: relative;
+  overflow: hidden; /* чтоб не вылазило */
+}
+
+.flipbook {
+  width: 100%;
+  height: 100%;
+}
+
+/* Каждая страница (фон, отступы) */
+.page {
+  background: #111; 
+  color: #fff;
+  text-align: center;
+  font-size: 1.1em;
+  line-height: 1.6;
+  padding: 20px;
+}
+
+/* Стиль обложки */
+.page.cover {
+  background: #222; 
+  color: gold;
+}
+
+/* Заголовки внутри страниц */
+.page h3 {
+  margin-top: 0;
+  color: gold;
+}
+
+/* Параграфы */
+.page p {
+  margin: 0;
+  white-space: pre-line; /* Чтобы переносы отображались */
+}
