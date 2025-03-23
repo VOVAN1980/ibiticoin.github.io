@@ -41,7 +41,7 @@
     .double-page {
       width: 1600px;      /* ширина "книги" */
       height: 1000px;     /* высота "книги" */
-      margin: 10px auto;  /* отступ сверху 10px => "поднято выше" */
+      margin: 0 auto;     /* отступ сверху 0 => "поднято выше" */
       display: none;      /* по умолчанию скрыт */
       position: relative;
     }
@@ -52,10 +52,10 @@
     /* Каждая страница (левая/правая) */
     .page {
       width: 50%;
-      height: 100%;        /* 1000px */
+      height: 100%;         /* 1000px */
       box-sizing: border-box;
-      background: #f4f4f4; /* светлый фон */
-      color: #000;         /* чёрный текст */
+      background: #f4f4f4;  /* светлый фон */
+      color: #000;          /* чёрный текст */
       display: flex;
       flex-direction: column;
       justify-content: center; /* вертикальное центрирование */
@@ -79,16 +79,20 @@
       margin: 10px 0;
       font-size: 1.3em;   /* чуть поменьше */
       font-weight: bold;
-      text-align: center; /* центрируем */
+      text-align: center;
     }
     .page p {
       font-size: 1.1em;   /* поменьше */
       font-weight: bold;  /* жирнее */
-      line-height: 1.2;   /* чуть уменьшили межстрочный интервал */
+      line-height: 1.2;   /* уменьшенный межстрочный интервал */
       margin: 0;
       width: 80%;
       text-align: justify; /* выравнивание по ширине */
     }
+
+    /* Страница 2 (правая страница разворота 1) – делаем текст чуть крупнее и центрируем */
+    /* Если нужно точечное изменение именно там, можно добавить класс, 
+       но пока оставляем глобальный для всех страниц. */
 
     /* Кнопки «←» и «→» – внизу */
     .nav-button {
@@ -149,7 +153,7 @@
     <div class="page">
       <img src="img/cover-front.jpg" alt="Cover Front" style="width:100%; height:100%;">
     </div>
-    <!-- Правая страница: «What if a man...», выравнивание по ширине -->
+    <!-- Правая страница: «What if a man...», выравнивание по ширине, центрированный текст -->
     <div class="page">
       <p>
 What if a man could live forever... but forget everything every time?
@@ -166,7 +170,7 @@ Each chapter is a mirror. A revelation. A warning. As the hero wanders through t
 
   <!-- Разворот 2 -->
   <div class="double-page" data-spread="2">
-    <!-- Левая страница: «The Path of Humanity... + лого» -->
+    <!-- Левая страница: «The Path of Humanity... + лого» (логотип под заголовками) -->
     <div class="page">
       <h2>The Path of Humanity</h2>
       <h3>by IBITIcoin</h3>
@@ -176,7 +180,7 @@ Each chapter is a mirror. A revelation. A warning. As the hero wanders through t
 ibiticoin.com
       </p>
     </div>
-    <!-- Правая страница: Звёздное изображение (большее) + часть главы -->
+    <!-- Правая страница: Звёздное изображение (80%) + часть главы -->
     <div class="page">
       <img src="img/cosmic-stars.jpg" alt="Cosmic Stars" style="width:80%; height:auto;">
       <p>
