@@ -38,7 +38,7 @@
     gtag('config', 'G-T5DF4BLR5S');
   </script>
 
-  <!-- Адаптивные стили для блока с дополнительными кнопками -->
+  <!-- Встроенные стили для секции кнопок и модального окна -->
   <style>
     .extra-buttons-section {
       display: flex;              /* Используем флекс */
@@ -48,6 +48,7 @@
       margin: 40px auto;          /* Отступы сверху/снизу */
       max-width: 1200px;          /* Ограничиваем ширину */
       text-align: center;
+      background: transparent !important;  /* Прозрачный фон */
     }
     .extra-buttons-section .btn-small {
       display: inline-block;
@@ -172,8 +173,8 @@
     <a class="btn-small" href="nft.html">NFT Галерея</a>
     <a class="btn-small" href="shop.html">Магазин</a>
     <a class="btn-small" href="book.html">Книга</a>
-    <!-- Добавляем кнопку "Поделиться" -->
-    <button id="openShareModal" class="btn-small">Поделиться</button>
+    <!-- Кнопка "Поделиться" реализована как ссылка -->
+    <a href="#" id="openShareModal" class="btn-small">Поделиться</a>
   </section>
 
   <footer>
@@ -254,12 +255,13 @@
   <!-- Скрипты для модального окна шаринга -->
   <script>
     // Получаем элементы модального окна и кнопки "Поделиться"
-    const openModalBtn = document.getElementById('openShareModal');
+    const openModalLink = document.getElementById('openShareModal');
     const modal = document.getElementById('shareModal');
     const closeBtn = document.querySelector('.modal .close');
 
     // Открытие модального окна
-    openModalBtn.addEventListener('click', () => {
+    openModalLink.addEventListener('click', (e) => {
+      e.preventDefault();
       modal.style.display = 'block';
     });
 
