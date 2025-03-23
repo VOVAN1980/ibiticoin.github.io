@@ -13,7 +13,7 @@
     body {
       margin: 0;
       padding: 0;
-      background: #000;  /* Чёрный фон */
+      background: #000;  /* Чёрный фон сайта */
       color: #fff;
       font-family: "Times New Roman", serif;
       overflow-x: hidden; /* чтобы не было горизонтальной прокрутки */
@@ -37,52 +37,64 @@
       background: rgba(0,0,0,0.9);
     }
 
-    /* Контейнер для разворотов (каждый разворот – 2 страницы) */
+    /* Контейнер для разворотов (3 разворота => 6 страниц) */
     .double-page {
-      width: 1200px;        /* фиксированная ширина для "разворота" */
-      height: 800px;        /* фиксированная высота */
-      margin: 60px auto;    /* центрируем */
-      display: none;        /* по умолчанию скрыто */
+      width: 1400px;       /* увеличили ширину */
+      height: 900px;       /* увеличили высоту */
+      margin: 60px auto;   /* центрируем по горизонтали, отступ сверху */
+      display: none;       /* по умолчанию скрыт */
       position: relative;
     }
     .double-page.active {
-      display: flex;        /* только активный разворот виден */
+      display: flex;       /* только текущий разворот виден */
     }
 
     /* Каждая страница (левая/правая) */
     .page {
       width: 50%;           /* половина разворота */
-      height: 100%;         /* высота = 800px */
+      height: 100%;         /* 900px */
       box-sizing: border-box;
-      background: #f4f4f4;  /* светлый фон, как в Word */
+      background: #f4f4f4;  /* светлый фон (как в Word) */
       color: #000;          /* чёрный текст */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;  /* центрируем по вертикали */
+      align-items: center;      /* центрируем по горизонтали */
       padding: 40px;
-      overflow-y: auto;     /* если текст не помещается, будет прокрутка */
-      white-space: pre-line;/* сохраняем переносы строк */
+      overflow: hidden;         /* убираем скролл, текст должен уместиться */
+      white-space: pre-line;    /* переносы строк */
     }
 
-    /* Изображения внутри страницы */
+    /* Изображения (обложки, лого, звёздная картинка) */
     .page img {
       max-width: 100%;
-      height: auto;
+      max-height: 100%;   /* чтобы не вылезало за страницу */
       display: block;
-      margin: 0 auto 20px;
+      margin-bottom: 20px;
+      object-fit: cover;
     }
 
+    /* Заголовки и параграфы */
     .page h2, .page h3 {
       margin: 10px 0;
       text-align: center;
     }
-
     .page p {
       line-height: 1.6;
-      margin-bottom: 20px;
+      margin: 0;
+      text-align: center;  /* выравниваем по центру */
+      width: 80%;          /* немного сужаем, чтобы текст не растягивался */
     }
 
-    /* Кнопки навигации (← и →) – вверху справа/слева */
+    /* Специально для второй страницы – делаем текст жирнее */
+    .page.bold-text p {
+      font-weight: bold;
+    }
+
+    /* Кнопки «←» и «→» – внизу */
     .nav-button {
       position: fixed;
-      top: 20px;
+      bottom: 20px;       /* отступ снизу */
       background: rgba(0, 0, 0, 0.7);
       border: 2px solid gold;
       color: gold;
@@ -101,8 +113,8 @@
 
   <script>
     $(document).ready(function(){
-      var currentSpread = 1;      // текущий разворот (1..3)
-      var totalSpreads = 3;      // всего 3 разворота
+      var currentSpread = 1;    // текущий разворот (1..3)
+      var totalSpreads = 3;    // всего 3 разворота => 6 страниц
 
       // Показываем первый разворот
       $(".double-page[data-spread='1']").addClass("active");
@@ -134,11 +146,11 @@
 
   <!-- Разворот 1 -->
   <div class="double-page active" data-spread="1">
-    <!-- Левая страница (лицевая обложка) -->
+    <!-- Левая страница: Лицевая обложка (на всю страницу) -->
     <div class="page">
-      <img src="img/cover-front.jpg" alt="Cover Front">
+      <img src="img/cover-front.jpg" alt="Cover Front" style="width:100%; height:100%;">
     </div>
-    <!-- Правая страница ("What if a man...") -->
+    <!-- Правая страница: «What if a man...», по центру, чуть ниже -->
     <div class="page">
       <p>
 What if a man could live forever... but forget everything every time?
@@ -155,9 +167,9 @@ Each chapter is a mirror. A revelation. A warning. As the hero wanders through t
 
   <!-- Разворот 2 -->
   <div class="double-page" data-spread="2">
-    <!-- Левая страница ("The Path of Humanity..." + логотип) -->
-    <div class="page">
-      <img src="img/ibi-coin.jpg" alt="IBI Coin" style="max-width:150px;">
+    <!-- Левая страница: «The Path of Humanity... + логотип», текст жирнее -->
+    <div class="page bold-text">
+      <img src="img/ibi-coin.jpg" alt="IBI Coin" style="max-width:200px;">
       <h2>The Path of Humanity</h2>
       <h3>by IBITIcoin</h3>
       <p>
@@ -165,7 +177,7 @@ Each chapter is a mirror. A revelation. A warning. As the hero wanders through t
 ibiticoin.com
       </p>
     </div>
-    <!-- Правая страница (звёздная картинка + начало Chapter 1) -->
+    <!-- Правая страница: Звёздная картинка + Chapter 1: Creation + цитата -->
     <div class="page">
       <img src="img/cosmic-stars.jpg" alt="Cosmic Stars" style="max-width:300px;">
       <p>
@@ -182,7 +194,7 @@ Chapter 1: Creation (Part 1)
 
   <!-- Разворот 3 -->
   <div class="double-page" data-spread="3">
-    <!-- Левая страница (остальной текст главы) -->
+    <!-- Левая страница: остальной текст главы -->
     <div class="page">
       <p>
 I had no form. I had no name. I did not know who I was, and could not know, for I had not yet lived. But I existed. As an observation. As a point of awareness in infinity, in which there was nothing to be aware of. I did not know that I was "I". But I already felt that I was not nothing.
@@ -210,15 +222,15 @@ I felt how it cools. How the earth's crust becomes covered with scars. How volca
                                            ,,I felt that I was being born,,
       </p>
     </div>
-    <!-- Правая страница (задняя обложка) -->
+    <!-- Правая страница: Задняя обложка (на всю страницу) -->
     <div class="page">
-      <img src="img/cover-back.jpg" alt="Cover Back">
+      <img src="img/cover-back.jpg" alt="Cover Back" style="width:100%; height:100%;">
     </div>
   </div>
 
-  <!-- Кнопки навигации "←" и "→" (вверху) -->
-  <div id="prevButton" class="nav-button">←</div>
-  <div id="nextButton" class="nav-button">→</div>
+  <!-- Кнопки «←» и «→» внизу -->
+  <div id="prevButton" class="nav-button" style="bottom:20px; left:80px;">←</div>
+  <div id="nextButton" class="nav-button" style="bottom:20px; right:20px;">→</div>
 
 </body>
 </html>
