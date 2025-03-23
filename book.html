@@ -5,7 +5,7 @@
   <title>The Path of Humanity – Double Page</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Подключаем jQuery -->
+  <!-- jQuery -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <style>
@@ -19,7 +19,7 @@
       overflow-x: hidden; /* убираем горизонтальную прокрутку */
     }
 
-    /* Кнопка "На главную" (в левом верхнем углу) */
+    /* Кнопка "На главную" */
     .exit-button {
       position: fixed;
       top: 20px;
@@ -37,62 +37,97 @@
       background: rgba(0,0,0,0.9);
     }
 
-    /* Контейнер для 3 разворотов => 6 страниц */
+    /* Контейнер для трёх разворотов (6 страниц) */
     .double-page {
-      width: 1600px;      /* ширина "книги" */
-      height: 1000px;     /* высота "книги" */
-      margin: 0 auto;     /* отступ сверху 0 => "поднято выше" */
-      display: none;      /* по умолчанию скрыт */
+      width: 1600px;    /* ширина книги */
+      height: 1000px;   /* высота книги */
+      margin: 0 auto;   /* поднимаем книгу как можно выше */
+      display: none;    /* по умолчанию скрыто */
       position: relative;
     }
     .double-page.active {
-      display: flex;      /* показываем текущий разворот */
+      display: flex;    /* показываем текущий разворот */
     }
 
     /* Каждая страница (левая/правая) */
     .page {
       width: 50%;
-      height: 100%;         /* 1000px */
+      height: 100%;        /* 1000px */
       box-sizing: border-box;
-      background: #f4f4f4;  /* светлый фон */
-      color: #000;          /* чёрный текст */
+      background: #f4f4f4; /* светлый фон */
+      color: #000;
       display: flex;
       flex-direction: column;
-      justify-content: center; /* вертикальное центрирование */
-      align-items: center;     /* горизонтальное центрирование */
       padding: 40px;
-      overflow: hidden;        /* без прокрутки – текст должен поместиться */
-      white-space: pre-line;   /* переносы строк */
+      overflow: hidden;    /* без прокрутки */
     }
 
-    /* Изображения (обложки, лого, звёздная картинка) */
-    .page img {
-      max-width: 100%;
-      max-height: 100%;
-      display: block;
-      margin-bottom: 20px;
+    /* Верхняя/нижняя часть страницы (чтобы можно было распределить элементы) */
+    .top-block {
+      margin-bottom: auto; /* прижимает к верху */
+      text-align: center;
+    }
+    .middle-block {
+      margin: auto 0;      /* по центру */
+      text-align: center;
+    }
+    .bottom-block {
+      margin-top: auto;    /* прижимает к низу */
+      text-align: center;
+    }
+
+    /* Для обложек (на всю страницу) */
+    .cover {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
     }
 
-    /* Заголовки/параграфы – шрифт чуть меньше, line-height чуть меньше */
-    .page h2, .page h3 {
-      margin: 10px 0;
-      font-size: 1.3em;   /* чуть поменьше */
-      font-weight: bold;
-      text-align: center;
-    }
-    .page p {
+    /* Текст общий */
+    .page p, .page h2, .page h3 {
       font-size: 1.1em;   /* поменьше */
       font-weight: bold;  /* жирнее */
-      line-height: 1.2;   /* уменьшенный межстрочный интервал */
-      margin: 0;
-      width: 80%;
-      text-align: justify; /* выравнивание по ширине */
+      line-height: 1.2;   /* уменьшенный интервал */
+      margin: 10px 0;
+      color: #000;
+      text-align: justify; /* по умолчанию выравниваем по ширине */
+      white-space: pre-line;
     }
 
-    /* Страница 2 (правая страница разворота 1) – делаем текст чуть крупнее и центрируем */
-    /* Если нужно точечное изменение именно там, можно добавить класс, 
-       но пока оставляем глобальный для всех страниц. */
+    /* Заголовки чуть крупнее */
+    .page h2 {
+      font-size: 1.3em;
+    }
+    .page h3 {
+      font-size: 1.2em;
+    }
+
+    /* ===== Особые стили для отдельных страниц ===== */
+
+    /* 1) Правая страница разворота 1: текст по центру */
+    .first-text {
+      text-align: center !important;
+    }
+
+    /* 2) Левая страница разворота 2: заголовки сверху, логотип посередине, текст снизу */
+    .top-block h2 {
+      margin: 0;
+      font-size: 1.4em; /* чуть крупнее */
+    }
+    .top-block h3 {
+      margin: 10px 0;
+      font-size: 1.2em;
+    }
+
+    /* 3) Правая страница разворота 2: звёздное изображение, текст красный для цитаты */
+    .quote {
+      color: #900; /* красный текст для цитаты */
+    }
+
+    /* 4) Левая страница разворота 3: выравнивание по ширине, как "идеально" */
+    .page-left-3 p {
+      text-align: justify !important;
+    }
 
     /* Кнопки «←» и «→» – внизу */
     .nav-button {
@@ -107,7 +142,7 @@
       z-index: 1000;
     }
     #prevButton {
-      left: 80px; /* чтобы не наезжать на кнопку "На главную" */
+      left: 80px; 
     }
     #nextButton {
       right: 20px;
@@ -147,15 +182,17 @@
   <!-- Кнопка "На главную" -->
   <a class="exit-button" href="index.html">На главную</a>
 
-  <!-- Разворот 1 -->
+  <!-- ====== Разворот 1 ====== -->
   <div class="double-page active" data-spread="1">
-    <!-- Левая страница: лицевая обложка (на всю страницу) -->
+    <!-- Левая страница: Лицевая обложка (на всю страницу) -->
     <div class="page">
-      <img src="img/cover-front.jpg" alt="Cover Front" style="width:100%; height:100%;">
+      <img src="img/cover-front.jpg" alt="Cover Front" class="cover">
     </div>
-    <!-- Правая страница: «What if a man...», выравнивание по ширине, центрированный текст -->
+    <!-- Правая страница: "What if a man...", по центру -->
     <div class="page">
-      <p>
+      <div class="top-block"></div> <!-- Пусто, если хотите отступ сверху -->
+      <div class="middle-block first-text">
+        <p>
 What if a man could live forever... but forget everything every time?
 Or can a man live forever?
 Who? What? Why?
@@ -164,41 +201,54 @@ So many questions and so few answers.
 The Journey of Humanity is a literary journey through the history of civilization, told from the perspective of an immortal man who awakens in different eras with no memory of himself.
 From the first fire to the quantum leap, each chapter becomes a turning point in the development of humanity: not only technological, but also spiritual, cultural and moral.
 Each chapter is a mirror. A revelation. A warning. As the hero wanders through time, fragments of the past return to him - and in the end he realizes the terrible truth: he was not just a witness ... he was, is and will be .... ? ....
-      </p>
+        </p>
+      </div>
+      <div class="bottom-block"></div>
     </div>
   </div>
 
-  <!-- Разворот 2 -->
+  <!-- ====== Разворот 2 ====== -->
   <div class="double-page" data-spread="2">
-    <!-- Левая страница: «The Path of Humanity... + лого» (логотип под заголовками) -->
+    <!-- Левая страница: "The Path of Humanity" (вверху), логотип (посередине), "A book..." (внизу) -->
     <div class="page">
-      <h2>The Path of Humanity</h2>
-      <h3>by IBITIcoin</h3>
-      <img src="img/ibi-coin.jpg" alt="IBI Coin" style="max-width:250px;">
-      <p>
+      <div class="top-block">
+        <h2>The Path of Humanity</h2>
+        <h3>by IBITIcoin</h3>
+      </div>
+      <div class="middle-block">
+        <img src="img/ibi-coin.jpg" alt="IBI Coin" style="max-width:250px;">
+      </div>
+      <div class="bottom-block">
+        <p style="text-align:center;">
 “A book to read — or to live through”
 ibiticoin.com
-      </p>
+        </p>
+      </div>
     </div>
-    <!-- Правая страница: Звёздное изображение (80%) + часть главы -->
+
+    <!-- Правая страница: звёздное изображение (80%), текст (часть главы), цитату делаем красной -->
     <div class="page">
-      <img src="img/cosmic-stars.jpg" alt="Cosmic Stars" style="width:80%; height:auto;">
-      <p>
-Chapter 1: Creation
-
-The Path of Humanity
-
-Chapter 1: Creation (Part 1)
-
+      <div class="top-block">
+        <img src="img/cosmic-stars.jpg" alt="Cosmic Stars" style="width:80%; height:auto;">
+      </div>
+      <div class="middle-block">
+        <p style="text-align:center;">
+Chapter 1: Creation<br><br>
+The Path of Humanity<br><br>
+Chapter 1: Creation (Part 1)<br><br>
+<span class="quote" style="color:#900;">
 "And I saw a new heaven and a new earth, for the first heaven and the first earth had passed away. - Revelation of John the Theologian
-      </p>
+</span>
+        </p>
+      </div>
+      <div class="bottom-block"></div>
     </div>
   </div>
 
-  <!-- Разворот 3 -->
+  <!-- ====== Разворот 3 ====== -->
   <div class="double-page" data-spread="3">
-    <!-- Левая страница: остальной текст главы -->
-    <div class="page">
+    <!-- Левая страница: остальной текст главы, выравнивание по ширине -->
+    <div class="page page-left-3">
       <p>
 I had no form. I had no name. I did not know who I was, and could not know, for I had not yet lived. But I existed. As an observation. As a point of awareness in infinity, in which there was nothing to be aware of. I did not know that I was "I". But I already felt that I was not nothing.
 
