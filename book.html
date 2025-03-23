@@ -9,19 +9,20 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/turn.js/dist/turn.min.js"></script>
 
-  <!-- Подключаем ваш общий style.css (с «золотыми» стилями и чёрным фоном сайта) -->
+  <!-- Подключаем ваш общий style.css (где «золотые» стили, чёрный фон и т.д.) -->
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- Встроенные стили для flipbook (дополняют style.css) -->
+  <!-- Дополнительные стили для страницы книги (flipbook) -->
   <style>
-    /* Чтобы на странице был чёрный фон и золотой текст (как на всём сайте) */
+    /* Чтобы на странице был чёрный фон и шёл общий стиль сайта */
     body.book {
       background: #000; /* чёрный фон */
-      color: gold;      /* золотой текст по умолчанию */
+      color: gold;      /* золотой текст, если что-то вне книги */
       margin: 0;
       padding: 0;
     }
-    /* Угловые кнопки, как в index.html */
+
+    /* Угловые кнопки, как на остальных страницах (Главная, Блог, Roadmap) */
     .corner-box {
       position: absolute;
       background: rgba(0, 0, 0, 0.8);
@@ -43,7 +44,7 @@
       text-decoration: underline;
     }
 
-    /* Кнопка "На главную" (если хотите отдельную) */
+    /* (Дополнительно) кнопка "На главную" в левом верхнем углу, если хотите отдельную */
     .exit-button {
       position: fixed;
       top: 20px;
@@ -58,7 +59,7 @@
       border-radius: 4px;
     }
 
-    /* Контейнер под flipbook — по центру экрана */
+    /* Контейнер для flipbook — центрируем, делаем почти на весь экран */
     .flipbook-container {
       width: 90%;
       max-width: 1200px;
@@ -66,16 +67,16 @@
       margin: 80px auto; /* отступ сверху, чтобы угловые кнопки не налезали */
       position: relative;
       box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      background: #fff; /* белая подложка для книги */
+      background: #fff; /* белая "подложка" */
     }
 
-    /* Сам блок flipbook */
+    /* Сам flipbook */
     #flipbook {
       width: 100%;
       height: 100%;
     }
 
-    /* Каждая страница (лист) — белый фон, чёрный текст, классический вид */
+    /* Каждая страница (лист) — белый фон, чёрный текст, классический Times New Roman */
     .page {
       background: #fff;
       color: #000;
@@ -85,10 +86,10 @@
       text-align: left;
       padding: 40px;
       box-sizing: border-box;
-      white-space: pre-line; /* Чтобы сохранять переносы строк как в документе */
+      white-space: pre-line; /* Сохраняем переносы строк, как в оригинале */
     }
 
-    /* Обложка (если хотите картинку) */
+    /* Обложка (если хотите фон-картинку). Если нет обложки, можно убрать background. */
     .cover {
       background: url("img/cover.jpg") no-repeat center center;
       background-size: cover;
@@ -110,10 +111,10 @@
   </style>
 </head>
 
-<!-- Добавляем класс "book" на body, чтобы стили для книги применялись -->
+<!-- Класс "book" на body, чтобы эти стили применялись -->
 <body class="book">
 
-  <!-- При желании можно оставить «угловые кнопки» (как на сайте) -->
+  <!-- Угловые кнопки (как на сайте) -->
   <div class="corner-box corner-box-left">
     <a href="index.html">Главная</a>
   </div>
@@ -126,15 +127,15 @@
     <a href="?lang=en">EN</a>
   </div>
 
-  <!-- Если нужна отдельная кнопка "На главную" вместо corner-box, раскомментируйте:
+  <!-- (Если нужна отдельная кнопка) 
   <a class="exit-button" href="index.html">На главную</a>
   -->
 
-  <!-- Контейнер для flipbook -->
+  <!-- Контейнер flipbook -->
   <div class="flipbook-container">
     <div id="flipbook">
-
-      <!-- Страница 1: Начало (строки из документа) -->
+      
+      <!-- ======================== СТРАНИЦА 1 ======================== -->
       <div class="page">
 What if a man could live forever... but forget everything every time?
 
@@ -145,6 +146,7 @@ Who? What? Why?
 So many questions and so few answers.
 
 
+
 The Journey of Humanity is a literary journey through the history of civilization, told from the perspective of an immortal man who awakens in different eras with no memory of himself.
 
 From the first fire to the quantum leap, each chapter becomes a turning point in the development of humanity: not only technological, but also spiritual, cultural and moral.
@@ -152,37 +154,45 @@ From the first fire to the quantum leap, each chapter becomes a turning point in
 Each chapter is a mirror. A revelation. A warning. As the hero wanders through time, fragments of the past return to him - and in the end he realizes the terrible truth: he was not just a witness ... he was, is and will be .... ? ....
       </div>
 
-      <!-- Страница 2: Заголовок книги -->
-      <div class="page cover">
-        <div class="overlay">
+      <!-- ======================== СТРАНИЦА 2 (Титульный лист) ======================== -->
+      <div class="page">
 The Path of Humanity
 
-by IBITIcoin
+
+                          by IBITIcoin
 
 
-“A book to read — or to live through”
 
-ibiticoin.com
-        </div>
+
+                      “A book to read — or to live through”
+
+                                                             ibiticoin.com
       </div>
 
-      <!-- Страница 3: Заголовок Chapter 1 -->
+      <!-- ======================== СТРАНИЦА 3 ======================== -->
       <div class="page">
 Chapter 1: Creation
 
 
+
+
+
 The Path of Humanity
+
 
 
 Chapter 1: Creation (Part 1)
       </div>
 
-      <!-- Страница 4: Цитата и начало текста -->
+      <!-- ======================== СТРАНИЦА 4 ======================== -->
       <div class="page">
 "And I saw a new heaven and a new earth, for the first heaven and the first earth had passed away. - Revelation of John the Theologian
 
 
+
+
 I had no form. I had no name. I did not know who I was, and could not know, for I had not yet lived. But I existed. As an observation. As a point of awareness in infinity, in which there was nothing to be aware of. I did not know that I was "I". But I already felt that I was not nothing.
+
 
 
 And then — it happened.
@@ -190,11 +200,12 @@ And then — it happened.
 Or did it only seem that way to me?
       </div>
 
-      <!-- Страница 5: Продолжение главы -->
+      <!-- ======================== СТРАНИЦА 5 ======================== -->
       <div class="page">
 What happened could not be called either an explosion or a beginning. It was a manifestation. Light turned inside out, giving birth to space. The fabric of being began to vibrate. In the birth of the Universe there was no joy, no anger — there was only the fact: "is".
 
 The galaxies began to rotate. Matter gathered into patterns.
+
 
 
 I was in every spark, in every stream.
@@ -204,21 +215,26 @@ Not as a creator, not as a witness — I was a part. A wave. A pulse.
 An unconscious shadow of the primordial heat.
 
 
+
 But even in this shadow — I felt alone.
+
 
 
 Millennia passed like a breath. The world was forming. Stars were born and died, not knowing that their death was a step towards life. The cosmos was beautiful and indifferent. I glided along its structures, getting lost, being, disappearing.
       </div>
 
-      <!-- Страница 6: Завершение главы -->
+      <!-- ======================== СТРАНИЦА 6 ======================== -->
       <div class="page">
 And here it is.
+
 
 
 A planet. Without a name. Without breath. A ball of dirt and heat, scorched and barren. But I knew: this is a point. A place. Here - mine will begin. Not consciously, not by will - but it is here that I will become myself.
 
 
+
 I felt how it cools. How the earth's crust becomes covered with scars. How volcanoes scream into the sky without stars. How water whispers to the sand for the first time. I was in this whisper. In these cracks. In these lightning strikes.
+
 
 
                                            ,,I felt that I was being born,,
@@ -227,7 +243,7 @@ I felt how it cools. How the earth's crust becomes covered with scars. How volca
     </div>
   </div>
 
-  <!-- Скрипт инициализации Turn.js -->
+  <!-- Скрипт инициализации flipbook -->
   <script>
     $(document).ready(function(){
       $('#flipbook').turn({
