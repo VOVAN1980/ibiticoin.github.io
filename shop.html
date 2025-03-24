@@ -17,8 +17,7 @@
   <script src="https://unpkg.com/@coinbase/wallet-sdk/dist/wallet-sdk.umd.min.js"></script>
   <!-- Fortmatic -->
   <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
-  <!-- Portis (правильный URL) -->
-  <script src="https://cdn.portis.io/js/portis.js"></script>
+  <!-- Убираем Portis, поэтому не подключаем его -->
   <!-- Torus -->
   <script src="https://unpkg.com/torus-embed"></script>
   
@@ -57,7 +56,6 @@
       color: gold;
       margin: 0 10px 10px;
     }
-    /* Стандартная кнопка для товаров, если нужно */
     .shop-item a {
       display: block;
       background: gold;
@@ -96,7 +94,7 @@
       color: gold;
     }
 
-    /* Стили для модального окна покупки (для IBITIcoin) */
+    /* Стили для модального окна покупки */
     .modal {
       display: none; /* Скрыто по умолчанию */
       position: fixed;
@@ -173,7 +171,7 @@
   </section>
 
   <section class="shop-items">
-    <!-- Товар IBITIcoin: остаётся с модальным окном покупки -->
+    <!-- Товар IBITIcoin: с модальным окном покупки -->
     <div class="shop-item">
       <img src="img/IBITIcoin.webp" alt="Товар 1">
       <h3>Название товара 1 (IBITIcoin)</h3>
@@ -186,7 +184,6 @@
       <img src="img/NFT.webp" alt="Товар 2">
       <h3>Название товара 2 (NFT)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-      <!-- Вместо вызова модального окна используем прямую ссылку -->
       <a class="btn" href="nft.html">Купить</a>
     </div>
     <!-- Добавьте другие товары аналогично -->
@@ -211,39 +208,54 @@
     <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
   </footer>
   
-  <!-- Подключаем файл wallet.js, который реализует подключение кошельков -->
-  <script src="js/wallet.js"></script>
+  <!-- Скрипты -->
+  <!-- Подключаем внешние библиотеки (без Portis, так как его не используем) -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="https://unpkg.com/web3modal"></script>
+  <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
+  <script src="https://unpkg.com/@coinbase/wallet-sdk/dist/wallet-sdk.umd.min.js"></script>
+  <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
+  <script src="https://unpkg.com/torus-embed"></script>
 
-  <!-- Скрипт для работы с модальным окном покупки -->
+  <!-- Дополнительные скрипты -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
-    // Глобальная переменная для хранения текущего товара (IBITIcoin)
+    AOS.init({ once: true });
+  </script>
+  <script type="text/javascript">
+    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+    (function(){
+      var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+      s1.async = true;
+      s1.src = 'https://embed.tawk.to/67db03deb73265190d550119/1imnoe7rb';
+      s1.charset = 'UTF-8';
+      s1.setAttribute('crossorigin', '*');
+      s0.parentNode.insertBefore(s1, s0);
+    })();
+  </script>
+  <script>
+    // Модальное окно покупки IBITIcoin
     let currentProduct = null;
-
-    // Функция открытия модального окна (для IBITIcoin)
     function openPurchaseModal(productName) {
       currentProduct = productName;
       document.getElementById('purchaseTitle').innerText = 'Покупка ' + productName;
       document.getElementById('purchaseModal').style.display = 'block';
     }
-
-    // Функция закрытия модального окна
     function closePurchaseModal() {
       document.getElementById('purchaseModal').style.display = 'none';
       currentProduct = null;
       document.getElementById('amount').value = '';
     }
-
-    // Обработка формы покупки
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
       event.preventDefault();
       const amount = document.getElementById('amount').value;
-
       // Здесь можно вызвать функцию смарт-контракта через ethers.js, например:
       // await buyTokenOrNFT(currentProduct, amount);
-
       alert('Покупка ' + amount + ' единиц «' + currentProduct + '» инициирована (тестовый режим).');
       closePurchaseModal();
     });
   </script>
+  <!-- Подключаем файл wallet.js -->
+  <script src="js/wallet.js"></script>
 </body>
 </html>
