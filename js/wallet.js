@@ -55,9 +55,8 @@ const providerOptions = {
 }
 };
 
-// Инициализируем Web3Modal с заданными опциями
-const web3Modal = new Web3Modal({
-  cacheProvider: false, // Если true, то запоминается выбранный кошелек
+const web3Modal = new (Web3Modal.default || Web3Modal)({
+  cacheProvider: false,
   providerOptions
 });
 
