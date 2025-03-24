@@ -343,7 +343,7 @@ iframe {
 
 /* ===== Секция для дополнительных кнопок (Калькулятор и Видео-гайды) ===== */
 .extra-buttons-section {
-  background: transparent;       /* Заменили черный фон на прозрачный */
+  background: transparent;       /* Прозрачный фон */
   padding: 40px 0;
   text-align: center;
 }
@@ -351,11 +351,12 @@ iframe {
   display: inline-block;
   background: gold;
   color: #000;
-  padding: 12px 25px;
+  padding: 8px 16px;       /* Уменьшенный padding */
   border-radius: 5px;
   text-decoration: none;
-  margin: 0 10px;
+  margin: 0 5px;           /* Уменьшенный отступ */
   font-weight: bold;
+  font-size: 0.9em;        /* Немного уменьшен размер шрифта */
   transition: background 0.3s, color 0.3s;
 }
 .btn-small:hover {
