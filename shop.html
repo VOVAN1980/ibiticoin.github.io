@@ -57,6 +57,7 @@
       color: gold;
       margin: 0 10px 10px;
     }
+    /* Стандартная кнопка для товаров, если нужно */
     .shop-item a {
       display: block;
       background: gold;
@@ -95,7 +96,7 @@
       color: gold;
     }
 
-    /* Стили для модального окна покупки */
+    /* Стили для модального окна покупки (для IBITIcoin) */
     .modal {
       display: none; /* Скрыто по умолчанию */
       position: fixed;
@@ -172,27 +173,26 @@
   </section>
 
   <section class="shop-items">
-    <!-- Товар 1 -->
+    <!-- Товар IBITIcoin: остаётся с модальным окном покупки -->
     <div class="shop-item">
       <img src="img/IBITIcoin.webp" alt="Товар 1">
       <h3>Название товара 1 (IBITIcoin)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-      <!-- Кнопка "Купить" вызывает функцию openPurchaseModal с параметром 'IBITIcoin' -->
       <a href="#" onclick="openPurchaseModal('IBITIcoin')">Купить</a>
     </div>
     
-    <!-- Товар 2 -->
+    <!-- Товар NFT: кнопка перенаправляет на страницу NFT-галереи -->
     <div class="shop-item">
       <img src="img/NFT.webp" alt="Товар 2">
       <h3>Название товара 2 (NFT)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-      <!-- Кнопка "Купить" вызывает функцию openPurchaseModal с параметром 'NFT' -->
-      <a href="#" onclick="openPurchaseModal('NFT')">Купить</a>
+      <!-- Вместо вызова модального окна используем прямую ссылку -->
+      <a class="btn" href="nft.html">Купить</a>
     </div>
     <!-- Добавьте другие товары аналогично -->
   </section>
 
-  <!-- Модальное окно для покупки -->
+  <!-- Модальное окно для покупки IBITIcoin -->
   <div id="purchaseModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closePurchaseModal()">&times;</span>
@@ -216,10 +216,10 @@
 
   <!-- Скрипт для работы с модальным окном покупки -->
   <script>
-    // Глобальная переменная для хранения текущего товара
+    // Глобальная переменная для хранения текущего товара (IBITIcoin)
     let currentProduct = null;
 
-    // Функция открытия модального окна
+    // Функция открытия модального окна (для IBITIcoin)
     function openPurchaseModal(productName) {
       currentProduct = productName;
       document.getElementById('purchaseTitle').innerText = 'Покупка ' + productName;
@@ -247,4 +247,3 @@
   </script>
 </body>
 </html>
-
