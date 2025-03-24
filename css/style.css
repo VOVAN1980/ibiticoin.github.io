@@ -604,3 +604,10 @@ body {
   background: #333 !important;
   cursor: pointer !important;
 }
+
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+body {
+  top: 0px !important;
+}
