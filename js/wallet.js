@@ -48,11 +48,11 @@ const providerOptions = {
     }
   },
   torus: {
-    package: Torus, // Требуется Torus
-    options: {
-      network: "mainnet"
-    }
+  package: window.TorusEmbed, // Используем глобальную переменную TorusEmbed
+  options: {
+    network: "mainnet"
   }
+}
 };
 
 // Инициализируем Web3Modal с заданными опциями
