@@ -577,7 +577,7 @@ body {
   top: 0px !important;
 }
 
-/* Стили для выпадающего списка (с !important, чтобы перебить Google) */
+/* Стили для выпадающего списка */
 #google_translate_element .goog-te-gadget .goog-te-combo {
   margin: 0 !important;
   padding: 5px 8px !important;
@@ -599,15 +599,8 @@ body {
   padding-right: 20px !important;
 }
 
-/* При наведении */
+/* Ховер-эффект для выпадающего списка */
 #google_translate_element .goog-te-gadget .goog-te-combo:hover {
   background: #333 !important;
   cursor: pointer !important;
-}
-
-.goog-te-banner-frame.skiptranslate {
-  display: none !important;
-}
-body {
-  top: 0px !important;
 }
