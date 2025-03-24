@@ -19,19 +19,22 @@
 let provider;
 let selectedAccount;
 
+// Используем один Infura ключ для всех случаев, где он требуется
+const INFURA_KEY = "1faccf0f1fdc4532ad7a1a38a67ee906";
+
 // Конфигурация провайдеров для Web3Modal
 const providerOptions = {
   walletconnect: {
     package: WalletConnectProvider, // Требуется @walletconnect/web3-provider
     options: {
-      infuraId: "YOUR_INFURA_ID" // Замените на ваш Infura ID
+      infuraId: INFURA_KEY
     }
   },
   coinbasewallet: {
     package: CoinbaseWalletSDK, // Требуется @coinbase/wallet-sdk
     options: {
       appName: "IBITIcoin",
-      infuraId: "1faccf0f1fdc4532ad7a1a38a67ee906", // Замените на ваш Infura ID
+      infuraId: INFURA_KEY,
       rpc: "", // Оставьте пустым, если используете Infura
       chainId: 1,
       darkMode: false
