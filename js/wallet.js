@@ -48,15 +48,16 @@ const providerOptions = {
     }
   },
   torus: {
-  package: window.TorusEmbed, // Используем глобальную переменную TorusEmbed
-  options: {
-    network: "mainnet"
+    package: window.TorusEmbed, // Используем глобальную переменную TorusEmbed
+    options: {
+      network: "mainnet"
+    }
   }
-}
 };
 
+// Инициализируем Web3Modal с заданными опциями
 const web3Modal = new (Web3Modal.default || Web3Modal)({
-  cacheProvider: false,
+  cacheProvider: false, // Если true, то запоминается выбранный кошелек
   providerOptions
 });
 
