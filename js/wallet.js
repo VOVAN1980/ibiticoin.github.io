@@ -33,7 +33,7 @@ const providerOptions = {
     }
   },
   coinbasewallet: {
-    package: CoinbaseWalletSDK, // Требуется @coinbase/wallet-sdk
+    package: window.CoinbaseWalletSDK, // Используем глобальную переменную
     options: {
       appName: "IBITIcoin",
       infuraId: INFURA_KEY,
