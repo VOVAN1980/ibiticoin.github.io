@@ -23,13 +23,13 @@
   <meta name="twitter:description" content="Узнайте, как IBITIcoin делает криптовалюту доступной и безопасной для всех.">
   <meta name="twitter:image" content="img/og-image.png">
   
-  <!-- Подключаем общий CSS (где и «золотые» стили, и flipbook-стили) -->
+  <!-- Подключаем общий CSS -->
   <link rel="stylesheet" href="css/style.css">
   
-  <!-- Подключаем AOS для анимаций (при прокрутке) -->
+  <!-- Подключаем AOS для анимаций -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
 
-  <!-- Google tag (gtag.js) - реальный ID: G-T5DF4BLR5S -->
+  <!-- Google tag -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-T5DF4BLR5S"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -38,17 +38,17 @@
     gtag('config', 'G-T5DF4BLR5S');
   </script>
 
-  <!-- Встроенные стили для секции кнопок и модального окна -->
   <style>
+    /* Встроенные стили для секции кнопок и модального окна */
     .extra-buttons-section {
-      display: flex;              /* Используем флекс */
-      flex-wrap: wrap;            /* Разрешаем перенос */
-      justify-content: center;    /* Центрируем кнопки */
-      gap: 10px;                  /* Расстояние между кнопками */
-      margin: 40px auto;          /* Отступы сверху/снизу */
-      max-width: 1200px;          /* Ограничиваем ширину */
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 40px auto;
+      max-width: 1200px;
       text-align: center;
-      background: transparent !important;  /* Прозрачный фон */
+      background: transparent !important;
     }
     .extra-buttons-section .btn-small {
       display: inline-block;
@@ -64,21 +64,8 @@
       background: #c0a000;
       color: #000;
     }
-    /* Адаптивное поведение для мобильных устройств */
-    @media (max-width: 600px) {
-      .extra-buttons-section {
-        flex-direction: column;   /* Кнопки располагаются вертикально */
-        align-items: center;
-      }
-      .extra-buttons-section .btn-small {
-        width: 80%;
-        max-width: 300px;
-        margin: 5px 0;
-      }
-    }
-    /* Стили для модального окна "Поделиться" */
     .modal {
-      display: none; /* Скрыто по умолчанию */
+      display: none;
       position: fixed;
       z-index: 1000;
       left: 0;
@@ -129,42 +116,37 @@
       }
     }
   </style>
-  
 </head>
 <body>
 
-  <!-- Левая сторона: кнопки «Главная» и «Блог» -->
+  <!-- Верхние угловые кнопки -->
   <div class="corner-box corner-box-left">
     <a href="index.html">Главная</a>
   </div>
   <div class="corner-box corner-box-left2">
     <a href="blog.html">Блог</a>
   </div>
-
-  <!-- Правая сторона: Roadmap + язык -->
   <div class="corner-box corner-box-right">
     <a href="roadmap.html">Roadmap</a> | 
     <a href="?lang=ru">RU</a> | 
     <a href="?lang=en">EN</a>
   </div>
 
-  <!-- Шапка с логотипом -->
   <header class="hero-header">
     <img src="img/logo.png" alt="IBITIcoin Logo" width="200">
     <h1>IBITIcoin</h1>
     <p>Stability | Innovation | Accessibility</p>
   </header>
 
-  <!-- Золотой блок (WHY CHOOSE) -->
   <section class="gold-section" data-aos="fade-up">
     <h2>WHY CHOOSE IBITIcoin?</h2>
     <p>
       IBITIcoin – это инновационная криптовалюта для быстрой, безопасной и доступной работы в цифровой экономике...
     </p>
+    <!-- Кнопка Buy на главной странице (используем класс .btn, inline-block) -->
     <a class="btn" href="buy.html">Buy IBITIcoin</a>
   </section>
   
-  <!-- Секция с дополнительными кнопками -->
   <section class="extra-buttons-section">
     <a class="btn-small" href="calculator.html">Калькулятор</a>
     <a class="btn-small" href="video-guides.html">Видео-гайды</a>
@@ -173,7 +155,6 @@
     <a class="btn-small" href="nft.html">NFT Галерея</a>
     <a class="btn-small" href="shop.html">Магазин</a>
     <a class="btn-small" href="book.html">Книга</a>
-    <!-- Кнопка "Поделиться" реализована как ссылка -->
     <a href="#" id="openShareModal" class="btn-small">Поделиться</a>
   </section>
 
@@ -208,15 +189,11 @@
     </div>
   </div>
 
-  <!-- Подключаем AOS скрипт и инициализируем -->
+  <!-- Скрипты -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
-    AOS.init({
-      once: true
-    });
+    AOS.init({ once: true });
   </script>
-
-  <!--Start of Tawk.to Script (Онлайн-чат)-->
   <script type="text/javascript">
     var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
     (function(){
@@ -228,69 +205,31 @@
       s0.parentNode.insertBefore(s1,s0);
     })();
   </script>
-  <!--End of Tawk.to Script-->
-
-  <!-- Нативный шаринг (резерв) -->
   <script>
-    function shareChart() {
-      if (navigator.share) {
-        navigator.share({
-          title: document.title,
-          text: 'Посмотрите этот раздел IBITIcoin!',
-          url: window.location.href
-        })
-        .then(() => console.log('Шаринг успешен'))
-        .catch((error) => console.log('Ошибка при шаринге', error));
-      } else {
-        alert('Ваш браузер не поддерживает нативный шаринг.');
-      }
-    }
-  </script>
-
-  <!-- Подключение jQuery (нужно для Turn.js) -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <!-- Подключение Turn.js (для flipbook, будет использоваться на book.html) -->
-  <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js/turn.min.js"></script>
-
-  <!-- Скрипты для модального окна шаринга -->
-  <script>
-    // Получаем элементы модального окна и кнопки "Поделиться"
     const openModalLink = document.getElementById('openShareModal');
     const modal = document.getElementById('shareModal');
     const closeBtn = document.querySelector('.modal .close');
-
-    // Открытие модального окна
     openModalLink.addEventListener('click', (e) => {
       e.preventDefault();
       modal.style.display = 'block';
     });
-
-    // Закрытие окна по клику на крестик
     closeBtn.addEventListener('click', () => {
       modal.style.display = 'none';
     });
-
-    // Закрытие окна при клике вне содержимого модального окна
     window.addEventListener('click', (event) => {
       if (event.target == modal) {
         modal.style.display = 'none';
       }
     });
-
-    // Функция открытия окна шаринга для конкретной соцсети
     function openShareWindow(url) {
       window.open(url, 'share-window', 'width=600,height=400');
     }
-
-    // Настройка шаринга для Facebook
     document.getElementById('share-facebook').addEventListener('click', (e) => {
       e.preventDefault();
       const shareUrl = encodeURIComponent(window.location.href);
       const url = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`;
       openShareWindow(url);
     });
-
-    // Настройка шаринга для Twitter
     document.getElementById('share-twitter').addEventListener('click', (e) => {
       e.preventDefault();
       const shareUrl = encodeURIComponent(window.location.href);
@@ -298,16 +237,12 @@
       const url = `https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareText}`;
       openShareWindow(url);
     });
-
-    // Настройка шаринга для VK
     document.getElementById('share-vk').addEventListener('click', (e) => {
       e.preventDefault();
       const shareUrl = encodeURIComponent(window.location.href);
       const url = `https://vk.com/share.php?url=${shareUrl}`;
       openShareWindow(url);
     });
-
-    // Настройка шаринга для Telegram
     document.getElementById('share-telegram').addEventListener('click', (e) => {
       e.preventDefault();
       const shareUrl = encodeURIComponent(window.location.href);
@@ -316,6 +251,5 @@
       openShareWindow(url);
     });
   </script>
-
 </body>
 </html>
