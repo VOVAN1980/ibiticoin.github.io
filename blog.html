@@ -10,15 +10,15 @@
 
   <!-- Левая панель (Главная, Блог) -->
   <div class="corner-box corner-box-left">
-    <a href="/">Главная</a>
+    <a href="index.html">Главная</a>
   </div>
   <div class="corner-box corner-box-left2">
-    <a href="/blog.html">Блог</a>
+    <a href="blog.html">Блог</a>
   </div>
 
   <!-- Правая панель (Roadmap + язык) -->
   <div class="corner-box corner-box-right">
-    <a href="/roadmap.html">Roadmap</a> | 
+    <a href="roadmap.html">Roadmap</a> | 
     <a href="?lang=ru">RU</a> | 
     <a href="?lang=en">EN</a>
   </div>
@@ -32,7 +32,6 @@
     <!-- Левая боковая панель (контактная форма) -->
     <aside class="blog-sidebar-left">
       <h2>Напишите нам</h2>
-      <!-- Начало кода Formspree -->
       <form action="https://formspree.io/f/mdkeadvl" method="POST">
         <label>
           Ваш email:
@@ -42,23 +41,24 @@
           Ваше сообщение:
           <textarea name="message" required></textarea>
         </label>
-        <!-- Кнопка оформлена классом .btn -->
+        <!-- Используем тот же класс .btn -->
         <button type="submit" class="btn">Отправить</button>
       </form>
-      <!-- Конец кода Formspree -->
     </aside>
 
-    <!-- Основной контент блога (новости, посты) -->
+    <!-- Основной контент блога -->
     <main class="blog-content">
       <h2>Последние новости</h2>
       <article class="blog-post">
         <h3>Новая интеграция с DeFi-платформой</h3>
         <p>Дата публикации: 15.04.2025</p>
         <p>Мы рады сообщить о новой интеграции, которая откроет доступ к стейкингу и DeFi-услугам...</p>
-        <!-- Кнопка "Читать далее" оформлена классом .btn -->
-        <a href="#" class="btn">Читать далее</a>
+        <!-- Оборачиваем кнопку в контейнер с текстовым выравниванием по центру -->
+        <div class="btn-wrapper" style="text-align: center;">
+          <a href="#" class="btn blog-btn">Читать далее</a>
+        </div>
       </article>
-      <!-- Дополнительные посты аналогично -->
+      <!-- Другие посты можно добавить аналогичным образом -->
     </main>
 
     <!-- Правая боковая панель (комментарии) -->
@@ -68,8 +68,6 @@
       <div id="disqus_thread"></div>
       <script>
         var disqus_config = function () {
-          // При необходимости: this.page.url = window.location.href;
-          // this.page.identifier = "blog-main";
         };
         (function() {
           var d = document, s = d.createElement('script');
