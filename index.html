@@ -80,6 +80,30 @@
       color: #000;
     }
 
+    /* Стили для секции подключения кошелька */
+    .wallet-section {
+      text-align: center;
+      margin: 20px auto;
+    }
+    .wallet-section button {
+      background: gold;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .wallet-section button:hover {
+      background: #c0a000;
+    }
+    .wallet-section #walletAddress {
+      margin-top: 10px;
+      font-weight: bold;
+      color: gold;
+    }
+
     /* Модальное окно шаринга */
     .modal {
       display: none;
@@ -164,7 +188,7 @@
     <p>
       IBITIcoin – это инновационная криптовалюта для быстрой, безопасной и доступной работы в цифровой экономике...
     </p>
-    <!-- Кнопка Buy на главной (класс .btn, inline-block) -->
+    <!-- Кнопка Buy на главной -->
     <a class="btn" href="buy.html">Buy IBITIcoin</a>
   </section>
   
@@ -177,6 +201,12 @@
     <a class="btn-small" href="shop.html">Магазин</a>
     <a class="btn-small" href="book.html">Книга</a>
     <a href="#" id="openShareModal" class="btn-small">Поделиться</a>
+  </section>
+  
+  <!-- Секция подключения кошелька -->
+  <section class="wallet-section">
+    <button id="connectWalletBtn">Подключить кошелек</button>
+    <div id="walletAddress"></div>
   </section>
 
   <footer>
@@ -295,5 +325,7 @@
       openShareWindow(url);
     });
   </script>
+  <!-- Подключаем файл wallet.js -->
+  <script src="js/wallet.js"></script>
 </body>
 </html>
