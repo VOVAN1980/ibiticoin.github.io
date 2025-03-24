@@ -1,18 +1,17 @@
 /**
  * wallet.js
  * Реализует подключение криптовалютных кошельков через Web3Modal.
- * Поддерживаются: MetaMask, WalletConnect (включая Trust Wallet), Coinbase Wallet, Fortmatic, Portis, Torus.
+ * Поддерживаются: MetaMask, WalletConnect (включая Trust Wallet), Coinbase Wallet, Fortmatic, Torus.
  *
- * Требует:
+ * Требуется:
  *  - ethers.js
  *  - Web3Modal
  *  - @walletconnect/web3-provider
  *  - @coinbase/wallet-sdk
  *  - Fortmatic
- *  - Portis
  *  - Torus
  *
- * Trust Wallet поддерживается через WalletConnect или как инжектированный провайдер (если используется встроенный браузер Trust Wallet).
+ * (Поддержка Portis временно исключена)
  */
 
 console.log("wallet.js загружен");
@@ -24,7 +23,7 @@ let selectedAccount;
 // Используем один Infura ключ для всех случаев, где он требуется
 const INFURA_KEY = "1faccf0f1fdc4532ad7a1a38a67ee906";
 
-// Конфигурация провайдеров для Web3Modal
+// Конфигурация провайдеров для Web3Modal (без Portis)
 const providerOptions = {
   walletconnect: {
     package: WalletConnectProvider, // Требуется @walletconnect/web3-provider
@@ -46,12 +45,6 @@ const providerOptions = {
     package: Fortmatic, // Требуется Fortmatic
     options: {
       key: "YOUR_FORTMATIC_KEY" // Замените на ваш Fortmatic ключ
-    }
-  },
-  portis: {
-    package: Portis, // Требуется Portis
-    options: {
-      id: "YOUR_PORTIS_ID" // Замените на ваш Portis ID
     }
   },
   torus: {
