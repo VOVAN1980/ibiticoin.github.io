@@ -17,9 +17,9 @@
   <script src="https://unpkg.com/@coinbase/wallet-sdk/dist/wallet-sdk.umd.min.js"></script>
   <!-- Fortmatic -->
   <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
-  <!-- Убираем Portis, поэтому не подключаем его -->
-  <!-- Torus -->
-  <script src="https://unpkg.com/torus-embed"></script>
+  <!-- Удаляем Portis -->
+  <!-- Подключаем Torus через jsDelivr -->
+  <script src="https://cdn.jsdelivr.net/npm/torus-embed@2.4.2/dist/torus.min.js"></script>
   
   <style>
     /* Дополнительные стили для магазина */
@@ -209,14 +209,14 @@
   </footer>
   
   <!-- Скрипты -->
-  <!-- Подключаем внешние библиотеки (без Portis, так как его не используем) -->
+  <!-- Подключаем внешние библиотеки (без Portis) -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="https://unpkg.com/web3modal"></script>
   <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
   <script src="https://unpkg.com/@coinbase/wallet-sdk/dist/wallet-sdk.umd.min.js"></script>
   <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
-  <script src="https://unpkg.com/torus-embed"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/torus-embed@2.4.2/dist/torus.min.js"></script>
+  
   <!-- Дополнительные скрипты -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
@@ -234,7 +234,7 @@
     })();
   </script>
   <script>
-    // Модальное окно покупки IBITIcoin
+    // Модальное окно для покупки IBITIcoin
     let currentProduct = null;
     function openPurchaseModal(productName) {
       currentProduct = productName;
