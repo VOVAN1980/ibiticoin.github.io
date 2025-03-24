@@ -628,3 +628,23 @@ body {
   background: #333 !important;
   cursor: pointer !important;
 }
+
+/* ===== Стили для кнопки "Купить" в NFT-галерее (маленькая кнопка сверху по центру) ===== */
+.nft-item .buy-button {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.8em;
+  padding: 5px 10px;
+  border-radius: 5px;
+  z-index: 10;
+  background: gold;
+  color: #000;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+.nft-item .buy-button:hover {
+  background: #c0a000;
+}
