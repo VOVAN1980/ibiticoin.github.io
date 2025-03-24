@@ -116,6 +116,30 @@ body {
   max-width: 220px;
 }
 
+/* ===== Стили для секции подключения кошелька ===== */
+.wallet-section {
+  text-align: center;
+  margin: 20px auto;
+}
+.wallet-section button {
+  background: gold;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.wallet-section button:hover {
+  background: #c0a000;
+}
+.wallet-section #walletAddress {
+  margin-top: 10px;
+  font-weight: bold;
+  color: gold;
+}
+
 /* ===== Шапка (hero-header) ===== */
 .hero-header {
   padding: 15px 20px;
