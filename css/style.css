@@ -558,3 +558,37 @@ iframe {
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
+
+/* Скрываем иконку и текст "Powered by Google" */
+.goog-logo-link,
+.goog-te-gadget span {
+  display: none !important;
+}
+
+/* Скрываем верхнюю панель при автоматическом переводе */
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+body {
+  top: 0px !important;
+}
+
+/* Меняем стиль выпадающего списка */
+#google_translate_element .goog-te-gadget .goog-te-combo {
+  margin: 0;
+  padding: 5px 8px;
+  background: #111;      /* Тёмный фон в стиле вашего сайта */
+  color: gold;           /* Золотой текст */
+  border: 1px solid gold;
+  border-radius: 5px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;       /* Размер шрифта */
+  outline: none;
+}
+
+/* При наведении можно добавить эффект */
+#google_translate_element .goog-te-gadget .goog-te-combo:hover {
+  background: #333;
+  cursor: pointer;
+}
+
