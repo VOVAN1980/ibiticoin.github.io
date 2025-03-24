@@ -15,6 +15,8 @@
  * Trust Wallet поддерживается через WalletConnect или как инжектированный провайдер (если используется встроенный браузер Trust Wallet).
  */
 
+console.log("wallet.js загружен");
+
 // Глобальные переменные для провайдера и выбранного аккаунта
 let provider;
 let selectedAccount;
