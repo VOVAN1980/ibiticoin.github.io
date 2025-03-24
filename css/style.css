@@ -559,51 +559,7 @@ iframe {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Скрываем только текст "Powered by Google", оставляя логотип */
-.goog-logo-link {
-  display: inline-block !important;
-}
-.goog-logo-link > span {
-  display: none !important;
-}
-
-/* Скрываем верхнюю панель при автопереводе */
-.goog-te-banner-frame.skiptranslate {
-  display: none !important;
-}
-body {
-  top: 0px !important;
-}
-
-/* Стили для выпадающего списка (с !important, чтобы перебить Google) */
-#google_translate_element .goog-te-gadget .goog-te-combo {
-  margin: 0 !important;
-  padding: 5px 8px !important;
-  width: 130px !important;
-  background: #111 !important;
-  color: gold !important;
-  border: 1px solid gold !important;
-  border-radius: 5px !important;
-  font-family: 'Orbitron', sans-serif !important;
-  font-size: 14px !important;
-  outline: none !important;
-  appearance: none !important;
-  -moz-appearance: none !important;
-  -webkit-appearance: none !important;
-  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg width%3D%2212%22 height%3D%227%22 viewBox%3D%220 0 12 7%22 xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath d%3D%22M6%200l6%206H0z%22 fill%3D%22gold%22/%3E%3C/svg%3E') !important;
-  background-repeat: no-repeat !important;
-  background-position: calc(100% - 10px) center !important;
-  background-size: 10px 7px !important;
-  padding-right: 25px !important;
-}
-
-/* При наведении */
-#google_translate_element .goog-te-gadget .goog-te-combo:hover {
-  background: #333 !important;
-  cursor: pointer !important;
-}
-
-/* ===== Стили для Google Translate (с !important) ===== */
+/* ===== Стили для Google Translate ===== */
 
 /* Скрываем только текст "Powered by Google", оставляя логотип */
 .goog-logo-link {
@@ -621,7 +577,7 @@ body {
   top: 0px !important;
 }
 
-/* Стили для выпадающего списка */
+/* Стили для выпадающего списка (с !important, чтобы перебить Google) */
 #google_translate_element .goog-te-gadget .goog-te-combo {
   margin: 0 !important;
   padding: 5px 8px !important;
