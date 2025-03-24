@@ -559,10 +559,13 @@ iframe {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Скрываем иконку и текст "Powered by Google" */
-.goog-logo-link,
-.goog-te-gadget span {
-  display: none !important;
+/* ===== Стили для Google Translate ===== */
+/* Скрываем только текст "Powered by Google", но сохраняем логотип */
+.goog-logo-link {
+  display: inline-block !important; /* Оставляем сам логотип */
+}
+.goog-logo-link > span {
+  display: none !important;        /* Скрываем текст "Powered by Google" */
 }
 
 /* Скрываем верхнюю панель при автоматическом переводе */
@@ -591,4 +594,3 @@ body {
   background: #333;
   cursor: pointer;
 }
-
