@@ -561,12 +561,12 @@ iframe {
 
 /* ===== Стили для Google Translate ===== */
 
-/* Скрываем только текст "Powered by Google", но оставляем логотип */
+/* Скрываем только текст "Powered by Google", оставляя логотип */
 .goog-logo-link {
-  display: inline-block !important; /* Лого Google остаётся */
+  display: inline-block !important;
 }
 .goog-logo-link > span {
-  display: none !important;         /* Скрываем текст "Powered by Google" */
+  display: none !important;
 }
 
 /* Скрываем верхнюю панель при автоматическом переводе */
@@ -581,25 +581,25 @@ body {
 #google_translate_element .goog-te-gadget .goog-te-combo {
   margin: 0;
   padding: 5px 8px;
-  width: 130px;                /* Фиксированная ширина для компактности */
-  background: #111;            /* Тёмный фон в стиле вашего сайта */
-  color: gold;                 /* Золотой текст */
-  border: 1px solid gold;      /* Золотая рамка */
+  width: 130px;
+  background: #111;
+  color: gold;
+  border: 1px solid gold;
   border-radius: 5px;
   font-family: 'Orbitron', sans-serif;
   font-size: 14px;
   outline: none;
-  appearance: none;            /* Скрываем системную стрелку */
+  appearance: none;
   -moz-appearance: none;
   -webkit-appearance: none;
   background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg width%3D%2212%22 height%3D%227%22 viewBox%3D%220 0 12 7%22 xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath d%3D%22M6%200l6%206H0z%22 fill%3D%22gold%22/%3E%3C/svg%3E');
   background-repeat: no-repeat;
   background-position: calc(100% - 10px) center;
-  background-size: 10px 7px;   /* Размер стрелки */
-  padding-right: 25px;         /* Отступ под иконку */
+  background-size: 10px 7px;
+  padding-right: 25px;
 }
 
-/* Ховер-эффект при наведении */
+/* Ховер-эффект для селекта */
 #google_translate_element .goog-te-gadget .goog-te-combo:hover {
   background: #333;
   cursor: pointer;
