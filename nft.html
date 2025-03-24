@@ -31,6 +31,8 @@
       width: 100%;
       display: block;
     }
+
+    /* Подпись внизу */
     .rarity-label {
       position: absolute;
       bottom: 0;
@@ -43,19 +45,29 @@
       padding: 10px;
       text-align: center;
     }
-    /* Кнопка "Купить" внутри каждого NFT-блока */
+
+    /* Базовый стиль кнопки "Купить" */
     .buy-button {
-      display: block;
       background: gold;
       color: #000;
       text-decoration: none;
       font-weight: bold;
-      padding: 10px;
-      border-radius: 0 0 10px 10px;
       transition: background 0.3s;
+      position: absolute;
+      z-index: 10; /* выше, чем label */
     }
     .buy-button:hover {
       background: #c0a000;
+    }
+
+    /* Маленькая кнопка сверху по центру */
+    .buy-button.small-btn {
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.8em;
+      padding: 5px 10px;
+      border-radius: 5px;
     }
 
     /* Стили для модального окна покупки */
@@ -140,57 +152,58 @@
     <div class="nft-item">
       <img src="img/Creation.webp" alt="Creation 1%">
       <div class="rarity-label">Creation 1%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('Creation 1%')">Купить</a>
+      <!-- Кнопка "Купить" сверху по центру, маленькая -->
+      <a href="#" class="buy-button small-btn" onclick="openPurchaseModal('Creation 1%')">Купить</a>
     </div>
     <div class="nft-item">
       <img src="img/Awakening_2.webp" alt="Awakening 2%">
       <div class="rarity-label">Awakening 2%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('Awakening 2%')">Купить</a>
+      <a href="#" class="buy-button small-btn" onclick="openPurchaseModal('Awakening 2%')">Купить</a>
     </div>
     <div class="nft-item">
       <img src="img/First_Gods_and_Kings_3.webp" alt="The First Gods and Kings 3%">
       <div class="rarity-label">The First Gods and Kings 3%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('The First Gods and Kings 3%')">Купить</a>
+      <a href="#" class="buy-button small-btn" onclick="openPurchaseModal('The First Gods and Kings 3%')">Купить</a>
     </div>
     <div class="nft-item">
       <img src="img/Enlightenment_4.webp" alt="Enlightenment 4%">
       <div class="rarity-label">Enlightenment 4%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('Enlightenment 4%')">Купить</a>
+      <a href="#" class="buy-button small-btn" onclick="openPurchaseModal('Enlightenment 4%')">Купить</a>
     </div>
     <div class="nft-item">
       <img src="img/The_Age_of_Darkness_and_Faith_5.webp" alt="The Age of Darkness and Faith 5%">
       <div class="rarity-label">The Age of Darkness and Faith 5%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('The Age of Darkness and Faith 5%')">Купить</a>
+      <a href="#" class="buy-button small-btn" onclick="openPurchaseModal('The Age of Darkness and Faith 5%')">Купить</a>
     </div>
     <div class="nft-item">
       <img src="img/Blood_and_Steel_6.webp" alt="Blood and Steel 6%">
       <div class="rarity-label">Blood and Steel 6%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('Blood and Steel 6%')">Купить</a>
+      <a href="#" class="buy-button small-btn" onclick="openPurchaseModal('Blood and Steel 6%')">Купить</a>
     </div>
     <div class="nft-item">
       <img src="img/Digital_Cell_7.webp" alt="Digital Cell 7%">
       <div class="rarity-label">Digital Cell 7%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('Digital Cell 7%')">Купить</a>
+      <a href="#" class="buy-button small-btn" onclick="openPurchaseModal('Digital Cell 7%')">Купить</a>
     </div>
     <div class="nft-item">
       <img src="img/The_Last_Frontier_50.webp" alt="The Last Frontier 50%">
       <div class="rarity-label">The Last Frontier 50%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('The Last Frontier 50%')">Купить</a>
+      <a href="#" class="buy-button small-btn" onclick="openPurchaseModal('The Last Frontier 50%')">Купить</a>
     </div>
     <div class="nft-item">
       <img src="img/Quantum_Leap_75.webp" alt="Quantum Leap 75%">
       <div class="rarity-label">Quantum Leap 75%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('Quantum Leap 75%')">Купить</a>
+      <a href="#" class="buy-button small-btn" onclick="openPurchaseModal('Quantum Leap 75%')">Купить</a>
     </div>
     <div class="nft-item">
       <img src="img/End_or_Rebirth_100.webp" alt="End or Rebirth 100%">
       <div class="rarity-label">End or Rebirth 100%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('End or Rebirth 100%')">Купить</a>
+      <a href="#" class="buy-button small-btn" onclick="openPurchaseModal('End or Rebirth 100%')">Купить</a>
     </div>
     <div class="nft-item">
       <img src="img/Pandora_100ful.webp" alt="Pandora 100ful">
       <div class="rarity-label">Pandora 100ful</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('Pandora 100ful')">Купить</a>
+      <a href="#" class="buy-button small-btn" onclick="openPurchaseModal('Pandora 100ful')">Купить</a>
     </div>
   </section>
 
