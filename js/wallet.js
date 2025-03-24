@@ -31,7 +31,7 @@ const providerOptions = {
     package: CoinbaseWalletSDK, // Требуется @coinbase/wallet-sdk
     options: {
       appName: "IBITIcoin",
-      infuraId: "YOUR_INFURA_ID", // Замените на ваш Infura ID
+      infuraId: "1faccf0f1fdc4532ad7a1a38a67ee906", // Замените на ваш Infura ID
       rpc: "", // Оставьте пустым, если используете Infura
       chainId: 1,
       darkMode: false
