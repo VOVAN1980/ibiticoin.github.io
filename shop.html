@@ -5,6 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Магазин IBITIcoin</title>
   <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Подключение внешних библиотек для подключения кошелька -->
+  <!-- ethers.js -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <!-- Web3Modal -->
+  <script src="https://unpkg.com/web3modal"></script>
+  <!-- WalletConnect Provider -->
+  <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
+  <!-- Coinbase Wallet SDK -->
+  <script src="https://unpkg.com/@coinbase/wallet-sdk/dist/wallet-sdk.umd.min.js"></script>
+  <!-- Fortmatic -->
+  <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
+  <!-- Portis -->
+  <script src="https://unpkg.com/portis-ui"></script>
+  <!-- Torus -->
+  <script src="https://unpkg.com/torus-embed"></script>
+  
   <style>
     /* Дополнительные стили для магазина */
     .shop-items {
@@ -53,6 +70,30 @@
     .shop-item a:hover {
       background: #c0a000;
     }
+    
+    /* Стили для секции подключения кошелька */
+    .wallet-section {
+      text-align: center;
+      margin: 20px auto;
+    }
+    .wallet-section button {
+      background: gold;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .wallet-section button:hover {
+      background: #c0a000;
+    }
+    .wallet-section #walletAddress {
+      margin-top: 10px;
+      font-weight: bold;
+      color: gold;
+    }
   </style>
 </head>
 <body>
@@ -60,6 +101,12 @@
     <h1>Магазин IBITIcoin</h1>
     <p>Приобретайте эксклюзивные товары, связанные с IBITIcoin!</p>
   </header>
+
+  <!-- Секция подключения кошелька -->
+  <section class="wallet-section">
+    <button id="connectWalletBtn">Подключить кошелек</button>
+    <div id="walletAddress"></div>
+  </section>
 
   <section class="shop-items">
     <div class="shop-item">
@@ -81,5 +128,8 @@
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
   </footer>
+  
+  <!-- Подключаем файл wallet.js, который реализует подключение кошельков -->
+  <script src="js/wallet.js"></script>
 </body>
 </html>
