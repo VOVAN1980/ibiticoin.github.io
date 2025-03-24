@@ -84,7 +84,10 @@ async function connectWallet() {
     selectedAccount = accounts[0];
     
     // Выводим адрес кошелька на странице (элемент с id="walletAddress")
-    document.getElementById("walletAddress").innerText = selectedAccount;
+    const walletDisplay = document.getElementById("walletAddress");
+    if (walletDisplay) {
+      walletDisplay.innerText = selectedAccount;
+    }
     console.log("Подключен аккаунт:", selectedAccount);
     
     // Подписываемся на события смены аккаунтов и отключения
@@ -93,7 +96,7 @@ async function connectWallet() {
         disconnectWallet();
       } else {
         selectedAccount = accounts[0];
-        document.getElementById("walletAddress").innerText = selectedAccount;
+        if (walletDisplay) walletDisplay.innerText = selectedAccount;
       }
     });
     
@@ -114,7 +117,8 @@ async function disconnectWallet() {
   }
   provider = null;
   selectedAccount = null;
-  document.getElementById("walletAddress").innerText = "Wallet disconnected";
+  const walletDisplay = document.getElementById("walletAddress");
+  if (walletDisplay) walletDisplay.innerText = "Wallet disconnected";
   console.log("Кошелек отключен");
 }
 
@@ -123,5 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
   if (connectBtn) {
     connectBtn.addEventListener("click", connectWallet);
+  } else {
+    console.error("Элемент с id 'connectWalletBtn' не найден.");
   }
 });
