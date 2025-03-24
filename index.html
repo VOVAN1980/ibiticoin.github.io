@@ -121,7 +121,7 @@
 
   <!-- Верхние угловые кнопки -->
   <div class="corner-box corner-box-left">
-    <a href="index.html">Главная</a>
+    <a href="/">Главная</a>
   </div>
   <div class="corner-box corner-box-left2">
     <a href="blog.html">Блог</a>
@@ -143,7 +143,7 @@
     <p>
       IBITIcoin – это инновационная криптовалюта для быстрой, безопасной и доступной работы в цифровой экономике...
     </p>
-    <!-- Кнопка Buy на главной странице (используем класс .btn, inline-block) -->
+    <!-- Кнопка Buy на главной (используем класс .btn) -->
     <a class="btn" href="buy.html">Buy IBITIcoin</a>
   </section>
   
@@ -206,6 +206,12 @@
     })();
   </script>
   <script>
+    // Получаем базовый URL и удаляем "index.html", если оно присутствует
+    let shareUrl = window.location.href;
+    if (shareUrl.endsWith("index.html")) {
+      shareUrl = shareUrl.replace("index.html", "");
+    }
+    // Скрипты модального окна шаринга
     const openModalLink = document.getElementById('openShareModal');
     const modal = document.getElementById('shareModal');
     const closeBtn = document.querySelector('.modal .close');
@@ -226,28 +232,24 @@
     }
     document.getElementById('share-facebook').addEventListener('click', (e) => {
       e.preventDefault();
-      const shareUrl = encodeURIComponent(window.location.href);
-      const url = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`;
+      const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
       openShareWindow(url);
     });
     document.getElementById('share-twitter').addEventListener('click', (e) => {
       e.preventDefault();
-      const shareUrl = encodeURIComponent(window.location.href);
       const shareText = encodeURIComponent(document.title);
-      const url = `https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareText}`;
+      const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${shareText}`;
       openShareWindow(url);
     });
     document.getElementById('share-vk').addEventListener('click', (e) => {
       e.preventDefault();
-      const shareUrl = encodeURIComponent(window.location.href);
-      const url = `https://vk.com/share.php?url=${shareUrl}`;
+      const url = `https://vk.com/share.php?url=${encodeURIComponent(shareUrl)}`;
       openShareWindow(url);
     });
     document.getElementById('share-telegram').addEventListener('click', (e) => {
       e.preventDefault();
-      const shareUrl = encodeURIComponent(window.location.href);
       const shareText = encodeURIComponent(document.title);
-      const url = `https://t.me/share/url?url=${shareUrl}&text=${shareText}`;
+      const url = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${shareText}`;
       openShareWindow(url);
     });
   </script>
