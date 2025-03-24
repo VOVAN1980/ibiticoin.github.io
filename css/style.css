@@ -14,7 +14,7 @@ body {
 .corner-box {
   position: absolute;
   background: rgba(0, 0, 0, 0.8);
-  border: 2px solid gold; /* Золотая рамка */
+  border: 2px solid gold;
   border-radius: 5px;
   padding: 10px 15px;
   z-index: 999;
@@ -24,7 +24,7 @@ body {
   left: 20px;
 }
 .corner-box-left2 {
-  top: 80px; /* Вторая кнопка чуть ниже первой */
+  top: 80px;
   left: 20px;
 }
 .corner-box-right {
@@ -43,14 +43,14 @@ body {
 
 /* ===== Кнопки (btn) ===== */
 .btn {
+  display: block;           /* Делаем кнопкой блочным элементом для центрирования */
+  margin: 20px auto;        /* Центрирование по горизонтали */
   background: linear-gradient(135deg, gold, #c0a000);
   color: #000;
   padding: 15px 30px;
   text-decoration: none;
   font-weight: bold;
   border-radius: 5px;
-  margin-top: 30px;
-  display: inline-block;
   transition: transform 0.3s ease, background 0.3s ease;
 }
 .btn:hover {
@@ -77,11 +77,11 @@ body {
   color: #fff;
 }
 
-/* ===== Золотой блок (gold-section) с рамками сверху и снизу ===== */
+/* ===== Золотой блок (gold-section) ===== */
 .gold-section {
   background: #111;
-  border-top: 2px solid gold;    /* Верхняя золотая линия */
-  border-bottom: 2px solid gold; /* Нижняя золотая линия */
+  border-top: 2px solid gold;
+  border-bottom: 2px solid gold;
   padding: 60px 20px;
 }
 .gold-section h2 {
@@ -98,11 +98,11 @@ body {
   text-align: center;
 }
 
-/* ===== Футер с верхней золотой линией ===== */
+/* ===== Футер ===== */
 footer {
   padding: 20px;
   background: rgba(0, 0, 0, 0.8);
-  border-top: 2px solid gold; /* Верхняя золотая линия */
+  border-top: 2px solid gold;
   font-size: 0.9em;
   text-align: center;
 }
@@ -114,7 +114,7 @@ footer a:hover {
   text-decoration: underline;
 }
 
-/* ===== Roadmap (каждый item с золотой рамкой) ===== */
+/* ===== Roadmap ===== */
 .roadmap {
   background: #111;
   padding: 40px 20px;
@@ -130,11 +130,11 @@ footer a:hover {
   margin: 20px auto;
   max-width: 800px;
   padding: 20px;
-  border: 1px solid gold; /* Золотая рамка */
+  border: 1px solid gold;
   border-radius: 10px;
 }
 
-/* ===== Блог (каждый пост с золотой рамкой) ===== */
+/* ===== Блог ===== */
 .blog {
   background: #222;
   padding: 40px 20px;
@@ -147,7 +147,7 @@ footer a:hover {
 }
 .blog-post {
   background: #111;
-  border: 1px solid gold; /* Золотая рамка */
+  border: 1px solid gold;
   border-radius: 10px;
   padding: 20px;
   margin: 20px auto;
@@ -159,25 +159,25 @@ footer a:hover {
   color: gold;
 }
 
-/* ===== Стили для списка шагов (buy-steps) ===== */
+/* ===== Стили для списка шагов ===== */
 .buy-steps {
-  list-style: decimal;      /* Нумерация */
-  display: inline-block;    /* Центрируем список */
-  margin: 0 auto;           /* Центрирование */
-  text-align: left;         /* Текст пунктов слева */
-  padding-left: 30px;       /* Отступ слева для цифр */
+  list-style: decimal;
+  display: inline-block;
+  margin: 0 auto;
+  text-align: left;
+  padding-left: 30px;
 }
 .buy-steps li {
   margin-bottom: 10px;
 }
 
-/* ===== Стили для видео ===== */
+/* ===== Видео ===== */
 iframe {
   display: block;
   margin: 30px auto;
 }
 
-/* ===== Стили для выпадающего меню (Dropdown) ===== */
+/* ===== Dropdown ===== */
 .dropdown {
   position: relative;
 }
@@ -193,7 +193,7 @@ iframe {
   top: 100%;
   left: 0;
   background: rgba(0, 0, 0, 0.9);
-  border: 2px solid gold; /* Золотая рамка */
+  border: 2px solid gold;
   border-radius: 5px;
   padding: 10px;
   min-width: 120px;
@@ -220,7 +220,7 @@ iframe {
   pointer-events: auto;
 }
 
-/* ===== Стили для социальных сетей (social-feed) ===== */
+/* ===== Social Feed ===== */
 .social-feed {
   background: #111;
   padding: 40px 20px;
@@ -233,7 +233,7 @@ iframe {
   margin-bottom: 20px;
 }
 
-/* ===== Стили для формы подписки (subscribe) ===== */
+/* ===== Subscribe ===== */
 .subscribe {
   background: #222;
   padding: 40px 20px;
@@ -266,7 +266,7 @@ iframe {
   background: #c0a000;
 }
 
-/* ===== Стили для калькулятора ===== */
+/* ===== Calculator ===== */
 .calculator {
   background: #222;
   padding: 40px 20px;
@@ -299,7 +299,7 @@ iframe {
   background: #c0a000;
 }
 
-/* ===== Стили для видео-гайдов ===== */
+/* ===== Video Guides ===== */
 .video-guides {
   background: #111;
   padding: 40px 20px;
@@ -319,7 +319,7 @@ iframe {
   margin-bottom: 10px;
 }
 
-/* ===== Дополнительные кнопки в нижнем углу (если нужны) ===== */
+/* ===== Дополнительные кнопки в нижнем углу ===== */
 .corner-box-bottom {
   position: absolute;
   bottom: 20px;
@@ -341,22 +341,24 @@ iframe {
   text-decoration: underline;
 }
 
-/* ===== Секция для дополнительных кнопок (Калькулятор и Видео-гайды) ===== */
+/* ===== Extra Buttons Section ===== */
 .extra-buttons-section {
-  background: transparent;       /* Прозрачный фон */
+  background: transparent;
   padding: 40px 0;
   text-align: center;
 }
+
+/* ===== Кнопки для extra-buttons-section ===== */
 .btn-small {
   display: inline-block;
   background: gold;
   color: #000;
-  padding: 8px 16px;       /* Уменьшенный padding */
+  padding: 8px 16px;
   border-radius: 5px;
   text-decoration: none;
-  margin: 0 5px;           /* Уменьшенный отступ */
+  margin: 0 5px;
   font-weight: bold;
-  font-size: 0.9em;        /* Немного уменьшен размер шрифта */
+  font-size: 0.9em;
   transition: background 0.3s, color 0.3s;
 }
 .btn-small:hover {
@@ -364,10 +366,10 @@ iframe {
   color: #000;
 }
 .btn-small:visited {
-  color: #000; 
+  color: #000;
 }
 
-/* ===== Трёхколоночная верстка блога (левая панель, контент, правая панель) ===== */
+/* ===== Трёхколоночная верстка блога ===== */
 .blog-layout {
   display: flex;
   justify-content: space-between;
@@ -377,7 +379,7 @@ iframe {
   min-height: 800px;
 }
 
-/* Левая боковая панель (контактная форма) */
+/* ===== Левая боковая панель (контактная форма) ===== */
 .blog-sidebar-left {
   width: 30%;
   background: #222;
@@ -389,7 +391,7 @@ iframe {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Центр (новости) */
+/* ===== Центр (новости) ===== */
 .blog-content {
   width: 40%;
   background: #111;
@@ -400,7 +402,7 @@ iframe {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Правая боковая панель (комментарии) */
+/* ===== Правая боковая панель (комментарии) ===== */
 .blog-sidebar-right {
   width: 30%;
   background: #222;
@@ -413,7 +415,7 @@ iframe {
   min-height: 800px;
 }
 
-/* Стили для формы в левой панели (центрируем поля) */
+/* ===== Формы в левой панели ===== */
 .blog-sidebar-left form {
   display: flex;
   flex-direction: column;
@@ -449,7 +451,7 @@ iframe {
   background: #c0a000;
 }
 
-/* Настройки для статей в контенте */
+/* ===== Настройки для статей ===== */
 .blog-post {
   background: #222;
   padding: 20px;
@@ -458,7 +460,7 @@ iframe {
   border-radius: 10px;
 }
 
-/* Адаптивность (при узком экране боковые панели под контентом) */
+/* ===== Адаптивность ===== */
 @media (max-width: 900px) {
   .blog-layout {
     flex-direction: column;
@@ -476,7 +478,7 @@ iframe {
 /* ===== Ссылки внутри .policy-section ===== */
 .policy-section a:link,
 .policy-section a:visited {
-  color: gold;                
+  color: gold;
   text-decoration: underline;
   transition: color 0.3s;
 }
@@ -488,10 +490,10 @@ iframe {
   color: #c0a000;
 }
 
-/* ===== Пример стилей для .policy-section (фон и белый текст) ===== */
+/* ===== Пример стилей для .policy-section ===== */
 .policy-section {
-  background: #111;   
-  color: #fff;        
+  background: #111;
+  color: #fff;
   padding: 40px 20px;
   max-width: 800px;
   margin: 40px auto;
