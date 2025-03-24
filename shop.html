@@ -23,7 +23,7 @@
   <script src="https://unpkg.com/torus-embed"></script>
   
   <style>
-    /* Стили для раздела товаров */
+    /* Дополнительные стили для магазина */
     .shop-items {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -94,6 +94,69 @@
       font-weight: bold;
       color: gold;
     }
+
+    /* Стили для модального окна покупки */
+    .modal {
+      display: none; /* Скрыто по умолчанию */
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background: rgba(0, 0, 0, 0.7);
+    }
+    .modal-content {
+      background: #111;
+      margin: 10% auto;
+      padding: 20px;
+      border: 2px solid gold;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 10px;
+      color: gold;
+      text-align: center;
+      position: relative;
+    }
+    .modal-content .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.5em;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .modal-content form {
+      margin-top: 30px;
+    }
+    .modal-content label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    .modal-content input[type="number"] {
+      padding: 10px;
+      width: 80%;
+      border: 1px solid gold;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      background: #000;
+      color: gold;
+    }
+    .modal-content button[type="submit"] {
+      background: gold;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .modal-content button[type="submit"]:hover {
+      background: #c0a000;
+    }
   </style>
 </head>
 <body>
@@ -108,33 +171,80 @@
     <div id="walletAddress"></div>
   </section>
 
-  <!-- Раздел товаров -->
   <section class="shop-items">
+    <!-- Товар 1 -->
     <div class="shop-item">
       <img src="img/IBITIcoin.webp" alt="Товар 1">
-      <h3>Название товара 1</h3>
+      <h3>Название товара 1 (IBITIcoin)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-      <!-- Если страницы еще нет, используйте заглушку, например: -->
-      <a href="#" onclick="alert('Раздел в разработке!')">Купить</a>
-      <!-- Или, если страница создана, укажите правильный путь, например: -->
-      <!-- <a href="IBITIcoin.html">Купить</a> -->
+      <!-- Кнопка "Купить" вызывает функцию openPurchaseModal с параметром 'IBITIcoin' -->
+      <a href="#" onclick="openPurchaseModal('IBITIcoin')">Купить</a>
     </div>
+    
+    <!-- Товар 2 -->
     <div class="shop-item">
       <img src="img/NFT.webp" alt="Товар 2">
-      <h3>Название товара 2</h3>
+      <h3>Название товара 2 (NFT)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-      <a href="#" onclick="alert('Раздел в разработке!')">Купить</a>
-      <!-- Или <a href="NFT.html">Купить</a> -->
+      <!-- Кнопка "Купить" вызывает функцию openPurchaseModal с параметром 'NFT' -->
+      <a href="#" onclick="openPurchaseModal('NFT')">Купить</a>
     </div>
     <!-- Добавьте другие товары аналогично -->
   </section>
+
+  <!-- Модальное окно для покупки -->
+  <div id="purchaseModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closePurchaseModal()">&times;</span>
+      <h2 id="purchaseTitle">Покупка</h2>
+      <form id="purchaseForm">
+        <label for="amount">Введите количество:</label>
+        <input type="number" id="amount" name="amount" min="1" required>
+        <br><br>
+        <button type="submit">Подтвердить покупку</button>
+      </form>
+    </div>
+  </div>
 
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
   </footer>
   
-  <!-- Подключаем файл wallet.js -->
+  <!-- Подключаем файл wallet.js, который реализует подключение кошельков -->
   <script src="js/wallet.js"></script>
+
+  <!-- Скрипт для работы с модальным окном покупки -->
+  <script>
+    // Глобальная переменная для хранения текущего товара
+    let currentProduct = null;
+
+    // Функция открытия модального окна
+    function openPurchaseModal(productName) {
+      currentProduct = productName;
+      document.getElementById('purchaseTitle').innerText = 'Покупка ' + productName;
+      document.getElementById('purchaseModal').style.display = 'block';
+    }
+
+    // Функция закрытия модального окна
+    function closePurchaseModal() {
+      document.getElementById('purchaseModal').style.display = 'none';
+      currentProduct = null;
+      document.getElementById('amount').value = '';
+    }
+
+    // Обработка формы покупки
+    document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+      const amount = document.getElementById('amount').value;
+
+      // Здесь можно вызвать функцию смарт-контракта через ethers.js, например:
+      // await buyTokenOrNFT(currentProduct, amount);
+
+      alert('Покупка ' + amount + ' единиц «' + currentProduct + '» инициирована (тестовый режим).');
+      closePurchaseModal();
+    });
+  </script>
 </body>
 </html>
+
