@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Магазин IBITIcoin</title>
   <link rel="stylesheet" href="css/style.css">
   
-  <!-- Подключение внешних библиотек для подключения кошелька -->
+  <!-- Подключение внешних библиотек для работы кошелька -->
   <!-- ethers.js -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <!-- Web3Modal -->
@@ -17,13 +17,13 @@
   <script src="https://unpkg.com/@coinbase/wallet-sdk/dist/wallet-sdk.umd.min.js"></script>
   <!-- Fortmatic -->
   <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
-  <!-- Portis -->
-  <script src="https://unpkg.com/portis-ui"></script>
+  <!-- Portis (правильный URL) -->
+  <script src="https://cdn.portis.io/js/portis.js"></script>
   <!-- Torus -->
   <script src="https://unpkg.com/torus-embed"></script>
   
   <style>
-    /* Дополнительные стили для магазина */
+    /* Стили для раздела товаров */
     .shop-items {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -108,18 +108,23 @@
     <div id="walletAddress"></div>
   </section>
 
+  <!-- Раздел товаров -->
   <section class="shop-items">
     <div class="shop-item">
       <img src="img/IBITIcoin.webp" alt="Товар 1">
       <h3>Название товара 1</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-      <a href="IBITIcoin">Купить</a>
+      <!-- Если страницы еще нет, используйте заглушку, например: -->
+      <a href="#" onclick="alert('Раздел в разработке!')">Купить</a>
+      <!-- Или, если страница создана, укажите правильный путь, например: -->
+      <!-- <a href="IBITIcoin.html">Купить</a> -->
     </div>
     <div class="shop-item">
       <img src="img/NFT.webp" alt="Товар 2">
       <h3>Название товара 2</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-      <a href="NFT">Купить</a>
+      <a href="#" onclick="alert('Раздел в разработке!')">Купить</a>
+      <!-- Или <a href="NFT.html">Купить</a> -->
     </div>
     <!-- Добавьте другие товары аналогично -->
   </section>
@@ -129,7 +134,7 @@
     <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
   </footer>
   
-  <!-- Подключаем файл wallet.js, который реализует подключение кошельков -->
+  <!-- Подключаем файл wallet.js -->
   <script src="js/wallet.js"></script>
 </body>
 </html>
