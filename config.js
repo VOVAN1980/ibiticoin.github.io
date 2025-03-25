@@ -41,5 +41,6 @@ const config = {
   }
 };
 
-module.exports = config;
-
+// Если у вас в браузере переменная process.env.NODE_ENV не определена,
+// можно заменить на конкретное значение, например "testnet".
+export default config["testnet"];
