@@ -29,16 +29,16 @@
   <!-- Подключаем AOS для анимаций -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
 
-  <!-- Google tag -->
+  <!-- Google Tag Manager -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-T5DF4BLR5S"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag(){ dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-T5DF4BLR5S');
   </script>
   
-  <!-- Виджет Google Translate (переключатель языков) -->
+  <!-- Виджет Google Translate -->
   <script type="text/javascript">
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
@@ -51,7 +51,56 @@
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   
   <style>
-    /* Встроенные стили для секции кнопок, модального окна и правых углов */
+    /* Стили для окошек в углах */
+    .corner-box {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid gold;
+      border-radius: 5px;
+      padding: 10px 15px;
+      z-index: 999;
+    }
+    .corner-box-left { top: 20px; left: 20px; }
+    .corner-box-left2 { top: 80px; left: 20px; }
+    .corner-box-right {
+      top: 20px; right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid gold;
+      border-radius: 5px;
+      padding: 10px 15px;
+      z-index: 999;
+    }
+    .corner-box-right a { color: gold; text-decoration: none; font-weight: bold; margin: 0 5px; }
+    .corner-box-right a:hover { text-decoration: underline; }
+    .corner-box-right-langs {
+      top: 80px; right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid gold;
+      border-radius: 5px;
+      padding: 10px 15px;
+      z-index: 999;
+    }
+    .corner-box-right-langs a { color: gold; text-decoration: none; font-weight: bold; margin: 0 5px; }
+    .corner-box-right-langs a:hover { text-decoration: underline; }
+    @media (max-width: 600px) {
+      .corner-box-right { top: 10px; right: 10px; }
+      .corner-box-right-langs { top: 60px; right: 10px; }
+    }
+    
+    /* Стили кнопок */
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, gold, #c0a000);
+      color: #000;
+      padding: 15px 30px;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 5px;
+      text-align: center;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+    .btn:hover { transform: scale(1.1); background: #c0a000; }
+    
     .extra-buttons-section {
       display: flex;
       flex-wrap: wrap;
@@ -72,14 +121,10 @@
       font-weight: bold;
       transition: background 0.3s, color 0.3s;
     }
-    .extra-buttons-section .btn-small:hover {
-      background: #c0a000;
-      color: #000;
-    }
-    .wallet-section {
-      text-align: center;
-      margin: 20px auto;
-    }
+    .extra-buttons-section .btn-small:hover { background: #c0a000; color: #000; }
+    
+    /* Секция подключения кошелька */
+    .wallet-section { text-align: center; margin: 20px auto; }
     .wallet-section button {
       background: gold;
       color: #000;
@@ -90,14 +135,10 @@
       cursor: pointer;
       transition: background 0.3s;
     }
-    .wallet-section button:hover {
-      background: #c0a000;
-    }
-    .wallet-section #walletAddress {
-      margin-top: 10px;
-      font-weight: bold;
-      color: gold;
-    }
+    .wallet-section button:hover { background: #c0a000; }
+    .wallet-section #walletAddress { margin-top: 10px; font-weight: bold; color: gold; }
+    
+    /* Модальное окно шаринга */
     .modal {
       display: none;
       position: fixed;
@@ -120,10 +161,7 @@
       text-align: center;
       color: gold;
     }
-    .modal-content h3 {
-      margin-top: 0;
-      font-size: 1.8em;
-    }
+    .modal-content h3 { margin-top: 0; font-size: 1.8em; }
     .modal-content .share-options a {
       display: inline-block;
       margin: 10px;
@@ -134,9 +172,7 @@
       border-radius: 5px;
       transition: transform 0.3s;
     }
-    .modal-content .share-options a:hover {
-      transform: scale(1.1);
-    }
+    .modal-content .share-options a:hover { transform: scale(1.1); }
     .modal-content .close {
       float: right;
       font-size: 1.5em;
@@ -144,15 +180,28 @@
       cursor: pointer;
     }
     @media (max-width: 600px) {
-      .modal-content {
-        width: 90%;
-        margin-top: 30%;
-      }
+      .modal-content { width: 90%; margin-top: 30%; }
     }
+    
+    /* Стили шапки */
+    .hero-header { padding: 15px 20px; }
+    .hero-header img { margin-bottom: 20px; }
+    .hero-header h1 { margin: 0; font-size: 3em; letter-spacing: 2px; color: gold; }
+    .hero-header p { margin: 10px 0 0; font-size: 1.5em; color: #fff; }
+    
+    /* Футер */
+    footer {
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      border-top: 2px solid gold;
+      font-size: 0.9em;
+      text-align: center;
+    }
+    footer p, footer a { color: gold; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
-
   <!-- Верхние угловые кнопки -->
   <div class="corner-box corner-box-left">
     <a href="/">Главная</a>
@@ -160,31 +209,30 @@
   <div class="corner-box corner-box-left2">
     <a href="blog.html">Блог</a>
   </div>
-  
-  <!-- Правая сторона: Roadmap -->
   <div class="corner-box corner-box-right">
     <a href="roadmap.html">Roadmap</a>
   </div>
-  <!-- Правая сторона: Языки (переключатель Google Translate) -->
   <div class="corner-box corner-box-right-langs">
     <div id="google_translate_element"></div>
   </div>
-
+  
+  <!-- Шапка сайта -->
   <header class="hero-header">
     <img src="img/logo.png" alt="IBITIcoin Logo" width="200">
     <h1>IBITIcoin</h1>
     <p>Stability | Innovation | Accessibility</p>
   </header>
 
+  <!-- Главный блок -->
   <section class="gold-section" data-aos="fade-up">
     <h2>WHY CHOOSE IBITIcoin?</h2>
     <p>
       IBITIcoin – это инновационная криптовалюта для быстрой, безопасной и доступной работы в цифровой экономике...
     </p>
-    <!-- Кнопка Buy на главной -->
     <a class="btn" href="buy.html">Buy IBITIcoin</a>
   </section>
   
+  <!-- Дополнительные кнопки -->
   <section class="extra-buttons-section">
     <a class="btn-small" href="calculator.html">Калькулятор</a>
     <a class="btn-small" href="video-guides.html">Видео-гайды</a>
@@ -193,7 +241,7 @@
     <a class="btn-small" href="nft.html">NFT Галерея</a>
     <a class="btn-small" href="shop.html">Магазин</a>
     <a class="btn-small" href="book.html">Книга</a>
-    <a href="#" id="openShareModal" class="btn-small">Поделиться</a>
+    <a class="btn-small" id="openShareModal" href="#">Поделиться</a>
   </section>
   
   <!-- Секция подключения кошелька -->
@@ -201,7 +249,8 @@
     <button id="connectWalletBtn">Подключить кошелек</button>
     <div id="walletAddress"></div>
   </section>
-
+  
+  <!-- Футер -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p>
@@ -214,38 +263,36 @@
       <a href="https://instagram.com/IBITIcoin_official" target="_blank">Instagram</a> |
       <a href="https://facebook.com/IBITIcoin" target="_blank">Facebook</a>
     </p>
-    <p>
-      <a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a>
-    </p>
+    <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
   </footer>
 
-  <!-- Модальное окно для шаринга -->
+  <!-- Модальное окно шаринга -->
   <div id="shareModal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
       <h3>Выберите соцсеть для шаринга</h3>
       <div class="share-options">
-        <a href="#" id="share-facebook">Facebook</a>
-        <a href="#" id="share-twitter">Twitter</a>
-        <a href="#" id="share-vk">VK</a>
-        <a href="#" id="share-telegram">Telegram</a>
-        <a href="#" id="share-ok">Одноклассники</a>
-        <a href="#" id="share-linkedin">LinkedIn</a>
-        <a href="#" id="share-weibo">Weibo</a>
+        <a id="share-facebook" href="#">Facebook</a>
+        <a id="share-twitter" href="#">Twitter</a>
+        <a id="share-vk" href="#">VK</a>
+        <a id="share-telegram" href="#">Telegram</a>
+        <a id="share-ok" href="#">Одноклассники</a>
+        <a id="share-linkedin" href="#">LinkedIn</a>
+        <a id="share-weibo" href="#">Weibo</a>
       </div>
     </div>
   </div>
 
-  <!-- Подключаем внешние библиотеки -->
+  <!-- Внешние библиотеки -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="https://unpkg.com/web3modal"></script>
   <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
   <script src="https://unpkg.com/@coinbase/wallet-sdk/dist/wallet-sdk.umd.min.js"></script>
   <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
-  <!-- Заменяем Portis на Torus -->
+  <!-- Используем Torus вместо Portis -->
   <script src="https://unpkg.com/torus-embed"></script>
 
-  <!-- Подключаем дополнительные скрипты -->
+  <!-- Дополнительные скрипты -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
     AOS.init({ once: true });
@@ -262,13 +309,13 @@
     })();
   </script>
   
-  <!-- Пример импорта конфигурации (config.js) через ES-модуль -->
+  <!-- Импорт конфигурации из config.js через ES-модуль -->
   <script type="module">
     import config from "./config.js";
     console.log("Подключаемся к сети:", config.networkName);
     console.log("RPC URL:", config.rpcUrl);
     console.log("Адрес IBITIcoin:", config.contracts.IBITI_TOKEN_ADDRESS);
-    // Здесь можно использовать config для создания провайдера, вызовов контрактов и т.д.
+    // Инициализация ethers.js и подключение контрактов с использованием config
   </script>
 
   <!-- Подключаем файл wallet.js -->
