@@ -359,54 +359,36 @@
   <!-- Подключаем файл wallet.js -->
   <script src="js/wallet.js"></script>
   
+  <!-- Подключаем файл shop.js -->
+  <script src="js/shop.js"></script>
+  
   <!-- Скрипт для работы модального окна покупки -->
   <script>
-    let currentProduct = null;
-    function openPurchaseModal(productName) {
-      currentProduct = productName;
-      document.getElementById('purchaseTitle').innerText = 'Покупка ' + productName;
-      document.getElementById('purchaseModal').style.display = 'block';
-    }
-    function closePurchaseModal() {
-      document.getElementById('purchaseModal').style.display = 'none';
-      currentProduct = null;
-      document.getElementById('amount').value = '';
-    }
-    document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
-      event.preventDefault();
-      const amount = document.getElementById('amount').value;
-      // Показываем индикатор загрузки с SweetAlert2
-      Swal.fire({
-        title: 'Ожидание подтверждения...',
-        html: 'Пожалуйста, ожидайте...',
-        allowOutsideClick: false,
-        didOpen: () => { Swal.showLoading(); }
-      });
-      try {
-        // Здесь должна быть логика вызова смарт-контракта через ethers.js
-        // Пример: await contract.purchase(currentProduct, amount);
-        // Имитируем задержку:
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        Swal.fire({
-          icon: 'success',
-          title: 'Ура!',
-          text: 'Покупка ' + amount + ' единиц ' + currentProduct + ' успешна, ты стал миллионером! 🎉',
-          timer: 5000,
-          timerProgressBar: true,
-          showConfirmButton: false
-        });
-      } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Ошибка покупки',
-          text: error.message || 'Что-то пошло не так. Попробуйте ещё раз.',
-          confirmButtonText: 'Ок'
-        });
-      }
-      closePurchaseModal();
+    // Если вы хотите, чтобы покупка обрабатывалась через shop.js,
+    // убедитесь, что кнопка покупки (например, в модальном окне) имеет id "buyBtn"
+    // или используйте обработку через модальное окно.
+    
+    // Если требуется, можно оставить дополнительную логику здесь,
+    // но сейчас вся логика покупки находится в shop.js.
+    
+    // Обработка модального окна шаринга (осталась без изменений)
+    const shareModal = document.getElementById('shareModal');
+    const openShareModalBtn = document.getElementById('openShareModal');
+    const closeShareModalBtn = document.getElementById('closeShareModal');
+
+    openShareModalBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      shareModal.style.display = 'block';
     });
-    document.getElementById('cancelBtn').addEventListener('click', () => {
-      closePurchaseModal();
+
+    closeShareModalBtn.addEventListener('click', () => {
+      shareModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+      if (event.target === shareModal) {
+        shareModal.style.display = 'none';
+      }
     });
   </script>
 </body>
