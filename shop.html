@@ -6,7 +6,7 @@
   <title>Магазин IBITIcoin</title>
   <link rel="stylesheet" href="css/style.css">
   
-  <!-- Подключение внешних библиотек для работы кошелька и SweetAlert2 -->
+  <!-- Подключение внешних библиотек для работы кошелька и уведомлений -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="https://unpkg.com/web3modal"></script>
   <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
@@ -15,8 +15,29 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/torus-embed@2.4.2/dist/torus.min.js"></script>
   
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+  
+  <!-- Google Tag Manager и Google Translate (оставляем как есть) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T5DF4BLR5S"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-T5DF4BLR5S');
+  </script>
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'ru',
+        includedLanguages: 'ru,uk,en,zh-CN,ja,fr,de,pl,es,pt,ko',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  
   <style>
-    /* --- УГЛОВЫЕ КНОПКИ --- */
+    /* --- Угловые кнопки --- */
     .corner-box {
       position: absolute;
       background: rgba(0, 0, 0, 0.8);
@@ -61,8 +82,8 @@
       .corner-box-right { top: 10px; right: 10px; }
       .corner-box-right-langs { top: 60px; right: 10px; }
     }
-
-    /* --- ХЕРО-ХЕДЕР / ШАПКА --- */
+    
+    /* --- Шапка --- */
     .hero-header {
       padding: 15px 20px;
       text-align: center;
@@ -76,8 +97,8 @@
       font-size: 1.5em;
       color: #fff;
     }
-
-    /* --- СЕКЦИЯ КОШЕЛЬКА --- */
+    
+    /* --- Секция подключения кошелька --- */
     .wallet-section {
       text-align: center;
       margin: 20px auto;
@@ -100,8 +121,8 @@
       font-weight: bold;
       color: gold;
     }
-
-    /* --- СТИЛИ ДЛЯ ТОВАРОВ (shop-items) --- */
+    
+    /* --- Секция товаров (shop-items) --- */
     .shop-items {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -135,23 +156,23 @@
       color: gold;
       margin: 0 10px 10px;
     }
-    .shop-item a, .shop-item button {
-      display: block;
+    /* Унифицированный стиль для кнопок покупки */
+    .shop-item button {
       background: gold;
       color: #000;
-      text-decoration: none;
-      font-weight: bold;
-      padding: 10px;
       border: none;
-      border-radius: 0 0 10px 10px;
+      padding: 10px;
+      width: 100%;
+      font-weight: bold;
       cursor: pointer;
+      border-radius: 0 0 10px 10px;
       transition: background 0.3s;
     }
-    .shop-item a:hover, .shop-item button:hover {
+    .shop-item button:hover {
       background: #c0a000;
     }
-
-    /* --- МОДАЛЬНОЕ ОКНО ПОКУПКИ --- */
+    
+    /* --- Модальное окно покупки --- */
     .modal {
       display: none;
       position: fixed;
@@ -216,11 +237,11 @@
     .modal-content button.cancel:hover {
       background: #c0a000;
     }
-
-    /* --- ФУТЕР --- */
+    
+    /* --- Футер --- */
     footer {
       padding: 20px;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0,0,0,0.8);
       border-top: 2px solid gold;
       text-align: center;
       color: gold;
@@ -249,7 +270,7 @@
     <div id="google_translate_element"></div>
   </div>
 
-  <!-- Шапка сайта -->
+  <!-- Шапка -->
   <header class="hero-header">
     <h1>Магазин IBITIcoin</h1>
     <p>Приобретайте эксклюзивные товары, связанные с IBITIcoin!</p>
@@ -261,18 +282,19 @@
     <div id="walletAddress"></div>
   </section>
 
+  <!-- Товары магазина -->
   <section class="shop-items">
-    <!-- Товар IBITIcoin: с модальным окном покупки -->
+    <!-- Товар IBITIcoin (монета) -->
     <div class="shop-item">
-      <img src="img/IBITIcoin.webp" alt="Товар 1">
+      <img src="img/IBITIcoin.webp" alt="IBITIcoin">
       <h3>Название товара 1 (IBITIcoin)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
+      <!-- Кнопка покупки оформлена как у NFT -->
       <button onclick="openPurchaseModal('IBITIcoin')">Купить</button>
     </div>
-    
-    <!-- Товар NFT: кнопка перенаправляет на страницу NFT-галереи -->
+    <!-- Товар NFT (ссылка на страницу NFT-галереи) -->
     <div class="shop-item">
-      <img src="img/NFT.webp" alt="Товар 2">
+      <img src="img/NFT.webp" alt="NFT">
       <h3>Название товара 2 (NFT)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
       <a class="btn" href="nft.html">Купить</a>
@@ -280,7 +302,7 @@
     <!-- Добавьте другие товары аналогично -->
   </section>
 
-  <!-- Модальное окно для покупки IBITIcoin -->
+  <!-- Модальное окно для покупки (используется и для монеты, и для NFT, если нужно) -->
   <div id="purchaseModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closePurchaseModal()">&times;</span>
@@ -316,7 +338,7 @@
       s0.parentNode.insertBefore(s1, s0);
     })();
   </script>
-
+  
   <!-- Импорт конфигурации из config.js через ES-модуль -->
   <script type="module">
     import config from "./config.js";
@@ -331,10 +353,12 @@
   <!-- Подключаем файл wallet.js -->
   <script src="js/wallet.js"></script>
   
+  <!-- Подключаем файл shop.js, если есть дополнительная логика -->
+  <script src="js/shop.js"></script>
+  
   <!-- Скрипт для логики покупки -->
   <script>
     let currentProduct = null;
-
     function openPurchaseModal(productName) {
       currentProduct = productName;
       document.getElementById('purchaseTitle').innerText = 'Покупка ' + productName;
@@ -345,48 +369,64 @@
       currentProduct = null;
       document.getElementById('amount').value = '';
     }
-
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
       event.preventDefault();
       const amount = document.getElementById('amount').value;
-
-      // Показываем индикатор загрузки через SweetAlert2
-      Swal.fire({
-        title: 'Ожидание подтверждения...',
-        html: 'Пожалуйста, ожидайте...',
-        allowOutsideClick: false,
-        didOpen: () => { Swal.showLoading(); }
-      });
-
-      try {
-        // Здесь замените на реальную логику покупки (ethers.js, contract вызовы)
-        // Например:
-        // const tx = await contract.purchase(currentProduct, amount);
-        // await tx.wait();
-
-        // Имитируем задержку (2 сек)
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        // Успех
-        Swal.fire({
-          icon: 'success',
-          title: 'Ура!',
-          text: `Покупка ${amount} единиц «${currentProduct}» успешна, ты стал миллионером!`,
-          timer: 5000,
-          timerProgressBar: true,
-          showConfirmButton: false
-        });
-      } catch (error) {
-        // Ошибка
-        Swal.fire({
-          icon: 'error',
-          title: 'Ошибка покупки',
-          text: error.message || 'Что-то пошло не так. Попробуйте ещё раз.',
-          confirmButtonText: 'Ок'
-        });
-      }
       
+      // Закрываем окно покупки сразу
       closePurchaseModal();
+      
+      // Минимальная задержка 10 мс для плавного перехода
+      setTimeout(async () => {
+        Swal.fire({
+          title: 'Ожидание подтверждения...',
+          html: 'Пожалуйста, ожидайте...',
+          allowOutsideClick: false,
+          didOpen: () => { Swal.showLoading(); }
+        });
+        try {
+          // Реальная логика покупки (замените имитацию на вызов смарт-контракта)
+          await new Promise(resolve => setTimeout(resolve, 10));
+          Swal.fire({
+            icon: 'success',
+            title: 'Ура!',
+            text: `Покупка ${amount} единиц «${currentProduct}» успешна, ты стал миллионером!`,
+            timer: 5000,
+            timerProgressBar: true,
+            showConfirmButton: false
+          });
+        } catch (error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Ошибка покупки',
+            text: error.message || 'Что-то пошло не так. Попробуйте ещё раз.',
+            confirmButtonText: 'Ок'
+          });
+        }
+      }, 10);
+    });
+  </script>
+  
+  <!-- Скрипт для работы модального окна шаринга -->
+  <script>
+    const shareModal = document.getElementById('shareModal');
+    const openShareModalBtn = document.getElementById('openShareModal');
+    const closeShareModalBtn = document.getElementById('closeShareModal');
+    if (openShareModalBtn) {
+      openShareModalBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        shareModal.style.display = 'block';
+      });
+    }
+    if (closeShareModalBtn) {
+      closeShareModalBtn.addEventListener('click', () => {
+        shareModal.style.display = 'none';
+      });
+    }
+    window.addEventListener('click', (event) => {
+      if (event.target === shareModal) {
+        shareModal.style.display = 'none';
+      }
     });
   </script>
 </body>
