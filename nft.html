@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NFT Галерея IBITIcoin</title>
   <link rel="stylesheet" href="css/style.css">
+
+  <!-- SweetAlert2 для уведомлений -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <style>
     /* Стили для NFT-галереи */
     .nft-gallery {
@@ -70,7 +74,7 @@
       border-radius: 5px;
     }
 
-    /* Стили для модального окна покупки */
+    /* Модальное окно покупки */
     .modal {
       display: none; /* Скрыто по умолчанию */
       position: fixed;
@@ -119,7 +123,8 @@
       background: #000;
       color: gold;
     }
-    .modal-content button[type="submit"] {
+    .modal-content button[type="submit"],
+    .modal-content button.cancel {
       background: gold;
       color: #000;
       border: none;
@@ -128,8 +133,10 @@
       font-weight: bold;
       cursor: pointer;
       transition: background 0.3s;
+      margin: 0 5px;
     }
-    .modal-content button[type="submit"]:hover {
+    .modal-content button[type="submit"]:hover,
+    .modal-content button.cancel:hover {
       background: #c0a000;
     }
   </style>
@@ -217,6 +224,8 @@
         <input type="number" id="nftAmount" name="nftAmount" min="1" required>
         <br><br>
         <button type="submit">Подтвердить покупку</button>
+        <!-- Кнопка "Отмена" -->
+        <button type="button" class="cancel" onclick="closePurchaseModal()">Отмена</button>
       </form>
     </div>
   </div>
@@ -226,7 +235,7 @@
     <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
   </footer>
 
-  <!-- Скрипт для работы с модальным окном покупки -->
+  <!-- Подключение логики покупок + SweetAlert2 -->
   <script>
     let currentNFT = null;
 
@@ -246,10 +255,40 @@
       event.preventDefault();
       const amount = document.getElementById('nftAmount').value;
 
-      // Здесь можно вызвать функцию смарт-контракта через ethers.js, например:
-      // await buyNFT(currentNFT, amount);
+      // Показываем индикатор загрузки через SweetAlert2
+      Swal.fire({
+        title: 'Ожидание подтверждения...',
+        html: 'Пожалуйста, ожидайте...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
 
-      alert('Покупка ' + amount + ' единиц «' + currentNFT + '» инициирована (тестовый режим).');
+      try {
+        // Здесь замените на реальную логику покупки (например, ethers.js + contract.buyNFT(...))
+        // Пример имитации задержки:
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Успешная покупка
+        Swal.fire({
+          icon: 'success',
+          title: 'Ура!',
+          text: `Покупка ${amount} единиц «${currentNFT}» успешна, ты стал миллионером!`,
+          timer: 5000,
+          timerProgressBar: true,
+          showConfirmButton: false
+        });
+      } catch (error) {
+        // Ошибка
+        Swal.fire({
+          icon: 'error',
+          title: 'Ошибка покупки',
+          text: error.message || 'Что-то пошло не так. Попробуйте ещё раз.',
+          confirmButtonText: 'Ок'
+        });
+      }
+
       closePurchaseModal();
     });
   </script>
