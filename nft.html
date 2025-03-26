@@ -58,7 +58,7 @@
       font-weight: bold;
       transition: background 0.3s;
       position: absolute;
-      z-index: 10; /* выше, чем label */
+      z-index: 10;
     }
     .buy-button:hover {
       background: #c0a000;
@@ -159,7 +159,6 @@
     <div class="nft-item">
       <img src="img/Creation.webp" alt="Creation 1%">
       <div class="rarity-label">Creation 1%</div>
-      <!-- Кнопка "Купить" сверху по центру, маленькая -->
       <a href="#" class="buy-button small-btn" onclick="openPurchaseModal('Creation 1%')">Купить</a>
     </div>
     <div class="nft-item">
@@ -235,61 +234,92 @@
     <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
   </footer>
 
-  <!-- Подключение логики покупок + SweetAlert2 -->
+  <!-- Дополнительные скрипты -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
+    AOS.init({ once: true });
+  </script>
+  <script type="text/javascript">
+    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+    (function(){
+      var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+      s1.async = true;
+      s1.src = 'https://embed.tawk.to/67db03deb73265190d550119/1imnoe7rb';
+      s1.charset = 'UTF-8';
+      s1.setAttribute('crossorigin', '*');
+      s0.parentNode.insertBefore(s1, s0);
+    })();
+  </script>
+  <script type="text/javascript">
+    // Логика модального окна покупки
     let currentNFT = null;
-
     function openPurchaseModal(nftName) {
       currentNFT = nftName;
       document.getElementById('purchaseTitle').innerText = 'Покупка ' + nftName;
       document.getElementById('purchaseModal').style.display = 'block';
     }
-
     function closePurchaseModal() {
       document.getElementById('purchaseModal').style.display = 'none';
       currentNFT = null;
       document.getElementById('nftAmount').value = '';
     }
-
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
       event.preventDefault();
       const amount = document.getElementById('nftAmount').value;
 
-      // Показываем индикатор загрузки через SweetAlert2
-      Swal.fire({
-        title: 'Ожидание подтверждения...',
-        html: 'Пожалуйста, ожидайте...',
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        }
-      });
-
-      try {
-        // Здесь замените на реальную логику покупки (например, ethers.js + contract.buyNFT(...))
-        // Пример имитации задержки:
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        // Успешная покупка
-        Swal.fire({
-          icon: 'success',
-          title: 'Ура!',
-          text: `Покупка ${amount} единиц «${currentNFT}» успешна, ты стал миллионером!`,
-          timer: 5000,
-          timerProgressBar: true,
-          showConfirmButton: false
-        });
-      } catch (error) {
-        // Ошибка
-        Swal.fire({
-          icon: 'error',
-          title: 'Ошибка покупки',
-          text: error.message || 'Что-то пошло не так. Попробуйте ещё раз.',
-          confirmButtonText: 'Ок'
-        });
-      }
-
+      // Закрываем окно покупки сразу для плавного перехода
       closePurchaseModal();
+
+      // Минимальная задержка 10 мс для плавного перехода
+      setTimeout(async () => {
+        Swal.fire({
+          title: 'Ожидание подтверждения...',
+          html: 'Пожалуйста, ожидайте...',
+          allowOutsideClick: false,
+          didOpen: () => { Swal.showLoading(); }
+        });
+        try {
+          // Здесь замените на реальную логику покупки (например, ethers.js + contract.buyNFT(...))
+          await new Promise(resolve => setTimeout(resolve, 10));
+          Swal.fire({
+            icon: 'success',
+            title: 'Ура!',
+            text: `Покупка ${amount} единиц «${currentNFT}» успешна, ты стал миллионером!`,
+            timer: 5000,
+            timerProgressBar: true,
+            showConfirmButton: false
+          });
+        } catch (error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Ошибка покупки',
+            text: error.message || 'Что-то пошло не так. Попробуйте ещё раз.',
+            confirmButtonText: 'Ок'
+          });
+        }
+      }, 10);
+    });
+  </script>
+  <script>
+    // Логика модального окна шаринга
+    const shareModal = document.getElementById('shareModal');
+    const openShareModalBtn = document.getElementById('openShareModal');
+    const closeShareModalBtn = document.getElementById('closeShareModal');
+    if (openShareModalBtn) {
+      openShareModalBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        shareModal.style.display = 'block';
+      });
+    }
+    if (closeShareModalBtn) {
+      closeShareModalBtn.addEventListener('click', () => {
+        shareModal.style.display = 'none';
+      });
+    }
+    window.addEventListener('click', (event) => {
+      if (event.target === shareModal) {
+        shareModal.style.display = 'none';
+      }
     });
   </script>
 </body>
