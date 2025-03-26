@@ -138,70 +138,49 @@
     .wallet-section button:hover { background: #c0a000; }
     .wallet-section #walletAddress { margin-top: 10px; font-weight: bold; color: gold; }
     
-    /* Стили для модального окна покупки */
+    /* Модальное окно шаринга */
     .modal {
-      display: none; /* Скрыто по умолчанию */
+      display: none;
       position: fixed;
-      z-index: 2000;
+      z-index: 1000;
       left: 0;
       top: 0;
       width: 100%;
       height: 100%;
       overflow: auto;
-      background: rgba(0, 0, 0, 0.7);
+      background-color: rgba(0,0,0,0.7);
     }
     .modal-content {
-      background: #111;
+      background-color: #111;
       margin: 10% auto;
       padding: 20px;
       border: 2px solid gold;
-      width: 90%;
+      width: 80%;
       max-width: 500px;
       border-radius: 10px;
-      color: gold;
       text-align: center;
-      position: relative;
+      color: gold;
     }
+    .modal-content h3 { margin-top: 0; font-size: 1.8em; }
+    .modal-content .share-options a {
+      display: inline-block;
+      margin: 10px;
+      padding: 10px 20px;
+      background: gold;
+      color: #000;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: transform 0.3s;
+    }
+    .modal-content .share-options a:hover { transform: scale(1.1); }
     .modal-content .close {
-      position: absolute;
-      top: 10px;
-      right: 15px;
+      float: right;
       font-size: 1.5em;
       font-weight: bold;
       cursor: pointer;
     }
-    .modal-content form {
-      margin-top: 30px;
-    }
-    .modal-content label {
-      display: block;
-      margin-bottom: 10px;
-      font-weight: bold;
-    }
-    .modal-content input[type="number"] {
-      padding: 10px;
-      width: 80%;
-      border: 1px solid gold;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      background: #000;
-      color: gold;
-    }
-    .modal-content button[type="submit"],
-    .modal-content button.cancel {
-      background: gold;
-      color: #000;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
-      margin: 0 5px;
-    }
-    .modal-content button[type="submit"]:hover,
-    .modal-content button.cancel:hover {
-      background: #c0a000;
+    @media (max-width: 600px) {
+      .modal-content { width: 90%; margin-top: 30%; }
     }
     
     /* Стили шапки */
@@ -287,45 +266,30 @@
     <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
   </footer>
 
-  <!-- Модальное окно для шаринга -->
+  <!-- Модальное окно шаринга -->
   <div id="shareModal" class="modal">
     <div class="modal-content">
-      <span class="close" id="closeShareModal">&times;</span>
+      <span class="close">&times;</span>
       <h3>Выберите соцсеть для шаринга</h3>
       <div class="share-options">
-        <a id="share-facebook" href="#" target="_blank">Facebook</a>
-        <a id="share-twitter" href="#" target="_blank">Twitter</a>
-        <a id="share-vk" href="#" target="_blank">VK</a>
-        <a id="share-telegram" href="#" target="_blank">Telegram</a>
-        <a id="share-ok" href="#" target="_blank">Одноклассники</a>
-        <a id="share-linkedin" href="#" target="_blank">LinkedIn</a>
-        <a id="share-weibo" href="#" target="_blank">Weibo</a>
+        <a id="share-facebook" href="#">Facebook</a>
+        <a id="share-twitter" href="#">Twitter</a>
+        <a id="share-vk" href="#">VK</a>
+        <a id="share-telegram" href="#">Telegram</a>
+        <a id="share-ok" href="#">Одноклассники</a>
+        <a id="share-linkedin" href="#">LinkedIn</a>
+        <a id="share-weibo" href="#">Weibo</a>
       </div>
     </div>
   </div>
-  
-  <!-- Модальное окно для покупки IBITIcoin -->
-  <div id="purchaseModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closePurchaseModal()">&times;</span>
-      <h2 id="purchaseTitle">Покупка</h2>
-      <form id="purchaseForm">
-        <label for="amount">Введите количество:</label>
-        <input type="number" id="amount" name="amount" min="1" required>
-        <br><br>
-        <button type="submit">Подтвердить покупку</button>
-        <button type="button" class="cancel" id="cancelBtn">Отмена</button>
-      </form>
-    </div>
-  </div>
-  
+
   <!-- Внешние библиотеки -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="https://unpkg.com/web3modal"></script>
   <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
   <script src="https://unpkg.com/@coinbase/wallet-sdk/dist/wallet-sdk.umd.min.js"></script>
   <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Используем Torus вместо Portis -->
   <script src="https://unpkg.com/torus-embed"></script>
 
   <!-- Дополнительные скрипты -->
@@ -333,7 +297,7 @@
   <script>
     AOS.init({ once: true });
   </script>
-  <script type="text/javascript">
+  <script>
     var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
     (function(){
       var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
@@ -351,6 +315,7 @@
     console.log("Подключаемся к сети:", config.networkName);
     console.log("RPC URL:", config.rpcUrl);
     console.log("Адрес IBITIcoin:", config.contracts.IBITI_TOKEN_ADDRESS);
+    // Здесь можно инициализировать ethers.js и подключить контракты
   </script>
   
   <!-- Подключаем файл nft.js для работы с NFT -->
@@ -358,30 +323,5 @@
   
   <!-- Подключаем файл wallet.js -->
   <script src="js/wallet.js"></script>
-  
-  <!-- Подключаем файл shop.js -->
-  <script src="js/shop.js"></script>
-  
-  <!-- Скрипт для работы модального окна шаринга -->
-  <script>
-    const shareModal = document.getElementById('shareModal');
-    const openShareModalBtn = document.getElementById('openShareModal');
-    const closeShareModalBtn = document.getElementById('closeShareModal');
-
-    openShareModalBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      shareModal.style.display = 'block';
-    });
-
-    closeShareModalBtn.addEventListener('click', () => {
-      shareModal.style.display = 'none';
-    });
-
-    window.addEventListener('click', (event) => {
-      if (event.target === shareModal) {
-        shareModal.style.display = 'none';
-      }
-    });
-  </script>
 </body>
-</html>
+</html
