@@ -17,7 +17,6 @@
   <script src="https://unpkg.com/@coinbase/wallet-sdk/dist/wallet-sdk.umd.min.js"></script>
   <!-- Fortmatic -->
   <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
-  <!-- Portis: отключено, чтобы не было ошибок -->
   <!-- Torus: подключаем через jsDelivr -->
   <script src="https://cdn.jsdelivr.net/npm/torus-embed@2.4.2/dist/torus.min.js"></script>
   
@@ -56,17 +55,19 @@
       color: gold;
       margin: 0 10px 10px;
     }
-    .shop-item a {
+    .shop-item a, .shop-item button {
       display: block;
       background: gold;
       color: #000;
       text-decoration: none;
       font-weight: bold;
       padding: 10px;
+      border: none;
       border-radius: 0 0 10px 10px;
+      cursor: pointer;
       transition: background 0.3s;
     }
-    .shop-item a:hover {
+    .shop-item a:hover, .shop-item button:hover {
       background: #c0a000;
     }
     
@@ -143,7 +144,8 @@
       background: #000;
       color: gold;
     }
-    .modal-content button[type="submit"] {
+    .modal-content button[type="submit"],
+    .modal-content button.cancel {
       background: gold;
       color: #000;
       border: none;
@@ -152,43 +154,84 @@
       font-weight: bold;
       cursor: pointer;
       transition: background 0.3s;
+      margin: 0 5px;
     }
-    .modal-content button[type="submit"]:hover {
+    .modal-content button[type="submit"]:hover,
+    .modal-content button.cancel:hover {
       background: #c0a000;
+    }
+    
+    /* Стили шапки */
+    .hero-header {
+      padding: 15px 20px;
+      text-align: center;
+    }
+    .hero-header h1 {
+      font-size: 3em;
+      color: gold;
+    }
+    .hero-header p {
+      font-size: 1.5em;
+      color: #fff;
+    }
+    
+    /* Футер */
+    footer {
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      border-top: 2px solid gold;
+      text-align: center;
+      color: gold;
+    }
+    footer p, footer a {
+      color: gold;
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
+  <!-- Верхние угловые кнопки -->
+  <div class="corner-box corner-box-left">
+    <a href="/">Главная</a>
+  </div>
+  <div class="corner-box corner-box-left2">
+    <a href="blog.html">Блог</a>
+  </div>
+  <div class="corner-box corner-box-right">
+    <a href="roadmap.html">Roadmap</a>
+  </div>
+  <div class="corner-box corner-box-right-langs">
+    <div id="google_translate_element"></div>
+  </div>
+  
+  <!-- Шапка сайта -->
   <header class="hero-header">
     <h1>Магазин IBITIcoin</h1>
     <p>Приобретайте эксклюзивные товары, связанные с IBITIcoin!</p>
   </header>
-
-  <!-- Секция подключения кошелька -->
-  <section class="wallet-section">
-    <button id="connectWalletBtn">Подключить кошелек</button>
-    <div id="walletAddress"></div>
-  </section>
-
+  
   <section class="shop-items">
-    <!-- Товар IBITIcoin: с модальным окном покупки -->
+    <!-- Товар IBITIcoin с модальным окном покупки -->
     <div class="shop-item">
-      <img src="img/IBITIcoin.webp" alt="Товар 1">
+      <img src="img/IBITIcoin.webp" alt="IBITIcoin">
       <h3>Название товара 1 (IBITIcoin)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-      <a href="#" onclick="openPurchaseModal('IBITIcoin')">Купить</a>
+      <!-- Кнопка покупки вызывает модальное окно -->
+      <button onclick="openPurchaseModal('IBITIcoin')">Купить</button>
     </div>
     
-    <!-- Товар NFT: кнопка перенаправляет на страницу NFT-галереи -->
+    <!-- Товар NFT, перенаправляющий на страницу NFT-галереи -->
     <div class="shop-item">
-      <img src="img/NFT.webp" alt="Товар 2">
+      <img src="img/NFT.webp" alt="NFT">
       <h3>Название товара 2 (NFT)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
       <a class="btn" href="nft.html">Купить</a>
     </div>
-    <!-- Добавьте другие товары аналогично -->
   </section>
-
+  
   <!-- Модальное окно для покупки IBITIcoin -->
   <div id="purchaseModal" class="modal">
     <div class="modal-content">
@@ -199,22 +242,23 @@
         <input type="number" id="amount" name="amount" min="1" required>
         <br><br>
         <button type="submit">Подтвердить покупку</button>
+        <button type="button" class="cancel" onclick="closePurchaseModal()">Отмена</button>
       </form>
     </div>
   </div>
-
+  
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
   </footer>
   
-  <!-- Скрипты -->
-  <!-- Подключаем внешние библиотеки (без Portis) -->
+  <!-- Внешние библиотеки -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="https://unpkg.com/web3modal"></script>
   <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
   <script src="https://unpkg.com/@coinbase/wallet-sdk/dist/wallet-sdk.umd.min.js"></script>
   <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/torus-embed@2.4.2/dist/torus.min.js"></script>
   
   <!-- Дополнительные скрипты -->
@@ -233,29 +277,46 @@
       s0.parentNode.insertBefore(s1, s0);
     })();
   </script>
-  <script>
-    // Модальное окно для покупки IBITIcoin
-    let currentProduct = null;
-    function openPurchaseModal(productName) {
-      currentProduct = productName;
-      document.getElementById('purchaseTitle').innerText = 'Покупка ' + productName;
-      document.getElementById('purchaseModal').style.display = 'block';
-    }
-    function closePurchaseModal() {
-      document.getElementById('purchaseModal').style.display = 'none';
-      currentProduct = null;
-      document.getElementById('amount').value = '';
-    }
-    document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
-      event.preventDefault();
-      const amount = document.getElementById('amount').value;
-      // Здесь можно вызвать функцию смарт-контракта через ethers.js, например:
-      // await buyTokenOrNFT(currentProduct, amount);
-      alert('Покупка ' + amount + ' единиц «' + currentProduct + '» инициирована (тестовый режим).');
-      closePurchaseModal();
-    });
+  
+  <!-- Импорт конфигурации из config.js через ES-модуль -->
+  <script type="module">
+    import config from "./config.js";
+    console.log("Подключаемся к сети:", config.networkName);
+    console.log("RPC URL:", config.rpcUrl);
+    console.log("Адрес IBITIcoin:", config.contracts.IBITI_TOKEN_ADDRESS);
   </script>
+  
+  <!-- Подключаем файл nft.js для работы с NFT -->
+  <script type="module" src="js/nft.js"></script>
+  
   <!-- Подключаем файл wallet.js -->
   <script src="js/wallet.js"></script>
+  
+  <!-- Подключаем файл shop.js (если отдельная логика покупки) -->
+  <script src="js/shop.js"></script>
+  
+  <!-- Скрипт для работы модального окна шаринга -->
+  <script>
+    const shareModal = document.getElementById('shareModal');
+    const openShareModalBtn = document.getElementById('openShareModal');
+    const closeShareModalBtn = document.getElementById('closeShareModal');
+
+    if (openShareModalBtn) {
+      openShareModalBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        shareModal.style.display = 'block';
+      });
+    }
+    if (closeShareModalBtn) {
+      closeShareModalBtn.addEventListener('click', () => {
+        shareModal.style.display = 'none';
+      });
+    }
+    window.addEventListener('click', (event) => {
+      if (event.target === shareModal) {
+        shareModal.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 </html>
