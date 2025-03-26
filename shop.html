@@ -17,7 +17,6 @@
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
   
-  <!-- Google Tag Manager и Google Translate (оставляем как есть) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-T5DF4BLR5S"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -156,7 +155,7 @@
       color: gold;
       margin: 0 10px 10px;
     }
-    /* Унифицированный стиль для кнопок покупки */
+    /* Унифицированный стиль кнопок для монеты и NFT */
     .shop-item button {
       background: gold;
       color: #000;
@@ -241,7 +240,7 @@
     /* --- Футер --- */
     footer {
       padding: 20px;
-      background: rgba(0,0,0,0.8);
+      background: rgba(0, 0, 0, 0.8);
       border-top: 2px solid gold;
       text-align: center;
       color: gold;
@@ -289,20 +288,20 @@
       <img src="img/IBITIcoin.webp" alt="IBITIcoin">
       <h3>Название товара 1 (IBITIcoin)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-      <!-- Кнопка покупки оформлена как у NFT -->
+      <!-- Кнопка покупки -->
       <button onclick="openPurchaseModal('IBITIcoin')">Купить</button>
     </div>
-    <!-- Товар NFT (ссылка на страницу NFT-галереи) -->
+    <!-- Товар NFT (ведёт на nft.html) -->
     <div class="shop-item">
       <img src="img/NFT.webp" alt="NFT">
       <h3>Название товара 2 (NFT)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-      <a class="btn" href="nft.html">Купить</a>
+      <!-- Оформлено как кнопка, но по клику ведёт на nft.html -->
+      <button onclick="window.location.href='nft.html'">Купить</button>
     </div>
-    <!-- Добавьте другие товары аналогично -->
   </section>
 
-  <!-- Модальное окно для покупки (используется и для монеты, и для NFT, если нужно) -->
+  <!-- Модальное окно для покупки монеты -->
   <div id="purchaseModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closePurchaseModal()">&times;</span>
@@ -353,10 +352,7 @@
   <!-- Подключаем файл wallet.js -->
   <script src="js/wallet.js"></script>
   
-  <!-- Подключаем файл shop.js, если есть дополнительная логика -->
-  <script src="js/shop.js"></script>
-  
-  <!-- Скрипт для логики покупки -->
+  <!-- Логика покупки -->
   <script>
     let currentProduct = null;
     function openPurchaseModal(productName) {
@@ -375,17 +371,17 @@
       
       // Закрываем окно покупки сразу
       closePurchaseModal();
-      
-      // Минимальная задержка 10 мс для плавного перехода
+
+      // Минимальная задержка 10 мс
       setTimeout(async () => {
         Swal.fire({
           title: 'Ожидание подтверждения...',
           html: 'Пожалуйста, ожидайте...',
           allowOutsideClick: false,
-          didOpen: () => { Swal.showLoading(); }
+          didOpen: () => Swal.showLoading()
         });
         try {
-          // Реальная логика покупки (замените имитацию на вызов смарт-контракта)
+          // Реальная логика покупки (ethers.js, contract вызовы)
           await new Promise(resolve => setTimeout(resolve, 10));
           Swal.fire({
             icon: 'success',
@@ -406,7 +402,7 @@
       }, 10);
     });
   </script>
-  
+
   <!-- Скрипт для работы модального окна шаринга -->
   <script>
     const shareModal = document.getElementById('shareModal');
