@@ -323,5 +323,30 @@
   
   <!-- Подключаем файл wallet.js -->
   <script src="js/wallet.js"></script>
+  
+  <!-- Скрипт для кнопки "Поделиться" -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var shareBtn = document.getElementById('openShareModal');
+      var shareModal = document.getElementById('shareModal');
+      var closeBtn = shareModal.querySelector('.close');
+
+      shareBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        shareModal.style.display = 'block';
+      });
+
+      closeBtn.addEventListener('click', function() {
+        shareModal.style.display = 'none';
+      });
+
+      window.addEventListener('click', function(e) {
+        if (e.target === shareModal) {
+          shareModal.style.display = 'none';
+        }
+      });
+    });
+  </script>
+  
 </body>
-</html
+</html>
