@@ -50,7 +50,7 @@
       text-align: center;
     }
 
-    /* Базовый стиль кнопки "Купить" (убрали small-btn) */
+    /* Базовый стиль кнопки "Купить" */
     .buy-button {
       background: gold;
       color: #000;
@@ -59,7 +59,6 @@
       transition: background 0.3s;
       position: absolute;
       z-index: 10; /* выше, чем label */
-      /* Можете настроить размер и расположение по вкусу */
       top: 10px;
       left: 50%;
       transform: translateX(-50%);
@@ -156,7 +155,6 @@
     <div class="nft-item">
       <img src="img/Creation.webp" alt="Creation 1%">
       <div class="rarity-label">Creation 1%</div>
-      <!-- Кнопка "Купить" (убрали класс small-btn) -->
       <a href="#" class="buy-button" onclick="openPurchaseModal('Creation 1%')">Купить</a>
     </div>
     <div class="nft-item">
@@ -255,38 +253,13 @@
       // Закрываем окно покупки сразу (чтобы не мерцало)
       closePurchaseModal();
 
-      // Минимальная задержка (10 мс), затем SweetAlert2
-      setTimeout(async () => {
-        Swal.fire({
-          title: 'Ожидание подтверждения...',
-          html: 'Пожалуйста, ожидайте...',
-          allowOutsideClick: false,
-          didOpen: () => Swal.showLoading()
-        });
-
-        try {
-          // Здесь замените на реальную логику покупки (ethers.js, вызов смарт-контракта)
-          await new Promise(resolve => setTimeout(resolve, 10));
-          
-          // Успешная покупка
-          Swal.fire({
-            icon: 'success',
-            title: 'Ура!',
-            text: `Покупка ${amount} единиц «${currentNFT}» успешна, ты стал миллионером!`,
-            timer: 5000,
-            timerProgressBar: true,
-            showConfirmButton: false
-          });
-        } catch (error) {
-          // Ошибка
-          Swal.fire({
-            icon: 'error',
-            title: 'Ошибка покупки',
-            text: error.message || 'Что-то пошло не так. Попробуйте ещё раз.',
-            confirmButtonText: 'Ок'
-          });
-        }
-      }, 10);
+      // Вместо реальной логики покупки — тестовый режим
+      Swal.fire({
+        icon: 'info',
+        title: 'Тестовый режим',
+        text: `Покупка ${amount} единиц «${currentNFT}» временно отключена, так как сайт и контракты находятся в тестовом режиме.`,
+        confirmButtonText: 'Ок'
+      });
     });
   </script>
 
