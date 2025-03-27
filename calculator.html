@@ -8,7 +8,7 @@
 </head>
 <body>
 
-  <!-- Вы можете добавить угловые кнопки навигации, если нужно -->
+  <!-- Угловые кнопки навигации -->
   <div class="corner-box corner-box-left">
     <a href="index.html">Главная</a>
   </div>
@@ -18,12 +18,13 @@
     <a href="?lang=en">EN</a>
   </div>
 
+  <!-- Шапка сайта с логотипом вместо заголовка -->
   <header class="hero-header">
-    <h1>Калькулятор инвестиций</h1>
+    <img src="img/logo.png" alt="IBITIcoin Logo" width="200">
   </header>
 
+  <!-- Основная секция калькулятора -->
   <section class="calculator">
-    <h2>Калькулятор инвестиций IBITIcoin</h2>
     <p>Введите сумму для инвестиций (в USD):</p>
     <input type="number" id="investment" placeholder="Сумма">
     <button onclick="calculate()">Рассчитать</button>
@@ -32,24 +33,20 @@
 
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
+    <p>
+      <a href="privacy.html">Политика конфиденциальности</a> |
+      <a href="terms.html">Пользовательское соглашение</a>
+    </p>
+    <p>
+      <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> |
+      <a href="https://t.me/IBITIcoin_chat" target="_blank">Telegram</a> |
+      <a href="https://instagram.com/IBITIcoin_official" target="_blank">Instagram</a> |
+      <a href="https://facebook.com/IBITIcoin" target="_blank">Facebook</a>
+    </p>
+    <p>
+      <a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a>
+    </p>
   </footer>
-
-<footer>
-  <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
-  <p>
-    <a href="privacy.html">Политика конфиденциальности</a> |
-    <a href="terms.html">Пользовательское соглашение</a>
-  </p>
-  <p>
-    <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> |
-    <a href="https://t.me/IBITIcoin_chat" target="_blank">Telegram</a> |
-    <a href="https://instagram.com/IBITIcoin_official" target="_blank">Instagram</a> |
-    <a href="https://facebook.com/IBITIcoin" target="_blank">Facebook</a>
-  </p>
-  <p>
-    <a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a>
-  </p>
-</footer>
 
   <script>
     function calculate() {
@@ -58,7 +55,7 @@
         document.getElementById('result').innerText = "Введите корректную сумму.";
         return;
       }
-      // Пример: доходность 10%
+      // Примерная доходность 10%
       const profit = investment * 0.10;
       document.getElementById('result').innerText = 'Ожидаемая прибыль: $' + profit.toFixed(2);
     }
