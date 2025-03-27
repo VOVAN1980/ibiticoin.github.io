@@ -51,94 +51,7 @@
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   
   <style>
-    /* Стили для окошек в углах */
-    .corner-box {
-      position: absolute;
-      background: rgba(0, 0, 0, 0.8);
-      border: 2px solid gold;
-      border-radius: 5px;
-      padding: 10px 15px;
-      z-index: 999;
-    }
-    .corner-box-left { top: 20px; left: 20px; }
-    .corner-box-left2 { top: 80px; left: 20px; }
-    .corner-box-right {
-      top: 20px; right: 20px;
-      background: rgba(0, 0, 0, 0.8);
-      border: 2px solid gold;
-      border-radius: 5px;
-      padding: 10px 15px;
-      z-index: 999;
-    }
-    .corner-box-right a { color: gold; text-decoration: none; font-weight: bold; margin: 0 5px; }
-    .corner-box-right a:hover { text-decoration: underline; }
-    .corner-box-right-langs {
-      top: 80px; right: 20px;
-      background: rgba(0, 0, 0, 0.8);
-      border: 2px solid gold;
-      border-radius: 5px;
-      padding: 10px 15px;
-      z-index: 999;
-    }
-    .corner-box-right-langs a { color: gold; text-decoration: none; font-weight: bold; margin: 0 5px; }
-    .corner-box-right-langs a:hover { text-decoration: underline; }
-    @media (max-width: 600px) {
-      .corner-box-right { top: 10px; right: 10px; }
-      .corner-box-right-langs { top: 60px; right: 10px; }
-    }
-    
-    /* Стили кнопок */
-    .btn {
-      display: inline-block;
-      background: linear-gradient(135deg, gold, #c0a000);
-      color: #000;
-      padding: 15px 30px;
-      text-decoration: none;
-      font-weight: bold;
-      border-radius: 5px;
-      text-align: center;
-      transition: transform 0.3s ease, background 0.3s ease;
-    }
-    .btn:hover { transform: scale(1.1); background: #c0a000; }
-    
-    .extra-buttons-section {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin: 40px auto;
-      max-width: 1200px;
-      text-align: center;
-      background: transparent !important;
-    }
-    .extra-buttons-section .btn-small {
-      display: inline-block;
-      background: gold;
-      color: #000;
-      padding: 12px 25px;
-      border-radius: 5px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: background 0.3s, color 0.3s;
-    }
-    .extra-buttons-section .btn-small:hover { background: #c0a000; color: #000; }
-    
-    /* Секция подключения кошелька */
-    .wallet-section { text-align: center; margin: 20px auto; }
-    .wallet-section button {
-      background: gold;
-      color: #000;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .wallet-section button:hover { background: #c0a000; }
-    .wallet-section #walletAddress { margin-top: 10px; font-weight: bold; color: gold; }
-    
-    /* Модальное окно шаринга */
+    /* Пример базовых стилей для модального окна шаринга */
     .modal {
       display: none;
       position: fixed;
@@ -160,8 +73,12 @@
       border-radius: 10px;
       text-align: center;
       color: gold;
+      position: relative;
     }
-    .modal-content h3 { margin-top: 0; font-size: 1.8em; }
+    .modal-content h3 {
+      margin-top: 0;
+      font-size: 1.8em;
+    }
     .modal-content .share-options a {
       display: inline-block;
       margin: 10px;
@@ -172,33 +89,17 @@
       border-radius: 5px;
       transition: transform 0.3s;
     }
-    .modal-content .share-options a:hover { transform: scale(1.1); }
+    .modal-content .share-options a:hover {
+      transform: scale(1.1);
+    }
     .modal-content .close {
-      float: right;
+      position: absolute;
+      top: 10px;
+      right: 15px;
       font-size: 1.5em;
       font-weight: bold;
       cursor: pointer;
     }
-    @media (max-width: 600px) {
-      .modal-content { width: 90%; margin-top: 30%; }
-    }
-    
-    /* Стили шапки */
-    .hero-header { padding: 15px 20px; }
-    .hero-header img { margin-bottom: 20px; }
-    .hero-header h1 { margin: 0; font-size: 3em; letter-spacing: 2px; color: gold; }
-    .hero-header p { margin: 10px 0 0; font-size: 1.5em; color: #fff; }
-    
-    /* Футер */
-    footer {
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.8);
-      border-top: 2px solid gold;
-      font-size: 0.9em;
-      text-align: center;
-    }
-    footer p, footer a { color: gold; text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -223,7 +124,7 @@
     <p>Stability | Innovation | Accessibility</p>
   </header>
 
-  <!-- Главный блок -->
+  <!-- Пример главного контента -->
   <section class="gold-section" data-aos="fade-up">
     <h2>WHY CHOOSE IBITIcoin?</h2>
     <p>
@@ -241,16 +142,11 @@
     <a class="btn-small" href="nft.html">NFT Галерея</a>
     <a class="btn-small" href="shop.html">Магазин</a>
     <a class="btn-small" href="book.html">Книга</a>
+    <!-- Кнопка "Поделиться" открывает модальное окно -->
     <a class="btn-small" id="openShareModal" href="#">Поделиться</a>
   </section>
   
-  <!-- Секция подключения кошелька -->
-  <section class="wallet-section">
-    <button id="connectWalletBtn">Подключить кошелек</button>
-    <div id="walletAddress"></div>
-  </section>
-  
-  <!-- Футер -->
+  <!-- Пример футера -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p>
@@ -269,16 +165,17 @@
   <!-- Модальное окно шаринга -->
   <div id="shareModal" class="modal">
     <div class="modal-content">
-      <span class="close">&times;</span>
+      <span class="close" id="closeShareModal">&times;</span>
       <h3>Выберите соцсеть для шаринга</h3>
       <div class="share-options">
-        <a id="share-facebook" href="#">Facebook</a>
-        <a id="share-twitter" href="#">Twitter</a>
-        <a id="share-vk" href="#">VK</a>
-        <a id="share-telegram" href="#">Telegram</a>
-        <a id="share-ok" href="#">Одноклассники</a>
-        <a id="share-linkedin" href="#">LinkedIn</a>
-        <a id="share-weibo" href="#">Weibo</a>
+        <!-- Изначально href="#" — в скрипте динамически подставляем реальные ссылки -->
+        <a id="share-facebook" href="#" target="_blank">Facebook</a>
+        <a id="share-twitter" href="#" target="_blank">Twitter</a>
+        <a id="share-vk" href="#" target="_blank">VK</a>
+        <a id="share-telegram" href="#" target="_blank">Telegram</a>
+        <a id="share-ok" href="#" target="_blank">Одноклассники</a>
+        <a id="share-linkedin" href="#" target="_blank">LinkedIn</a>
+        <a id="share-weibo" href="#" target="_blank">Weibo</a>
       </div>
     </div>
   </div>
@@ -309,44 +206,69 @@
     })();
   </script>
   
-  <!-- Импорт конфигурации из config.js через ES-модуль -->
+  <!-- Импорт конфигурации из config.js через ES-модуль (пример) -->
   <script type="module">
     import config from "./config.js";
     console.log("Подключаемся к сети:", config.networkName);
     console.log("RPC URL:", config.rpcUrl);
     console.log("Адрес IBITIcoin:", config.contracts.IBITI_TOKEN_ADDRESS);
-    // Здесь можно инициализировать ethers.js и подключить контракты
   </script>
   
-  <!-- Подключаем файл nft.js для работы с NFT -->
+  <!-- Подключаем файл nft.js для работы с NFT (пример) -->
   <script type="module" src="js/nft.js"></script>
   
-  <!-- Подключаем файл wallet.js -->
+  <!-- Подключаем файл wallet.js (пример) -->
   <script src="js/wallet.js"></script>
   
-  <!-- Скрипт для кнопки "Поделиться" -->
+  <!-- Скрипт для открытия/закрытия модального окна "Поделиться" и динамической генерации ссылок -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      var shareBtn = document.getElementById('openShareModal');
-      var shareModal = document.getElementById('shareModal');
-      var closeBtn = shareModal.querySelector('.close');
+      // Элементы модального окна шаринга
+      const shareModal = document.getElementById('shareModal');
+      const openShareModalBtn = document.getElementById('openShareModal');
+      const closeShareModalBtn = document.getElementById('closeShareModal');
 
-      shareBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        shareModal.style.display = 'block';
-      });
+      // Открытие модального окна
+      if (openShareModalBtn) {
+        openShareModalBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          shareModal.style.display = 'block';
+        });
+      }
 
-      closeBtn.addEventListener('click', function() {
-        shareModal.style.display = 'none';
-      });
+      // Закрытие модального окна по клику на крестик
+      if (closeShareModalBtn) {
+        closeShareModalBtn.addEventListener('click', () => {
+          shareModal.style.display = 'none';
+        });
+      }
 
-      window.addEventListener('click', function(e) {
-        if (e.target === shareModal) {
+      // Закрытие модального окна при клике вне его
+      window.addEventListener('click', (event) => {
+        if (event.target === shareModal) {
           shareModal.style.display = 'none';
         }
       });
+
+      // --- Динамическая генерация ссылок для шаринга ---
+      const pageUrl = encodeURIComponent(window.location.href);
+      const shareText = encodeURIComponent("Узнайте о будущем цифровых финансов вместе с IBITIcoin!");
+
+      document.getElementById('share-facebook').href = 
+        `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+      document.getElementById('share-twitter').href = 
+        `https://twitter.com/intent/tweet?url=${pageUrl}&text=${shareText}`;
+      document.getElementById('share-vk').href = 
+        `https://vk.com/share.php?url=${pageUrl}&title=${shareText}`;
+      document.getElementById('share-telegram').href = 
+        `https://t.me/share/url?url=${pageUrl}&text=${shareText}`;
+      document.getElementById('share-ok').href = 
+        `https://connect.ok.ru/offer?url=${pageUrl}&title=${shareText}`;
+      document.getElementById('share-linkedin').href = 
+        `https://www.linkedin.com/shareArticle?mini=true&url=${pageUrl}&title=${shareText}`;
+      document.getElementById('share-weibo').href = 
+        `http://service.weibo.com/share/share.php?url=${pageUrl}&title=${shareText}`;
     });
   </script>
-  
 </body>
 </html>
