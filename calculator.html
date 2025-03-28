@@ -8,22 +8,24 @@
 </head>
 <body>
 
-  <!-- Угловые кнопки навигации -->
+  <!-- Кнопки в углах -->
   <div class="corner-box corner-box-left">
     <a href="index.html">Главная</a>
   </div>
   <div class="corner-box corner-box-right">
-    <a href="roadmap.html">Roadmap</a> | 
-    <a href="?lang=ru">RU</a> | 
+    <a href="roadmap.html">Roadmap</a> |
+    <a href="?lang=ru">RU</a> |
     <a href="?lang=en">EN</a>
   </div>
 
-  <!-- Шапка сайта с логотипом вместо заголовка -->
+  <!-- Шапка с логотипом и надписью -->
   <header class="hero-header">
-    <img src="img/logo.png" alt="IBITIcoin Logo" width="200">
+    <!-- Замените путь к логотипу при необходимости -->
+    <img src="img/ibi-coin.png" alt="IBITIcoin Logo" width="120">
+    <h1>Калькулятор инвестиций</h1>
   </header>
 
-  <!-- Основная секция калькулятора -->
+  <!-- Основной раздел калькулятора -->
   <section class="calculator">
     <p>Введите сумму для инвестиций (в USD):</p>
     <input type="number" id="investment" placeholder="Сумма">
@@ -31,6 +33,7 @@
     <p id="result"></p>
   </section>
 
+  <!-- Футер -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p>
@@ -55,7 +58,7 @@
         document.getElementById('result').innerText = "Введите корректную сумму.";
         return;
       }
-      // Примерная доходность 10%
+      // Пример расчёта: доходность 10%
       const profit = investment * 0.10;
       document.getElementById('result').innerText = 'Ожидаемая прибыль: $' + profit.toFixed(2);
     }
