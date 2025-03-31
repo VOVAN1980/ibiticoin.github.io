@@ -231,13 +231,28 @@
   <script>
     let currentNFT = null;
 
-    // Обновлённая функция с проверкой подключения кошелька
+    // Функция открытия модального окна покупки.
+    // Если кошелек не подключен, сразу вызывается функция подключения (connectWallet),
+    // после чего, при успешном подключении, открывается окно ввода количества для покупки.
     async function openPurchaseModal(nftName) {
       currentNFT = nftName;
-      // Если кошелек не подключен, инициируем подключение
-      if (!window.walletAddress) {  // Предполагается, что переменная walletAddress определена после подключения
-        await connectWallet();  // Функция connectWallet() должна быть определена в wallet.js
+      const walletDisplay = document.getElementById('walletAddress');
+      
+      // Если кошелек не подключен, вызываем окно выбора кошелька
+      if (!walletDisplay || walletDisplay.innerText.trim() === '' || walletDisplay.innerText.toLowerCase().includes("disconnected")) {
+        await connectWallet();
+        // После попытки подключения ещё раз проверяем наличие адреса
+        if (!walletDisplay || walletDisplay.innerText.trim() === '' || walletDisplay.innerText.toLowerCase().includes("disconnected")) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Кошелек не подключен',
+            text: 'Пожалуйста, подключите кошелек для продолжения.',
+            confirmButtonText: 'Ок'
+          });
+          return;
+        }
       }
+      // Если кошелек подключен, открываем модальное окно покупки
       document.getElementById('purchaseTitle').innerText = 'Покупка ' + nftName;
       document.getElementById('purchaseModal').style.display = 'block';
     }
@@ -253,7 +268,7 @@
       const amount = document.getElementById('nftAmount').value;
       closePurchaseModal();
       try {
-        await handlePurchase(amount, currentNFT); // Вызываем реальную функцию покупки через ethers.js
+        await handlePurchase(amount, currentNFT); // handlePurchase должна быть определена в shop.js
         Swal.fire({
           icon: 'success',
           title: 'Покупка успешна',
@@ -293,5 +308,13 @@
       }
     });
   </script>
+
+  <!-- Подключаем необходимые скрипты -->
+  <!-- Файл wallet.js должен сделать функцию connectWallet доступной глобально (например, через window.connectWallet = connectWallet;) -->
+  <script src="js/wallet.js"></script>
+  <!-- Файл shop.js содержит функцию handlePurchase -->
+  <script src="js/shop.js"></script>
+  <!-- Файл nft.js для работы с NFT (если требуется) -->
+  <script type="module" src="js/nft.js"></script>
 </body>
 </html>
