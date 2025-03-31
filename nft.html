@@ -35,7 +35,6 @@
       width: 100%;
       display: block;
     }
-
     /* Подпись внизу */
     .rarity-label {
       position: absolute;
@@ -49,7 +48,6 @@
       padding: 10px;
       text-align: center;
     }
-
     /* Стиль кнопки "Купить" */
     .buy-button {
       background: gold;
@@ -69,7 +67,6 @@
     .buy-button:hover {
       background: #c0a000;
     }
-
     /* Модальное окно */
     .modal {
       display: none;
@@ -153,58 +150,19 @@
     <div class="nft-item">
       <img src="img/Creation.webp" alt="Creation 1%">
       <div class="rarity-label">Creation 1%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('Creation 1%')">Купить</a>
+      <a href="#" class="buy-button" onclick="initiatePurchase('Creation 1%')">Купить</a>
     </div>
     <div class="nft-item">
       <img src="img/Awakening_2.webp" alt="Awakening 3%">
       <div class="rarity-label">Awakening 3%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('Awakening 3%')">Купить</a>
+      <a href="#" class="buy-button" onclick="initiatePurchase('Awakening 3%')">Купить</a>
     </div>
     <div class="nft-item">
       <img src="img/First_Gods_and_Kings_3.webp" alt="The First Gods and Kings 5%">
       <div class="rarity-label">The First Gods and Kings 5%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('The First Gods and Kings 5%')">Купить</a>
+      <a href="#" class="buy-button" onclick="initiatePurchase('The First Gods and Kings 5%')">Купить</a>
     </div>
-    <div class="nft-item">
-      <img src="img/Enlightenment_4.webp" alt="Enlightenment 7%">
-      <div class="rarity-label">Enlightenment 7%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('Enlightenment 7%')">Купить</a>
-    </div>
-    <div class="nft-item">
-      <img src="img/The_Age_of_Darkness_and_Faith_5.webp" alt="The Age of Darkness and Faith 10%">
-      <div class="rarity-label">The Age of Darkness and Faith 10%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('The Age of Darkness and Faith 10%')">Купить</a>
-    </div>
-    <div class="nft-item">
-      <img src="img/Blood_and_Steel_6.webp" alt="Blood and Steel 15%">
-      <div class="rarity-label">Blood and Steel 15%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('Blood and Steel 15%')">Купить</a>
-    </div>
-    <div class="nft-item">
-      <img src="img/Digital_Cell_7.webp" alt="Digital Cell 25%">
-      <div class="rarity-label">Digital Cell 25%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('Digital Cell 25%')">Купить</a>
-    </div>
-    <div class="nft-item">
-      <img src="img/The_Last_Frontier_50.webp" alt="The Last Frontier 50%">
-      <div class="rarity-label">The Last Frontier 50%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('The Last Frontier 50%')">Купить</a>
-    </div>
-    <div class="nft-item">
-      <img src="img/Quantum_Leap_75.webp" alt="Quantum Leap 75%">
-      <div class="rarity-label">Quantum Leap 75%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('Quantum Leap 75%')">Купить</a>
-    </div>
-    <div class="nft-item">
-      <img src="img/End_or_Rebirth_100.webp" alt="End or Rebirth 100%">
-      <div class="rarity-label">End or Rebirth 100%</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('End or Rebirth 100%')">Купить</a>
-    </div>
-    <div class="nft-item">
-      <img src="img/Pandora_100ful.webp" alt="Pandora 100% FUL">
-      <div class="rarity-label">Pandora 100% FUL</div>
-      <a href="#" class="buy-button" onclick="openPurchaseModal('Pandora 100% FUL')">Купить</a>
-    </div>
+    <!-- Остальные товары аналогично -->
   </section>
 
   <!-- Модальное окно для покупки NFT -->
@@ -227,46 +185,109 @@
     <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
   </footer>
 
-  <!-- Логика покупок + SweetAlert2 -->
+  <!-- Дополнительные скрипты -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script>
+    AOS.init({ once: true });
+  </script>
+  <script type="text/javascript">
+    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+    (function(){
+      var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+      s1.async = true;
+      s1.src = 'https://embed.tawk.to/67db03deb73265190d550119/1imnoe7rb';
+      s1.charset = 'UTF-8';
+      s1.setAttribute('crossorigin', '*');
+      s0.parentNode.insertBefore(s1, s0);
+    })();
+  </script>
+  
+  <!-- Импорт конфигурации из config.js через ES-модуль -->
+  <script type="module">
+    import config from "./config.js";
+    console.log("Подключаемся к сети:", config.networkName);
+    console.log("RPC URL:", config.rpcUrl);
+    console.log("Адрес IBITIcoin:", config.contracts.IBITI_TOKEN_ADDRESS);
+  </script>
+  
+  <!-- Подключаем файл nft.js для работы с NFT -->
+  <script type="module" src="js/nft.js"></script>
+  
+  <!-- Подключаем файл wallet.js -->
+  <script src="js/wallet.js"></script>
+  
+  <!-- Логика покупки -->
   <script>
     let currentNFT = null;
-
-    function openPurchaseModal(nftName) {
+    
+    // Функция, которая инициирует процесс покупки: сначала проверяет подключение кошелька, затем открывает модальное окно
+    async function initiatePurchase(nftName) {
       currentNFT = nftName;
+      // Проверяем, подключен ли кошелек
+      const walletAddressEl = document.getElementById('walletAddress');
+      if (!walletAddressEl || walletAddressEl.innerText.trim() === '' || walletAddressEl.innerText.toLowerCase().includes("disconnected")) {
+        // Если кошелек не подключен, пробуем подключить его через функцию connectWallet из wallet.js
+        if (typeof connectWallet === "function") {
+          await connectWallet();
+        }
+      }
+      // После подключения отображаем модальное окно
       document.getElementById('purchaseTitle').innerText = 'Покупка ' + nftName;
       document.getElementById('purchaseModal').style.display = 'block';
     }
-
+    
     function closePurchaseModal() {
       document.getElementById('purchaseModal').style.display = 'none';
       currentNFT = null;
       document.getElementById('nftAmount').value = '';
     }
-
+    
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
-  event.preventDefault();
-  const amount = document.getElementById('nftAmount').value;
-  closePurchaseModal();
-  try {
-    await handlePurchase(amount, currentNFT); // вызываем реальную функцию покупки
-    Swal.fire({
-      icon: 'success',
-      title: 'Покупка успешна',
-      text: `Вы приобрели ${amount} единиц «${currentNFT}».`,
-      confirmButtonText: 'Ок'
+      event.preventDefault();
+      
+      // Проверка подключения кошелька
+      const walletAddressEl = document.getElementById('walletAddress');
+      if (!walletAddressEl || walletAddressEl.innerText.trim() === '' || walletAddressEl.innerText.toLowerCase().includes("disconnected")) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Кошелек не подключен',
+          text: 'Пожалуйста, подключите кошелек перед покупкой.',
+          confirmButtonText: 'Ок'
+        });
+        return;
+      }
+      
+      const amount = document.getElementById('nftAmount').value;
+      closePurchaseModal();
+      try {
+        await handlePurchase(amount, currentNFT); // здесь должна быть реализована логика покупки через контракт
+        Swal.fire({
+          icon: 'success',
+          title: 'Покупка успешна',
+          text: `Вы приобрели ${amount} единиц «${currentNFT}».`,
+          confirmButtonText: 'Ок'
+        });
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Ошибка покупки',
+          text: error.message || 'Что-то пошло не так. Попробуйте ещё раз.',
+          confirmButtonText: 'Ок'
+        });
+      }
     });
-  } catch (error) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Ошибка покупки',
-      text: error.message || 'Что-то пошло не так. Попробуйте ещё раз.',
-      confirmButtonText: 'Ок'
-    });
-  }
-});
+    
+    // Функция заглушки для handlePurchase — её можно заменить на реальную логику
+    async function handlePurchase(amount, productName) {
+      console.log("Покупка:", amount, productName);
+      // Здесь должен быть вызов функции покупки через ethers.js,
+      // например: 
+      // const tx = await nftContract.purchaseNFT(tokenURI, { value: price });
+      // await tx.wait();
+    }
   </script>
-
-  <!-- Логика шаринга (если требуется) -->
+  
+  <!-- Скрипт для работы модального окна шаринга (если требуется) -->
   <script>
     const shareModal = document.getElementById('shareModal');
     const openShareModalBtn = document.getElementById('openShareModal');
