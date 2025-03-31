@@ -135,6 +135,30 @@
     .modal-content button.cancel:hover {
       background: #c0a000;
     }
+
+    /* Кнопка подключения кошелька (как в shop.html) */
+    .wallet-section {
+      text-align: center;
+      margin: 20px auto;
+    }
+    .wallet-section button {
+      background: gold;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .wallet-section button:hover {
+      background: #c0a000;
+    }
+    .wallet-section #walletAddress {
+      margin-top: 10px;
+      font-weight: bold;
+      color: gold;
+    }
   </style>
 </head>
 <body>
@@ -147,6 +171,12 @@
       End or Rebirth 100% &mdash; Pandora 100% FUL
     </p>
   </header>
+
+  <!-- Кнопка подключения кошелька (как в shop.html) -->
+  <section class="wallet-section">
+    <button id="connectWalletBtn">Подключить кошелек</button>
+    <div id="walletAddress"></div>
+  </section>
 
   <!-- Галерея NFT -->
   <section class="nft-gallery">
@@ -231,9 +261,20 @@
   <script>
     let currentNFT = null;
 
-    // Функция открытия модального окна покупки.
-    // Если кошелек не подключен, сразу вызывается функция подключения (connectWallet),
-    // после чего, при успешном подключении, открывается окно ввода количества для покупки.
+    // При загрузке страницы навешиваем обработчик на кнопку "Подключить кошелек"
+    document.addEventListener('DOMContentLoaded', () => {
+      const connectBtn = document.getElementById('connectWalletBtn');
+      if (connectBtn) {
+        connectBtn.addEventListener('click', async () => {
+          await connectWallet(); // Функция из wallet.js (глобальная)
+        });
+      }
+    });
+
+    // Функция открытия модального окна покупки
+    // 1. Проверяет, подключен ли кошелек
+    // 2. Если нет, предлагает подключить
+    // 3. После подключения открывает модальное окно для ввода количества
     async function openPurchaseModal(nftName) {
       currentNFT = nftName;
       const walletDisplay = document.getElementById('walletAddress');
@@ -263,12 +304,14 @@
       document.getElementById('nftAmount').value = '';
     }
 
+    // Обработчик формы покупки
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
       event.preventDefault();
       const amount = document.getElementById('nftAmount').value;
       closePurchaseModal();
       try {
-        await handlePurchase(amount, currentNFT); // handlePurchase должна быть определена в shop.js
+        // handlePurchase - функция, определённая в shop.js
+        await handlePurchase(amount, currentNFT);
         Swal.fire({
           icon: 'success',
           title: 'Покупка успешна',
@@ -310,11 +353,11 @@
   </script>
 
   <!-- Подключаем необходимые скрипты -->
-  <!-- Файл wallet.js должен сделать функцию connectWallet доступной глобально (например, через window.connectWallet = connectWallet;) -->
+  <!-- Файл wallet.js должен сделать функцию connectWallet доступной глобально (window.connectWallet = connectWallet;) -->
   <script src="js/wallet.js"></script>
   <!-- Файл shop.js содержит функцию handlePurchase -->
   <script src="js/shop.js"></script>
-  <!-- Файл nft.js для работы с NFT (если требуется) -->
+  <!-- Файл nft.js для работы с NFT (если нужно, можно подключать как ES-модуль) -->
   <script type="module" src="js/nft.js"></script>
 </body>
 </html>
