@@ -1,16 +1,22 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NFT Галерея IBITIcoin</title>
   <link rel="stylesheet" href="css/style.css">
-  
-  <!-- SweetAlert2 для уведомлений -->
+
+  <!-- Подключаем те же библиотеки, что и в shop.html -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="https://unpkg.com/web3modal"></script>
+  <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
+  <script src="https://unpkg.com/@coinbase/wallet-sdk/dist/wallet-sdk.umd.min.js"></script>
+  <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
+  <script src="https://cdn.jsdelivr.net/npm/torus-embed@2.4.2/dist/torus.min.js"></script>
+
   <style>
-    /* Стили для NFT-галереи */
+    /* ----- Стили NFT-галереи ----- */
     .nft-gallery {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -66,7 +72,7 @@
       background: #c0a000;
     }
     
-    /* Модальное окно для покупки */
+    /* ----- Модальное окно для покупки NFT ----- */
     .modal {
       display: none;
       position: fixed;
@@ -131,8 +137,8 @@
     .modal-content button.cancel:hover {
       background: #c0a000;
     }
-    
-    /* Секция подключения кошелька, как в магазине */
+
+    /* ----- Секция подключения кошелька (как в магазине) ----- */
     .wallet-section {
       text-align: center;
       margin: 20px auto;
@@ -168,7 +174,7 @@
     </p>
   </header>
 
-  <!-- Секция подключения кошелька (как в магазине) -->
+  <!-- Секция подключения кошелька (как в shop.html) -->
   <section class="wallet-section">
     <button id="connectWalletBtn">Подключить кошелек</button>
     <div id="walletAddress"></div>
@@ -253,29 +259,23 @@
     <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
   </footer>
 
-  <!-- Подключаем необходимые скрипты -->
-  <!-- Скрипт WalletConnectProvider -->
-  <script src="https://unpkg.com/@walletconnect/web3-provider/dist/umd/index.min.js"></script>
-  <!-- Библиотека ethers (UMD-версия) -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <!-- Подключаем wallet.js, который должен сделать функцию connectWallet глобальной -->
+  <!-- Подключаем wallet.js, shop.js, nft.js так же, как в магазине -->
   <script src="js/wallet.js"></script>
-  <!-- Подключаем shop.js, где определена функция handlePurchase -->
   <script src="js/shop.js"></script>
-  <!-- Подключаем nft.js (если требуется дополнительная логика для NFT) -->
   <script type="module" src="js/nft.js"></script>
 
-  <!-- Основной inline-код для NFT-галереи -->
   <script>
     let currentNFT = null;
 
-    // Функция открытия модального окна покупки:
-    // Если кошелек не подключен – вызывается connectWallet, затем при успешном подключении открывается модальное окно
+    // При нажатии на кнопку "Купить" для NFT
     async function openPurchaseModal(nftName) {
       currentNFT = nftName;
       const walletDisplay = document.getElementById('walletAddress');
+
+      // Если кошелек не подключен, пытаемся подключить
       if (!walletDisplay || walletDisplay.innerText.trim() === '' || walletDisplay.innerText.toLowerCase().includes("disconnected")) {
-        await connectWallet();
+        await connectWallet(); // Функция из wallet.js (должна быть глобальной)
+        // Снова проверяем, подключен ли кошелек
         if (!walletDisplay || walletDisplay.innerText.trim() === '' || walletDisplay.innerText.toLowerCase().includes("disconnected")) {
           Swal.fire({
             icon: 'warning',
@@ -286,6 +286,7 @@
           return;
         }
       }
+      // Если кошелек подключен, открываем модальное окно покупки
       document.getElementById('purchaseTitle').innerText = 'Покупка ' + nftName;
       document.getElementById('purchaseModal').style.display = 'block';
     }
@@ -296,11 +297,13 @@
       document.getElementById('nftAmount').value = '';
     }
 
+    // При подтверждении покупки
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
       event.preventDefault();
       const amount = document.getElementById('nftAmount').value;
       closePurchaseModal();
       try {
+        // handlePurchase() из shop.js
         await handlePurchase(amount, currentNFT);
         Swal.fire({
           icon: 'success',
