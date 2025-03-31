@@ -281,25 +281,28 @@
     <div id="walletAddress"></div>
   </section>
 
-  <!-- Товары магазина -->
-  <section class="shop-items">
-    <!-- Товар IBITIcoin (монета) -->
-    <div class="shop-item">
-      <img src="img/IBITIcoin.webp" alt="IBITIcoin">
-      <h3>Название товара 1 (IBITIcoin)</h3>
-      <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-      <!-- Кнопка покупки: открывается модальное окно -->
-      <button onclick="openPurchaseModal('IBITIcoin')">Купить</button>
-    </div>
-    <!-- Товар NFT -->
-    <div class="shop-item">
-      <img src="img/NFT.webp" alt="NFT">
-      <h3>Название товара 2 (NFT)</h3>
-      <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-      <!-- Вместо перехода на nft.html, выводим сообщение о тестовом режиме -->
-      <button onclick="testModePurchase('NFT')">Купить</button>
-    </div>
-  </section>
+  document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
+  event.preventDefault();
+  const amount = document.getElementById('nftAmount').value;
+  // Закрываем модальное окно
+  closePurchaseModal();
+  try {
+    await handlePurchase(amount, currentNFT); // здесь реализована логика покупки через контракт
+    Swal.fire({
+      icon: 'success',
+      title: 'Покупка успешна',
+      text: `Вы приобрели ${amount} единиц «${currentNFT}».`,
+      confirmButtonText: 'Ок'
+    });
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Ошибка покупки',
+      text: error.message || 'Что-то пошло не так. Попробуйте ещё раз.',
+      confirmButtonText: 'Ок'
+    });
+  }
+});
 
   <!-- Модальное окно для покупки монеты -->
   <div id="purchaseModal" class="modal">
