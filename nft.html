@@ -244,16 +244,26 @@
     }
 
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
-      event.preventDefault();
-      const amount = document.getElementById('nftAmount').value;
-      closePurchaseModal();
-      Swal.fire({
-        icon: 'info',
-        title: 'Тестовый режим',
-        text: `Покупка ${amount} единиц «${currentNFT}» временно отключена, так как сайт и контракты находятся в тестовом режиме.`,
-        confirmButtonText: 'Ок'
-      });
+  event.preventDefault();
+  const amount = document.getElementById('nftAmount').value;
+  closePurchaseModal();
+  try {
+    await handlePurchase(amount, currentNFT); // вызываем реальную функцию покупки
+    Swal.fire({
+      icon: 'success',
+      title: 'Покупка успешна',
+      text: `Вы приобрели ${amount} единиц «${currentNFT}».`,
+      confirmButtonText: 'Ок'
     });
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Ошибка покупки',
+      text: error.message || 'Что-то пошло не так. Попробуйте ещё раз.',
+      confirmButtonText: 'Ок'
+    });
+  }
+});
   </script>
 
   <!-- Логика шаринга (если требуется) -->
