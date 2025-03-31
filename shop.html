@@ -294,12 +294,12 @@
       <img src="img/NFT.webp" alt="NFT">
       <h3>Название товара 2 (NFT)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-      <!-- Здесь вызываем openPurchaseModal вместо testModePurchase для включения реальной покупки -->
+      <!-- Для NFT вместо открытия модального окна происходит перенаправление в NFT-галерею -->
       <button onclick="openPurchaseModal('NFT')">Купить</button>
     </div>
   </section>
 
-  <!-- Модальное окно для покупки -->
+  <!-- Модальное окно для покупки (актуально для остальных товаров) -->
   <div id="purchaseModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closePurchaseModal()">&times;</span>
@@ -355,6 +355,12 @@
     let currentProduct = null;
     function openPurchaseModal(productName) {
       currentProduct = productName;
+      // Если покупка относится к NFT, перенаправляем на страницу NFT-галереи
+      if (productName === 'NFT') {
+        window.location.href = 'nft.html';
+        return;
+      }
+      // Для остальных товаров открываем модальное окно покупки
       document.getElementById('purchaseTitle').innerText = 'Покупка ' + productName;
       document.getElementById('purchaseModal').style.display = 'block';
     }
