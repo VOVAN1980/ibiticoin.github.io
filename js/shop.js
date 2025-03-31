@@ -1,5 +1,5 @@
 async function handlePurchase() {
-  // Показываем индикатор загрузки
+  // Показываем индикатор загрузки через SweetAlert
   Swal.fire({
     title: 'Ожидание подтверждения...',
     html: 'Пожалуйста, ожидайте...',
@@ -10,11 +10,10 @@ async function handlePurchase() {
   });
   
   try {
-    // Пример: вызов функции покупки (замени на свою логику)
+    // Пример вызова функции покупки – замените на реальную логику покупки
     const tx = await contract.purchase(/* параметры покупки */);
     await tx.wait();
     
-    // Показываем уведомление об успехе
     Swal.fire({
       icon: 'success',
       title: 'Ура!',
@@ -24,9 +23,8 @@ async function handlePurchase() {
       showConfirmButton: false
     });
     
-    // Обновление UI или переход на другую страницу, если нужно
+    // Обновление UI или редирект, если нужно
   } catch (error) {
-    // Показываем уведомление об ошибке
     Swal.fire({
       icon: 'error',
       title: 'Ошибка покупки',
@@ -36,7 +34,6 @@ async function handlePurchase() {
   }
 }
 
-// Привяжем функцию к кнопке с id="buyBtn"
 document.getElementById('buyBtn').addEventListener('click', (e) => {
   e.preventDefault();
   handlePurchase();
