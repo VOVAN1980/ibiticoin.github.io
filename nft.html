@@ -231,8 +231,13 @@
   <script>
     let currentNFT = null;
 
-    function openPurchaseModal(nftName) {
+    // Обновлённая функция с проверкой подключения кошелька
+    async function openPurchaseModal(nftName) {
       currentNFT = nftName;
+      // Если кошелек не подключен, инициируем подключение
+      if (!window.walletAddress) {  // Предполагается, что переменная walletAddress определена после подключения
+        await connectWallet();  // Функция connectWallet() должна быть определена в wallet.js
+      }
       document.getElementById('purchaseTitle').innerText = 'Покупка ' + nftName;
       document.getElementById('purchaseModal').style.display = 'block';
     }
@@ -244,26 +249,26 @@
     }
 
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
-  event.preventDefault();
-  const amount = document.getElementById('nftAmount').value;
-  closePurchaseModal();
-  try {
-    await handlePurchase(amount, currentNFT); // вызываем реальную функцию покупки
-    Swal.fire({
-      icon: 'success',
-      title: 'Покупка успешна',
-      text: Вы приобрели ${amount} единиц «${currentNFT}».,
-      confirmButtonText: 'Ок'
+      event.preventDefault();
+      const amount = document.getElementById('nftAmount').value;
+      closePurchaseModal();
+      try {
+        await handlePurchase(amount, currentNFT); // Вызываем реальную функцию покупки через ethers.js
+        Swal.fire({
+          icon: 'success',
+          title: 'Покупка успешна',
+          text: `Вы приобрели ${amount} единиц «${currentNFT}».`,
+          confirmButtonText: 'Ок'
+        });
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Ошибка покупки',
+          text: error.message || 'Что-то пошло не так. Попробуйте ещё раз.',
+          confirmButtonText: 'Ок'
+        });
+      }
     });
-  } catch (error) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Ошибка покупки',
-      text: error.message || 'Что-то пошло не так. Попробуйте ещё раз.',
-      confirmButtonText: 'Ок'
-    });
-  }
-});
   </script>
 
   <!-- Логика шаринга (если требуется) -->
