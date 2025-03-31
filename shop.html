@@ -434,8 +434,12 @@
     window.addEventListener('click', (event) => {
       if (event.target === shareModal) {
         shareModal.style.display = 'none';
-      }
-    });
+       });
+    }
+// Экспортируем функцию handlePurchase в глобальное пространство, чтобы её можно было вызывать из HTML
+window.handlePurchase = handlePurchase;
+ }
+  });
   </script>
 </body>
 </html>
