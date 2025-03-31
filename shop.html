@@ -369,42 +369,39 @@
       document.getElementById('amount').value = '';
     }
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
-      event.preventDefault();
-      const amount = document.getElementById('amount').value;
-      
-      // Проверяем, подключен ли кошелек
-      const walletAddressEl = document.getElementById('walletAddress');
-      if (!walletAddressEl || walletAddressEl.innerText.trim() === '') {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Кошелек не подключен',
-          text: 'Пожалуйста, подключите кошелек перед покупкой.',
-          confirmButtonText: 'Ок'
-        });
-        return;
-      }
-      
-      // Закрываем окно покупки сразу
-      closePurchaseModal();
-      
-      // В тестовом режиме покупка отключена – выводим уведомление
-      Swal.fire({
-        icon: 'info',
-        title: 'Тестовый режим',
-        text: `Покупка ${amount} единиц «${currentProduct}» временно отключена, так как сайт и контракты находятся в тестовом режиме.`,
-        confirmButtonText: 'Ок'
-      });
+  event.preventDefault();
+  
+  // Проверка подключения кошелька
+  const walletAddressEl = document.getElementById('walletAddress');
+  if (!walletAddressEl || walletAddressEl.innerText.trim() === '' || walletAddressEl.innerText.includes("disconnected")) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Кошелек не подключен',
+      text: 'Пожалуйста, подключите кошелек перед покупкой.',
+      confirmButtonText: 'Ок'
     });
-    
-    // Функция для отключенной покупки NFT
-    function testModePurchase(productName) {
-      Swal.fire({
-        icon: 'info',
-        title: 'Тестовый режим',
-        text: `Покупка для продукта «${productName}» временно отключена, так как сайт и контракты находятся в тестовом режиме.`,
-        confirmButtonText: 'Ок'
-      });
-    }
+    return;
+  }
+  
+  const amount = document.getElementById('amount').value;
+  closePurchaseModal();
+  try {
+    await handlePurchase(amount, currentProduct); // вызываем реальную логику покупки
+    Swal.fire({
+      icon: 'success',
+      title: 'Покупка успешна',
+      text: `Вы приобрели ${amount} единиц «${currentProduct}».`,
+      confirmButtonText: 'Ок'
+    });
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Ошибка покупки',
+      text: error.message || 'Что-то пошло не так. Попробуйте ещё раз.',
+      confirmButtonText: 'Ок'
+    });
+  }
+});
   </script>
 
   <!-- Скрипт для работы модального окна шаринга -->
