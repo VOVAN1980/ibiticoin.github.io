@@ -172,7 +172,7 @@
     </p>
   </header>
 
-  <!-- Кнопка подключения кошелька (как в shop.html) -->
+  <!-- Кнопка подключения кошелька -->
   <section class="wallet-section">
     <button id="connectWalletBtn">Подключить кошелек</button>
     <div id="walletAddress"></div>
@@ -257,32 +257,23 @@
     <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
   </footer>
 
-  <!-- Логика покупок + SweetAlert2 -->
+  <!-- Сначала подключаем необходимые скрипты -->
+  <script src="js/wallet.js"></script>
+  <script src="js/shop.js"></script>
+  <script type="module" src="js/nft.js"></script>
+
+  <!-- Затем основной inline-код, который использует функции из подключенных файлов -->
   <script>
     let currentNFT = null;
 
-    // При загрузке страницы навешиваем обработчик на кнопку "Подключить кошелек"
-    document.addEventListener('DOMContentLoaded', () => {
-      const connectBtn = document.getElementById('connectWalletBtn');
-      if (connectBtn) {
-        connectBtn.addEventListener('click', async () => {
-          await connectWallet(); // Функция из wallet.js (глобальная)
-        });
-      }
-    });
-
-    // Функция открытия модального окна покупки
-    // 1. Проверяет, подключен ли кошелек
-    // 2. Если нет, предлагает подключить
-    // 3. После подключения открывает модальное окно для ввода количества
+    // Функция открытия модального окна покупки:
+    // Если кошелек не подключен, вызывается connectWallet, затем открывается окно ввода количества.
     async function openPurchaseModal(nftName) {
       currentNFT = nftName;
       const walletDisplay = document.getElementById('walletAddress');
       
-      // Если кошелек не подключен, вызываем окно выбора кошелька
       if (!walletDisplay || walletDisplay.innerText.trim() === '' || walletDisplay.innerText.toLowerCase().includes("disconnected")) {
         await connectWallet();
-        // После попытки подключения ещё раз проверяем наличие адреса
         if (!walletDisplay || walletDisplay.innerText.trim() === '' || walletDisplay.innerText.toLowerCase().includes("disconnected")) {
           Swal.fire({
             icon: 'warning',
@@ -293,7 +284,6 @@
           return;
         }
       }
-      // Если кошелек подключен, открываем модальное окно покупки
       document.getElementById('purchaseTitle').innerText = 'Покупка ' + nftName;
       document.getElementById('purchaseModal').style.display = 'block';
     }
@@ -304,13 +294,11 @@
       document.getElementById('nftAmount').value = '';
     }
 
-    // Обработчик формы покупки
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
       event.preventDefault();
       const amount = document.getElementById('nftAmount').value;
       closePurchaseModal();
       try {
-        // handlePurchase - функция, определённая в shop.js
         await handlePurchase(amount, currentNFT);
         Swal.fire({
           icon: 'success',
@@ -328,36 +316,5 @@
       }
     });
   </script>
-
-  <!-- Логика шаринга (если требуется) -->
-  <script>
-    const shareModal = document.getElementById('shareModal');
-    const openShareModalBtn = document.getElementById('openShareModal');
-    const closeShareModalBtn = document.getElementById('closeShareModal');
-    if (openShareModalBtn) {
-      openShareModalBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        shareModal.style.display = 'block';
-      });
-    }
-    if (closeShareModalBtn) {
-      closeShareModalBtn.addEventListener('click', () => {
-        shareModal.style.display = 'none';
-      });
-    }
-    window.addEventListener('click', (event) => {
-      if (event.target === shareModal) {
-        shareModal.style.display = 'none';
-      }
-    });
-  </script>
-
-  <!-- Подключаем необходимые скрипты -->
-  <!-- Файл wallet.js должен сделать функцию connectWallet доступной глобально (window.connectWallet = connectWallet;) -->
-  <script src="js/wallet.js"></script>
-  <!-- Файл shop.js содержит функцию handlePurchase -->
-  <script src="js/shop.js"></script>
-  <!-- Файл nft.js для работы с NFT (если нужно, можно подключать как ES-модуль) -->
-  <script type="module" src="js/nft.js"></script>
 </body>
 </html>
