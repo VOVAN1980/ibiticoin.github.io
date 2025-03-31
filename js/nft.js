@@ -1,12 +1,12 @@
 import { ethers } from "ethers";
-import config from "../config.js"; // убедитесь, что путь корректный
-import nftAbi from "./abis/IBITINFT.json"; // поместите ABI в папку js/abis
+import config from "../config.js"; // Убедитесь, что путь корректный
+import nftAbi from "./abis/IBITINFT.json"; // ABI контракта IBITINFT должен быть в этой папке
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
 
 const nftContract = new ethers.Contract(
-  config.contracts.IBITI_NFT_ADDRESS, // или IBITI_NFT_IMPL_ADDRESS, если нужно
+  config.contracts.IBITI_NFT_ADDRESS,
   nftAbi,
   signer
 );
