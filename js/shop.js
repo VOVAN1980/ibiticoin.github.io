@@ -3,23 +3,19 @@
 import config from "../config.js";
 import contractAbi from "./abis/IBITIcoin.js";
 
-// Создаём провайдер и signer через ethers.js
+// Создаем провайдера и подписанта через ethers.js
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
 
-// Создаём экземпляр контракта, используя адрес из конфигурации
+// Создаем экземпляр контракта, используя адрес из конфигурации
 const contract = new ethers.Contract(
   config.contracts.IBITI_TOKEN_ADDRESS,
   contractAbi,
   signer
 );
 
-/**
- * Функция покупки, принимает количество и название продукта.
- * Замените вызов contract.purchase(...) на фактический метод покупки вашего контракта.
- */
+// Функция покупки, принимает количество и название продукта
 async function handlePurchase(amount, productName) {
-  // Показываем индикатор загрузки через SweetAlert
   Swal.fire({
     title: 'Ожидание подтверждения...',
     html: 'Пожалуйста, ожидайте...',
@@ -30,9 +26,8 @@ async function handlePurchase(amount, productName) {
   });
 
   try {
-    // Пример вызова метода покупки. Замените "purchase" и его параметры на реальную логику.
-    // Например: const tx = await contract.purchase(amount, productName);
-    const tx = await contract.purchase(/* передайте параметры, если нужно */);
+    // Вызов метода покупки с передачей параметров
+    const tx = await contract.purchase(amount, productName);
     await tx.wait();
 
     Swal.fire({
@@ -53,17 +48,17 @@ async function handlePurchase(amount, productName) {
   }
 }
 
-// Если на странице есть элемент с id "buyBtn", навешиваем обработчик.
+// Навешиваем обработчик клика, если элемент с id "buyBtn" присутствует
 const buyBtn = document.getElementById('buyBtn');
 if (buyBtn) {
   buyBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    // Можно задать фиксированное значение или вызвать handlePurchase с параметрами
-    handlePurchase(); 
+    // Передаем примерные параметры. Измените их по необходимости.
+    handlePurchase(1, 'Product');
   });
 }
 
-// Экспортируем функцию handlePurchase в глобальное пространство, чтобы её можно было вызывать из HTML
+// Экспортируем функцию в глобальное пространство, чтобы можно было вызвать её из HTML
 window.handlePurchase = handlePurchase;
 
 console.log("Используемая сеть:", config.networkName);
