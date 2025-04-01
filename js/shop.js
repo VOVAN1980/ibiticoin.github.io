@@ -58,7 +58,7 @@ const buyBtn = document.getElementById('buyBtn');
 if (buyBtn) {
   buyBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    // Здесь можно задать фиксированное значение или вызвать handlePurchase с параметрами
+    // Можно задать фиксированное значение или вызвать handlePurchase с параметрами
     handlePurchase(); 
   });
 }
