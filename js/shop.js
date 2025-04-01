@@ -2,8 +2,8 @@
 
 // Импорт конфигурации (адреса, параметры сети и т.д.)
 import config from "./config.js";
-// Импорт ABI контракта – замените путь и имя файла на актуальные
-import contractAbi from "./abis/YourContractABI.json";
+// Импорт ABI контракта монеты – убедитесь, что файл IBITIcoin.json лежит в папке js/abis/
+import contractAbi from "./abis/IBITIcoin.json";
 
 // Создаём провайдер и signer через ethers.js
 const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -11,7 +11,7 @@ const signer = provider.getSigner();
 
 // Создаём экземпляр контракта, используя адрес из конфигурации
 const contract = new ethers.Contract(
-  config.contracts.IBITI_TOKEN_ADDRESS, // адрес из config.js
+  config.contracts.IBITI_TOKEN_ADDRESS, // адрес монеты из config.js
   contractAbi,
   signer
 );
@@ -27,10 +27,10 @@ async function handlePurchase() {
       Swal.showLoading();
     }
   });
-
+  
   try {
-    // Вызов метода покупки на контракте.
-    // Параметры покупки можно указать согласно вашему контракту.
+    // Здесь вызываем метод покупки на контракте.
+    // Замените "purchase" и его параметры на тот метод, который реализует покупку токенов в вашем контракте.
     const tx = await contract.purchase(/* параметры покупки */);
     await tx.wait();
     
