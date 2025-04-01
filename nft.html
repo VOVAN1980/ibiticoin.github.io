@@ -6,7 +6,7 @@
   <title>NFT Галерея IBITIcoin</title>
   <link rel="stylesheet" href="css/style.css">
   
-  <!-- Подключаем библиотеки для работы с блокчейном и уведомлениями -->
+  <!-- Подключаем те же библиотеки, что и в магазине -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="https://unpkg.com/web3modal"></script>
   <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
@@ -36,7 +36,7 @@
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   
   <style>
-    /* Стили NFT-галереи */
+    /* ----- Стили NFT-галереи ----- */
     .nft-gallery {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -92,7 +92,7 @@
       background: #c0a000;
     }
     
-    /* Модальное окно для покупки NFT */
+    /* ----- Модальное окно для покупки NFT ----- */
     .modal {
       display: none;
       position: fixed;
@@ -158,7 +158,7 @@
       background: #c0a000;
     }
 
-    /* Секция подключения кошелька */
+    /* ----- Секция подключения кошелька (как в магазине) ----- */
     .wallet-section {
       text-align: center;
       margin: 20px auto;
@@ -202,7 +202,7 @@
     </p>
   </header>
 
-  <!-- Секция подключения кошелька -->
+  <!-- Секция подключения кошелька (как в магазине) -->
   <section class="wallet-section">
     <button id="connectWalletBtn">Подключить кошелек</button>
     <div id="walletAddress"></div>
@@ -292,7 +292,7 @@
   <script>
     AOS.init({ once: true });
   </script>
-  <script>
+  <script type="text/javascript">
     var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
     (function(){
       var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
@@ -304,23 +304,29 @@
     })();
   </script>
   
+  <!-- Импорт конфигурации из config.js через ES-модуль -->
+  <script type="module">
+    import config from "./config.js";
+    console.log("Подключаемся к сети:", config.networkName);
+    console.log("RPC URL:", config.rpcUrl);
+    console.log("Адрес IBITIcoin:", config.contracts.IBITI_TOKEN_ADDRESS);
+  </script>
+  
   <!-- Подключаем файл nft.js для работы с NFT -->
   <script type="module" src="js/nft.js"></script>
   
   <!-- Подключаем файл wallet.js -->
   <script src="js/wallet.js"></script>
   
-  <!-- Подключаем файл shop.js как модуль -->
+  <!-- Подключаем файл shop.js как модуль (изменено) -->
   <script type="module" src="js/shop.js"></script>
   
-  <!-- Логика покупки и управление модальным окном -->
-  <script type="module">
-    import { handlePurchase } from './js/shop.js';
-
+  <!-- Логика покупки -->
+  <script>
     let currentProduct = null;
-    window.openPurchaseModal = function(productName) {
+    function openPurchaseModal(productName) {
       currentProduct = productName;
-      // Если покупка относится к NFT, перенаправляем на страницу NFT-галереи (если нужно)
+      // Если покупка относится к NFT, перенаправляем на страницу NFT-галереи
       if (productName === 'NFT') {
         window.location.href = 'nft.html';
         return;
@@ -328,17 +334,18 @@
       document.getElementById('purchaseTitle').innerText = 'Покупка ' + productName;
       document.getElementById('purchaseModal').style.display = 'block';
     }
-    window.closePurchaseModal = function() {
+    function closePurchaseModal() {
       document.getElementById('purchaseModal').style.display = 'none';
+      // НЕ сбрасываем currentProduct, чтобы сохранить значение для покупки
       document.getElementById('nftAmount').value = '';
     }
-
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
       event.preventDefault();
       const amount = document.getElementById('nftAmount').value;
+      // Сохраняем значение текущего продукта до закрытия модального окна
       const productToPurchase = currentProduct;
       closePurchaseModal();
-      
+      // Проверка подключения кошелька
       const walletAddressEl = document.getElementById('walletAddress');
       console.log("walletAddress:", walletAddressEl ? walletAddressEl.innerText : "нет");
       if (!walletAddressEl || walletAddressEl.innerText.trim() === '' || walletAddressEl.innerText.toLowerCase().includes("disconnected")) {
@@ -369,6 +376,13 @@
         });
       }
     });
+  </script>
+  
+  <!-- Экспорт handlePurchase из shop.js в глобальное пространство -->
+  <script>
+    if (typeof handlePurchase !== 'undefined') {
+      window.handlePurchase = handlePurchase;
+    }
   </script>
 </body>
 </html>
