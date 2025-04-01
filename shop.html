@@ -373,7 +373,10 @@
     }
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
       event.preventDefault();
-      
+      const amount = document.getElementById('amount').value;
+      // Сохраняем значение currentProduct, прежде чем закрывать окно
+      const productToPurchase = currentProduct;
+      closePurchaseModal();
       // Проверка подключения кошелька
       const walletAddressEl = document.getElementById('walletAddress');
       if (!walletAddressEl || walletAddressEl.innerText.trim() === '' || walletAddressEl.innerText.toLowerCase().includes("disconnected")) {
@@ -385,16 +388,15 @@
         });
         return;
       }
-      
-      const amount = document.getElementById('amount').value;
-      closePurchaseModal();
       try {
-        await handlePurchase(amount, currentProduct);
+        await handlePurchase(amount, productToPurchase);
         Swal.fire({
           icon: 'success',
-          title: 'Покупка успешна',
-          text: `Вы приобрели ${amount} единиц «${currentProduct}».`,
-          confirmButtonText: 'Ок'
+          title: 'Ура!',
+          text: 'Покупка успешна, ты стал миллионером! 🎉',
+          timer: 5000,
+          timerProgressBar: true,
+          showConfirmButton: false
         });
       } catch (error) {
         Swal.fire({
