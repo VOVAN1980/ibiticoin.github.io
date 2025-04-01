@@ -1,8 +1,6 @@
 // shop.js
 
-// Импорт конфигурации (адреса, параметры сети и т.д.)
 import config from "../config.js";
-// Импорт ABI контракта монеты — убедитесь, что файл IBITIcoin.js лежит в папке js/abis/
 import contractAbi from "./abis/IBITIcoin.js";
 
 // Создаём провайдер и signer через ethers.js
@@ -11,13 +9,16 @@ const signer = provider.getSigner();
 
 // Создаём экземпляр контракта, используя адрес из конфигурации
 const contract = new ethers.Contract(
-  config.contracts.IBITI_TOKEN_ADDRESS, // адрес монеты из config.js
+  config.contracts.IBITI_TOKEN_ADDRESS,
   contractAbi,
   signer
 );
 
-// Функция покупки
-async function handlePurchase() {
+/**
+ * Функция покупки, принимает количество и название продукта.
+ * Замените вызов contract.purchase(...) на фактический метод покупки вашего контракта.
+ */
+async function handlePurchase(amount, productName) {
   // Показываем индикатор загрузки через SweetAlert
   Swal.fire({
     title: 'Ожидание подтверждения...',
@@ -27,13 +28,13 @@ async function handlePurchase() {
       Swal.showLoading();
     }
   });
-  
+
   try {
-    // Здесь вызываем метод покупки на контракте.
-    // Замените "purchase" и его параметры на тот метод, который реализует покупку токенов в вашем контракте.
-    const tx = await contract.purchase(/* параметры покупки */);
+    // Пример вызова метода покупки. Замените "purchase" и его параметры на реальную логику.
+    // Например: const tx = await contract.purchase(amount, productName);
+    const tx = await contract.purchase(/* передайте параметры, если нужно */);
     await tx.wait();
-    
+
     Swal.fire({
       icon: 'success',
       title: 'Ура!',
@@ -42,8 +43,6 @@ async function handlePurchase() {
       timerProgressBar: true,
       showConfirmButton: false
     });
-    
-    // Здесь можно добавить обновление UI или редирект
   } catch (error) {
     Swal.fire({
       icon: 'error',
@@ -54,17 +53,17 @@ async function handlePurchase() {
   }
 }
 
-// Привязываем обработчик к элементу с id="buyBtn", если он существует
+// Если на странице есть элемент с id "buyBtn", навешиваем обработчик.
 const buyBtn = document.getElementById('buyBtn');
 if (buyBtn) {
   buyBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    handlePurchase();
+    // Здесь можно задать фиксированное значение или вызвать handlePurchase с параметрами
+    handlePurchase(); 
   });
 }
 
-// Экспортируем функцию handlePurchase в глобальное пространство,
-// чтобы её можно было вызывать из HTML-страницы
+// Экспортируем функцию handlePurchase в глобальное пространство, чтобы её можно было вызывать из HTML
 window.handlePurchase = handlePurchase;
 
 console.log("Используемая сеть:", config.networkName);
