@@ -3,7 +3,7 @@
 // Импорт конфигурации (адреса, параметры сети и т.д.)
 import config from "./config.js";
 // Импорт ABI контракта монеты – убедитесь, что файл IBITIcoin.json лежит в папке js/abis/
-import contractAbi from "./abis/IBITIcoin.js";
+import contractAbi from "./abis/IBITIcoin.json";
 
 // Создаём провайдер и signer через ethers.js
 const provider = new ethers.providers.Web3Provider(window.ethereum);
