@@ -6,7 +6,7 @@
   <title>NFT Галерея IBITIcoin</title>
   <link rel="stylesheet" href="css/style.css">
   
-  <!-- Подключаем те же библиотеки, что и в магазине -->
+  <!-- Подключаем те же библиотеки, что и в shop.html -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="https://unpkg.com/web3modal"></script>
   <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
@@ -14,26 +14,6 @@
   <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/torus-embed@2.4.2/dist/torus.min.js"></script>
-  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
-  
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T5DF4BLR5S"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-T5DF4BLR5S');
-  </script>
-  <script type="text/javascript">
-    function googleTranslateElementInit() {
-      new google.translate.TranslateElement({
-        pageLanguage: 'ru',
-        includedLanguages: 'ru,uk,en,zh-CN,ja,fr,de,pl,es,pt,ko',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-      }, 'google_translate_element');
-    }
-  </script>
-  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   
   <style>
     /* ----- Стили NFT-галереи ----- */
@@ -102,7 +82,7 @@
       width: 100%;
       height: 100%;
       overflow: auto;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0, 0, 0, 0.7);
     }
     .modal-content {
       background: #111;
@@ -182,14 +162,6 @@
       color: gold;
     }
   </style>
-  
-  <!-- Импорт конфигурации из config.js через ES-модуль -->
-  <script type="module">
-    import config from "./config.js";
-    console.log("Подключаемся к сети:", config.networkName);
-    console.log("RPC URL:", config.rpcUrl);
-    console.log("Адрес IBITIcoin:", config.contracts.IBITI_TOKEN_ADDRESS);
-  </script>
 </head>
 <body>
   <header class="hero-header">
@@ -323,9 +295,9 @@
   
   <!-- Логика покупки -->
   <script>
-    let currentProduct = null;
+    let currentNFT = null;
     function openPurchaseModal(productName) {
-      currentProduct = productName;
+      currentNFT = productName;
       // Если покупка относится к NFT, перенаправляем на страницу NFT-галереи
       if (productName === 'NFT') {
         window.location.href = 'nft.html';
@@ -336,14 +308,14 @@
     }
     function closePurchaseModal() {
       document.getElementById('purchaseModal').style.display = 'none';
-      // НЕ сбрасываем currentProduct, чтобы сохранить значение для покупки
+      // НЕ сбрасываем currentNFT, чтобы сохранить значение для покупки
       document.getElementById('nftAmount').value = '';
     }
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
       event.preventDefault();
       const amount = document.getElementById('nftAmount').value;
-      // Сохраняем значение текущего продукта до закрытия модального окна
-      const productToPurchase = currentProduct;
+      // Сохраняем значение товара до закрытия модального окна
+      const productToPurchase = currentNFT;
       closePurchaseModal();
       // Проверка подключения кошелька
       const walletAddressEl = document.getElementById('walletAddress');
