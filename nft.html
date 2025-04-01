@@ -14,7 +14,7 @@
   <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/torus-embed@2.4.2/dist/torus.min.js"></script>
-
+  
   <style>
     /* ----- Стили NFT-галереи ----- */
     .nft-gallery {
@@ -259,7 +259,7 @@
     <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
   </footer>
 
-  <!-- Подключаем внешние скрипты -->
+  <!-- Дополнительные скрипты -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
     AOS.init({ once: true });
@@ -295,9 +295,9 @@
   
   <!-- Логика покупки -->
   <script>
-    let currentProduct = null;
+    let currentNFT = null;
     function openPurchaseModal(productName) {
-      currentProduct = productName;
+      currentNFT = productName;
       // Если покупка относится к NFT, перенаправляем на страницу NFT-галереи
       if (productName === 'NFT') {
         window.location.href = 'nft.html';
@@ -308,17 +308,18 @@
     }
     function closePurchaseModal() {
       document.getElementById('purchaseModal').style.display = 'none';
-      // Здесь НЕ обнуляем currentProduct, чтобы его можно было использовать при отправке формы
-      document.getElementById('amount').value = '';
+      // НЕ сбрасываем currentNFT, чтобы сохранить значение для покупки
+      document.getElementById('nftAmount').value = '';
     }
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
       event.preventDefault();
       const amount = document.getElementById('nftAmount').value;
-      // Сохраняем текущее значение продукта до закрытия модального окна
-      const productToPurchase = currentProduct;
+      // Сохраняем значение товара до закрытия модального окна
+      const productToPurchase = currentNFT;
       closePurchaseModal();
       // Проверка подключения кошелька
       const walletAddressEl = document.getElementById('walletAddress');
+      console.log("walletAddress:", walletAddressEl ? walletAddressEl.innerText : "нет");
       if (!walletAddressEl || walletAddressEl.innerText.trim() === '' || walletAddressEl.innerText.toLowerCase().includes("disconnected")) {
         Swal.fire({
           icon: 'warning',
@@ -349,7 +350,7 @@
     });
   </script>
   
-  <!-- Экспорт handlePurchase в глобальное пространство -->
+  <!-- Экспорт handlePurchase из shop.js в глобальное пространство -->
   <script>
     if (typeof handlePurchase !== 'undefined') {
       window.handlePurchase = handlePurchase;
