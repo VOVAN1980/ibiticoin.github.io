@@ -6,7 +6,7 @@
   <title>NFT Галерея IBITIcoin</title>
   <link rel="stylesheet" href="css/style.css">
   
-  <!-- Подключаем те же библиотеки, что и в shop.html -->
+  <!-- Подключаем те же библиотеки, что и в магазине -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="https://unpkg.com/web3modal"></script>
   <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
@@ -82,7 +82,7 @@
       width: 100%;
       height: 100%;
       overflow: auto;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0,0,0,0.7);
     }
     .modal-content {
       background: #111;
@@ -295,10 +295,10 @@
   
   <!-- Логика покупки -->
   <script>
-    let currentNFT = null;
+    let currentProduct = null;
     function openPurchaseModal(productName) {
-      currentNFT = productName;
-      // Если покупка относится к NFT, перенаправляем на страницу NFT-галереи
+      currentProduct = productName;
+      // Если покупка относится к NFT, перенаправляем на страницу NFT-галерею
       if (productName === 'NFT') {
         window.location.href = 'nft.html';
         return;
@@ -308,14 +308,14 @@
     }
     function closePurchaseModal() {
       document.getElementById('purchaseModal').style.display = 'none';
-      // НЕ сбрасываем currentNFT, чтобы сохранить значение для покупки
+      // НЕ сбрасываем currentProduct, чтобы сохранить значение для покупки
       document.getElementById('nftAmount').value = '';
     }
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
       event.preventDefault();
       const amount = document.getElementById('nftAmount').value;
-      // Сохраняем значение товара до закрытия модального окна
-      const productToPurchase = currentNFT;
+      // Сохраняем значение текущего продукта до закрытия модального окна
+      const productToPurchase = currentProduct;
       closePurchaseModal();
       // Проверка подключения кошелька
       const walletAddressEl = document.getElementById('walletAddress');
