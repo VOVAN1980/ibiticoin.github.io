@@ -339,9 +339,12 @@
   <script type="module" src="js/shop.js"></script>
   
   <!-- Логика покупки -->
-  <script>
+  <script type="module">
+    // Импортируем функцию handlePurchase из shop.js
+    import { handlePurchase } from './js/shop.js';
+
     let currentProduct = null;
-    function openPurchaseModal(productName) {
+    window.openPurchaseModal = function(productName) {
       currentProduct = productName;
       // Если покупка относится к NFT, перенаправляем на страницу NFT-галереи
       if (productName === 'NFT') {
@@ -351,11 +354,13 @@
       document.getElementById('purchaseTitle').innerText = 'Покупка ' + productName;
       document.getElementById('purchaseModal').style.display = 'block';
     }
-    function closePurchaseModal() {
+
+    window.closePurchaseModal = function() {
       document.getElementById('purchaseModal').style.display = 'none';
-      // НЕ сбрасываем currentProduct, чтобы сохранить значение для покупки
+      // Сохраняем currentProduct для дальнейшей покупки
       document.getElementById('nftAmount').value = '';
     }
+
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
       event.preventDefault();
       const amount = document.getElementById('nftAmount').value;
@@ -391,13 +396,6 @@
         });
       }
     });
-  </script>
-  
-  <!-- Экспорт handlePurchase из shop.js в глобальное пространство -->
-  <script>
-    if (typeof handlePurchase !== 'undefined') {
-      window.handlePurchase = handlePurchase;
-    }
   </script>
 </body>
 </html>
