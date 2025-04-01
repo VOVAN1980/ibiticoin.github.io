@@ -9,10 +9,9 @@
   <!-- Подключаем те же библиотеки, что и в магазине -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="https://unpkg.com/web3modal"></script>
-  <!-- Используем стабильные CDN для следующих библиотек -->
-  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk@3.10.1/dist/wallet-sdk.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/fortmatic@2.0.6/dist/fortmatic.js"></script>
+  <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
+  <script src="https://unpkg.com/@coinbase/wallet-sdk/dist/wallet-sdk.umd.min.js"></script>
+  <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/torus-embed@2.4.2/dist/torus.min.js"></script>
   
@@ -319,8 +318,8 @@
   <!-- Подключаем файл wallet.js -->
   <script src="js/wallet.js"></script>
   
-  <!-- Подключаем файл shop.js как модуль (исправлено) -->
-  <script type="module" src="js/shop.js"></script>
+  <!-- Подключаем файл shop.js -->
+  <script src="js/shop.js"></script>
   
   <!-- Логика покупки -->
   <script>
@@ -379,10 +378,11 @@
     });
   </script>
   
-  <!-- Экспорт handlePurchase из shop.js в глобальное пространство (исправлено) -->
-  <script type="module">
-    import { handlePurchase } from './js/shop.js';
-    window.handlePurchase = handlePurchase;
+  <!-- Экспорт handlePurchase из shop.js в глобальное пространство -->
+  <script>
+    if (typeof handlePurchase !== 'undefined') {
+      window.handlePurchase = handlePurchase;
+    }
   </script>
 </body>
 </html>
