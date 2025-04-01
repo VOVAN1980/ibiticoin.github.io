@@ -305,8 +305,8 @@
       <span class="close" onclick="closePurchaseModal()">&times;</span>
       <h2 id="purchaseTitle">Покупка</h2>
       <form id="purchaseForm">
-        <label for="amount">Введите количество:</label>
-        <input type="number" id="amount" name="amount" min="1" required>
+        <label for="nftAmount">Введите количество:</label>
+        <input type="number" id="nftAmount" name="nftAmount" min="1" required>
         <br><br>
         <button type="submit">Подтвердить покупку</button>
         <button type="button" class="cancel" onclick="closePurchaseModal()">Отмена</button>
@@ -358,7 +358,7 @@
     let currentProduct = null;
     function openPurchaseModal(productName) {
       currentProduct = productName;
-      // Если покупка относится к NFT, перенаправляем на страницу NFT-галереи
+      // Если покупка относится к NFT, перенаправляем на страницу NFT-галерею
       if (productName === 'NFT') {
         window.location.href = 'nft.html';
         return;
@@ -368,17 +368,18 @@
     }
     function closePurchaseModal() {
       document.getElementById('purchaseModal').style.display = 'none';
-      currentProduct = null;
-      document.getElementById('amount').value = '';
+      // НЕ сбрасываем currentProduct, чтобы сохранить значение для покупки
+      document.getElementById('nftAmount').value = '';
     }
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
       event.preventDefault();
-      const amount = document.getElementById('amount').value;
-      // Сохраняем значение currentProduct, прежде чем закрывать окно
+      const amount = document.getElementById('nftAmount').value;
+      // Сохраняем значение текущего продукта до закрытия модального окна
       const productToPurchase = currentProduct;
       closePurchaseModal();
       // Проверка подключения кошелька
       const walletAddressEl = document.getElementById('walletAddress');
+      console.log("walletAddress:", walletAddressEl ? walletAddressEl.innerText : "нет");
       if (!walletAddressEl || walletAddressEl.innerText.trim() === '' || walletAddressEl.innerText.toLowerCase().includes("disconnected")) {
         Swal.fire({
           icon: 'warning',
@@ -409,7 +410,7 @@
     });
   </script>
   
-  <!-- Экспортируем handlePurchase из shop.js в глобальное пространство -->
+  <!-- Экспорт handlePurchase из shop.js в глобальное пространство -->
   <script>
     if (typeof handlePurchase !== 'undefined') {
       window.handlePurchase = handlePurchase;
