@@ -1,3 +1,22 @@
+// shop.js
+
+// Импорт конфигурации (адреса, параметры сети и т.д.)
+import config from "./config.js";
+// Импорт ABI контракта – замените путь и имя файла на актуальные
+import contractAbi from "./abis/YourContractABI.json";
+
+// Создаём провайдер и signer через ethers.js
+const provider = new ethers.providers.Web3Provider(window.ethereum);
+const signer = provider.getSigner();
+
+// Создаём экземпляр контракта, используя адрес из конфигурации
+const contract = new ethers.Contract(
+  config.contracts.IBITI_TOKEN_ADDRESS, // адрес из config.js
+  contractAbi,
+  signer
+);
+
+// Функция покупки
 async function handlePurchase() {
   // Показываем индикатор загрузки через SweetAlert
   Swal.fire({
@@ -8,9 +27,10 @@ async function handlePurchase() {
       Swal.showLoading();
     }
   });
-  
+
   try {
-    // Пример вызова функции покупки – замените на реальную логику покупки
+    // Вызов метода покупки на контракте.
+    // Параметры покупки можно указать согласно вашему контракту.
     const tx = await contract.purchase(/* параметры покупки */);
     await tx.wait();
     
@@ -23,7 +43,7 @@ async function handlePurchase() {
       showConfirmButton: false
     });
     
-    // Обновление UI или редирект, если нужно
+    // Здесь можно добавить обновление UI или редирект
   } catch (error) {
     Swal.fire({
       icon: 'error',
@@ -34,7 +54,19 @@ async function handlePurchase() {
   }
 }
 
-document.getElementById('buyBtn').addEventListener('click', (e) => {
-  e.preventDefault();
-  handlePurchase();
-});
+// Привязываем обработчик к элементу с id="buyBtn", если он существует
+const buyBtn = document.getElementById('buyBtn');
+if (buyBtn) {
+  buyBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    handlePurchase();
+  });
+}
+
+// Экспортируем функцию handlePurchase в глобальное пространство,
+// чтобы её можно было вызывать из HTML-страницы
+window.handlePurchase = handlePurchase;
+
+console.log("Используемая сеть:", config.networkName);
+console.log("RPC URL:", config.rpcUrl);
+console.log("Адрес контракта:", config.contracts.IBITI_TOKEN_ADDRESS);
