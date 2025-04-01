@@ -287,7 +287,7 @@
       <img src="img/NFT.webp" alt="NFT">
       <h3>Название товара 2 (NFT)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-      <!-- Для NFT вместо открытия модального окна происходит перенаправление в NFT-галерею -->
+      <!-- Для NFT перенаправление в NFT-галерею -->
       <button onclick="openPurchaseModal('NFT')">Купить</button>
     </div>
   </section>
@@ -343,7 +343,7 @@
     let currentProduct = null;
     function openPurchaseModal(productName) {
       currentProduct = productName;
-      // Если покупка относится к NFT, перенаправляем на страницу NFT-галерею
+      // Если покупка относится к NFT, перенаправляем на страницу NFT-галереи
       if (productName === 'NFT') {
         window.location.href = 'nft.html';
         return;
@@ -359,10 +359,8 @@
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
       event.preventDefault();
       const amount = document.getElementById('nftAmount').value;
-      // Сохраняем значение текущего продукта до закрытия модального окна
       const productToPurchase = currentProduct;
       closePurchaseModal();
-      // Проверка подключения кошелька
       const walletAddressEl = document.getElementById('walletAddress');
       console.log("walletAddress:", walletAddressEl ? walletAddressEl.innerText : "нет");
       if (!walletAddressEl || walletAddressEl.innerText.trim() === '' || walletAddressEl.innerText.toLowerCase().includes("disconnected")) {
