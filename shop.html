@@ -252,16 +252,23 @@
       text-decoration: underline;
     }
   </style>
-  
-  <!-- Импорт конфигурации из config.js через ES-модуль -->
-  <script type="module">
-    import config from "./config.js";
-    console.log("Подключаемся к сети:", config.networkName);
-    console.log("RPC URL:", config.rpcUrl);
-    console.log("Адрес IBITIcoin:", config.contracts.IBITI_TOKEN_ADDRESS);
-  </script>
 </head>
 <body>
+  <!-- Верхние угловые кнопки -->
+  <div class="corner-box corner-box-left">
+    <a href="/">Главная</a>
+  </div>
+  <div class="corner-box corner-box-left2">
+    <a href="blog.html">Блог</a>
+  </div>
+  <div class="corner-box corner-box-right">
+    <a href="roadmap.html">Roadmap</a>
+  </div>
+  <div class="corner-box corner-box-right-langs">
+    <div id="google_translate_element"></div>
+  </div>
+
+  <!-- Шапка -->
   <header class="hero-header">
     <h1>Магазин IBITIcoin</h1>
     <p>Приобретайте эксклюзивные товары, связанные с IBITIcoin!</p>
@@ -287,19 +294,19 @@
       <img src="img/NFT.webp" alt="NFT">
       <h3>Название товара 2 (NFT)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-      <!-- Для NFT перенаправление в NFT-галерею -->
+      <!-- Для NFT вместо открытия модального окна происходит перенаправление в NFT-галерею -->
       <button onclick="openPurchaseModal('NFT')">Купить</button>
     </div>
   </section>
 
-  <!-- Модальное окно для покупки -->
+  <!-- Модальное окно для покупки (актуально для остальных товаров) -->
   <div id="purchaseModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closePurchaseModal()">&times;</span>
       <h2 id="purchaseTitle">Покупка</h2>
       <form id="purchaseForm">
-        <label for="nftAmount">Введите количество:</label>
-        <input type="number" id="nftAmount" name="nftAmount" min="1" required>
+        <label for="amount">Введите количество:</label>
+        <input type="number" id="amount" name="amount" min="1" required>
         <br><br>
         <button type="submit">Подтвердить покупку</button>
         <button type="button" class="cancel" onclick="closePurchaseModal()">Отмена</button>
@@ -329,22 +336,27 @@
     })();
   </script>
   
+  <!-- Импорт конфигурации из config.js через ES-модуль -->
+  <script type="module">
+    import config from "./config.js";
+    console.log("Подключаемся к сети:", config.networkName);
+    console.log("RPC URL:", config.rpcUrl);
+    console.log("Адрес IBITIcoin:", config.contracts.IBITI_TOKEN_ADDRESS);
+  </script>
+  
   <!-- Подключаем файл nft.js для работы с NFT -->
   <script type="module" src="js/nft.js"></script>
   
   <!-- Подключаем файл wallet.js -->
   <script src="js/wallet.js"></script>
   
-  <!-- Подключаем файл shop.js как модуль -->
-  <script type="module" src="js/shop.js"></script>
+  <!-- Подключаем файл shop.js -->
+  <script src="js/shop.js"></script>
   
   <!-- Логика покупки -->
-  <script type="module">
-    // Импортируем функцию handlePurchase из shop.js
-    import { handlePurchase } from './js/shop.js';
-
+  <script>
     let currentProduct = null;
-    window.openPurchaseModal = function(productName) {
+    function openPurchaseModal(productName) {
       currentProduct = productName;
       // Если покупка относится к NFT, перенаправляем на страницу NFT-галереи
       if (productName === 'NFT') {
@@ -354,20 +366,19 @@
       document.getElementById('purchaseTitle').innerText = 'Покупка ' + productName;
       document.getElementById('purchaseModal').style.display = 'block';
     }
-
-    window.closePurchaseModal = function() {
+    function closePurchaseModal() {
       document.getElementById('purchaseModal').style.display = 'none';
-      // Сохраняем currentProduct для дальнейшей покупки
-      document.getElementById('nftAmount').value = '';
+      currentProduct = null;
+      document.getElementById('amount').value = '';
     }
-
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
       event.preventDefault();
-      const amount = document.getElementById('nftAmount').value;
+      const amount = document.getElementById('amount').value;
+      // Сохраняем значение currentProduct, прежде чем закрывать окно
       const productToPurchase = currentProduct;
       closePurchaseModal();
+      // Проверка подключения кошелька
       const walletAddressEl = document.getElementById('walletAddress');
-      console.log("walletAddress:", walletAddressEl ? walletAddressEl.innerText : "нет");
       if (!walletAddressEl || walletAddressEl.innerText.trim() === '' || walletAddressEl.innerText.toLowerCase().includes("disconnected")) {
         Swal.fire({
           icon: 'warning',
@@ -396,6 +407,13 @@
         });
       }
     });
+  </script>
+  
+  <!-- Экспортируем handlePurchase из shop.js в глобальное пространство -->
+  <script>
+    if (typeof handlePurchase !== 'undefined') {
+      window.handlePurchase = handlePurchase;
+    }
   </script>
 </body>
 </html>
