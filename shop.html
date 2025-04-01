@@ -252,23 +252,16 @@
       text-decoration: underline;
     }
   </style>
+  
+  <!-- Импорт конфигурации из config.js через ES-модуль -->
+  <script type="module">
+    import config from "./config.js";
+    console.log("Подключаемся к сети:", config.networkName);
+    console.log("RPC URL:", config.rpcUrl);
+    console.log("Адрес IBITIcoin:", config.contracts.IBITI_TOKEN_ADDRESS);
+  </script>
 </head>
 <body>
-  <!-- Верхние угловые кнопки -->
-  <div class="corner-box corner-box-left">
-    <a href="/">Главная</a>
-  </div>
-  <div class="corner-box corner-box-left2">
-    <a href="blog.html">Блог</a>
-  </div>
-  <div class="corner-box corner-box-right">
-    <a href="roadmap.html">Roadmap</a>
-  </div>
-  <div class="corner-box corner-box-right-langs">
-    <div id="google_translate_element"></div>
-  </div>
-
-  <!-- Шапка -->
   <header class="hero-header">
     <h1>Магазин IBITIcoin</h1>
     <p>Приобретайте эксклюзивные товары, связанные с IBITIcoin!</p>
@@ -336,29 +329,21 @@
     })();
   </script>
   
-  <!-- Импорт конфигурации из config.js через ES-модуль -->
-  <script type="module">
-    import config from "./config.js";
-    console.log("Подключаемся к сети:", config.networkName);
-    console.log("RPC URL:", config.rpcUrl);
-    console.log("Адрес IBITIcoin:", config.contracts.IBITI_TOKEN_ADDRESS);
-  </script>
-  
   <!-- Подключаем файл nft.js для работы с NFT -->
   <script type="module" src="js/nft.js"></script>
   
   <!-- Подключаем файл wallet.js -->
   <script src="js/wallet.js"></script>
   
-  <!-- Подключаем файл shop.js -->
-  <script src="js/shop.js"></script>
+  <!-- Подключаем файл shop.js как модуль, если он использует import -->
+  <script type="module" src="js/shop.js"></script>
   
   <!-- Логика покупки -->
   <script>
     let currentProduct = null;
     function openPurchaseModal(productName) {
       currentProduct = productName;
-      // Если покупка относится к NFT, перенаправляем на страницу NFT-галерею
+      // Если покупка относится к NFT, перенаправляем на страницу NFT-галереи
       if (productName === 'NFT') {
         window.location.href = 'nft.html';
         return;
