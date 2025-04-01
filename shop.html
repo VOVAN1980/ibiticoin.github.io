@@ -292,7 +292,7 @@
     </div>
   </section>
 
-  <!-- Модальное окно для покупки (актуально для остальных товаров) -->
+  <!-- Модальное окно для покупки -->
   <div id="purchaseModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closePurchaseModal()">&times;</span>
@@ -335,7 +335,7 @@
   <!-- Подключаем файл wallet.js -->
   <script src="js/wallet.js"></script>
   
-  <!-- Подключаем файл shop.js как модуль, если он использует import -->
+  <!-- Подключаем файл shop.js как модуль -->
   <script type="module" src="js/shop.js"></script>
   
   <!-- Логика покупки -->
@@ -343,7 +343,7 @@
     let currentProduct = null;
     function openPurchaseModal(productName) {
       currentProduct = productName;
-      // Если покупка относится к NFT, перенаправляем на страницу NFT-галереи
+      // Если покупка относится к NFT, перенаправляем на страницу NFT-галерею
       if (productName === 'NFT') {
         window.location.href = 'nft.html';
         return;
@@ -394,9 +394,6 @@
       }
     });
   </script>
-  
-  <!-- Подключаем файл shop.js как модуль -->
-  <script type="module" src="js/shop.js"></script>
   
   <!-- Экспорт handlePurchase из shop.js в глобальное пространство -->
   <script>
