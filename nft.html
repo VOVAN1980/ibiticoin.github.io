@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NFT Галерея IBITIcoin</title>
   <link rel="stylesheet" href="css/style.css">
-
+  
   <!-- Подключаем те же библиотеки, что и в shop.html -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="https://unpkg.com/web3modal"></script>
@@ -174,7 +174,7 @@
     </p>
   </header>
 
-  <!-- Секция подключения кошелька (как в shop.html) -->
+  <!-- Секция подключения кошелька (как в магазине) -->
   <section class="wallet-section">
     <button id="connectWalletBtn">Подключить кошелек</button>
     <div id="walletAddress"></div>
@@ -259,57 +259,84 @@
     <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
   </footer>
 
-  <!-- Подключаем wallet.js, shop.js, nft.js так же, как в магазине -->
-  <script src="js/wallet.js"></script>
-  <script src="js/shop.js"></script>
-  <script type="module" src="js/nft.js"></script>
-
+  <!-- Подключаем внешние скрипты -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
-    let currentNFT = null;
-
-    // При нажатии на кнопку "Купить" для NFT
-    async function openPurchaseModal(nftName) {
-      currentNFT = nftName;
-      const walletDisplay = document.getElementById('walletAddress');
-
-      // Если кошелек не подключен, пытаемся подключить
-      if (!walletDisplay || walletDisplay.innerText.trim() === '' || walletDisplay.innerText.toLowerCase().includes("disconnected")) {
-        await connectWallet(); // Функция из wallet.js (должна быть глобальной)
-        // Снова проверяем, подключен ли кошелек
-        if (!walletDisplay || walletDisplay.innerText.trim() === '' || walletDisplay.innerText.toLowerCase().includes("disconnected")) {
-          Swal.fire({
-            icon: 'warning',
-            title: 'Кошелек не подключен',
-            text: 'Пожалуйста, подключите кошелек для продолжения.',
-            confirmButtonText: 'Ок'
-          });
-          return;
-        }
+    AOS.init({ once: true });
+  </script>
+  <script type="text/javascript">
+    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+    (function(){
+      var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+      s1.async = true;
+      s1.src = 'https://embed.tawk.to/67db03deb73265190d550119/1imnoe7rb';
+      s1.charset = 'UTF-8';
+      s1.setAttribute('crossorigin', '*');
+      s0.parentNode.insertBefore(s1, s0);
+    })();
+  </script>
+  
+  <!-- Импорт конфигурации из config.js через ES-модуль -->
+  <script type="module">
+    import config from "./config.js";
+    console.log("Подключаемся к сети:", config.networkName);
+    console.log("RPC URL:", config.rpcUrl);
+    console.log("Адрес IBITIcoin:", config.contracts.IBITI_TOKEN_ADDRESS);
+  </script>
+  
+  <!-- Подключаем файл nft.js для работы с NFT -->
+  <script type="module" src="js/nft.js"></script>
+  
+  <!-- Подключаем файл wallet.js -->
+  <script src="js/wallet.js"></script>
+  
+  <!-- Подключаем файл shop.js -->
+  <script src="js/shop.js"></script>
+  
+  <!-- Логика покупки -->
+  <script>
+    let currentProduct = null;
+    function openPurchaseModal(productName) {
+      currentProduct = productName;
+      // Если покупка относится к NFT, перенаправляем на страницу NFT-галереи
+      if (productName === 'NFT') {
+        window.location.href = 'nft.html';
+        return;
       }
-      // Если кошелек подключен, открываем модальное окно покупки
-      document.getElementById('purchaseTitle').innerText = 'Покупка ' + nftName;
+      document.getElementById('purchaseTitle').innerText = 'Покупка ' + productName;
       document.getElementById('purchaseModal').style.display = 'block';
     }
-
     function closePurchaseModal() {
       document.getElementById('purchaseModal').style.display = 'none';
-      currentNFT = null;
-      document.getElementById('nftAmount').value = '';
+      // Здесь НЕ обнуляем currentProduct, чтобы его можно было использовать при отправке формы
+      document.getElementById('amount').value = '';
     }
-
-    // При подтверждении покупки
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
       event.preventDefault();
       const amount = document.getElementById('nftAmount').value;
+      // Сохраняем текущее значение продукта до закрытия модального окна
+      const productToPurchase = currentProduct;
       closePurchaseModal();
+      // Проверка подключения кошелька
+      const walletAddressEl = document.getElementById('walletAddress');
+      if (!walletAddressEl || walletAddressEl.innerText.trim() === '' || walletAddressEl.innerText.toLowerCase().includes("disconnected")) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Кошелек не подключен',
+          text: 'Пожалуйста, подключите кошелек перед покупкой.',
+          confirmButtonText: 'Ок'
+        });
+        return;
+      }
       try {
-        // handlePurchase() из shop.js
-        await handlePurchase(amount, currentNFT);
+        await handlePurchase(amount, productToPurchase);
         Swal.fire({
           icon: 'success',
-          title: 'Покупка успешна',
-          text: `Вы приобрели ${amount} единиц «${currentNFT}».`,
-          confirmButtonText: 'Ок'
+          title: 'Ура!',
+          text: 'Покупка успешна, ты стал миллионером! 🎉',
+          timer: 5000,
+          timerProgressBar: true,
+          showConfirmButton: false
         });
       } catch (error) {
         Swal.fire({
@@ -320,6 +347,13 @@
         });
       }
     });
+  </script>
+  
+  <!-- Экспорт handlePurchase в глобальное пространство -->
+  <script>
+    if (typeof handlePurchase !== 'undefined') {
+      window.handlePurchase = handlePurchase;
+    }
   </script>
 </body>
 </html>
