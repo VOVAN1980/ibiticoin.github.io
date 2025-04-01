@@ -137,7 +137,7 @@
     .modal-content button.cancel:hover {
       background: #c0a000;
     }
-
+    
     /* ----- Секция подключения кошелька (как в магазине) ----- */
     .wallet-section {
       text-align: center;
@@ -162,6 +162,14 @@
       color: gold;
     }
   </style>
+  
+  <!-- Импорт конфигурации из config.js через ES-модуль -->
+  <script type="module">
+    import config from "./config.js";
+    console.log("Подключаемся к сети:", config.networkName);
+    console.log("RPC URL:", config.rpcUrl);
+    console.log("Адрес IBITIcoin:", config.contracts.IBITI_TOKEN_ADDRESS);
+  </script>
 </head>
 <body>
   <header class="hero-header">
@@ -298,7 +306,7 @@
     let currentProduct = null;
     function openPurchaseModal(productName) {
       currentProduct = productName;
-      // Если покупка относится к NFT, перенаправляем на страницу NFT-галерею
+      // Если покупка относится к NFT, перенаправляем на страницу NFT-галереи
       if (productName === 'NFT') {
         window.location.href = 'nft.html';
         return;
