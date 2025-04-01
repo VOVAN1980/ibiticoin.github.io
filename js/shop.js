@@ -1,7 +1,7 @@
 // shop.js
 
 // Импорт конфигурации (адреса, параметры сети и т.д.)
-import config from "./config.js";
+import config from "../config.js";
 // Импорт ABI контракта монеты — убедитесь, что файл IBITIcoin.js лежит в папке js/abis/
 import contractAbi from "./abis/IBITIcoin.js";
 
