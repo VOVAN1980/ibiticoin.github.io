@@ -4,8 +4,8 @@ import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.es
 // Импорт конфигурации (config.js находится в корне, поэтому путь "../config.js")
 import config from "../config.js";
 
-// Импорт ABI для NFT-контракта (ABI находится в папке "js/abis/IBITINFT.js")
-import nftAbi from "./abis/IBITINFT.js";
+// Импорт ABI для NFT-контракта (ABI находится в папке "js/abis/IBITINFT.json")
+import nftAbi from "./abis/IBITINFT.json";
 
 // Создаем провайдер и signer через ethers.js
 const provider = new ethers.providers.Web3Provider(window.ethereum);
