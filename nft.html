@@ -5,18 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NFT Галерея IBITIcoin</title>
   <link rel="stylesheet" href="css/style.css">
-  
-  <!-- Подключаем те же библиотеки, что и в магазине -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <script src="https://unpkg.com/web3modal"></script>
-  <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
-  <script src="https://unpkg.com/@coinbase/wallet-sdk/dist/wallet-sdk.umd.min.js"></script>
-  <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://cdn.jsdelivr.net/npm/torus-embed@2.4.2/dist/torus.min.js"></script>
-  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
   
+  <!-- Основные метаданные -->
+  <meta name="description" content="IBITIcoin – инновационная криптовалюта для быстрой, безопасной и доступной работы в цифровой экономике.">
+  <meta name="keywords" content="IBITIcoin, криптовалюта, инвестиции, блокчейн, DeFi">
+  <meta name="author" content="IBITIcoin Team">
+  <meta property="og:title" content="IBITIcoin – Будущее цифровых финансов">
+  <meta property="og:description" content="Узнайте, как IBITIcoin делает криптовалюту доступной и безопасной для всех.">
+  <meta property="og:image" content="img/og-image.png">
+  <meta property="og:url" content="index.html">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="IBITIcoin – Будущее цифровых финансов">
+  <meta name="twitter:description" content="Узнайте, как IBITIcoin делает криптовалюту доступной и безопасной для всех.">
+  <meta name="twitter:image" content="img/og-image.png">
+
+  <!-- Google Tag Manager -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-T5DF4BLR5S"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -24,6 +29,8 @@
     gtag('js', new Date());
     gtag('config', 'G-T5DF4BLR5S');
   </script>
+  
+  <!-- Google Translate -->
   <script type="text/javascript">
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
@@ -36,7 +43,86 @@
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   
   <style>
-    /* ----- Стили NFT-галереи ----- */
+    /* --- Угловые кнопки --- */
+    .corner-box {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid gold;
+      border-radius: 5px;
+      padding: 10px 15px;
+      z-index: 999;
+    }
+    .corner-box-left { top: 20px; left: 20px; }
+    .corner-box-left2 { top: 80px; left: 20px; }
+    .corner-box-right {
+      top: 20px; right: 20px;
+      padding: 10px 15px;
+      z-index: 999;
+    }
+    .corner-box-right a {
+      color: gold;
+      text-decoration: none;
+      font-weight: bold;
+      margin: 0 5px;
+    }
+    .corner-box-right a:hover { text-decoration: underline; }
+    .corner-box-right-langs {
+      top: 80px; right: 20px;
+      padding: 10px 15px;
+      z-index: 999;
+    }
+    .corner-box-right-langs a {
+      color: gold;
+      text-decoration: none;
+      font-weight: bold;
+      margin: 0 5px;
+    }
+    .corner-box-right-langs a:hover { text-decoration: underline; }
+    @media (max-width: 600px) {
+      .corner-box-right { top: 10px; right: 10px; }
+      .corner-box-right-langs { top: 60px; right: 10px; }
+    }
+    
+    /* --- Шапка --- */
+    .hero-header {
+      padding: 15px 20px;
+      text-align: center;
+    }
+    .hero-header h1 {
+      font-size: 3em;
+      color: gold;
+      margin: 0;
+    }
+    .hero-header p {
+      font-size: 1.5em;
+      color: #fff;
+    }
+    
+    /* --- Секция подключения кошелька --- */
+    .wallet-section {
+      text-align: center;
+      margin: 20px auto;
+    }
+    .wallet-section button {
+      background: gold;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .wallet-section button:hover {
+      background: #c0a000;
+    }
+    .wallet-section #walletAddress {
+      margin-top: 10px;
+      font-weight: bold;
+      color: gold;
+    }
+    
+    /* --- NFT-галерея --- */
     .nft-gallery {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -92,7 +178,7 @@
       background: #c0a000;
     }
     
-    /* ----- Модальное окно для покупки NFT ----- */
+    /* --- Модальное окно для покупки NFT --- */
     .modal {
       display: none;
       position: fixed;
@@ -158,32 +244,24 @@
       background: #c0a000;
     }
 
-    /* ----- Секция подключения кошелька (как в магазине) ----- */
-    .wallet-section {
+    /* --- Футер --- */
+    footer {
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      border-top: 2px solid gold;
       text-align: center;
-      margin: 20px auto;
-    }
-    .wallet-section button {
-      background: gold;
-      color: #000;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .wallet-section button:hover {
-      background: #c0a000;
-    }
-    .wallet-section #walletAddress {
-      margin-top: 10px;
-      font-weight: bold;
       color: gold;
+    }
+    footer p, footer a {
+      color: gold;
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
     }
   </style>
   
-  <!-- Импорт конфигурации из config.js через ES-модуль -->
+  <!-- Импорт конфигурации (ES-модуль) -->
   <script type="module">
     import config from "./config.js";
     console.log("Подключаемся к сети:", config.networkName);
@@ -202,7 +280,7 @@
     </p>
   </header>
 
-  <!-- Секция подключения кошелька (как в магазине) -->
+  <!-- Секция подключения кошелька -->
   <section class="wallet-section">
     <button id="connectWalletBtn">Подключить кошелек</button>
     <div id="walletAddress"></div>
@@ -287,12 +365,17 @@
     <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
   </footer>
 
+  <!-- Внешние библиотеки (подключаются один раз, с проверенными версиями) -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
+  <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
+  
   <!-- Дополнительные скрипты -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
     AOS.init({ once: true });
   </script>
-  <script type="text/javascript">
+  <script>
     var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
     (function(){
       var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
@@ -304,29 +387,16 @@
     })();
   </script>
   
-  <!-- Импорт конфигурации из config.js через ES-модуль -->
-  <script type="module">
-    import config from "./config.js";
-    console.log("Подключаемся к сети:", config.networkName);
-    console.log("RPC URL:", config.rpcUrl);
-    console.log("Адрес IBITIcoin:", config.contracts.IBITI_TOKEN_ADDRESS);
-  </script>
-  
-  <!-- Подключаем файл nft.js для работы с NFT -->
+  <!-- Логика NFT и кошелька -->
   <script type="module" src="js/nft.js"></script>
-  
-  <!-- Подключаем файл wallet.js -->
   <script src="js/wallet.js"></script>
-  
-  <!-- Подключаем файл shop.js как модуль (изменено) -->
   <script type="module" src="js/shop.js"></script>
   
-  <!-- Логика покупки -->
+  <!-- Логика покупки и экспорт handlePurchase -->
   <script>
     let currentProduct = null;
     function openPurchaseModal(productName) {
       currentProduct = productName;
-      // Если покупка относится к NFT, перенаправляем на страницу NFT-галереи
       if (productName === 'NFT') {
         window.location.href = 'nft.html';
         return;
@@ -336,16 +406,13 @@
     }
     function closePurchaseModal() {
       document.getElementById('purchaseModal').style.display = 'none';
-      // НЕ сбрасываем currentProduct, чтобы сохранить значение для покупки
       document.getElementById('nftAmount').value = '';
     }
     document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
       event.preventDefault();
       const amount = document.getElementById('nftAmount').value;
-      // Сохраняем значение текущего продукта до закрытия модального окна
       const productToPurchase = currentProduct;
       closePurchaseModal();
-      // Проверка подключения кошелька
       const walletAddressEl = document.getElementById('walletAddress');
       console.log("walletAddress:", walletAddressEl ? walletAddressEl.innerText : "нет");
       if (!walletAddressEl || walletAddressEl.innerText.trim() === '' || walletAddressEl.innerText.toLowerCase().includes("disconnected")) {
@@ -377,8 +444,6 @@
       }
     });
   </script>
-  
-  <!-- Экспорт handlePurchase из shop.js в глобальное пространство -->
   <script>
     if (typeof handlePurchase !== 'undefined') {
       window.handlePurchase = handlePurchase;
