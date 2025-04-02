@@ -50,6 +50,13 @@
   </script>
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   
+  <!-- Подключаем необходимые библиотеки для работы кошельков -->
+  <script src="https://unpkg.com/@walletconnect/web3-provider/dist/umd/index.min.js"></script>
+  <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
+  <script src="https://unpkg.com/@coinbase/wallet-sdk/dist/wallet-sdk.umd.min.js"></script>
+  <script src="https://unpkg.com/torus-embed"></script>
+  <script src="https://unpkg.com/web3modal"></script>
+  
   <style>
     /* Пример базовых стилей для модального окна шаринга */
     .modal {
@@ -179,7 +186,7 @@
     </div>
   </div>
 
-  <!-- Внешние библиотеки -->
+  <!-- Подключаем внешние библиотеки (Ether.js уже подключён выше) -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="https://unpkg.com/web3modal"></script>
   <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
@@ -187,7 +194,7 @@
   <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
   <script src="https://unpkg.com/torus-embed"></script>
 
-  <!-- Дополнительные скрипты -->
+  <!-- Дополнительные скрипты и инициализация AOS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
     AOS.init({ once: true });
@@ -245,5 +252,8 @@
   
   <!-- Подключаем основной скрипт main.js -->
   <script type="module" src="js/main.js"></script>
+  
+  <!-- Подключаем скрипт wallet.js для работы кошельков -->
+  <script src="js/wallet.js"></script>
 </body>
 </html>
