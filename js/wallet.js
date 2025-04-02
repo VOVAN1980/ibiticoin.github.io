@@ -49,13 +49,14 @@ const web3Modal = new (Web3Modal.default || Web3Modal)({
 
 async function connectWallet() {
   try {
-    // Открываем Web3Modal для выбора кошелька
+    // Если MetaMask установлен, явно запрашиваем доступ к аккаунтам,
+    // чтобы отобразилось окно разблокировки, если кошелек заблокирован.
+    if (window.ethereum) {
+      await window.ethereum.request({ method: "eth_requestAccounts" });
+    }
+    // Открываем Web3Modal для выбора кошелька.
     provider = await web3Modal.connect();
     const ethersProvider = new ethers.providers.Web3Provider(provider);
-    
-    // Явно запрашиваем доступ к аккаунтам (это вызовет окно MetaMask, если он заблокирован)
-    await ethersProvider.send("eth_requestAccounts", []);
-    
     const accounts = await ethersProvider.listAccounts();
     if (accounts.length === 0) {
       console.error("Нет подключенных аккаунтов");
@@ -99,11 +100,14 @@ async function disconnectWallet() {
   console.log("Кошелек отключен");
 }
 
+// Привязываем событие подключения ко всем элементам с классом "connectWalletBtn"
 document.addEventListener("DOMContentLoaded", () => {
-  const connectBtn = document.getElementById("connectWalletBtn");
-  if (connectBtn) {
-    connectBtn.addEventListener("click", connectWallet);
+  const connectBtns = document.querySelectorAll(".connectWalletBtn");
+  if (connectBtns.length > 0) {
+    connectBtns.forEach(btn => {
+      btn.addEventListener("click", connectWallet);
+    });
   } else {
-    console.error("Элемент с id 'connectWalletBtn' не найден.");
+    console.error("Элементы с классом 'connectWalletBtn' не найдены.");
   }
 });
