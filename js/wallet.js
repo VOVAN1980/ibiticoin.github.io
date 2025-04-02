@@ -31,7 +31,7 @@ const providerOptions = {
   fortmatic: {
     package: Fortmatic, // Требуется Fortmatic
     options: {
-      key: "YOUR_FORTMATIC_KEY" // замените на ваш Fortmatic ключ
+      key: "YOUR_FORTMATIC_KEY" // Замените на ваш Fortmatic ключ
     }
   },
   torus: {
@@ -49,14 +49,17 @@ const web3Modal = new (Web3Modal.default || Web3Modal)({
 
 async function connectWallet() {
   try {
-    // Если MetaMask установлен, явно запрашиваем доступ к аккаунтам,
-    // чтобы отобразилось окно разблокировки, если кошелек заблокирован.
+    // Если MetaMask доступен, явно запрашиваем доступ к аккаунтам.
     if (window.ethereum) {
       await window.ethereum.request({ method: "eth_requestAccounts" });
     }
     // Открываем Web3Modal для выбора кошелька.
     provider = await web3Modal.connect();
     const ethersProvider = new ethers.providers.Web3Provider(provider);
+    
+    // Явно запрашиваем доступ, если это еще не сделано.
+    await ethersProvider.send("eth_requestAccounts", []);
+    
     const accounts = await ethersProvider.listAccounts();
     if (accounts.length === 0) {
       console.error("Нет подключенных аккаунтов");
@@ -96,18 +99,26 @@ async function disconnectWallet() {
   provider = null;
   selectedAccount = null;
   const walletDisplay = document.getElementById("walletAddress");
-  if (walletDisplay) walletDisplay.innerText = "Wallet disconnected";
+  if (walletDisplay) {
+    walletDisplay.innerText = "Wallet disconnected";
+  }
   console.log("Кошелек отключен");
 }
 
-// Привязываем событие подключения ко всем элементам с классом "connectWalletBtn"
 document.addEventListener("DOMContentLoaded", () => {
+  // Сначала пытаемся найти элемент по id
+  const connectBtnById = document.getElementById("connectWalletBtn");
+  if (connectBtnById) {
+    connectBtnById.addEventListener("click", connectWallet);
+    return;
+  }
+  // Если элемента с таким id нет, ищем все элементы с классом "connectWalletBtn"
   const connectBtns = document.querySelectorAll(".connectWalletBtn");
   if (connectBtns.length > 0) {
     connectBtns.forEach(btn => {
       btn.addEventListener("click", connectWallet);
     });
   } else {
-    console.error("Элементы с классом 'connectWalletBtn' не найдены.");
+    console.error("Элементы для подключения кошелька (id 'connectWalletBtn' или класс 'connectWalletBtn') не найдены.");
   }
 });
