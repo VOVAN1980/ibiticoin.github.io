@@ -13,13 +13,13 @@ const INFURA_KEY = "1faccf0f1fdc4532ad7a1a38a67ee906";
 
 const providerOptions = {
   walletconnect: {
-    package: WalletConnectProvider, // Требуется @walletconnect/web3-provider
+    package: WalletConnectProvider,
     options: {
       infuraId: INFURA_KEY
     }
   },
   coinbasewallet: {
-    package: window.CoinbaseWalletSDK, // Используем глобальную переменную
+    package: window.CoinbaseWalletSDK,
     options: {
       appName: "IBITIcoin",
       infuraId: INFURA_KEY,
@@ -29,13 +29,13 @@ const providerOptions = {
     }
   },
   fortmatic: {
-    package: Fortmatic, // Требуется Fortmatic
+    package: Fortmatic,
     options: {
       key: "YOUR_FORTMATIC_KEY" // замените на ваш Fortmatic ключ
     }
   },
   torus: {
-    package: window.TorusEmbed, // Используем глобальную переменную TorusEmbed
+    package: window.TorusEmbed,
     options: {
       network: "mainnet"
     }
@@ -50,25 +50,14 @@ const web3Modal = new (Web3Modal.default || Web3Modal)({
 async function connectWallet() {
   console.log("connectWallet() вызывается");
   try {
+    // Проверяем, установлен ли MetaMask
     if (!window.ethereum) {
       alert("MetaMask не установлен. Пожалуйста, установите MetaMask для подключения кошелька.");
       window.open("https://metamask.io/download/", "_blank");
       return;
     }
     
-    console.log("Запрашиваем доступ через MetaMask...");
-    try {
-      // Запрашиваем доступ напрямую через MetaMask
-      await window.ethereum.request({ method: "eth_requestAccounts" });
-    } catch (err) {
-      if (err.code === -32002) {
-        console.log("Запрос eth_requestAccounts уже в процессе, продолжаем...");
-      } else {
-        throw err;
-      }
-    }
-    
-    // Очистка кэша, чтобы окно выбора появлялось всегда
+    // Очищаем кэш, чтобы окно выбора появлялось всегда
     await web3Modal.clearCachedProvider();
     
     console.log("Открываем Web3Modal...");
@@ -76,15 +65,16 @@ async function connectWallet() {
     console.log("Провайдер получен:", provider);
     
     const ethersProvider = new ethers.providers.Web3Provider(provider);
-    // Запрос списка аккаунтов
+    // Получаем аккаунты (Web3Modal сам вызовет eth_requestAccounts, если выбрана MetaMask)
     const accounts = await ethersProvider.listAccounts();
     console.log("Найденные аккаунты:", accounts);
+    
     if (accounts.length === 0) {
       console.warn("Пользователь не разрешил доступ или аккаунтов нет");
       return;
     }
-    selectedAccount = accounts[0];
     
+    selectedAccount = accounts[0];
     const walletDisplay = document.getElementById("walletAddress");
     if (walletDisplay) {
       walletDisplay.innerText = selectedAccount;
@@ -107,7 +97,7 @@ async function connectWallet() {
     });
     
   } catch (error) {
-    if (error.message && error.message.includes("User Rejected")) {
+    if (error.message.includes("User Rejected")) {
       alert("Вы отклонили подключение кошелька. Пожалуйста, нажмите 'Подключить кошелек' для авторизации.");
     }
     console.error("Ошибка подключения через Web3Modal:", error);
@@ -132,15 +122,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Ищем элементы с id или классом "connectWalletBtn"
   const connectBtns = document.querySelectorAll("#connectWalletBtn, .connectWalletBtn");
   console.log("Найдено кнопок подключения:", connectBtns.length);
-  if (connectBtns.length > 0) {
-    connectBtns.forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        e.preventDefault();
-        console.log("Кнопка подключения нажата");
-        connectWallet();
-      });
+  connectBtns.forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      console.log("Кнопка подключения нажата");
+      connectWallet();
     });
-  } else {
-    console.error("Элементы для подключения кошелька не найдены (id 'connectWalletBtn' или класс 'connectWalletBtn').");
-  }
+  });
 });
