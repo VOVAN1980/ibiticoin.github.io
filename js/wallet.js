@@ -13,13 +13,13 @@ const INFURA_KEY = "1faccf0f1fdc4532ad7a1a38a67ee906";
 
 const providerOptions = {
   walletconnect: {
-    package: WalletConnectProvider,
+    package: WalletConnectProvider, // Требуется @walletconnect/web3-provider
     options: {
       infuraId: INFURA_KEY
     }
   },
   coinbasewallet: {
-    package: window.CoinbaseWalletSDK,
+    package: window.CoinbaseWalletSDK, // Используем глобальную переменную
     options: {
       appName: "IBITIcoin",
       infuraId: INFURA_KEY,
@@ -29,13 +29,13 @@ const providerOptions = {
     }
   },
   fortmatic: {
-    package: Fortmatic,
+    package: Fortmatic, // Требуется Fortmatic
     options: {
       key: "YOUR_FORTMATIC_KEY" // замените на ваш Fortmatic ключ
     }
   },
   torus: {
-    package: window.TorusEmbed,
+    package: window.TorusEmbed, // Используем глобальную переменную TorusEmbed
     options: {
       network: "mainnet"
     }
@@ -49,14 +49,20 @@ const web3Modal = new (Web3Modal.default || Web3Modal)({
 
 async function connectWallet() {
   try {
+    // Открываем Web3Modal для выбора кошелька
     provider = await web3Modal.connect();
     const ethersProvider = new ethers.providers.Web3Provider(provider);
+    
+    // Явно запрашиваем доступ к аккаунтам (это вызовет окно MetaMask, если он заблокирован)
+    await ethersProvider.send("eth_requestAccounts", []);
+    
     const accounts = await ethersProvider.listAccounts();
     if (accounts.length === 0) {
       console.error("Нет подключенных аккаунтов");
       return;
     }
     selectedAccount = accounts[0];
+    
     const walletDisplay = document.getElementById("walletAddress");
     if (walletDisplay) {
       walletDisplay.innerText = selectedAccount;
