@@ -1,7 +1,6 @@
 /**
  * wallet.js
- * Реализует подключение кошельков через Web3Modal.
- * Поддерживаются: MetaMask, WalletConnect, Coinbase Wallet, Fortmatic, Torus.
+ * Подключает кошелек через Web3Modal (MetaMask, WalletConnect, и т.д.)
  */
 
 console.log("wallet.js загружен");
@@ -50,28 +49,10 @@ const web3Modal = new (Web3Modal.default || Web3Modal)({
 async function connectWallet() {
   console.log("connectWallet() вызывается");
   try {
-    // Если у вас есть инжектированный кошелек (например, MetaMask)
-    if (window.ethereum) {
-      // Если пользователь ещё не авторизован, запрашиваем его аккаунты
-      if (!window.ethereum.selectedAddress) {
-        console.log("MetaMask не залогинен – запрашиваем аккаунты через eth_requestAccounts");
-        try {
-          await window.ethereum.request({ method: "eth_requestAccounts" });
-        } catch (err) {
-          console.error("Пользователь отклонил запрос eth_requestAccounts:", err);
-          alert("Пожалуйста, разрешите доступ в MetaMask для подключения кошелька.");
-          return;
-        }
-      }
-    } else {
-      alert("Инжектированный кошелек не найден. Пожалуйста, установите MetaMask или используйте другой способ подключения.");
-      return;
-    }
-    
-    console.log("Открываем Web3Modal...");
+    // Открываем окно выбора кошелька через Web3Modal
     provider = await web3Modal.connect();
     console.log("Провайдер получен:", provider);
-
+    
     const ethersProvider = new ethers.providers.Web3Provider(provider);
     const accounts = await ethersProvider.listAccounts();
     console.log("Найденные аккаунты:", accounts);
@@ -87,7 +68,8 @@ async function connectWallet() {
       walletDisplay.innerText = selectedAccount;
     }
     console.log("Подключен аккаунт:", selectedAccount);
-
+    
+    // Обработка смены аккаунтов
     provider.on("accountsChanged", (newAccounts) => {
       console.log("accountsChanged:", newAccounts);
       if (newAccounts.length === 0) {
@@ -97,17 +79,18 @@ async function connectWallet() {
         if (walletDisplay) walletDisplay.innerText = selectedAccount;
       }
     });
-
+    
+    // Обработка отключения
     provider.on("disconnect", () => {
       console.log("Провайдер отключился");
       disconnectWallet();
     });
     
   } catch (error) {
+    console.error("Ошибка подключения через Web3Modal:", error);
     if (error.message && error.message.includes("User Rejected")) {
       alert("Вы отклонили подключение кошелька. Пожалуйста, нажмите 'Подключить кошелек' для авторизации.");
     }
-    console.error("Ошибка подключения через Web3Modal:", error);
   }
 }
 
@@ -125,7 +108,6 @@ async function disconnectWallet() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Ищем кнопки подключения по id или классу "connectWalletBtn"
   const connectBtns = document.querySelectorAll("#connectWalletBtn, .connectWalletBtn");
   console.log("Найдено кнопок подключения:", connectBtns.length);
   if (connectBtns.length > 0) {
