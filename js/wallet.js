@@ -50,8 +50,9 @@ const web3Modal = new (Web3Modal.default || Web3Modal)({
 async function connectWallet() {
   console.log("connectWallet() вызывается");
   try {
-    // Для инжектированных кошельков (например, MetaMask)
+    // Если у вас есть инжектированный кошелек (например, MetaMask)
     if (window.ethereum) {
+      // Если пользователь ещё не авторизован, запрашиваем его аккаунты
       if (!window.ethereum.selectedAddress) {
         console.log("MetaMask не залогинен – запрашиваем аккаунты через eth_requestAccounts");
         try {
@@ -70,7 +71,7 @@ async function connectWallet() {
     console.log("Открываем Web3Modal...");
     provider = await web3Modal.connect();
     console.log("Провайдер получен:", provider);
-    
+
     const ethersProvider = new ethers.providers.Web3Provider(provider);
     const accounts = await ethersProvider.listAccounts();
     console.log("Найденные аккаунты:", accounts);
@@ -86,7 +87,7 @@ async function connectWallet() {
       walletDisplay.innerText = selectedAccount;
     }
     console.log("Подключен аккаунт:", selectedAccount);
-    
+
     provider.on("accountsChanged", (newAccounts) => {
       console.log("accountsChanged:", newAccounts);
       if (newAccounts.length === 0) {
@@ -96,7 +97,7 @@ async function connectWallet() {
         if (walletDisplay) walletDisplay.innerText = selectedAccount;
       }
     });
-    
+
     provider.on("disconnect", () => {
       console.log("Провайдер отключился");
       disconnectWallet();
@@ -124,6 +125,7 @@ async function disconnectWallet() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Ищем кнопки подключения по id или классу "connectWalletBtn"
   const connectBtns = document.querySelectorAll("#connectWalletBtn, .connectWalletBtn");
   console.log("Найдено кнопок подключения:", connectBtns.length);
   if (connectBtns.length > 0) {
