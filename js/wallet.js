@@ -99,11 +99,14 @@ async function disconnectWallet() {
   console.log("Кошелек отключен");
 }
 
+// Привязываем событие подключения ко всем элементам с классом "connectWalletBtn"
 document.addEventListener("DOMContentLoaded", () => {
-  const connectBtn = document.getElementById("connectWalletBtn");
-  if (connectBtn) {
-    connectBtn.addEventListener("click", connectWallet);
+  const connectBtns = document.querySelectorAll(".connectWalletBtn");
+  if (connectBtns.length > 0) {
+    connectBtns.forEach((btn) => {
+      btn.addEventListener("click", connectWallet);
+    });
   } else {
-    console.error("Элемент с id 'connectWalletBtn' не найден.");
+    console.error("Элементы с классом 'connectWalletBtn' не найдены.");
   }
 });
