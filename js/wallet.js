@@ -1,7 +1,6 @@
 /**
  * wallet.js
- * Реализует подключение кошельков через Web3Modal.
- * Поддерживаются: MetaMask (инжектированный) и WalletConnect.
+ * Поддержка MetaMask и WalletConnect.
  */
 
 console.log("wallet.js загружен");
@@ -9,42 +8,39 @@ console.log("wallet.js загружен");
 let provider;
 let selectedAccount;
 
-const INFURA_KEY = "1faccf0f1fdc4532ad7a1a38a67ee906";
+const INFURA_KEY = "ВАШ_INFURA_ID";
 
-// Проверяем, существует ли window.WalletConnectProvider.default; если да – используем его, иначе window.WalletConnectProvider
-const WalletConnectProviderConstructor = (window.WalletConnectProvider && window.WalletConnectProvider.default) || window.WalletConnectProvider;
+// 1) Проверяем, как именно UMD-билд экспортирует WalletConnectProvider
+const WalletConnectProviderConstructor = 
+  (window.WalletConnectProvider && window.WalletConnectProvider.default)
+    ? window.WalletConnectProvider.default
+    : window.WalletConnectProvider;
 
 const providerOptions = {
   walletconnect: {
     package: WalletConnectProviderConstructor,
     options: {
       infuraId: INFURA_KEY,
-    },
-  },
+    }
+  }
 };
 
-const web3Modal = new (Web3Modal.default || Web3Modal)({
+const web3Modal = new (window.Web3Modal.default || window.Web3Modal)({
   cacheProvider: false,
-  providerOptions,
+  providerOptions
 });
 
+// Подключение
 async function connectWallet() {
   console.log("connectWallet() вызывается");
   try {
-    // Если имеется инжектированный кошелек (например, MetaMask)
+    // Проверяем MetaMask
     if (window.ethereum) {
       if (!window.ethereum.selectedAddress) {
-        console.log("MetaMask не залогинен – запрашиваем аккаунты");
-        try {
-          await window.ethereum.request({ method: "eth_requestAccounts" });
-        } catch (err) {
-          console.error("Пользователь отклонил запрос:", err);
-          alert("Пожалуйста, разрешите доступ в MetaMask для подключения кошелька.");
-          return;
-        }
+        await window.ethereum.request({ method: "eth_requestAccounts" });
       }
     } else {
-      alert("Инжектированный кошелек не найден. Установите MetaMask или используйте другой способ подключения.");
+      alert("MetaMask не найден. Установите расширение или используйте WalletConnect.");
       return;
     }
     
@@ -54,9 +50,9 @@ async function connectWallet() {
 
     const ethersProvider = new ethers.providers.Web3Provider(provider);
     const accounts = await ethersProvider.listAccounts();
-    console.log("Найденные аккаунты:", accounts);
+    console.log("Аккаунты:", accounts);
     
-    if (accounts.length === 0) {
+    if (!accounts.length) {
       console.warn("Нет подключенных аккаунтов");
       return;
     }
@@ -64,11 +60,9 @@ async function connectWallet() {
     selectedAccount = accounts[0];
     const walletDisplay = document.getElementById("walletAddress");
     if (walletDisplay) walletDisplay.innerText = selectedAccount;
-    console.log("Подключен аккаунт:", selectedAccount);
 
     provider.on("accountsChanged", (newAccounts) => {
-      console.log("accountsChanged:", newAccounts);
-      if (newAccounts.length === 0) {
+      if (!newAccounts.length) {
         disconnectWallet();
       } else {
         selectedAccount = newAccounts[0];
@@ -77,20 +71,21 @@ async function connectWallet() {
     });
 
     provider.on("disconnect", () => {
-      console.log("Провайдер отключился");
       disconnectWallet();
     });
     
   } catch (error) {
     if (error.message && error.message.includes("User Rejected")) {
-      alert("Вы отклонили подключение кошелька. Нажмите 'Подключить кошелек' для авторизации.");
+      alert("Вы отклонили подключение. Повторите попытку.");
     }
     console.error("Ошибка подключения через Web3Modal:", error);
   }
 }
 
 async function disconnectWallet() {
-  if (provider && provider.close) await provider.close();
+  if (provider && provider.close) {
+    await provider.close();
+  }
   provider = null;
   selectedAccount = null;
   const walletDisplay = document.getElementById("walletAddress");
@@ -100,16 +95,10 @@ async function disconnectWallet() {
 
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtns = document.querySelectorAll("#connectWalletBtn, .connectWalletBtn");
-  console.log("Найдено кнопок подключения:", connectBtns.length);
-  if (connectBtns.length > 0) {
-    connectBtns.forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        e.preventDefault();
-        console.log("Кнопка подключения нажата");
-        connectWallet();
-      });
+  connectBtns.forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      connectWallet();
     });
-  } else {
-    console.error("Элементы для подключения кошелька не найдены (id 'connectWalletBtn' или класс 'connectWalletBtn').");
-  }
+  });
 });
