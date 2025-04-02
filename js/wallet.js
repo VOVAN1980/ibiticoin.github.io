@@ -1,8 +1,6 @@
-/**
- * wallet.js
- * Реализует подключение кошельков через Web3Modal.
- * Поддерживаются: MetaMask (инжектированный) и WalletConnect.
- */
+import WalletConnectProvider from '@walletconnect/web3-provider';
+import Web3Modal from 'web3modal';
+import { ethers } from 'ethers';
 
 console.log("wallet.js загружен");
 
@@ -11,17 +9,16 @@ let selectedAccount;
 
 const INFURA_KEY = "1faccf0f1fdc4532ad7a1a38a67ee906";
 
-// Используем глобальный объект для WalletConnectProvider
 const providerOptions = {
   walletconnect: {
-    package: window.WalletConnectProvider,
+    package: WalletConnectProvider,
     options: {
       infuraId: INFURA_KEY
     }
   }
 };
 
-const web3Modal = new (Web3Modal.default || Web3Modal)({
+const web3Modal = new Web3Modal({
   cacheProvider: false,
   providerOptions
 });
@@ -29,16 +26,11 @@ const web3Modal = new (Web3Modal.default || Web3Modal)({
 async function connectWallet() {
   console.log("connectWallet() вызывается");
   try {
+    // Проверяем наличие инжектированного кошелька (MetaMask)
     if (window.ethereum) {
       if (!window.ethereum.selectedAddress) {
         console.log("MetaMask не залогинен – запрашиваем аккаунты");
-        try {
-          await window.ethereum.request({ method: "eth_requestAccounts" });
-        } catch (err) {
-          console.error("Пользователь отклонил запрос:", err);
-          alert("Пожалуйста, разрешите доступ в MetaMask для подключения кошелька.");
-          return;
-        }
+        await window.ethereum.request({ method: "eth_requestAccounts" });
       }
     } else {
       alert("Инжектированный кошелек не найден. Установите MetaMask или используйте другой способ подключения.");
@@ -60,7 +52,9 @@ async function connectWallet() {
     
     selectedAccount = accounts[0];
     const walletDisplay = document.getElementById("walletAddress");
-    if (walletDisplay) walletDisplay.innerText = selectedAccount;
+    if (walletDisplay) {
+      walletDisplay.innerText = selectedAccount;
+    }
     console.log("Подключен аккаунт:", selectedAccount);
 
     provider.on("accountsChanged", (newAccounts) => {
@@ -87,11 +81,15 @@ async function connectWallet() {
 }
 
 async function disconnectWallet() {
-  if (provider && provider.close) await provider.close();
+  if (provider && provider.close) {
+    await provider.close();
+  }
   provider = null;
   selectedAccount = null;
   const walletDisplay = document.getElementById("walletAddress");
-  if (walletDisplay) walletDisplay.innerText = "Wallet disconnected";
+  if (walletDisplay) {
+    walletDisplay.innerText = "Wallet disconnected";
+  }
   console.log("Кошелек отключен");
 }
 
