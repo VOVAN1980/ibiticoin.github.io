@@ -11,6 +11,8 @@ let selectedAccount;
 
 const INFURA_KEY = "1faccf0f1fdc4532ad7a1a38a67ee906";
 
+// Для стабильной работы временно оставляем только MetaMask (инжектированный) и WalletConnect.
+// Если нужно добавить другие кошельки, убедитесь, что соответствующие библиотеки (CoinbaseWalletSDK, Fortmatic, TorusEmbed) загружены до wallet.js.
 const providerOptions = {
   walletconnect: {
     package: WalletConnectProvider,
@@ -18,6 +20,7 @@ const providerOptions = {
       infuraId: INFURA_KEY
     }
   },
+  /* Дополнительные провайдеры временно отключены для восстановления стабильности:
   coinbasewallet: {
     package: window.CoinbaseWalletSDK,
     options: {
@@ -40,6 +43,7 @@ const providerOptions = {
       network: "mainnet"
     }
   }
+  */
 };
 
 const web3Modal = new (Web3Modal.default || Web3Modal)({
@@ -50,7 +54,7 @@ const web3Modal = new (Web3Modal.default || Web3Modal)({
 async function connectWallet() {
   console.log("connectWallet() вызывается");
   try {
-    // Если у вас есть инжектированный кошелек (например, MetaMask)
+    // Если имеется инжектированный кошелек (например, MetaMask)
     if (window.ethereum) {
       // Если пользователь ещё не авторизован, запрашиваем его аккаунты
       if (!window.ethereum.selectedAddress) {
