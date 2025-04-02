@@ -2,7 +2,7 @@
 
 // Импортируем ethers из CDN (ES-модульная версия)
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
-import configData from "../config.js";
+import configData from "../../config.js";
 import IBITIcoinAbi from "../abis/IBITIcoin.js";
 
 // Выбираем параметры сети: если NODE_ENV равен "production" и есть mainnet, используем его; иначе testnet.
