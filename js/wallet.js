@@ -50,14 +50,13 @@ const web3Modal = new (Web3Modal.default || Web3Modal)({
 async function connectWallet() {
   console.log("connectWallet() вызывается");
   try {
-    // Проверяем, установлен ли MetaMask
     if (!window.ethereum) {
       alert("MetaMask не установлен. Пожалуйста, установите MetaMask для подключения кошелька.");
       window.open("https://metamask.io/download/", "_blank");
       return;
     }
     
-    // Очищаем кэш, чтобы окно выбора появлялось всегда
+    // Очистим кэш, чтобы окно выбора всегда появлялось
     await web3Modal.clearCachedProvider();
     
     console.log("Открываем Web3Modal...");
@@ -65,7 +64,6 @@ async function connectWallet() {
     console.log("Провайдер получен:", provider);
     
     const ethersProvider = new ethers.providers.Web3Provider(provider);
-    // Получаем аккаунты (Web3Modal сам вызовет eth_requestAccounts, если выбрана MetaMask)
     const accounts = await ethersProvider.listAccounts();
     console.log("Найденные аккаунты:", accounts);
     
@@ -122,11 +120,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // Ищем элементы с id или классом "connectWalletBtn"
   const connectBtns = document.querySelectorAll("#connectWalletBtn, .connectWalletBtn");
   console.log("Найдено кнопок подключения:", connectBtns.length);
-  connectBtns.forEach(btn => {
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      console.log("Кнопка подключения нажата");
-      connectWallet();
+  if (connectBtns.length > 0) {
+    connectBtns.forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        console.log("Кнопка подключения нажата");
+        connectWallet();
+      });
     });
-  });
+  } else {
+    console.error("Элементы для подключения кошелька не найдены (id 'connectWalletBtn' или класс 'connectWalletBtn').");
+  }
 });
