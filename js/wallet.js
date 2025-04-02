@@ -31,7 +31,7 @@ const providerOptions = {
   fortmatic: {
     package: Fortmatic, // Требуется Fortmatic
     options: {
-      key: "YOUR_FORTMATIC_KEY" // Замените на ваш Fortmatic ключ
+      key: "YOUR_FORTMATIC_KEY" // замените на ваш Fortmatic ключ
     }
   },
   torus: {
@@ -49,15 +49,15 @@ const web3Modal = new (Web3Modal.default || Web3Modal)({
 
 async function connectWallet() {
   try {
-    // Если MetaMask доступен, явно запрашиваем доступ к аккаунтам.
+    // Если MetaMask установлен, явно запрашиваем доступ к аккаунтам
     if (window.ethereum) {
       await window.ethereum.request({ method: "eth_requestAccounts" });
     }
-    // Открываем Web3Modal для выбора кошелька.
+    // Открываем Web3Modal для выбора кошелька
     provider = await web3Modal.connect();
     const ethersProvider = new ethers.providers.Web3Provider(provider);
     
-    // Явно запрашиваем доступ, если это еще не сделано.
+    // Явно запрашиваем доступ, если еще не получен
     await ethersProvider.send("eth_requestAccounts", []);
     
     const accounts = await ethersProvider.listAccounts();
@@ -106,19 +106,11 @@ async function disconnectWallet() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Сначала пытаемся найти элемент по id
-  const connectBtnById = document.getElementById("connectWalletBtn");
-  if (connectBtnById) {
-    connectBtnById.addEventListener("click", connectWallet);
-    return;
-  }
-  // Если элемента с таким id нет, ищем все элементы с классом "connectWalletBtn"
+  // Ищем все элементы с классом "connectWalletBtn"
   const connectBtns = document.querySelectorAll(".connectWalletBtn");
   if (connectBtns.length > 0) {
     connectBtns.forEach(btn => {
       btn.addEventListener("click", connectWallet);
     });
-  } else {
-    console.error("Элементы для подключения кошелька (id 'connectWalletBtn' или класс 'connectWalletBtn') не найдены.");
   }
 });
