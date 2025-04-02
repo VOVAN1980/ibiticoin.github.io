@@ -1,7 +1,7 @@
 /**
  * wallet.js
  * Реализует подключение кошельков через Web3Modal.
- * Поддерживаются: MetaMask, WalletConnect, Coinbase Wallet, Fortmatic, Torus.
+ * Поддерживаются: MetaMask (инжектированный) и WalletConnect.
  */
 
 console.log("wallet.js загружен");
@@ -11,39 +11,15 @@ let selectedAccount;
 
 const INFURA_KEY = "1faccf0f1fdc4532ad7a1a38a67ee906";
 
-// Для стабильной работы временно оставляем только MetaMask (инжектированный) и WalletConnect.
-// Если нужно добавить другие кошельки, убедитесь, что соответствующие библиотеки (CoinbaseWalletSDK, Fortmatic, TorusEmbed) загружены до wallet.js.
+// Оставляем только WalletConnect для стабильной работы.
+// MetaMask (инжектированный кошелек) используется напрямую через window.ethereum.
 const providerOptions = {
   walletconnect: {
     package: WalletConnectProvider,
     options: {
       infuraId: INFURA_KEY
     }
-  },
-  /* Дополнительные провайдеры временно отключены для восстановления стабильности:
-  coinbasewallet: {
-    package: window.CoinbaseWalletSDK,
-    options: {
-      appName: "IBITIcoin",
-      infuraId: INFURA_KEY,
-      rpc: "",
-      chainId: 1,
-      darkMode: false
-    }
-  },
-  fortmatic: {
-    package: Fortmatic,
-    options: {
-      key: "YOUR_FORTMATIC_KEY" // замените на ваш Fortmatic ключ
-    }
-  },
-  torus: {
-    package: window.TorusEmbed,
-    options: {
-      network: "mainnet"
-    }
   }
-  */
 };
 
 const web3Modal = new (Web3Modal.default || Web3Modal)({
