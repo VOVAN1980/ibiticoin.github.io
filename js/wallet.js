@@ -11,9 +11,10 @@ let selectedAccount;
 
 const INFURA_KEY = "1faccf0f1fdc4532ad7a1a38a67ee906";
 
+// Используем глобальный объект для WalletConnectProvider
 const providerOptions = {
   walletconnect: {
-    package: WalletConnectProvider,
+    package: window.WalletConnectProvider,
     options: {
       infuraId: INFURA_KEY
     }
