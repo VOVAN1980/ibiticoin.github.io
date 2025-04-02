@@ -50,9 +50,9 @@
   </script>
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-  <!-- Подключаем необходимые библиотеки для работы кошельков -->
-  <script src="https://unpkg.com/@walletconnect/web3-provider/dist/umd/index.min.js"></script>
-  <script src="https://unpkg.com/web3modal"></script>
+  <!-- Подключаем необходимые библиотеки для работы кошельков (проверенные версии) -->
+  <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
+  <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
   
   <style>
     /* Пример базовых стилей для модального окна шаринга */
@@ -185,8 +185,9 @@
 
   <!-- Внешние библиотеки -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <script src="https://unpkg.com/web3modal"></script>
-  <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
+  <!-- Проверенные версии: Web3Modal 1.9.8 и WalletConnectProvider 1.6.6 -->
+  <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
+  <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
   
   <!-- Дополнительные скрипты -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
@@ -205,3 +206,44 @@
     })();
   </script>
   <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const shareModal = document.getElementById('shareModal');
+      const openShareModalBtn = document.getElementById('openShareModal');
+      const closeShareModalBtn = document.getElementById('closeShareModal');
+
+      if (openShareModalBtn) {
+        openShareModalBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          shareModal.style.display = 'block';
+        });
+      }
+
+      if (closeShareModalBtn) {
+        closeShareModalBtn.addEventListener('click', () => {
+          shareModal.style.display = 'none';
+        });
+      }
+
+      window.addEventListener('click', (event) => {
+        if (event.target === shareModal) {
+          shareModal.style.display = 'none';
+        }
+      });
+
+      const pageUrl = encodeURIComponent(window.location.href);
+      const shareText = encodeURIComponent("Узнайте о будущем цифровых финансов вместе с IBITIcoin!");
+
+      document.getElementById('share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+      document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?url=${pageUrl}&text=${shareText}`;
+      document.getElementById('share-vk').href = `https://vk.com/share.php?url=${pageUrl}&title=${shareText}`;
+      document.getElementById('share-telegram').href = `https://t.me/share/url?url=${pageUrl}&text=${shareText}`;
+      document.getElementById('share-ok').href = `https://connect.ok.ru/offer?url=${pageUrl}&title=${shareText}`;
+      document.getElementById('share-linkedin').href = `https://www.linkedin.com/shareArticle?mini=true&url=${pageUrl}&title=${shareText}`;
+      document.getElementById('share-weibo').href = `http://service.weibo.com/share/share.php?url=${pageUrl}&title=${shareText}`;
+    });
+  </script>
+  
+  <!-- Подключаем основной скрипт main.js -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
