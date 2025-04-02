@@ -13,13 +13,13 @@ const INFURA_KEY = "1faccf0f1fdc4532ad7a1a38a67ee906";
 
 const providerOptions = {
   walletconnect: {
-    package: WalletConnectProvider,
+    package: WalletConnectProvider, // Требуется @walletconnect/web3-provider
     options: {
       infuraId: INFURA_KEY
     }
   },
   coinbasewallet: {
-    package: window.CoinbaseWalletSDK,
+    package: window.CoinbaseWalletSDK, // Используем глобальную переменную
     options: {
       appName: "IBITIcoin",
       infuraId: INFURA_KEY,
@@ -29,13 +29,13 @@ const providerOptions = {
     }
   },
   fortmatic: {
-    package: Fortmatic,
+    package: Fortmatic, // Требуется Fortmatic
     options: {
       key: "YOUR_FORTMATIC_KEY" // замените на ваш Fortmatic ключ
     }
   },
   torus: {
-    package: window.TorusEmbed,
+    package: window.TorusEmbed, // Используем глобальную переменную TorusEmbed
     options: {
       network: "mainnet"
     }
@@ -43,22 +43,21 @@ const providerOptions = {
 };
 
 const web3Modal = new (Web3Modal.default || Web3Modal)({
-  cacheProvider: false,
+  cacheProvider: false, // Если true, кэшируется последний выбранный кошелек
   providerOptions
 });
 
 async function connectWallet() {
   console.log("connectWallet() вызывается");
   try {
+    // Проверяем, установлен ли MetaMask (или другой инжектированный кошелек)
     if (!window.ethereum) {
       alert("MetaMask не установлен. Пожалуйста, установите MetaMask для подключения кошелька.");
       window.open("https://metamask.io/download/", "_blank");
       return;
     }
     
-    // Очистим кэш, чтобы окно выбора всегда появлялось
-    await web3Modal.clearCachedProvider();
-    
+    // Открываем Web3Modal – пользователь увидит окно выбора кошелька
     console.log("Открываем Web3Modal...");
     provider = await web3Modal.connect();
     console.log("Провайдер получен:", provider);
@@ -68,7 +67,7 @@ async function connectWallet() {
     console.log("Найденные аккаунты:", accounts);
     
     if (accounts.length === 0) {
-      console.warn("Пользователь не разрешил доступ или аккаунтов нет");
+      console.warn("Нет подключенных аккаунтов");
       return;
     }
     
@@ -79,6 +78,7 @@ async function connectWallet() {
     }
     console.log("Подключен аккаунт:", selectedAccount);
     
+    // Обработка смены аккаунтов
     provider.on("accountsChanged", (newAccounts) => {
       console.log("accountsChanged:", newAccounts);
       if (newAccounts.length === 0) {
@@ -89,6 +89,7 @@ async function connectWallet() {
       }
     });
     
+    // Обработка отключения
     provider.on("disconnect", () => {
       console.log("Провайдер отключился");
       disconnectWallet();
@@ -105,7 +106,7 @@ async function connectWallet() {
 async function disconnectWallet() {
   if (provider && provider.close) {
     await provider.close();
-    await web3Modal.clearCachedProvider();
+    // При необходимости можно очистить кэш: await web3Modal.clearCachedProvider();
   }
   provider = null;
   selectedAccount = null;
@@ -117,7 +118,7 @@ async function disconnectWallet() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Ищем элементы с id или классом "connectWalletBtn"
+  // Ищем кнопки подключения по id или классу "connectWalletBtn"
   const connectBtns = document.querySelectorAll("#connectWalletBtn, .connectWalletBtn");
   console.log("Найдено кнопок подключения:", connectBtns.length);
   if (connectBtns.length > 0) {
