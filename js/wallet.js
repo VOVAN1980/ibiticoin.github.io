@@ -13,13 +13,13 @@ const INFURA_KEY = "1faccf0f1fdc4532ad7a1a38a67ee906";
 
 const providerOptions = {
   walletconnect: {
-    package: WalletConnectProvider, // Требуется @walletconnect/web3-provider
+    package: WalletConnectProvider,
     options: {
       infuraId: INFURA_KEY
     }
   },
   coinbasewallet: {
-    package: window.CoinbaseWalletSDK, // Используем глобальную переменную
+    package: window.CoinbaseWalletSDK,
     options: {
       appName: "IBITIcoin",
       infuraId: INFURA_KEY,
@@ -29,45 +29,46 @@ const providerOptions = {
     }
   },
   fortmatic: {
-    package: Fortmatic, // Требуется Fortmatic
+    package: Fortmatic,
     options: {
       key: "YOUR_FORTMATIC_KEY" // замените на ваш Fortmatic ключ
     }
   },
   torus: {
-    package: window.TorusEmbed, // Используем глобальную переменную TorusEmbed
+    package: window.TorusEmbed,
     options: {
       network: "mainnet"
     }
   }
 };
 
+// Добавляем disableInjectedProvider: false, чтобы даже при наличии MetaMask окно выбора появлялось
 const web3Modal = new (Web3Modal.default || Web3Modal)({
-  cacheProvider: false, // Если true, кэшируется последний выбранный кошелек
+  cacheProvider: false,
+  disableInjectedProvider: false,
   providerOptions
 });
 
 async function connectWallet() {
   console.log("connectWallet() вызывается");
   try {
-    // Проверяем, установлен ли MetaMask (или другой инжектированный кошелек)
     if (!window.ethereum) {
       alert("MetaMask не установлен. Пожалуйста, установите MetaMask для подключения кошелька.");
       window.open("https://metamask.io/download/", "_blank");
       return;
     }
-    
-    // Открываем Web3Modal – пользователь увидит окно выбора кошелька
+
     console.log("Открываем Web3Modal...");
+    // Открываем окно выбора кошелька
     provider = await web3Modal.connect();
-    console.log("Провайдер получен:", provider);
-    
+    console.log("Web3Modal вернул провайдер:", provider);
+
     const ethersProvider = new ethers.providers.Web3Provider(provider);
     const accounts = await ethersProvider.listAccounts();
     console.log("Найденные аккаунты:", accounts);
     
     if (accounts.length === 0) {
-      console.warn("Нет подключенных аккаунтов");
+      console.warn("Нет подключенных аккаунтов. Возможно, вы отменили запрос в MetaMask.");
       return;
     }
     
@@ -78,7 +79,6 @@ async function connectWallet() {
     }
     console.log("Подключен аккаунт:", selectedAccount);
     
-    // Обработка смены аккаунтов
     provider.on("accountsChanged", (newAccounts) => {
       console.log("accountsChanged:", newAccounts);
       if (newAccounts.length === 0) {
@@ -89,7 +89,6 @@ async function connectWallet() {
       }
     });
     
-    // Обработка отключения
     provider.on("disconnect", () => {
       console.log("Провайдер отключился");
       disconnectWallet();
@@ -106,7 +105,7 @@ async function connectWallet() {
 async function disconnectWallet() {
   if (provider && provider.close) {
     await provider.close();
-    // При необходимости можно очистить кэш: await web3Modal.clearCachedProvider();
+    // По необходимости можно также вызвать: await web3Modal.clearCachedProvider();
   }
   provider = null;
   selectedAccount = null;
