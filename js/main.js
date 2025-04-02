@@ -3,7 +3,7 @@ import { provider, signer, ibitiContract, network } from "./utils/blockchain.js"
 
 console.log("Подключены к сети:", network.networkName);
 
-// Пример функции для проверки общего предложения токенов
+// Функция для проверки общего предложения токенов
 async function checkTotalSupply() {
   try {
     const supply = await ibitiContract.totalSupply();
@@ -14,7 +14,7 @@ async function checkTotalSupply() {
 }
 checkTotalSupply();
 
-// Пример функции для покупки токенов
+// Функция для покупки токенов
 async function buyTokens() {
   try {
     const amountInput = document.getElementById("buyAmount");
@@ -23,6 +23,7 @@ async function buyTokens() {
       alert("Введите сумму для покупки");
       return;
     }
+    // Используем ethers, который уже подключен через CDN
     const value = ethers.parseEther(amountBNB);
     const tx = await ibitiContract.purchaseCoinBNB({ value });
     console.log("Транзакция отправлена:", tx.hash);
@@ -33,8 +34,13 @@ async function buyTokens() {
   }
 }
 
-// Привязываем функцию к кнопке покупки
-document.getElementById("buyBtn").addEventListener("click", (e) => {
-  e.preventDefault();
-  buyTokens();
-});
+// Привязываем функцию к кнопке покупки, если элемент существует
+const buyBtn = document.getElementById("buyBtn");
+if (buyBtn) {
+  buyBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    buyTokens();
+  });
+} else {
+  console.warn("Элемент с id 'buyBtn' не найден.");
+}
