@@ -28,7 +28,7 @@
   
   <!-- Подключаем AOS для анимаций -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
-  
+
   <!-- Google Tag Manager -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-T5DF4BLR5S"></script>
   <script>
@@ -134,7 +134,9 @@
   <!-- Пример главного контента -->
   <section class="gold-section" data-aos="fade-up">
     <h2>WHY CHOOSE IBITIcoin?</h2>
-    <p>IBITIcoin – это инновационная криптовалюта для быстрой, безопасной и доступной работы в цифровой экономике...</p>
+    <p>
+      IBITIcoin – это инновационная криптовалюта для быстрой, безопасной и доступной работы в цифровой экономике...
+    </p>
     <a class="btn" href="buy.html">Buy IBITIcoin</a>
   </section>
   
@@ -147,11 +149,11 @@
     <a class="btn-small" href="nft.html">NFT Галерея</a>
     <a class="btn-small" href="shop.html">Магазин</a>
     <a class="btn-small" href="book.html">Книга</a>
-    <!-- Кнопка "Поделиться" -->
+    <!-- Кнопка "Поделиться" открывает модальное окно -->
     <a class="btn-small" id="openShareModal" href="#">Поделиться</a>
   </section>
   
-  <!-- Футер -->
+  <!-- Пример футера -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p>
@@ -183,14 +185,16 @@
       </div>
     </div>
   </div>
-  
-  <!-- Секция подключения кошелька -->
-  <section class="wallet-section">
-    <button id="connectWalletBtn" class="connectWalletBtn">Подключить кошелек</button>
-    <div id="walletAddress"></div>
-  </section>
-  
-  <!-- Подключаем дополнительные скрипты -->
+
+  <!-- Подключаем внешние библиотеки (Ether.js уже подключён выше) -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="https://unpkg.com/web3modal"></script>
+  <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
+  <script src="https://unpkg.com/@coinbase/wallet-sdk/dist/wallet-sdk.umd.min.js"></script>
+  <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
+  <script src="https://unpkg.com/torus-embed"></script>
+
+  <!-- Дополнительные скрипты и инициализация AOS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
     AOS.init({ once: true });
@@ -207,18 +211,49 @@
     })();
   </script>
   
-  <!-- Импорт конфигурации -->
-  <script type="module">
-    import config from "./config.js";
-    console.log("Подключаемся к сети:", config.networkName);
-    console.log("RPC URL:", config.rpcUrl);
-    console.log("Адрес IBITIcoin:", config.contracts.IBITI_TOKEN_ADDRESS);
+  <!-- Динамическая генерация ссылок для шаринга -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const shareModal = document.getElementById('shareModal');
+      const openShareModalBtn = document.getElementById('openShareModal');
+      const closeShareModalBtn = document.getElementById('closeShareModal');
+
+      if (openShareModalBtn) {
+        openShareModalBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          shareModal.style.display = 'block';
+        });
+      }
+
+      if (closeShareModalBtn) {
+        closeShareModalBtn.addEventListener('click', () => {
+          shareModal.style.display = 'none';
+        });
+      }
+
+      window.addEventListener('click', (event) => {
+        if (event.target === shareModal) {
+          shareModal.style.display = 'none';
+        }
+      });
+
+      const pageUrl = encodeURIComponent(window.location.href);
+      const shareText = encodeURIComponent("Узнайте о будущем цифровых финансов вместе с IBITIcoin!");
+
+      document.getElementById('share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+      document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?url=${pageUrl}&text=${shareText}`;
+      document.getElementById('share-vk').href = `https://vk.com/share.php?url=${pageUrl}&title=${shareText}`;
+      document.getElementById('share-telegram').href = `https://t.me/share/url?url=${pageUrl}&text=${shareText}`;
+      document.getElementById('share-ok').href = `https://connect.ok.ru/offer?url=${pageUrl}&title=${shareText}`;
+      document.getElementById('share-linkedin').href = `https://www.linkedin.com/shareArticle?mini=true&url=${pageUrl}&title=${shareText}`;
+      document.getElementById('share-weibo').href = `http://service.weibo.com/share/share.php?url=${pageUrl}&title=${shareText}`;
+    });
   </script>
   
-  <!-- Подключаем файлы для работы с NFT, кошельком и основным функционалом -->
-  <script type="module" src="js/nft.js"></script>
-  <script src="js/wallet.js"></script>
-  <script type="module" src="js/shop.js"></script>
+  <!-- Подключаем основной скрипт main.js -->
   <script type="module" src="js/main.js"></script>
+  
+  <!-- Подключаем скрипт wallet.js для работы кошельков -->
+  <script src="js/wallet.js"></script>
 </body>
 </html>
