@@ -2,16 +2,17 @@
 
 // Импортируем ethers из CDN (ES-модульная версия)
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
+// Поскольку config.js находится в корне, а этот файл в js/utils, путь будет ../../config.js
 import configData from "../../config.js";
+// Импортируем ABI контракта IBITIcoin; предполагаем, что он лежит в js/abis
 import IBITIcoinAbi from "../abis/IBITIcoin.js";
 
-// Выбираем параметры сети: если NODE_ENV равен "production" и есть mainnet, используем его; иначе testnet.
-const network =
-  process.env.NODE_ENV === "production" && configData.mainnet
-    ? configData.mainnet
-    : configData;
+// Определяем, является ли окружение продакшеном
+const isProd = typeof process !== "undefined" && process.env && process.env.NODE_ENV === "production";
 
-// Проверяем наличие необходимых данных
+// Если process не определён (браузер), то используем тестовую конфигурацию
+const network = isProd && configData.mainnet ? configData.mainnet : configData;
+
 if (!network.rpcUrl || !network.contracts.IBITI_TOKEN_ADDRESS) {
   throw new Error("Некорректная конфигурация сети в config.js");
 }
@@ -25,14 +26,12 @@ try {
   throw err;
 }
 
-// Функция для проверки, соответствует ли текущая сеть ожидаемой
+// Функция для проверки сети
 async function checkNetwork() {
   try {
     const currentNetwork = await provider.getNetwork();
     if (currentNetwork.chainId !== network.chainId) {
-      console.warn(
-        `Текущая сеть (chainId=${currentNetwork.chainId}) не соответствует ожидаемой (${network.chainId}).`
-      );
+      console.warn(`Текущая сеть (chainId=${currentNetwork.chainId}) не соответствует ожидаемой (${network.chainId}).`);
     } else {
       console.log(`Подключены к сети: ${network.networkName} (chainId=${network.chainId}).`);
     }
@@ -48,11 +47,12 @@ if (typeof window !== "undefined" && window.ethereum) {
   // Если в браузере – используем MetaMask
   const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
   signer = web3Provider.getSigner();
-  // Запрашиваем доступ, если ещё не получен
+  // Запрашиваем доступ к аккаунтам
   window.ethereum.request({ method: "eth_requestAccounts" }).catch((err) => {
     console.error("Ошибка при запросе доступа к MetaMask:", err);
   });
-} else if (process.env.PRIVATE_KEY) {
+} else if (typeof process !== "undefined" && process.env && process.env.PRIVATE_KEY) {
+  // Для серверных скриптов: используем PRIVATE_KEY из переменных окружения
   try {
     signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
   } catch (err) {
