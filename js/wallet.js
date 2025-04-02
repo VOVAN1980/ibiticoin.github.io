@@ -42,8 +42,17 @@ const providerOptions = {
   }
 };
 
-// Инициализируем Web3Modal через глобальный объект
-const web3Modal = new window.Web3Modal({
+// Явно получаем конструктор Web3Modal из глобального объекта
+const Web3ModalConstructor =
+  window.Web3Modal && window.Web3Modal.default
+    ? window.Web3Modal.default
+    : window.Web3Modal;
+
+if (!Web3ModalConstructor) {
+  console.error("Web3Modal не загружен. Проверьте подключение библиотеки.");
+}
+
+const web3Modal = new Web3ModalConstructor({
   cacheProvider: false,
   providerOptions
 });
@@ -67,7 +76,6 @@ async function connectWallet() {
     }
     console.log("Подключен аккаунт:", selectedAccount);
     
-    // Подписка на изменение аккаунтов
     provider.on("accountsChanged", (accounts) => {
       if (accounts.length === 0) {
         disconnectWallet();
@@ -77,14 +85,12 @@ async function connectWallet() {
       }
     });
     
-    // Подписка на событие отключения
     provider.on("disconnect", () => {
       disconnectWallet();
     });
     
   } catch (error) {
     console.error("Ошибка подключения кошелька:", error);
-    // Если пользователь отменил подключение, можно показать сообщение
     alert("Вы отклонили подключение кошелька. Пожалуйста, нажмите 'Подключить кошелек' для авторизации.");
   }
 }
