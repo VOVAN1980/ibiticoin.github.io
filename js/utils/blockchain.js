@@ -1,8 +1,11 @@
-import { ethers } from "hardhat";
-import configData from "./config.js";
-import IBITIcoinAbi from "./js/abis/IBITIcoin.js";
+// blockchain.js (js/utils/blockchain.js)
 
-// Выбираем параметры сети: если NODE_ENV равен "production" и конфигурация mainnet задана, используем её; иначе – testnet.
+// Импортируем ethers из CDN (ES-модульная версия)
+import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
+import configData from "../config.js";
+import IBITIcoinAbi from "../abis/IBITIcoin.js";
+
+// Выбираем параметры сети: если NODE_ENV равен "production" и есть mainnet, используем его; иначе testnet.
 const network =
   process.env.NODE_ENV === "production" && configData.mainnet
     ? configData.mainnet
@@ -13,7 +16,7 @@ if (!network.rpcUrl || !network.contracts.IBITI_TOKEN_ADDRESS) {
   throw new Error("Некорректная конфигурация сети в config.js");
 }
 
-// Создаем провайдер на основе RPC URL
+// Создаем провайдер
 let provider;
 try {
   provider = new ethers.providers.JsonRpcProvider(network.rpcUrl);
@@ -37,6 +40,7 @@ async function checkNetwork() {
     console.error("Ошибка при проверке сети:", err);
   }
 }
+checkNetwork();
 
 // Инициализируем signer
 let signer;
@@ -44,12 +48,11 @@ if (typeof window !== "undefined" && window.ethereum) {
   // Если в браузере – используем MetaMask
   const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
   signer = web3Provider.getSigner();
-  // Рекомендуется запросить разрешение на доступ к аккаунтам, если это еще не сделано
+  // Запрашиваем доступ, если ещё не получен
   window.ethereum.request({ method: "eth_requestAccounts" }).catch((err) => {
     console.error("Ошибка при запросе доступа к MetaMask:", err);
   });
 } else if (process.env.PRIVATE_KEY) {
-  // Для серверных скриптов используем PRIVATE_KEY из переменных окружения
   try {
     signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
   } catch (err) {
@@ -60,9 +63,6 @@ if (typeof window !== "undefined" && window.ethereum) {
   throw new Error("Signer не определен: нет MetaMask и PRIVATE_KEY не указан");
 }
 
-// Проверяем сеть сразу после создания signer
-checkNetwork();
-
 // Создаем экземпляр контракта IBITIcoin
 const ibitiContract = new ethers.Contract(
   network.contracts.IBITI_TOKEN_ADDRESS,
@@ -70,5 +70,5 @@ const ibitiContract = new ethers.Contract(
   signer
 );
 
-// Экспортируем провайдер, signer, контракт и параметры сети для использования в других модулях
+// Экспортируем провайдер, signer, контракт и настройки сети
 export { provider, signer, ibitiContract, network };
