@@ -1,6 +1,7 @@
 /**
  * wallet.js
- * Подключает кошелек через Web3Modal (MetaMask, WalletConnect, и т.д.)
+ * Реализует подключение кошельков через Web3Modal.
+ * Поддерживаются: MetaMask, WalletConnect, Coinbase Wallet, Fortmatic, Torus.
  */
 
 console.log("wallet.js загружен");
@@ -49,7 +50,24 @@ const web3Modal = new (Web3Modal.default || Web3Modal)({
 async function connectWallet() {
   console.log("connectWallet() вызывается");
   try {
-    // Открываем окно выбора кошелька через Web3Modal
+    // Для инжектированных кошельков (например, MetaMask)
+    if (window.ethereum) {
+      if (!window.ethereum.selectedAddress) {
+        console.log("MetaMask не залогинен – запрашиваем аккаунты через eth_requestAccounts");
+        try {
+          await window.ethereum.request({ method: "eth_requestAccounts" });
+        } catch (err) {
+          console.error("Пользователь отклонил запрос eth_requestAccounts:", err);
+          alert("Пожалуйста, разрешите доступ в MetaMask для подключения кошелька.");
+          return;
+        }
+      }
+    } else {
+      alert("Инжектированный кошелек не найден. Пожалуйста, установите MetaMask или используйте другой способ подключения.");
+      return;
+    }
+    
+    console.log("Открываем Web3Modal...");
     provider = await web3Modal.connect();
     console.log("Провайдер получен:", provider);
     
@@ -69,7 +87,6 @@ async function connectWallet() {
     }
     console.log("Подключен аккаунт:", selectedAccount);
     
-    // Обработка смены аккаунтов
     provider.on("accountsChanged", (newAccounts) => {
       console.log("accountsChanged:", newAccounts);
       if (newAccounts.length === 0) {
@@ -80,17 +97,16 @@ async function connectWallet() {
       }
     });
     
-    // Обработка отключения
     provider.on("disconnect", () => {
       console.log("Провайдер отключился");
       disconnectWallet();
     });
     
   } catch (error) {
-    console.error("Ошибка подключения через Web3Modal:", error);
     if (error.message && error.message.includes("User Rejected")) {
       alert("Вы отклонили подключение кошелька. Пожалуйста, нажмите 'Подключить кошелек' для авторизации.");
     }
+    console.error("Ошибка подключения через Web3Modal:", error);
   }
 }
 
