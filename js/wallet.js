@@ -58,7 +58,7 @@ async function connectWallet() {
     
     console.log("Запрашиваем доступ через MetaMask...");
     try {
-      // Запрашиваем доступ через MetaMask напрямую
+      // Запрашиваем доступ напрямую через MetaMask
       await window.ethereum.request({ method: "eth_requestAccounts" });
     } catch (err) {
       if (err.code === -32002) {
@@ -68,7 +68,7 @@ async function connectWallet() {
       }
     }
     
-    // Очистим кэш, чтобы окно выбора появилось всегда
+    // Очистка кэша, чтобы окно выбора появлялось всегда
     await web3Modal.clearCachedProvider();
     
     console.log("Открываем Web3Modal...");
@@ -76,23 +76,21 @@ async function connectWallet() {
     console.log("Провайдер получен:", provider);
     
     const ethersProvider = new ethers.providers.Web3Provider(provider);
-    // Получаем аккаунты (Web3Modal должен уже вызвать eth_requestAccounts внутри)
+    // Запрос списка аккаунтов
     const accounts = await ethersProvider.listAccounts();
     console.log("Найденные аккаунты:", accounts);
-    
     if (accounts.length === 0) {
       console.warn("Пользователь не разрешил доступ или аккаунтов нет");
       return;
     }
-    
     selectedAccount = accounts[0];
+    
     const walletDisplay = document.getElementById("walletAddress");
     if (walletDisplay) {
       walletDisplay.innerText = selectedAccount;
     }
     console.log("Подключен аккаунт:", selectedAccount);
     
-    // Обработка изменения аккаунтов
     provider.on("accountsChanged", (newAccounts) => {
       console.log("accountsChanged:", newAccounts);
       if (newAccounts.length === 0) {
@@ -103,14 +101,16 @@ async function connectWallet() {
       }
     });
     
-    // Обработка отключения
     provider.on("disconnect", () => {
       console.log("Провайдер отключился");
       disconnectWallet();
     });
     
   } catch (error) {
-    console.error("Ошибка подключения кошелька:", error);
+    if (error.message && error.message.includes("User Rejected")) {
+      alert("Вы отклонили подключение кошелька. Пожалуйста, нажмите 'Подключить кошелек' для авторизации.");
+    }
+    console.error("Ошибка подключения через Web3Modal:", error);
   }
 }
 
