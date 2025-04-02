@@ -49,8 +49,8 @@
     }
   </script>
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  
-  <!-- Подключаем необходимые библиотеки для работы кошельков -->
+
+  <!-- Добавляем необходимые библиотеки для работы кошельков -->
   <script src="https://unpkg.com/@walletconnect/web3-provider/dist/umd/index.min.js"></script>
   <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
   <script src="https://unpkg.com/@coinbase/wallet-sdk/dist/wallet-sdk.umd.min.js"></script>
@@ -186,7 +186,7 @@
     </div>
   </div>
 
-  <!-- Подключаем внешние библиотеки (Ether.js уже подключён выше) -->
+  <!-- Внешние библиотеки -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="https://unpkg.com/web3modal"></script>
   <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
@@ -194,7 +194,7 @@
   <script src="https://unpkg.com/fortmatic/dist/fortmatic.js"></script>
   <script src="https://unpkg.com/torus-embed"></script>
 
-  <!-- Дополнительные скрипты и инициализация AOS -->
+  <!-- Дополнительные скрипты -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
     AOS.init({ once: true });
@@ -240,20 +240,17 @@
       const pageUrl = encodeURIComponent(window.location.href);
       const shareText = encodeURIComponent("Узнайте о будущем цифровых финансов вместе с IBITIcoin!");
 
-      document.getElementById('share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
-      document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?url=${pageUrl}&text=${shareText}`;
-      document.getElementById('share-vk').href = `https://vk.com/share.php?url=${pageUrl}&title=${shareText}`;
-      document.getElementById('share-telegram').href = `https://t.me/share/url?url=${pageUrl}&text=${shareText}`;
-      document.getElementById('share-ok').href = `https://connect.ok.ru/offer?url=${pageUrl}&title=${shareText}`;
-      document.getElementById('share-linkedin').href = `https://www.linkedin.com/shareArticle?mini=true&url=${pageUrl}&title=${shareText}`;
-      document.getElementById('share-weibo').href = `http://service.weibo.com/share/share.php?url=${pageUrl}&title=${shareText}`;
+      document.getElementById('share-facebook').href = https://www.facebook.com/sharer/sharer.php?u=${pageUrl};
+      document.getElementById('share-twitter').href = https://twitter.com/intent/tweet?url=${pageUrl}&text=${shareText};
+      document.getElementById('share-vk').href = https://vk.com/share.php?url=${pageUrl}&title=${shareText};
+      document.getElementById('share-telegram').href = https://t.me/share/url?url=${pageUrl}&text=${shareText};
+      document.getElementById('share-ok').href = https://connect.ok.ru/offer?url=${pageUrl}&title=${shareText};
+      document.getElementById('share-linkedin').href = https://www.linkedin.com/shareArticle?mini=true&url=${pageUrl}&title=${shareText};
+      document.getElementById('share-weibo').href = http://service.weibo.com/share/share.php?url=${pageUrl}&title=${shareText};
     });
   </script>
   
   <!-- Подключаем основной скрипт main.js -->
   <script type="module" src="js/main.js"></script>
-  
-  <!-- Подключаем скрипт wallet.js для работы кошельков -->
-  <script src="js/wallet.js"></script>
 </body>
 </html>
