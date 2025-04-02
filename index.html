@@ -204,12 +204,6 @@
     })();
   </script>
   
-  <!-- Подключаем файл nft.js для работы с NFT -->
-  <script type="module" src="js/nft.js"></script>
-  
-  <!-- Подключаем файл wallet.js -->
-  <script src="js/wallet.js"></script>
-  
   <!-- Динамическая генерация ссылок для шаринга -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -239,20 +233,13 @@
       const pageUrl = encodeURIComponent(window.location.href);
       const shareText = encodeURIComponent("Узнайте о будущем цифровых финансов вместе с IBITIcoin!");
 
-      document.getElementById('share-facebook').href = 
-        `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
-      document.getElementById('share-twitter').href = 
-        `https://twitter.com/intent/tweet?url=${pageUrl}&text=${shareText}`;
-      document.getElementById('share-vk').href = 
-        `https://vk.com/share.php?url=${pageUrl}&title=${shareText}`;
-      document.getElementById('share-telegram').href = 
-        `https://t.me/share/url?url=${pageUrl}&text=${shareText}`;
-      document.getElementById('share-ok').href = 
-        `https://connect.ok.ru/offer?url=${pageUrl}&title=${shareText}`;
-      document.getElementById('share-linkedin').href = 
-        `https://www.linkedin.com/shareArticle?mini=true&url=${pageUrl}&title=${shareText}`;
-      document.getElementById('share-weibo').href = 
-        `http://service.weibo.com/share/share.php?url=${pageUrl}&title=${shareText}`;
+      document.getElementById('share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+      document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?url=${pageUrl}&text=${shareText}`;
+      document.getElementById('share-vk').href = `https://vk.com/share.php?url=${pageUrl}&title=${shareText}`;
+      document.getElementById('share-telegram').href = `https://t.me/share/url?url=${pageUrl}&text=${shareText}`;
+      document.getElementById('share-ok').href = `https://connect.ok.ru/offer?url=${pageUrl}&title=${shareText}`;
+      document.getElementById('share-linkedin').href = `https://www.linkedin.com/shareArticle?mini=true&url=${pageUrl}&title=${shareText}`;
+      document.getElementById('share-weibo').href = `http://service.weibo.com/share/share.php?url=${pageUrl}&title=${shareText}`;
     });
   </script>
   
