@@ -1,39 +1,36 @@
 // Импортируем ethers из CDN (ESM-версия)
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
 
-// Импорт конфигурации и ABI
+// Импорт конфигурации (config.js находится в корне, поэтому поднимаемся на один уровень)
 import config from "../config.js";
+
+// Импорт ABI для NFT-контракта (убедитесь, что файл ABI преобразован в модульный JS-файл)
 import nftAbi from "./abis/IBITINFT.js";
 
-// Проверка на наличие MetaMask
-if (!window.ethereum) {
-  console.warn("MetaMask не обнаружен. NFT-модуль не активен.");
-} else {
-  const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-  const signer = provider.getSigner();
+// Создаем провайдер и signer через ethers.js
+const provider = new ethers.providers.Web3Provider(window.ethereum);
+const signer = provider.getSigner();
 
-  // NFT контракт
-  const nftContract = new ethers.Contract(
-    config.contracts.IBITI_NFT_ADDRESS,
-    nftAbi,
-    signer
-  );
+// Создаем экземпляр контракта NFT, используя адрес из config.js
+const nftContract = new ethers.Contract(
+  config.contracts.IBITI_NFT_ADDRESS, // Адрес NFT-контракта из config.js
+  nftAbi,                             // ABI контракта (модуль .js)
+  signer                              // Signer для отправки транзакций
+);
 
-  // Получение баланса NFT
-  async function getNFTBalance() {
-    try {
-      const address = await signer.getAddress();
-      const balance = await nftContract.balanceOf(address);
-      console.log(`NFT баланс для ${address}:`, balance.toString());
-    } catch (error) {
-      console.error("Ошибка получения NFT баланса:", error);
-    }
+// Функция для получения баланса NFT у подключенного адреса
+async function getNFTBalance() {
+  try {
+    const address = await signer.getAddress();
+    const balance = await nftContract.balanceOf(address);
+    console.log("NFT баланс:", balance.toString());
+  } catch (error) {
+    console.error("Ошибка получения NFT баланса:", error);
   }
-
-  // Запускаем проверку при загрузке
-  getNFTBalance();
-
-  // Экспорт
-  window.nftContract = nftContract;
-  window.getNFTBalance = getNFTBalance;
 }
+
+// Вызываем функцию для проверки баланса при загрузке модуля
+getNFTBalance();
+
+// Экспортируем контракт и функцию, если они потребуются в других модулях
+export { nftContract, getNFTBalance };
