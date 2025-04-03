@@ -24,8 +24,19 @@ async function handlePurchase(amount, productName) {
   });
 
   try {
-    // ⚠️ ПРИМЕР метода, адаптируй под нужный (например, purchaseCoinBNB или mint)
-    const tx = await contract.purchase(amount, productName);
+    let tx;
+    // Пример: если покупается IBITIcoin, используем purchaseCoinToken с USDT
+    if (productName === "IBITIcoin") {
+      // Адрес USDT, как указан в смарт-контракте на BSC Mainnet:
+      const usdtAddress = "0x55d398326f99059fF775485246999027B3197955";
+      // Здесь amount — количество токенов в базовой единице (учтите, что токен имеет 8 десятичных знаков)
+      tx = await contract.purchaseCoinToken(usdtAddress, amount);
+    } else {
+      // Если потребуется другая логика (например, покупка через BNB), можно добавить:
+      // tx = await contract.purchaseCoinBNB({ value: ethers.utils.parseEther(amount.toString()) });
+      throw new Error("Покупка данного продукта не поддерживается через данный метод.");
+    }
+    
     await tx.wait();
 
     Swal.fire({
@@ -57,6 +68,7 @@ let currentProduct = null;
 function openPurchaseModal(productName) {
   currentProduct = productName;
 
+  // Если покупка NFT, перенаправляем на NFT-галерею
   if (productName === 'NFT') {
     window.location.href = 'nft.html';
     return;
@@ -101,4 +113,4 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-console.log("shop.js загружен — готов к покупкам!");
+console.log("shop.js загружен — готов к работе");
