@@ -4,58 +4,28 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Магазин IBITIcoin</title>
-  
-  <!-- Основные метатеги SEO для страницы магазина -->
-  <meta name="description" content="Магазин IBITIcoin – приобретайте эксклюзивные товары, связанные с IBITIcoin, включая NFT.">
-  <meta name="keywords" content="IBITIcoin, магазин, товары, криптовалюта, NFT">
-  
-  <!-- Общий CSS -->
-  <link rel="stylesheet" href="css/style.css">
-  <!-- AOS CSS для анимаций -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
-  
-  <!-- Подключение библиотек для работы кошельков -->
-  <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
-  <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
-  
   <style>
-    /* Навигация верхнего уровня */
-    .top-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #111;
-      padding: 10px 20px;
-    }
-    .top-nav a {
-      color: gold;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .top-nav a:hover {
-      text-decoration: underline;
-    }
-    
-    /* Шапка магазина */
-    .hero-header {
-      text-align: center;
-      padding: 20px;
+    body {
       background: #111;
       color: gold;
-    }
-    .hero-header h1 {
+      font-family: Arial, sans-serif;
       margin: 0;
-      font-size: 2.5em;
+      padding: 0;
+      text-align: center;
     }
-    .hero-header p {
+    header {
+      padding: 20px;
+    }
+    header h1 {
+      font-size: 2.5em;
+      margin: 0;
+    }
+    header p {
       margin: 10px 0 0;
       font-size: 1.2em;
     }
-    
-    /* Секция подключения кошелька */
     .wallet-section {
-      text-align: center;
-      margin: 20px auto;
+      margin: 20px 0;
     }
     .wallet-section button {
       background: gold;
@@ -65,66 +35,51 @@
       border-radius: 5px;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.3s;
-    }
-    .wallet-section button:hover {
-      background: #c0a000;
     }
     .wallet-section #walletAddress {
       margin-top: 10px;
       font-weight: bold;
-      color: gold;
     }
-    
-    /* Секция товаров магазина */
     .shop-items {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
       max-width: 1200px;
-      margin: 40px auto;
+      margin: 20px auto;
       padding: 0 20px;
     }
     .shop-item {
-      background: #111;
+      background: #222;
       border: 1px solid gold;
-      border-radius: 10px;
-      overflow: hidden;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-      transition: transform 0.3s;
-    }
-    .shop-item:hover {
-      transform: scale(1.02);
-    }
-    .shop-item img {
-      width: 100%;
-      display: block;
+      border-radius: 5px;
+      padding: 20px;
     }
     .shop-item h3 {
-      margin: 10px 0;
-      color: gold;
+      margin: 0 0 10px;
       font-size: 1.3em;
     }
     .shop-item p {
-      color: gold;
-      margin: 0 10px 10px;
+      margin: 0 0 10px;
     }
     .shop-item button {
       background: gold;
       color: #000;
       border: none;
       padding: 10px;
-      width: 100%;
+      border-radius: 5px;
       font-weight: bold;
       cursor: pointer;
-      border-radius: 0 0 10px 10px;
-      transition: background 0.3s;
     }
-    .shop-item button:hover {
-      background: #c0a000;
+    footer {
+      padding: 20px;
+      border-top: 1px solid gold;
+      margin-top: 20px;
     }
-    
+    footer a {
+      color: gold;
+      text-decoration: none;
+      font-weight: bold;
+    }
     /* Модальное окно для покупки */
     .modal {
       display: none;
@@ -134,7 +89,6 @@
       top: 0;
       width: 100%;
       height: 100%;
-      overflow: auto;
       background: rgba(0,0,0,0.7);
     }
     .modal-content {
@@ -145,8 +99,6 @@
       width: 90%;
       max-width: 500px;
       border-radius: 10px;
-      color: gold;
-      text-align: center;
       position: relative;
     }
     .modal-content .close {
@@ -174,8 +126,7 @@
       background: #000;
       color: gold;
     }
-    .modal-content button[type="submit"],
-    .modal-content button.cancel {
+    .modal-content button {
       background: gold;
       color: #000;
       border: none;
@@ -183,64 +134,45 @@
       border-radius: 5px;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.3s;
       margin: 0 5px;
-    }
-    .modal-content button[type="submit"]:hover,
-    .modal-content button.cancel:hover {
-      background: #c0a000;
-    }
-    
-    /* Футер магазина */
-    footer {
-      padding: 20px;
-      background: #111;
-      border-top: 2px solid gold;
-      text-align: center;
-      color: gold;
-    }
-    footer p {
-      margin: 0;
     }
   </style>
 </head>
 <body>
-  <!-- Верхняя навигация -->
-  <nav class="top-nav">
-    <a href="index.html">Главная</a>
-    <span>Магазин</span>
-  </nav>
-  
   <!-- Шапка магазина -->
-  <header class="hero-header">
+  <header>
     <h1>Магазин IBITIcoin</h1>
-    <p>Приобретайте эксклюзивные товары и NFT, связанные с IBITIcoin</p>
+    <p>Приобретайте эксклюзивные товары, связанные с IBITIcoin!</p>
   </header>
-
+  
   <!-- Секция подключения кошелька -->
-  <section class="wallet-section">
+  <div class="wallet-section">
     <button id="connectWalletBtn">Подключить кошелек</button>
     <div id="walletAddress"></div>
-  </section>
-
+  </div>
+  
   <!-- Секция товаров магазина -->
   <section class="shop-items">
     <!-- Товар IBITIcoin -->
-    <div class="shop-item" data-aos="fade-up">
-      <img src="img/IBITIcoin.webp" alt="IBITIcoin">
-      <h3>IBITIcoin</h3>
-      <p>Эксклюзивная монета IBITIcoin – надежное вложение в будущее.</p>
+    <div class="shop-item">
+      <h3>Название товара 1 (IBITIcoin)</h3>
+      <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
       <button onclick="openPurchaseModal('IBITIcoin')">Купить</button>
     </div>
     <!-- Товар NFT -->
-    <div class="shop-item" data-aos="fade-up">
-      <img src="img/NFT.webp" alt="NFT">
-      <h3>NFT</h3>
-      <p>Ограниченная коллекция NFT для истинных ценителей цифрового искусства.</p>
+    <div class="shop-item">
+      <h3>Название товара 2 (NFT)</h3>
+      <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
       <button onclick="openPurchaseModal('NFT')">Купить</button>
     </div>
   </section>
-
+  
+  <!-- Футер -->
+  <footer>
+    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
+    <p><a href="index.html">Вернуться на главную</a></p>
+  </footer>
+  
   <!-- Модальное окно для покупки -->
   <div id="purchaseModal" class="modal">
     <div class="modal-content">
@@ -251,38 +183,47 @@
         <input type="number" id="purchaseAmount" name="purchaseAmount" min="1" required>
         <br><br>
         <button type="submit">Подтвердить покупку</button>
-        <button type="button" class="cancel" onclick="closePurchaseModal()">Отмена</button>
+        <button type="button" onclick="closePurchaseModal()">Отмена</button>
       </form>
     </div>
   </div>
-
-  <!-- Футер магазина с кнопкой возврата -->
-  <footer>
-    <p>&copy; 2025 IBITIcoin. Все права защищены.</p>
-    <p><a href="index.html" style="color: gold; text-decoration: none; font-weight: bold;">Вернуться на главную</a></p>
-  </footer>
-
-  <!-- Внешние библиотеки -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-  <script>
-    AOS.init({ once: true });
-  </script>
   
-  <!-- Скрипты магазина и подключения кошелька -->
-  <script type="module" src="js/shop.js"></script>
-  <script src="js/wallet.js"></script>
-  
-  <!-- Скрипты для работы модального окна покупки -->
+  <!-- Скрипты -->
   <script>
+    // Простейшая логика подключения кошелька (через MetaMask)
+    const connectWalletBtn = document.getElementById("connectWalletBtn");
+    const walletAddressDiv = document.getElementById("walletAddress");
+    
+    connectWalletBtn.addEventListener("click", async () => {
+      if (typeof window.ethereum !== "undefined") {
+        try {
+          const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+          walletAddressDiv.textContent = "Кошелек: " + accounts[0];
+        } catch (error) {
+          console.error("Ошибка подключения кошелька", error);
+        }
+      } else {
+        walletAddressDiv.textContent = "MetaMask не найден. Установите расширение MetaMask.";
+      }
+    });
+    
+    // Логика модального окна покупки
     function openPurchaseModal(product) {
-      document.getElementById('purchaseTitle').innerText = 'Покупка ' + product;
-      document.getElementById('purchaseModal').style.display = 'block';
+      document.getElementById("purchaseTitle").innerText = "Покупка " + product;
+      document.getElementById("purchaseModal").style.display = "block";
     }
-  
+    
     function closePurchaseModal() {
-      document.getElementById('purchaseModal').style.display = 'none';
+      document.getElementById("purchaseModal").style.display = "none";
     }
+    
+    // Закрытие модального окна при клике вне его
+    window.addEventListener("click", function(event) {
+      const modal = document.getElementById("purchaseModal");
+      if (event.target === modal) {
+        closePurchaseModal();
+      }
+    });
   </script>
 </body>
 </html>
