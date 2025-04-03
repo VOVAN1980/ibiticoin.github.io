@@ -340,65 +340,10 @@
   <script>
     AOS.init({ once: true });
   </script>
-  <script>
-    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-    (function(){
-      var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-      s1.async = true;
-      s1.src = 'https://embed.tawk.to/67db03deb73265190d550119/1imnoe7rb';
-      s1.charset = 'UTF-8';
-      s1.setAttribute('crossorigin', '*');
-      s0.parentNode.insertBefore(s1, s0);
-    })();
-  </script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const shareModal = document.getElementById('shareModal');
-      const openShareModalBtn = document.getElementById('openShareModal');
-      const closeShareModalBtn = document.getElementById('closeShareModal');
-
-      if (openShareModalBtn) {
-        openShareModalBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          shareModal.style.display = 'block';
-        });
-      }
-
-      if (closeShareModalBtn) {
-        closeShareModalBtn.addEventListener('click', () => {
-          shareModal.style.display = 'none';
-        });
-      }
-
-      window.addEventListener('click', (event) => {
-        if (event.target === shareModal) {
-          shareModal.style.display = 'none';
-        }
-      });
-
-      const pageUrl = encodeURIComponent(window.location.href);
-      const shareText = encodeURIComponent("Узнайте о будущем цифровых финансов вместе с IBITIcoin!");
-
-      document.getElementById('share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
-      document.getElementById('share-twitter').href = `https://twitter.com/intent/tweet?url=${pageUrl}&text=${shareText}`;
-      document.getElementById('share-vk').href = `https://vk.com/share.php?url=${pageUrl}&title=${shareText}`;
-      document.getElementById('share-telegram').href = `https://t.me/share/url?url=${pageUrl}&text=${shareText}`;
-      document.getElementById('share-ok').href = `https://connect.ok.ru/offer?url=${pageUrl}&title=${shareText}`;
-      document.getElementById('share-linkedin').href = `https://www.linkedin.com/shareArticle?mini=true&url=${pageUrl}&title=${shareText}`;
-      document.getElementById('share-weibo').href = `http://service.weibo.com/share/share.php?url=${pageUrl}&title=${shareText}`;
-    });
-  </script>
   
   <!-- Подключаем файлы логики в виде модулей и обычных скриптов -->
   <script type="module" src="js/nft.js"></script>
   <script src="js/wallet.js"></script>
   <script type="module" src="js/shop.js"></script>
-  
-  <!-- Экспорт handlePurchase в глобальное пространство -->
-  <script>
-    if (typeof handlePurchase !== 'undefined') {
-      window.handlePurchase = handlePurchase;
-    }
-  </script>
 </body>
 </html>
