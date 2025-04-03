@@ -2,40 +2,121 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Магазин IBITIcoin</title>
   
-  <!-- Основные метатеги SEO для страницы магазина -->
-  <meta name="description" content="Магазин IBITIcoin – приобретайте эксклюзивные товары, связанные с IBITIcoin.">
-  <meta name="keywords" content="IBITIcoin, магазин, товары, криптовалюта">
+  <!-- Основные метатеги SEO -->
+  <meta name="description" content="IBITIcoin – инновационная криптовалюта для быстрой, безопасной и доступной работы в цифровой экономике.">
+  <meta name="keywords" content="IBITIcoin, криптовалюта, инвестиции, блокчейн, DeFi">
+  <meta name="author" content="IBITIcoin Team">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="IBITIcoin – Будущее цифровых финансов">
+  <meta property="og:description" content="Узнайте, как IBITIcoin делает криптовалюту доступной и безопасной для всех.">
+  <meta property="og:image" content="img/og-image.png">
+  <meta property="og:url" content="index.html">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="IBITIcoin – Будущее цифровых финансов">
+  <meta name="twitter:description" content="Узнайте, как IBITIcoin делает криптовалюту доступной и безопасной для всех.">
+  <meta name="twitter:image" content="img/og-image.png">
   
-  <!-- Общий CSS -->
+  <!-- Подключаем общий CSS -->
   <link rel="stylesheet" href="css/style.css">
-  <!-- AOS CSS для анимаций -->
+  <!-- AOS CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
+  <!-- Google Tag Manager -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T5DF4BLR5S"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-T5DF4BLR5S');
+  </script>
   
-  <!-- Подключение библиотек для работы кошельков -->
+  <!-- Виджет Google Translate -->
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'ru',
+        includedLanguages: 'ru,uk,en,zh-CN,ja,fr,de,pl,es,pt,ko',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+  <!-- Подключаем библиотеки для работы кошельков и уведомлений -->
   <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
   <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <style>
-    /* Шапка магазина */
-    .hero-header {
-      text-align: center;
-      padding: 20px;
-      background: #111;
+    /* --- Угловые кнопки --- */
+    .corner-box {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid gold;
+      border-radius: 5px;
+      padding: 10px 15px;
+      z-index: 999;
+    }
+    .corner-box-left { top: 20px; left: 20px; }
+    .corner-box-left2 { top: 80px; left: 20px; }
+    .corner-box-right {
+      top: 20px; right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid gold;
+      border-radius: 5px;
+      padding: 10px 15px;
+      z-index: 999;
+    }
+    .corner-box-right a {
       color: gold;
+      text-decoration: none;
+      font-weight: bold;
+      margin: 0 5px;
     }
-    .hero-header h1 {
-      margin: 0;
-      font-size: 2.5em;
+    .corner-box-right a:hover { text-decoration: underline; }
+    .corner-box-right-langs {
+      top: 80px; right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid gold;
+      border-radius: 5px;
+      padding: 10px 15px;
+      z-index: 999;
     }
-    .hero-header p {
-      margin: 10px 0 0;
-      font-size: 1.2em;
+    .corner-box-right-langs a {
+      color: gold;
+      text-decoration: none;
+      font-weight: bold;
+      margin: 0 5px;
+    }
+    .corner-box-right-langs a:hover { text-decoration: underline; }
+    @media (max-width: 600px) {
+      .corner-box-right { top: 10px; right: 10px; }
+      .corner-box-right-langs { top: 60px; right: 10px; }
     }
     
-    /* Секция подключения кошелька */
+    /* --- Шапка --- */
+    .hero-header {
+      padding: 15px 20px;
+      text-align: center;
+    }
+    .hero-header h1 {
+      font-size: 3em;
+      color: gold;
+      margin: 0;
+    }
+    .hero-header p {
+      font-size: 1.5em;
+      color: #fff;
+    }
+    
+    /* --- Секция подключения кошелька --- */
     .wallet-section {
       text-align: center;
       margin: 20px auto;
@@ -59,7 +140,7 @@
       color: gold;
     }
     
-    /* Секция товаров магазина */
+    /* --- Секция товаров (shop-items) --- */
     .shop-items {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -108,7 +189,7 @@
       background: #c0a000;
     }
     
-    /* Модальное окно для покупки */
+    /* --- Модальное окно для покупки --- */
     .modal {
       display: none;
       position: fixed;
@@ -174,24 +255,35 @@
       background: #c0a000;
     }
     
-    /* Футер магазина */
+    /* --- Футер --- */
     footer {
       padding: 20px;
-      background: #111;
+      background: rgba(0, 0, 0, 0.8);
       border-top: 2px solid gold;
       text-align: center;
       color: gold;
     }
-    footer p {
-      margin: 0;
+    footer p, footer a {
+      color: gold;
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
     }
   </style>
+  
+  <!-- Импорт конфигурации через ES-модуль -->
+  <script type="module">
+    import config from "./config.js";
+    console.log("Подключаемся к сети:", config.networkName);
+    console.log("RPC URL:", config.rpcUrl);
+    console.log("Адрес IBITIcoin:", config.contracts.IBITI_TOKEN_ADDRESS);
+  </script>
 </head>
 <body>
-  <!-- Шапка магазина -->
   <header class="hero-header">
     <h1>Магазин IBITIcoin</h1>
-    <p>Приобретайте эксклюзивные товары, связанные с IBITIcoin</p>
+    <p>Приобретайте эксклюзивные товары, связанные с IBITIcoin!</p>
   </header>
 
   <!-- Секция подключения кошелька -->
@@ -202,14 +294,20 @@
 
   <!-- Секция товаров магазина -->
   <section class="shop-items">
-    <!-- Пример товара -->
-    <div class="shop-item" data-aos="fade-up">
+    <!-- Товар IBITIcoin (монета) -->
+    <div class="shop-item">
       <img src="img/IBITIcoin.webp" alt="IBITIcoin">
-      <h3>IBITIcoin</h3>
-      <p>Эксклюзивная монета IBITIcoin – надежное вложение в будущее.</p>
+      <h3>Название товара 1 (IBITIcoin)</h3>
+      <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
       <button onclick="openPurchaseModal('IBITIcoin')">Купить</button>
     </div>
-    <!-- Дополнительные товары можно добавить аналогичным блоком -->
+    <!-- Товар NFT -->
+    <div class="shop-item">
+      <img src="img/NFT.webp" alt="NFT">
+      <h3>Название товара 2 (NFT)</h3>
+      <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
+      <button onclick="openPurchaseModal('NFT')">Купить</button>
+    </div>
   </section>
 
   <!-- Модальное окно для покупки -->
@@ -227,32 +325,25 @@
     </div>
   </div>
 
-  <!-- Футер магазина -->
   <footer>
-    <p>&copy; 2025 IBITIcoin. Все права защищены.</p>
+    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
+    <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
   </footer>
 
   <!-- Внешние библиотеки -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
+  <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
+  
+  <!-- Дополнительные скрипты -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
     AOS.init({ once: true });
   </script>
   
-  <!-- Подключаем скрипты магазина -->
-  <script type="module" src="js/shop.js"></script>
+  <!-- Подключаем файлы логики в виде модулей и обычных скриптов -->
+  <script type="module" src="js/nft.js"></script>
   <script src="js/wallet.js"></script>
-  
-  <!-- Скрипты для работы модального окна покупки -->
-  <script>
-    function openPurchaseModal(product) {
-      document.getElementById('purchaseTitle').innerText = 'Покупка ' + product;
-      document.getElementById('purchaseModal').style.display = 'block';
-    }
-  
-    function closePurchaseModal() {
-      document.getElementById('purchaseModal').style.display = 'none';
-    }
-  </script>
+  <script type="module" src="js/shop.js"></script>
 </body>
 </html>
