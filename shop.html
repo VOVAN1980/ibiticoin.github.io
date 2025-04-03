@@ -345,5 +345,47 @@
   <script type="module" src="js/nft.js"></script>
   <script src="js/wallet.js"></script>
   <script type="module" src="js/shop.js"></script>
+  
+  <!-- Интеграция уведомлений SweetAlert для покупки -->
+  <script>
+    // Обработчик отправки формы покупки
+    document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+      const amount = parseInt(document.getElementById('nftAmount').value);
+      // Из заголовка модального окна получаем название товара (ожидается, что заголовок вида "Покупка IBITIcoin" или "Покупка NFT")
+      const productToPurchase = document.getElementById('purchaseTitle').innerText.replace('Покупка ', '');
+      
+      // Проверка, подключён ли кошелек
+      const walletAddressDiv = document.getElementById("walletAddress");
+      if (!walletAddressDiv.textContent || walletAddressDiv.textContent.indexOf("не найден") !== -1) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Кошелек не подключен',
+          text: 'Пожалуйста, подключите кошелек перед покупкой.',
+          confirmButtonText: 'Ок'
+        });
+        return;
+      }
+      
+      try {
+        await handlePurchase(amount, productToPurchase);
+        Swal.fire({
+          icon: 'success',
+          title: 'Ура!',
+          text: 'Покупка успешна, ты стал миллионером! 🎉',
+          timer: 5000,
+          timerProgressBar: true,
+          showConfirmButton: false
+        });
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Ошибка покупки',
+          text: error.message || 'Что-то пошло не так. Попробуйте ещё раз.',
+          confirmButtonText: 'Ок'
+        });
+      }
+    });
+  </script>
 </body>
 </html>
