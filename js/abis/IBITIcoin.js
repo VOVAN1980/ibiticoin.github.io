@@ -133,6 +133,25 @@ export default [
       {
         indexed: true,
         internalType: "address",
+        name: "to",
+        type: "address"
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256"
+      }
+    ],
+    name: "BuybackWithdrawal",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
         name: "buyer",
         type: "address"
       },
@@ -282,6 +301,19 @@ export default [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: "address",
+        name: "newOwner",
+        type: "address"
+      }
+    ],
+    name: "OwnershipSwitchedToDao",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: "address",
         name: "previousOwner",
@@ -295,6 +327,19 @@ export default [
       }
     ],
     name: "OwnershipTransferred",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "newStakingModule",
+        type: "address"
+      }
+    ],
+    name: "StakingModuleUpdated",
     type: "event"
   },
   {
@@ -1462,6 +1507,13 @@ export default [
       }
     ],
     stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [],
+    name: "switchOwnershipToDao",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function"
   },
   {
