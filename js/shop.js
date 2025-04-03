@@ -3,64 +3,102 @@
 import config from "../config.js";
 import contractAbi from "./abis/IBITIcoin.js";
 
-// Создаем провайдера и подписанта через ethers.js
+// Создаём провайдера и signer через ethers.js
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
 
-// Создаем экземпляр контракта, используя адрес из конфигурации
+// Контракт токена
 const contract = new ethers.Contract(
   config.contracts.IBITI_TOKEN_ADDRESS,
   contractAbi,
   signer
 );
 
-// Функция покупки, принимает количество и название продукта
+// Основная функция покупки токена или NFT
 async function handlePurchase(amount, productName) {
   Swal.fire({
     title: 'Ожидание подтверждения...',
-    html: 'Пожалуйста, ожидайте...',
+    html: 'Пожалуйста, подтвердите транзакцию в кошельке',
     allowOutsideClick: false,
-    didOpen: () => {
-      Swal.showLoading();
-    }
+    didOpen: () => Swal.showLoading()
   });
 
   try {
-    // Вызов метода покупки с передачей параметров
+    // ⚠️ ПРИМЕР метода, адаптируй под нужный (например, purchaseCoinBNB или mint)
     const tx = await contract.purchase(amount, productName);
     await tx.wait();
 
     Swal.fire({
       icon: 'success',
-      title: 'Ура!',
-      text: 'Покупка успешна, ты стал миллионером! 🎉',
+      title: 'Покупка успешна!',
+      text: 'Вы стали владельцем!',
       timer: 5000,
-      timerProgressBar: true,
       showConfirmButton: false
     });
   } catch (error) {
     Swal.fire({
       icon: 'error',
-      title: 'Ошибка покупки',
-      text: error.message || 'Что-то пошло не так. Попробуйте ещё раз.',
+      title: 'Ошибка',
+      text: error.message || 'Что-то пошло не так.',
       confirmButtonText: 'Ок'
     });
   }
 }
 
-// Навешиваем обработчик клика, если элемент с id "buyBtn" присутствует
-const buyBtn = document.getElementById('buyBtn');
-if (buyBtn) {
-  buyBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    // Передаем примерные параметры. Измените их по необходимости.
-    handlePurchase(1, 'Product');
-  });
-}
-
-// Экспортируем функцию в глобальное пространство, чтобы можно было вызвать её из HTML
+// Экспортируем в глобальную область
 window.handlePurchase = handlePurchase;
 
-console.log("Используемая сеть:", config.networkName);
-console.log("RPC URL:", config.rpcUrl);
-console.log("Адрес контракта:", config.contracts.IBITI_TOKEN_ADDRESS);
+// ------------------------------
+// Модальное окно покупки
+// ------------------------------
+
+let currentProduct = null;
+
+function openPurchaseModal(productName) {
+  currentProduct = productName;
+
+  if (productName === 'NFT') {
+    window.location.href = 'nft.html';
+    return;
+  }
+
+  document.getElementById('purchaseTitle').innerText = 'Покупка ' + productName;
+  document.getElementById('purchaseModal').style.display = 'block';
+}
+
+function closePurchaseModal() {
+  document.getElementById('purchaseModal').style.display = 'none';
+  document.getElementById('nftAmount').value = '';
+}
+
+window.openPurchaseModal = openPurchaseModal;
+window.closePurchaseModal = closePurchaseModal;
+
+// ------------------------------
+// Обработчик формы покупки
+// ------------------------------
+
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById('purchaseForm');
+  if (form) {
+    form.addEventListener('submit', async function(event) {
+      event.preventDefault();
+      const amount = document.getElementById('nftAmount').value;
+
+      const walletDisplay = document.getElementById("walletAddress");
+      if (!walletDisplay || walletDisplay.innerText.trim() === '' || walletDisplay.innerText.toLowerCase().includes("disconnect")) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Кошелек не подключен',
+          text: 'Сначала подключите кошелек.',
+        });
+        return;
+      }
+
+      closePurchaseModal();
+      await handlePurchase(amount, currentProduct);
+    });
+  }
+});
+
+console.log("shop.js загружен — готов к покупкам!");
