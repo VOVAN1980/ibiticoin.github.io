@@ -3,7 +3,7 @@ console.log("wallet.js загружен");
 let provider = null;
 let selectedAccount = null;
 
-const INFURA_ID = "ВАШ_INFURA_ID"; // Заменить на настоящий
+const INFURA_ID = "1faccf0f1fdc4532ad7a1a38a67ee906"; // Заменить на настоящий
 
 const WalletConnectProviderConstructor =
   window.WalletConnectProvider?.default || window.WalletConnectProvider;
