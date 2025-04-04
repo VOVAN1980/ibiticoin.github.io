@@ -1,4 +1,3 @@
-// js/shop.js
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
 import config from "./config.js";
 import { ibitiTokenAbi } from "./abis/ibitiTokenAbi.js";
@@ -34,13 +33,19 @@ async function handlePurchase(amount, productName) {
 
   try {
     let tx;
+    const decimals = 8;
+    const amountFormatted = ethers.utils.parseUnits(amount.toString(), decimals);
+    const paymentMethod = document.getElementById("paymentMethod")?.value;
 
     if (productName === "IBITIcoin") {
-      const usdtAddress = config.testnet.contracts.ERC20_MOCK_ADDRESS;
-      const decimals = 8;
-      const amountFormatted = ethers.utils.parseUnits(amount.toString(), decimals);
-
-      tx = await ibitiContract.purchaseCoinToken(usdtAddress, amountFormatted);
+      if (paymentMethod === "IBITI") {
+        tx = await ibitiContract.purchaseCoinBNB({ value: amountFormatted });
+      } else if (paymentMethod === "USDT") {
+        const usdtAddress = config.testnet.contracts.ERC20_MOCK_ADDRESS;
+        tx = await ibitiContract.purchaseCoinToken(usdtAddress, amountFormatted);
+      } else {
+        throw new Error("Выберите способ оплаты.");
+      }
     } else {
       throw new Error("Покупка данного продукта не поддерживается.");
     }
@@ -63,7 +68,6 @@ async function handlePurchase(amount, productName) {
     });
   }
 }
-
 
 window.handlePurchase = handlePurchase;
 
