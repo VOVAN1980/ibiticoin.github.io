@@ -1,21 +1,18 @@
-// Импортируем ethers из CDN (ESM-версия)
+// js/nft.js
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
-
-// Импорт конфигурации и ABI
 import config from "../config.js";
-import nftAbi from "./abis/IBITINFT.js";
+import { ibitiNftAbi } from "./abis/IBITINFT.js";
 
-// Проверка на наличие MetaMask
+// Проверка MetaMask
 if (!window.ethereum) {
   console.warn("MetaMask не обнаружен. NFT-модуль не активен.");
 } else {
   const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
   const signer = provider.getSigner();
 
-  // NFT контракт
   const nftContract = new ethers.Contract(
-    config.contracts.IBITI_NFT_ADDRESS,
-    nftAbi,
+    config.testnet.contracts.IBITI_NFT_ADDRESS,
+    ibitiNftAbi,
     signer
   );
 
@@ -24,16 +21,16 @@ if (!window.ethereum) {
     try {
       const address = await signer.getAddress();
       const balance = await nftContract.balanceOf(address);
-      console.log(`NFT баланс для ${address}:`, balance.toString());
+      console.log(`NFT-баланс (${address}): ${balance.toString()}`);
     } catch (error) {
-      console.error("Ошибка получения NFT баланса:", error);
+      console.error("Ошибка получения баланса NFT:", error);
     }
   }
 
-  // Запускаем проверку при загрузке
+  // При загрузке
   getNFTBalance();
 
-  // Экспорт
+  // Глобальный экспорт (для кнопок, отладки и т.д.)
   window.nftContract = nftContract;
   window.getNFTBalance = getNFTBalance;
 }
