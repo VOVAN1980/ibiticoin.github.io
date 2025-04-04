@@ -126,3 +126,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 console.log("✅ shop.js загружен");
+
+// Активация кнопки после выбора способа оплаты
+document.getElementById('paymentToken').addEventListener('change', function () {
+  const btn = document.getElementById('confirmBtn');
+  btn.disabled = this.value === "";
+});
