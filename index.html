@@ -278,10 +278,16 @@
   <!-- wallet.js должен инициализировать window.saleManager -->
   <script src="js/wallet.js"></script>
 
-  <!-- Скрипт с функциями (НЕ type=module), чтобы они были в глобальной области -->
-  <script>
-    let selectedDiscount = 0;
-    let nftUriPrefix = \"ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/\";
+  <!-- Скрипт с функциями -->
+<script>
+  let selectedDiscount = 0;
+  // убери все слеши перед кавычками, просто:
+  let nftUriPrefix = "ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/";
+  
+  function openMintModal() {
+    // ...
+  }
+</script>
 
     function openMintModal(discount, title) {
       selectedDiscount = discount;
