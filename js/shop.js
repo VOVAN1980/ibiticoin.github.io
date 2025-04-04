@@ -1,42 +1,38 @@
-// shop.js
-
+// js/shop.js
+import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
 import config from "../config.js";
-import contractAbi from "./abis/IBITIcoin.js";
+import { ibitiTokenAbi } from "./abis/ibitiTokenAbi.js";
 
-// Создаём провайдера и signer через ethers.js
+// Провайдер и signer
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 const signer = provider.getSigner();
 
-// Контракт токена
-const contract = new ethers.Contract(
-  config.contracts.IBITI_TOKEN_ADDRESS,
-  contractAbi,
+// Контракт IBITIcoin
+const ibitiContract = new ethers.Contract(
+  config.testnet.contracts.IBITI_TOKEN_ADDRESS,
+  ibitiTokenAbi,
   signer
 );
 
-// Основная функция покупки токена или NFT
+// Покупка токенов
 async function handlePurchase(amount, productName) {
   Swal.fire({
     title: 'Ожидание подтверждения...',
-    html: 'Пожалуйста, подтвердите транзакцию в кошельке',
+    html: 'Подтвердите транзакцию в кошельке',
     allowOutsideClick: false,
     didOpen: () => Swal.showLoading()
   });
 
   try {
     let tx;
-    // Пример: если покупается IBITIcoin, используем purchaseCoinToken с USDT
+
     if (productName === "IBITIcoin") {
-      // Адрес USDT, как указан в смарт-контракте на BSC Mainnet:
-      const usdtAddress = "0x55d398326f99059fF775485246999027B3197955";
-      // Здесь amount — количество токенов в базовой единице (учтите, что токен имеет 8 десятичных знаков)
-      tx = await contract.purchaseCoinToken(usdtAddress, amount);
+      const usdtAddress = "0x55d398326f99059fF775485246999027B3197955"; // USDT mainnet
+      tx = await ibitiContract.purchaseCoinToken(usdtAddress, amount);
     } else {
-      // Если потребуется другая логика (например, покупка через BNB), можно добавить:
-      // tx = await contract.purchaseCoinBNB({ value: ethers.utils.parseEther(amount.toString()) });
-      throw new Error("Покупка данного продукта не поддерживается через данный метод.");
+      throw new Error("Покупка данного продукта не поддерживается.");
     }
-    
+
     await tx.wait();
 
     Swal.fire({
@@ -56,19 +52,17 @@ async function handlePurchase(amount, productName) {
   }
 }
 
-// Экспортируем в глобальную область
 window.handlePurchase = handlePurchase;
 
-// ------------------------------
-// Модальное окно покупки
-// ------------------------------
+// ----------------------
+// Модальное окно
+// ----------------------
 
 let currentProduct = null;
 
 function openPurchaseModal(productName) {
   currentProduct = productName;
 
-  // Если покупка NFT, перенаправляем на NFT-галерею
   if (productName === 'NFT') {
     window.location.href = 'nft.html';
     return;
@@ -86,9 +80,9 @@ function closePurchaseModal() {
 window.openPurchaseModal = openPurchaseModal;
 window.closePurchaseModal = closePurchaseModal;
 
-// ------------------------------
-// Обработчик формы покупки
-// ------------------------------
+// ----------------------
+// Обработчик формы
+// ----------------------
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById('purchaseForm');
@@ -113,4 +107,4 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-console.log("shop.js загружен — готов к работе");
+console.log("✅ shop.js загружен");
