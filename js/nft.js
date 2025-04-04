@@ -1,7 +1,7 @@
 // js/nft.js
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
 import config from "./config.js";
-import { ibitiNftAbi } from "./abis/IBITINFT.js";
+import { ibitiNftAbi } from "./abis/ibitiNftAbi.js";
 
 // Определяем активную сеть
 const netConfig = config.testnet ?? config;
