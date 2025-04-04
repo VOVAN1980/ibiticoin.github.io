@@ -1,6 +1,6 @@
 // js/shop.js
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
-import { config } from "./config.js";
+import config from "./config.js";
 import { ibitiTokenAbi } from "./abis/ibitiTokenAbi.js";
 
 // Провайдер и signer
