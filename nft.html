@@ -156,14 +156,16 @@
   <section class="nft-gallery">
     <!-- 1% -->
     <div class="nft-item">
-      <img src="img/Creation.webp" alt="Creation 1%" onclick="openMintModal(1, 'Creation 1%')" />
+      <img src="img/Creation.webp" alt="Creation 1%"
+           onclick="openMintModal(1, 'Creation 1%')" />
       <div class="rarity-label">Creation 1%</div>
       <a href="#" class="buy-button" onclick="openMintModal(1, 'Creation 1%')">Купить</a>
     </div>
 
     <!-- 3% -->
     <div class="nft-item">
-      <img src="img/Awakening_2.webp" alt="Awakening 3%" onclick="openMintModal(3, 'Awakening 3%')" />
+      <img src="img/Awakening_2.webp" alt="Awakening 3%"
+           onclick="openMintModal(3, 'Awakening 3%')" />
       <div class="rarity-label">Awakening 3%</div>
       <a href="#" class="buy-button" onclick="openMintModal(3, 'Awakening 3%')">Купить</a>
     </div>
@@ -275,10 +277,10 @@
   <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
   <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
 
-  <!-- wallet.js должен инициализировать window.saleManager -->
+  <!-- wallet.js: создает window.saleManager -->
   <script src="js/wallet.js"></script>
 
-  <!-- Скрипт с функциями (НЕ type=module), чтобы они были в глобальной области -->
+  <!-- Скрипт с функциями -->
   <script>
     let selectedDiscount = 0;
     let nftUriPrefix = \"ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/\";
@@ -288,14 +290,14 @@
       document.getElementById('nftTitle').innerText = title;
       document.getElementById('discountPercent').innerText = discount;
 
-      // Проверяем, подключён ли кошелёк
+      // Проверка кошелька
       const addr = document.getElementById('walletAddress').innerText;
       if (!addr || addr.toLowerCase().includes('disconnected')) {
         alert('Кошелёк не подключён!\nСначала подключите кошелёк, затем покупайте NFT.');
         return;
       }
 
-      // Загружаем цены
+      // Грузим цены
       document.getElementById('mintStatus').innerText = '';
       window.saleManager.getCurrentIBITIPrice(discount)
         .then(ibitiPrice => {
@@ -308,7 +310,6 @@
 
       window.saleManager.getCurrentUSDTPrice(discount)
         .then(usdtPrice => {
-          // Предположим тоже 1e8 decimals
           document.getElementById('priceUSDT').innerText = (usdtPrice / 1e8).toFixed(4);
         })
         .catch(err => {
@@ -352,4 +353,3 @@
 
 </body>
 </html>
-
