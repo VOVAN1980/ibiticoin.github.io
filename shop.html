@@ -331,20 +331,21 @@
   </footer>
 
   <!-- Внешние библиотеки -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
-  <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
-  
-  <!-- Дополнительные скрипты -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-  <script>
-    AOS.init({ once: true });
-  </script>
-  
-  <!-- Подключаем файлы логики в виде модулей и обычных скриптов -->
-  <script type="module" src="js/nft.js"></script>
-  <script src="js/wallet.js"></script>
-  <script type="module" src="js/shop.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
+<script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
+
+<!-- Дополнительные библиотеки -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+  AOS.init({ once: true });
+</script>
+
+<!-- Скрипты проекта (все должны быть модулями, если используют import) -->
+<script type="module" src="js/config.js"></script>
+<script type="module" src="js/wallet.js"></script>
+<script type="module" src="js/nft.js"></script>
+<script type="module" src="js/shop.js"></script>
   
   <!-- Интеграция уведомлений SweetAlert для покупки -->
   <script>
