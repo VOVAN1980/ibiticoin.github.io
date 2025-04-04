@@ -1,4 +1,4 @@
-export default [
+export const [
   {
     inputs: [],
     stateMutability: "nonpayable",
@@ -78,12 +78,106 @@ export default [
     inputs: [
       {
         indexed: false,
+        internalType: "address",
+        name: "daoModule",
+        type: "address"
+      }
+    ],
+    name: "DAOModuleSet",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "uint256",
         name: "_tokenId",
         type: "uint256"
       }
     ],
     name: "MetadataUpdate",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "to",
+        type: "address"
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256"
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "discountPercent",
+        type: "uint256"
+      },
+      {
+        indexed: false,
+        internalType: "enum NFTDiscount.NFTLevel",
+        name: "level",
+        type: "uint8"
+      }
+    ],
+    name: "NFTMinted",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256"
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "from",
+        type: "address"
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "to",
+        type: "address"
+      }
+    ],
+    name: "NFTTransferred",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "user",
+        type: "address"
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256"
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "discount",
+        type: "uint256"
+      }
+    ],
+    name: "NFTUsed",
     type: "event"
   },
   {
@@ -103,6 +197,25 @@ export default [
       }
     ],
     name: "OwnershipTransferred",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "enum NFTDiscount.NFTLevel",
+        name: "level",
+        type: "uint8"
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "newCap",
+        type: "uint256"
+      }
+    ],
+    name: "SupplyCapUpdated",
     type: "event"
   },
   {
@@ -131,12 +244,8 @@ export default [
     type: "event"
   },
   {
-    stateMutability: "payable",
-    type: "fallback"
-  },
-  {
     inputs: [],
-    name: "COOLDOWN",
+    name: "EPIC_COOLDOWN",
     outputs: [
       {
         internalType: "uint256",
@@ -148,16 +257,42 @@ export default [
     type: "function"
   },
   {
-    inputs: [
+    inputs: [],
+    name: "LEGENDARY_COOLDOWN",
+    outputs: [
       {
-        internalType: "address",
-        name: "token",
-        type: "address"
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
       }
     ],
-    name: "addSupportedPaymentToken",
-    outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [],
+    name: "NORMAL_COOLDOWN",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [],
+    name: "RARE_COOLDOWN",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
     type: "function"
   },
   {
@@ -198,16 +333,65 @@ export default [
     type: "function"
   },
   {
+    inputs: [],
+    name: "daoModule",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
-        name: "tokenId",
+        name: "",
         type: "uint256"
       }
     ],
-    name: "burn",
-    outputs: [],
-    stateMutability: "nonpayable",
+    name: "discountData",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "discountPercent",
+        type: "uint256"
+      },
+      {
+        internalType: "enum NFTDiscount.NFTLevel",
+        name: "level",
+        type: "uint8"
+      },
+      {
+        internalType: "uint256",
+        name: "lastTransferTime",
+        type: "uint256"
+      },
+      {
+        internalType: "uint256",
+        name: "purchaseTime",
+        type: "uint256"
+      },
+      {
+        internalType: "bool",
+        name: "used",
+        type: "bool"
+      },
+      {
+        internalType: "uint256",
+        name: "usageCount",
+        type: "uint256"
+      },
+      {
+        internalType: "uint256",
+        name: "lastUsageReset",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
     type: "function"
   },
   {
@@ -254,51 +438,60 @@ export default [
     type: "function"
   },
   {
-    inputs: [],
-    name: "lastPriceUpdate",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
     inputs: [
       {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    name: "lastTransferTime",
-    outputs: [
+        internalType: "address",
+        name: "to",
+        type: "address"
+      },
       {
         internalType: "uint256",
-        name: "",
+        name: "discountPercent",
         type: "uint256"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
+      },
       {
         internalType: "string",
-        name: "",
+        name: "tokenURI",
         type: "string"
       }
     ],
-    name: "mintedURIs",
+    name: "mint",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "to",
+        type: "address"
+      },
+      {
+        internalType: "string",
+        name: "tokenURI",
+        type: "string"
+      }
+    ],
+    name: "mintPandora",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "enum NFTDiscount.NFTLevel",
+        name: "",
+        type: "uint8"
+      }
+    ],
+    name: "mintedCount",
     outputs: [
       {
-        internalType: "bool",
+        internalType: "uint256",
         name: "",
-        type: "bool"
+        type: "uint256"
       }
     ],
     stateMutability: "view",
@@ -319,7 +512,7 @@ export default [
   },
   {
     inputs: [],
-    name: "nftPrice",
+    name: "nextTokenId",
     outputs: [
       {
         internalType: "uint256",
@@ -360,69 +553,6 @@ export default [
       }
     ],
     stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "priceGrowthRate",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "priceUpdateInterval",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "tokenURI",
-        type: "string"
-      },
-      {
-        internalType: "address",
-        name: "_paymentToken",
-        type: "address"
-      }
-    ],
-    name: "purchaseNFT",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    stateMutability: "payable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "token",
-        type: "address"
-      }
-    ],
-    name: "removeSupportedPaymentToken",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function"
   },
   {
@@ -504,48 +634,48 @@ export default [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_newPrice",
-        type: "uint256"
-      }
-    ],
-    name: "setNFTPrice",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_interval",
-        type: "uint256"
-      },
-      {
-        internalType: "uint256",
-        name: "_growthRate",
-        type: "uint256"
-      }
-    ],
-    name: "setPriceParameters",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
         internalType: "address",
-        name: "",
+        name: "_daoModule",
         type: "address"
       }
     ],
-    name: "supportedPaymentTokens",
+    name: "setDAOModule",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "enum NFTDiscount.NFTLevel",
+        name: "level",
+        type: "uint8"
+      },
+      {
+        internalType: "uint256",
+        name: "newCap",
+        type: "uint256"
+      }
+    ],
+    name: "setSupplyCap",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "enum NFTDiscount.NFTLevel",
+        name: "",
+        type: "uint8"
+      }
+    ],
+    name: "supplyCap",
     outputs: [
       {
-        internalType: "bool",
+        internalType: "uint256",
         name: "",
-        type: "bool"
+        type: "uint256"
       }
     ],
     stateMutability: "view",
@@ -639,8 +769,14 @@ export default [
     type: "function"
   },
   {
-    inputs: [],
-    name: "updateNFTPrice",
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256"
+      }
+    ],
+    name: "useDiscount",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"
@@ -651,45 +787,11 @@ export default [
         internalType: "uint256",
         name: "tokenId",
         type: "uint256"
-      },
-      {
-        internalType: "string",
-        name: "newTokenURI",
-        type: "string"
       }
     ],
-    name: "updateTokenURI",
+    name: "usePandora",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "tokenAddress",
-        type: "address"
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256"
-      }
-    ],
-    name: "withdrawERC20",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "withdrawNative",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    stateMutability: "payable",
-    type: "receive"
   }
 ]
