@@ -16,6 +16,15 @@ const ibitiContract = new ethers.Contract(
 
 // Покупка токенов
 async function handlePurchase(amount, productName) {
+  if (!window.ethereum) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'MetaMask не найден',
+      text: 'Установите MetaMask для выполнения покупки.',
+    });
+    return;
+  }
+
   Swal.fire({
     title: 'Ожидание подтверждения...',
     html: 'Подтвердите транзакцию в кошельке',
@@ -27,8 +36,11 @@ async function handlePurchase(amount, productName) {
     let tx;
 
     if (productName === "IBITIcoin") {
-      const usdtAddress = "0x55d398326f99059fF775485246999027B3197955"; // USDT mainnet
-      tx = await ibitiContract.purchaseCoinToken(usdtAddress, amount);
+      const usdtAddress = config.testnet.contracts.ERC20_MOCK_ADDRESS;
+      const decimals = 8;
+      const amountFormatted = ethers.utils.parseUnits(amount.toString(), decimals);
+
+      tx = await ibitiContract.purchaseCoinToken(usdtAddress, amountFormatted);
     } else {
       throw new Error("Покупка данного продукта не поддерживается.");
     }
@@ -38,7 +50,7 @@ async function handlePurchase(amount, productName) {
     Swal.fire({
       icon: 'success',
       title: 'Покупка успешна!',
-      text: 'Вы стали владельцем!',
+      text: 'Ура!!! вы стали миллионером!',
       timer: 5000,
       showConfirmButton: false
     });
@@ -51,6 +63,7 @@ async function handlePurchase(amount, productName) {
     });
   }
 }
+
 
 window.handlePurchase = handlePurchase;
 
