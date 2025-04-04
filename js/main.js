@@ -1,46 +1,66 @@
-// Импортируем модуль blockchain.js из папки utils
-import { provider, signer, ibitiContract, network } from "./utils/blockchain.js";
+// js/main.js
 
-console.log("Подключены к сети:", network.networkName);
+import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
+import config from "../config.js";
+import { ibitiTokenAbi } from "./abis/ibitiTokenAbi.js";
 
-// Функция для проверки общего предложения токенов
+// Провайдер и signer
+const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+const signer = provider.getSigner();
+
+// Контракт токена
+const ibitiContract = new ethers.Contract(
+  config.testnet.contracts.IBITI_TOKEN_ADDRESS,
+  ibitiTokenAbi,
+  signer
+);
+
+// Лог сетевого подключения
+provider.getNetwork().then(network => {
+  console.log("Подключены к сети:", network.name);
+});
+
+// Получение общего предложения
 async function checkTotalSupply() {
   try {
     const supply = await ibitiContract.totalSupply();
-    console.log("Общее предложение:", supply.toString());
+    console.log("Общее предложение токенов:", supply.toString());
   } catch (err) {
     console.error("Ошибка получения общего предложения:", err);
   }
 }
-checkTotalSupply();
 
-// Функция для покупки токенов
+// Покупка токенов за BNB
 async function buyTokens() {
   try {
     const amountInput = document.getElementById("buyAmount");
-    const amountBNB = amountInput.value;
+    const amountBNB = amountInput?.value;
     if (!amountBNB) {
       alert("Введите сумму для покупки");
       return;
     }
-    // Используем ethers, который уже подключен через CDN
+
     const value = ethers.parseEther(amountBNB);
     const tx = await ibitiContract.purchaseCoinBNB({ value });
     console.log("Транзакция отправлена:", tx.hash);
     await tx.wait();
-    console.log("Покупка прошла успешно!");
+    console.log("✅ Покупка прошла успешно!");
   } catch (err) {
-    console.error("Ошибка покупки токенов:", err);
+    console.error("❌ Ошибка при покупке токенов:", err);
   }
 }
 
-// Привязываем функцию к кнопке покупки, если элемент существует
-const buyBtn = document.getElementById("buyBtn");
-if (buyBtn) {
-  buyBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    buyTokens();
-  });
-} else {
-  console.warn("Элемент с id 'buyBtn' не найден.");
-}
+// Привязка к кнопке
+document.addEventListener("DOMContentLoaded", () => {
+  const buyBtn = document.getElementById("buyBtn");
+  if (buyBtn) {
+    buyBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      buyTokens();
+    });
+  } else {
+    console.warn("Кнопка #buyBtn не найдена.");
+  }
+
+  checkTotalSupply();
+});
