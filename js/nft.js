@@ -3,35 +3,87 @@ import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.es
 import config from "../config.js";
 import { ibitiNftAbi } from "./abis/IBITINFT.js";
 
-// Определяем активную сеть (по config)
+// Определяем активную сеть
 const netConfig = config.testnet ?? config;
 
-if (!window.ethereum) {
-  alert("MetaMask не установлен. Установите расширение для работы с NFT.");
-  console.warn("MetaMask не обнаружен. NFT-модуль не активен.");
-} else {
-  const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-  const signer = provider.getSigner();
+let provider, signer, nftContract;
 
-  const nftContract = new ethers.Contract(
+// Проверка MetaMask и инициализация
+async function initNFT() {
+  if (!window.ethereum) {
+    alert("MetaMask не установлен. Установите расширение для работы с NFT.");
+    console.warn("MetaMask не обнаружен. NFT-модуль не активен.");
+    return;
+  }
+
+  provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+  signer = provider.getSigner();
+
+  nftContract = new ethers.Contract(
     netConfig.contracts.IBITI_NFT_ADDRESS,
     ibitiNftAbi,
     signer
   );
 
-  async function getNFTBalance() {
-    try {
-      const address = await signer.getAddress();
-      const balance = await nftContract.balanceOf(address);
-      console.log(`NFT-баланс (${address}): ${balance.toString()}`);
-    } catch (error) {
-      console.error("Ошибка получения баланса NFT:", error);
-    }
-  }
-
-  getNFTBalance();
-
-  // Глобальный экспорт
   window.nftContract = nftContract;
   window.getNFTBalance = getNFTBalance;
+  window.handleNFTPurchase = handleNFTPurchase;
+
+  await getNFTBalance();
 }
+
+// Проверка баланса
+async function getNFTBalance() {
+  try {
+    const address = await signer.getAddress();
+    const balance = await nftContract.balanceOf(address);
+    console.log(`NFT-баланс (${address}): ${balance.toString()}`);
+  } catch (error) {
+    console.error("Ошибка получения баланса NFT:", error);
+  }
+}
+
+// Обработка покупки NFT
+async function handleNFTPurchase(discount, uri) {
+  if (!window.ethereum) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'MetaMask не найден',
+      text: 'Установите MetaMask для выполнения покупки.',
+    });
+    return;
+  }
+
+  Swal.fire({
+    title: 'Ожидание подтверждения...',
+    html: 'Подтвердите транзакцию в кошельке',
+    allowOutsideClick: false,
+    didOpen: () => Swal.showLoading()
+  });
+
+  try {
+    const saleManager = window.saleManager;
+    if (!saleManager) throw new Error("Контракт saleManager не инициализирован");
+
+    const tx = await saleManager.buyNFTWithIBITI(discount, uri);
+    await tx.wait();
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Покупка успешна!',
+      text: 'Вы приобрели NFT.',
+      timer: 5000,
+      showConfirmButton: false
+    });
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Ошибка',
+      text: error.message || 'Что-то пошло не так.',
+      confirmButtonText: 'Ок'
+    });
+  }
+}
+
+// Инициализация при загрузке
+document.addEventListener("DOMContentLoaded", initNFT);
