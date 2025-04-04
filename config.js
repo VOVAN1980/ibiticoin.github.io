@@ -1,4 +1,4 @@
-export const config = {
+const config = {
   testnet: {
     networkName: "BSC Testnet",
     rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
@@ -42,3 +42,5 @@ export const config = {
     }
   }
 };
+
+export default config;
