@@ -1,4 +1,4 @@
-export const IBITINFT = [
+export const ibitiNftAbi = [
   {
     inputs: [],
     stateMutability: "nonpayable",
