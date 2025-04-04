@@ -55,52 +55,6 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <style>
-    /* --- Угловые кнопки --- */
-    .corner-box {
-      position: absolute;
-      background: rgba(0, 0, 0, 0.8);
-      border: 2px solid gold;
-      border-radius: 5px;
-      padding: 10px 15px;
-      z-index: 999;
-    }
-    .corner-box-left { top: 20px; left: 20px; }
-    .corner-box-left2 { top: 80px; left: 20px; }
-    .corner-box-right {
-      top: 20px; right: 20px;
-      background: rgba(0, 0, 0, 0.8);
-      border: 2px solid gold;
-      border-radius: 5px;
-      padding: 10px 15px;
-      z-index: 999;
-    }
-    .corner-box-right a {
-      color: gold;
-      text-decoration: none;
-      font-weight: bold;
-      margin: 0 5px;
-    }
-    .corner-box-right a:hover { text-decoration: underline; }
-    .corner-box-right-langs {
-      top: 80px; right: 20px;
-      background: rgba(0, 0, 0, 0.8);
-      border: 2px solid gold;
-      border-radius: 5px;
-      padding: 10px 15px;
-      z-index: 999;
-    }
-    .corner-box-right-langs a {
-      color: gold;
-      text-decoration: none;
-      font-weight: bold;
-      margin: 0 5px;
-    }
-    .corner-box-right-langs a:hover { text-decoration: underline; }
-    @media (max-width: 600px) {
-      .corner-box-right { top: 10px; right: 10px; }
-      .corner-box-right-langs { top: 60px; right: 10px; }
-    }
-    
     /* --- Шапка --- */
     .hero-header {
       padding: 15px 20px;
@@ -343,43 +297,42 @@
   <!-- Интеграция уведомлений SweetAlert для покупки -->
   <script>
     // Обработчик отправки формы покупки
-    document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
-      event.preventDefault();
-      const amount = parseInt(document.getElementById('nftAmount').value);
-      // Из заголовка модального окна получаем название товара (ожидается, что заголовок вида "Покупка IBITIcoin" или "Покупка NFT")
-      const productToPurchase = document.getElementById('purchaseTitle').innerText.replace('Покупка ', '');
-      
-      // Проверка, подключён ли кошелек
-      const walletAddressDiv = document.getElementById("walletAddress");
-      if (!walletAddressDiv.textContent || walletAddressDiv.textContent.indexOf("не найден") !== -1) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Кошелек не подключен',
-          text: 'Пожалуйста, подключите кошелек перед покупкой.',
-          confirmButtonText: 'Ок'
-        });
-        return;
-      }
-      
-      try {
-        await handlePurchase(amount, productToPurchase);
-        Swal.fire({
-          icon: 'success',
-          title: 'Ура!',
-          text: 'Покупка успешна, ты стал миллионером! 🎉',
-          timer: 5000,
-          timerProgressBar: true,
-          showConfirmButton: false
-        });
-      } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Ошибка покупки',
-          text: error.message || 'Что-то пошло не так. Попробуйте ещё раз.',
-          confirmButtonText: 'Ок'
-        });
-      }
+document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
+  event.preventDefault();
+  const amount = parseInt(document.getElementById('nftAmount').value);
+  const productToPurchase = document.getElementById('purchaseTitle').innerText.replace('Покупка ', '');
+  const paymentToken = document.getElementById('paymentToken').value;
+
+  const walletAddressDiv = document.getElementById("walletAddress");
+  if (!walletAddressDiv.textContent || walletAddressDiv.textContent.indexOf("не найден") !== -1) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Кошелек не подключен',
+      text: 'Пожалуйста, подключите кошелек перед покупкой.',
+      confirmButtonText: 'Ок'
     });
+    return;
+  }
+
+  try {
+    await handlePurchase(amount, productToPurchase, paymentToken);
+    Swal.fire({
+      icon: 'success',
+      title: 'Ура!',
+      text: 'Покупка успешна, ты стал миллионером! 🎉',
+      timer: 5000,
+      timerProgressBar: true,
+      showConfirmButton: false
+    });
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Ошибка покупки',
+      text: error.message || 'Что-то пошло не так. Попробуйте ещё раз.',
+      confirmButtonText: 'Ок'
+    });
+  }
+});
   </script>
 </body>
 </html>
