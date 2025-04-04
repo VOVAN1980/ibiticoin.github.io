@@ -1,4 +1,4 @@
-export const ibitiTokenAbi =
+export const ibitiTokenAbi = [
   {
     inputs: [
       {
