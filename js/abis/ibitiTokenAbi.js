@@ -1005,6 +1005,24 @@ export const [
     type: "function"
   },
   {
+    inputs: [],
+    name: "getLatestPriceData",
+    outputs: [
+      {
+        internalType: "int256",
+        name: "price",
+        type: "int256"
+      },
+      {
+        internalType: "uint256",
+        name: "updatedAt",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
