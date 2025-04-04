@@ -1,17 +1,35 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
   <title>NFT Галерея IBITIcoin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Простой стиль -->
   <style>
+    /* Базовые стили */
     body {
       margin: 0; padding: 0;
       background: #000; font-family: sans-serif;
       color: #fff;
     }
+    /* Уголковые кнопки */
+    .corner-box {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid gold;
+      border-radius: 5px;
+      padding: 10px;
+      z-index: 9999;
+    }
+    .corner-left { top: 20px; left: 20px; }
+    .corner-right { top: 20px; right: 20px; }
+    .corner-box a {
+      color: gold; text-decoration: none; font-weight: bold; margin: 0 5px;
+    }
+    .corner-box a:hover {
+      text-decoration: underline;
+    }
+
     header {
       text-align: center; padding: 20px;
     }
@@ -21,8 +39,9 @@
     header p {
       font-size: 1.1em; margin: 10px auto 0 auto;
       max-width: 900px; line-height: 1.4;
+      color: #ccc;
     }
-    /* Кнопка подключения кошелька */
+
     .wallet-section {
       text-align: center; margin: 20px auto;
     }
@@ -34,12 +53,11 @@
     .wallet-section button:hover {
       background: #c0a000;
     }
-    /* Отображение адреса кошелька */
     #walletAddress {
       margin-top: 10px; font-weight: bold; color: gold;
     }
 
-    /* NFT-галерея */
+    /* Галерея */
     .nft-gallery {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 20px; padding: 40px; max-width: 1200px; margin: 0 auto;
@@ -100,6 +118,7 @@
       margin-top: 15px; min-height: 20px; color: #ffecb3;
     }
 
+    /* Футер */
     footer {
       text-align: center; padding: 20px; background: #111; color: gold;
       border-top: 1px solid gold;
@@ -110,6 +129,14 @@
 </head>
 
 <body>
+
+  <!-- Кнопки в углах -->
+  <div class="corner-box corner-left">
+    <a href="index.html">Вернуться на главную</a>
+  </div>
+  <div class="corner-box corner-right">
+    <a href="shop.html">Магазин</a>
+  </div>
 
   <header>
     <h1>NFT Галерея IBITIcoin</h1>
@@ -125,20 +152,18 @@
     <div id="walletAddress">Disconnected</div>
   </section>
 
-  <!-- Галерея NFT (11 карточек) -->
+  <!-- Галерея из 11 карточек -->
   <section class="nft-gallery">
     <!-- 1% -->
     <div class="nft-item">
-      <img src="img/Creation.webp" alt="Creation 1%"
-           onclick="openMintModal(1, 'Creation 1%')" />
+      <img src="img/Creation.webp" alt="Creation 1%" onclick="openMintModal(1, 'Creation 1%')" />
       <div class="rarity-label">Creation 1%</div>
       <a href="#" class="buy-button" onclick="openMintModal(1, 'Creation 1%')">Купить</a>
     </div>
 
     <!-- 3% -->
     <div class="nft-item">
-      <img src="img/Awakening_2.webp" alt="Awakening 3%"
-           onclick="openMintModal(3, 'Awakening 3%')" />
+      <img src="img/Awakening_2.webp" alt="Awakening 3%" onclick="openMintModal(3, 'Awakening 3%')" />
       <div class="rarity-label">Awakening 3%</div>
       <a href="#" class="buy-button" onclick="openMintModal(3, 'Awakening 3%')">Купить</a>
     </div>
@@ -216,7 +241,7 @@
     </div>
   </section>
 
-  <!-- Модальное окно для покупки NFT -->
+  <!-- Модальное окно -->
   <div id="mintModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeMintModal()">&times;</span>
@@ -229,9 +254,20 @@
     </div>
   </div>
 
+  <!-- Футер -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
-    <p><a href="index.html">Вернуться на главную</a></p>
+    <p>
+      <a href="privacy.html">Политика конфиденциальности</a> |
+      <a href="terms.html">Пользовательское соглашение</a>
+    </p>
+    <p>
+      <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> |
+      <a href="https://t.me/IBITIcoin_chat" target="_blank">Telegram</a> |
+      <a href="https://instagram.com/IBITIcoin_official" target="_blank">Instagram</a> |
+      <a href="https://facebook.com/IBITIcoin" target="_blank">Facebook</a>
+    </p>
+    <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
   </footer>
 
   <!-- Ethers + Web3Modal -->
@@ -239,53 +275,60 @@
   <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
   <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
 
-  <!-- Подключаем wallet.js (должен создавать window.provider / window.saleManager) -->
+  <!-- wallet.js должен инициализировать window.saleManager -->
   <script src="js/wallet.js"></script>
 
-  <!-- Скрипт для modals и покупки NFT -->
+  <!-- Скрипт с функциями (НЕ type=module), чтобы они были в глобальной области -->
   <script>
     let selectedDiscount = 0;
     let nftUriPrefix = \"ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/\";
 
-    async function openMintModal(discount, title) {
+    function openMintModal(discount, title) {
       selectedDiscount = discount;
-      // Название и % скидки в окне
       document.getElementById('nftTitle').innerText = title;
       document.getElementById('discountPercent').innerText = discount;
 
-      // Проверяем, подключён ли кошелек
+      // Проверяем, подключён ли кошелёк
       const addr = document.getElementById('walletAddress').innerText;
       if (!addr || addr.toLowerCase().includes('disconnected')) {
         alert('Кошелёк не подключён!\nСначала подключите кошелёк, затем покупайте NFT.');
         return;
       }
 
-      // Запрашиваем цены в IBITI / USDT
-      try {
-        const ibitiPrice = await window.saleManager.getCurrentIBITIPrice(discount);
-        const usdtPrice = await window.saleManager.getCurrentUSDTPrice(discount);
-        // Условно считаем, что 1e8 decimals
-        document.getElementById('priceIBITI').innerText = (ibitiPrice / 1e8).toFixed(4);
-        document.getElementById('priceUSDT').innerText = (usdtPrice / 1e8).toFixed(4);
-      } catch (e) {
-        console.warn('Ошибка получения цены:', e);
-        document.getElementById('priceIBITI').innerText = '???';
-        document.getElementById('priceUSDT').innerText = '???';
-      }
+      // Загружаем цены
+      document.getElementById('mintStatus').innerText = '';
+      window.saleManager.getCurrentIBITIPrice(discount)
+        .then(ibitiPrice => {
+          document.getElementById('priceIBITI').innerText = (ibitiPrice / 1e8).toFixed(4);
+        })
+        .catch(err => {
+          console.warn('Ошибка getCurrentIBITIPrice:', err);
+          document.getElementById('priceIBITI').innerText = '???';
+        });
+
+      window.saleManager.getCurrentUSDTPrice(discount)
+        .then(usdtPrice => {
+          // Предположим тоже 1e8 decimals
+          document.getElementById('priceUSDT').innerText = (usdtPrice / 1e8).toFixed(4);
+        })
+        .catch(err => {
+          console.warn('Ошибка getCurrentUSDTPrice:', err);
+          document.getElementById('priceUSDT').innerText = '???';
+        });
 
       // Показываем модалку
       document.getElementById('mintModal').style.display = 'block';
-      document.getElementById('mintStatus').innerText = '';
     }
 
     function closeMintModal() {
       document.getElementById('mintModal').style.display = 'none';
+      document.getElementById('mintStatus').innerText = '';
     }
 
     async function buyWithIBITI() {
       try {
         document.getElementById('mintStatus').innerText = 'Отправляем транзакцию...';
-        const uri = nftUriPrefix + selectedDiscount + \".json\";
+        const uri = nftUriPrefix + selectedDiscount + '.json';
         const tx = await window.saleManager.buyNFTWithIBITI(selectedDiscount, uri);
         await tx.wait();
         document.getElementById('mintStatus').innerText = '✅ NFT успешно куплен за IBITI!';
@@ -297,7 +340,7 @@
     async function buyWithUSDT() {
       try {
         document.getElementById('mintStatus').innerText = 'Отправляем транзакцию...';
-        const uri = nftUriPrefix + selectedDiscount + \".json\";
+        const uri = nftUriPrefix + selectedDiscount + '.json';
         const tx = await window.saleManager.buyNFTWithUSDT(selectedDiscount, uri);
         await tx.wait();
         document.getElementById('mintStatus').innerText = '✅ NFT успешно куплен за USDT!';
@@ -309,3 +352,4 @@
 
 </body>
 </html>
+
