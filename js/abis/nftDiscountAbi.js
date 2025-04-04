@@ -1,4 +1,4 @@
-export const [
+export const nftDiscountAbi = [
   {
     inputs: [],
     stateMutability: "nonpayable",
