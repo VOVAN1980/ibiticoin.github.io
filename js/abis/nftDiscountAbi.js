@@ -103,6 +103,25 @@ export const [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: "enum NFTDiscount.NFTLevel",
+        name: "level",
+        type: "uint8"
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "newLimit",
+        type: "uint256"
+      }
+    ],
+    name: "MonthlyLimitUpdated",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: "address",
         name: "to",
@@ -316,6 +335,19 @@ export const [
   {
     inputs: [
       {
+        internalType: "uint256[]",
+        name: "tokenIds",
+        type: "uint256[]"
+      }
+    ],
+    name: "auditAndBurnExpiredNFT",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "owner",
         type: "address"
@@ -441,6 +473,54 @@ export const [
     inputs: [
       {
         internalType: "address",
+        name: "",
+        type: "address"
+      },
+      {
+        internalType: "enum NFTDiscount.NFTLevel",
+        name: "",
+        type: "uint8"
+      }
+    ],
+    name: "lastMintReset",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address"
+      },
+      {
+        internalType: "enum NFTDiscount.NFTLevel",
+        name: "",
+        type: "uint8"
+      }
+    ],
+    name: "lastTransferReset",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "to",
         type: "address"
       },
@@ -487,6 +567,73 @@ export const [
       }
     ],
     name: "mintedCount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "enum NFTDiscount.NFTLevel",
+        name: "",
+        type: "uint8"
+      }
+    ],
+    name: "monthlyLimit",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address"
+      },
+      {
+        internalType: "enum NFTDiscount.NFTLevel",
+        name: "",
+        type: "uint8"
+      }
+    ],
+    name: "monthlyMintCount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address"
+      },
+      {
+        internalType: "enum NFTDiscount.NFTLevel",
+        name: "",
+        type: "uint8"
+      }
+    ],
+    name: "monthlyTransferCount",
     outputs: [
       {
         internalType: "uint256",
@@ -640,6 +787,24 @@ export const [
       }
     ],
     name: "setDAOModule",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "enum NFTDiscount.NFTLevel",
+        name: "level",
+        type: "uint8"
+      },
+      {
+        internalType: "uint256",
+        name: "newLimit",
+        type: "uint256"
+      }
+    ],
+    name: "setMonthlyLimit",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"
