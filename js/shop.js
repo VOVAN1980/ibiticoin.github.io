@@ -36,7 +36,7 @@ async function handlePurchase(amount, productName) {
     let tx;
     const decimals = 8;
     const amountFormatted = ethers.utils.parseUnits(amount.toString(), decimals);
-    const paymentMethod = document.getElementById("paymentMethod")?.value;
+    const paymentMethod = document.getElementById("paymentToken")?.value;
 
     if (productName === "IBITIcoin") {
       if (paymentMethod === "IBITI") {
