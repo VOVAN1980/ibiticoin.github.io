@@ -1,4 +1,3 @@
-// js/wallet.js
 console.log("wallet.js загружен");
 
 // -----------------------------
@@ -23,17 +22,27 @@ import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 // -----------------------------
 // 2) Web3Modal настройка
 // -----------------------------
+// Добавляем настройки для инжектированного провайдера (MetaMask) и WalletConnect
 const WalletConnectProviderConstructor = window.WalletConnectProvider?.default || window.WalletConnectProvider;
 
 const providerOptions = {
+  injected: {
+    display: {
+      name: "MetaMask",
+      description: "Подключитесь через MetaMask"
+    },
+    package: null
+  },
   walletconnect: {
     package: WalletConnectProviderConstructor,
-    options: { infuraId: INFURA_ID }
+    options: {
+      infuraId: INFURA_ID
+    }
   }
 };
 
 const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
-  cacheProvider: false,
+  cacheProvider: false, // Отключаем кэширование, чтобы каждый раз показывался выбор кошелька
   providerOptions
 });
 
@@ -43,6 +52,7 @@ const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
 async function connectWallet() {
   try {
     console.log("Подключение кошелька...");
+    // При каждом вызове будет показано окно выбора
     provider = await web3Modal.connect();
     const web3Provider = new ethers.providers.Web3Provider(provider);
     signer = web3Provider.getSigner();
@@ -62,7 +72,6 @@ async function connectWallet() {
     provider.on("disconnect", () => disconnectWallet());
 
     console.log("Кошелек подключен:", selectedAccount);
-
     await initContracts(web3Provider);
   } catch (err) {
     console.error("Ошибка подключения:", err);
@@ -96,7 +105,7 @@ async function initContracts(web3Provider) {
 }
 
 // -----------------------------
-// 5) Отключение
+// 5) Отключение кошелька
 // -----------------------------
 async function disconnectWallet() {
   if (provider?.close) await provider.close();
@@ -124,4 +133,4 @@ document.addEventListener("DOMContentLoaded", () => {
 // -----------------------------
 // 7) Экспорт
 // -----------------------------
-export { connectWallet, disconnectWallet, provider, signer, selectedAccount };
+export { connectWallet, disconnectWallet, provider, signer };
