@@ -27,6 +27,7 @@ import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 const WalletConnectProviderConstructor = window.WalletConnectProvider?.default || window.WalletConnectProvider;
 
 const providerOptions = {
+  // Injected-провайдер (например, MetaMask)
   injected: {
     display: {
       name: "MetaMask",
@@ -34,6 +35,7 @@ const providerOptions = {
     },
     package: null
   },
+  // WalletConnect v2
   walletconnect: {
     package: WalletConnectProviderConstructor,
     options: {
@@ -50,8 +52,8 @@ const providerOptions = {
 };
 
 const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
-  cacheProvider: false,           // не сохраняем предыдущий выбор
-  disableInjectedProvider: true,  // принудительно отключаем автоматическое подключение встроенного кошелька
+  cacheProvider: false,            // Не сохраняем выбор провайдера
+  disableInjectedProvider: false,  // Включаем Injected-провайдер, чтобы он был доступен для выбора
   providerOptions
 });
 
@@ -61,6 +63,8 @@ const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
 async function connectWallet() {
   try {
     console.log("Подключение кошелька...");
+    // Принудительно очищаем кэш, чтобы окно выбора всегда показывалось
+    web3Modal.clearCachedProvider();
     provider = await web3Modal.connect();
     const web3Provider = new ethers.providers.Web3Provider(provider);
     signer = web3Provider.getSigner();
@@ -73,16 +77,17 @@ async function connectWallet() {
     const walletDisplay = document.getElementById("walletAddress");
     if (walletDisplay) walletDisplay.innerText = selectedAccount;
 
+    // Обработка изменения аккаунтов
     provider.on("accountsChanged", (accs) => {
       if (!accs.length) return disconnectWallet();
       selectedAccount = accs[0];
       if (walletDisplay) walletDisplay.innerText = selectedAccount;
     });
 
+    // Обработка отключения
     provider.on("disconnect", () => disconnectWallet());
 
     console.log("Кошелек подключен:", selectedAccount);
-
     await initContracts(web3Provider);
   } catch (err) {
     console.error("Ошибка подключения:", err);
@@ -129,7 +134,7 @@ async function disconnectWallet() {
 }
 
 // -----------------------------
-// 6) Обработчик кнопки
+// 6) Обработчик кнопки подключения
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
