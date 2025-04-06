@@ -29,10 +29,9 @@ function isMobileDevice() {
 // -----------------------------
 // 3) Web3Modal и WalletConnect v2 настройка
 // -----------------------------
-// Получите свой projectId на https://cloud.walletconnect.com/
-const WALLETCONNECT_PROJECT_ID = "ВАШ_PROJECT_ID";  // Замените на ваш projectId
+// Используйте свой projectId, полученный на WalletConnect Cloud
+const WALLETCONNECT_PROJECT_ID = "95f126f3a088cebcf781d2a1c10711fc";
 
-// Используем последнюю версию WalletConnectProvider v2
 const WalletConnectProviderConstructor = window.WalletConnectProvider?.default || window.WalletConnectProvider;
 
 const providerOptions = {
@@ -62,13 +61,12 @@ const providerOptions = {
 };
 
 const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
-  cacheProvider: false, // не запоминаем выбор, чтобы каждый раз показывался выбор кошельков
-  // Для мобильных отключаем инжектированный провайдер, чтобы выбор отображался всегда
+  cacheProvider: false,
   disableInjectedProvider: isMobileDevice(),
   providerOptions
 });
 
-// Сброс кэша (на всякий случай)
+// Очистка кэша (на всякий случай)
 web3Modal.clearCachedProvider();
 
 // -----------------------------
@@ -77,7 +75,7 @@ web3Modal.clearCachedProvider();
 async function connectWallet() {
   try {
     console.log("Подключение кошелька...");
-    // При каждом вызове должно показываться окно выбора
+    // При каждом вызове будет показано окно выбора
     provider = await web3Modal.connect();
     const web3Provider = new ethers.providers.Web3Provider(provider);
     signer = web3Provider.getSigner();
