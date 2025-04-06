@@ -23,12 +23,9 @@ import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 // -----------------------------
 // 2) Настройка Web3Modal и WalletConnect v2
 // -----------------------------
-// Получаем конструктор WalletConnectProvider
 const WalletConnectProviderConstructor = window.WalletConnectProvider?.default || window.WalletConnectProvider;
 
-// Параметры подключения для провайдеров
 const providerOptions = {
-  // Инжектированный провайдер (MetaMask)
   injected: {
     display: {
       name: "MetaMask",
@@ -36,7 +33,6 @@ const providerOptions = {
     },
     package: null
   },
-  // Провайдер WalletConnect
   walletconnect: {
     package: WalletConnectProviderConstructor,
     options: {
@@ -56,15 +52,12 @@ const providerOptions = {
   }
 };
 
-// Важно: ставим disableInjectedProvider: true, чтобы всегда показывать модальное окно выбора,
-// даже если MetaMask установлен.
 const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
   cacheProvider: false,
   disableInjectedProvider: true,
   providerOptions
 });
 
-// Очищаем кэш провайдера на всякий случай
 web3Modal.clearCachedProvider();
 
 // -----------------------------
@@ -73,7 +66,6 @@ web3Modal.clearCachedProvider();
 async function connectWallet() {
   try {
     console.log("Подключение кошелька...");
-    // При вызове web3Modal.connect() всегда будет показано модальное окно выбора кошельков.
     provider = await web3Modal.connect();
     const web3Provider = new ethers.providers.Web3Provider(provider);
     signer = web3Provider.getSigner();
