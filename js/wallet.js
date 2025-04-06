@@ -50,8 +50,8 @@ const providerOptions = {
 };
 
 const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
-  cacheProvider: false,           // не кэшировать выбор провайдера
-  disableInjectedProvider: true,  // отключаем автоматическое подключение встроенного кошелька
+  cacheProvider: false,           // не сохраняем предыдущий выбор
+  disableInjectedProvider: true,  // принудительно отключаем автоматическое подключение встроенного кошелька
   providerOptions
 });
 
@@ -71,18 +71,14 @@ async function connectWallet() {
     }
     selectedAccount = accounts[0];
     const walletDisplay = document.getElementById("walletAddress");
-    if (walletDisplay) {
-      walletDisplay.innerText = selectedAccount;
-    }
+    if (walletDisplay) walletDisplay.innerText = selectedAccount;
 
-    // Обработка изменения аккаунтов
     provider.on("accountsChanged", (accs) => {
       if (!accs.length) return disconnectWallet();
       selectedAccount = accs[0];
       if (walletDisplay) walletDisplay.innerText = selectedAccount;
     });
 
-    // Обработка отключения
     provider.on("disconnect", () => disconnectWallet());
 
     console.log("Кошелек подключен:", selectedAccount);
@@ -98,9 +94,7 @@ async function connectWallet() {
 // 4) Инициализация контрактов
 // -----------------------------
 async function initContracts(web3Provider) {
-  // Создаем провайдер Infura для операций чтения (если нужно)
-  const infuraProvider = new ethers.providers.InfuraProvider("homestead", INFURA_ID);
-  // Здесь можно комбинировать: signer используется для транзакций, а infuraProvider — для чтения данных
+  const signer = web3Provider.getSigner();
 
   window.ibitiToken = new ethers.Contract(
     IBITI_TOKEN_ADDRESS,
@@ -130,14 +124,12 @@ async function disconnectWallet() {
   signer = null;
   selectedAccount = null;
   const walletDisplay = document.getElementById("walletAddress");
-  if (walletDisplay) {
-    walletDisplay.innerText = "Wallet disconnected";
-  }
+  if (walletDisplay) walletDisplay.innerText = "Wallet disconnected";
   console.log("Кошелек отключен");
 }
 
 // -----------------------------
-// 6) Обработчик кнопки подключения
+// 6) Обработчик кнопки
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
