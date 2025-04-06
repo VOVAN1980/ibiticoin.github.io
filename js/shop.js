@@ -20,22 +20,16 @@ function getIbitiContract() {
 
 // Функция покупки токенов
 async function handlePurchase(amount, productName) {
-  // Проверяем, подключен ли кошелек, используя элемент walletAddress
   const walletDisplay = document.getElementById("walletAddress");
   if (
     !walletDisplay ||
     walletDisplay.innerText.trim() === '' ||
     walletDisplay.innerText.toLowerCase().includes("disconnected")
   ) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Кошелек не подключен',
-      text: 'Пожалуйста, нажмите кнопку «Подключить кошелек».',
-    });
+    console.log("Кошелек не подключен – нажмите кнопку «Подключить кошелек» для подключения.");
     return;
   }
   
-  // Показываем индикатор ожидания подтверждения транзакции
   Swal.fire({
     title: 'Ожидание подтверждения...',
     html: 'Подтвердите транзакцию в кошельке',
@@ -88,7 +82,6 @@ async function handlePurchase(amount, productName) {
 
 window.handlePurchase = handlePurchase;
 
-// Модальное окно покупки
 let currentProduct = null;
 
 function openPurchaseModal(productName) {
@@ -109,28 +102,21 @@ function closePurchaseModal() {
 window.openPurchaseModal = openPurchaseModal;
 window.closePurchaseModal = closePurchaseModal;
 
-// Обработчики формы покупки и выбора способа оплаты
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById('purchaseForm');
   if (form) {
     form.addEventListener('submit', async function(event) {
       event.preventDefault();
       const amount = document.getElementById('nftAmount').value;
-
       const walletDisplay = document.getElementById("walletAddress");
       if (
         !walletDisplay ||
         walletDisplay.innerText.trim() === '' ||
         walletDisplay.innerText.toLowerCase().includes("disconnected")
       ) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Кошелек не подключен',
-          text: 'Пожалуйста, нажмите кнопку «Подключить кошелек».',
-        });
+        console.log("Кошелек не подключен – нажмите кнопку «Подключить кошелек» для подключения.");
         return;
       }
-
       closePurchaseModal();
       await handlePurchase(amount, currentProduct);
     });
