@@ -30,9 +30,9 @@ const providerOptions = {
     package: WalletConnectProviderConstructor,
     options: {
       projectId: PROJECT_ID,
-      relayUrl: "wss://relay.walletconnect.com", // Стандартный URL для v2
+      relayUrl: "wss://relay.walletconnect.com", // Используем официальный relay-сервер для v2
       metadata: {
-        name: "My Dapp", // Замените на название вашего приложения
+        name: "My Dapp", // Название вашего приложения
         description: "Описание моего Dapp",
         url: "https://your-dapp-url.com", // URL вашего сайта
         icons: ["https://your-dapp-url.com/icon.png"]
@@ -135,3 +135,4 @@ document.addEventListener("DOMContentLoaded", () => {
 // 7) Экспорт функций для внешнего использования
 // -----------------------------
 export { connectWallet, disconnectWallet, provider, signer };
+
