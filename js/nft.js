@@ -15,7 +15,8 @@ async function initNFT() {
   }
   
   provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-  let accounts = await provider.listAccounts();
+  const accounts = await provider.listAccounts();
+  
   if (accounts.length === 0) {
     alert("Кошелек не подключен. Пожалуйста, нажмите кнопку «Подключить кошелек» на главной странице.");
     console.warn("Кошелек не подключен.");
@@ -87,4 +88,5 @@ async function handleNFTPurchase(discount, uri) {
   }
 }
 
+// Загрузка NFT-модуля без попытки автоматического подключения
 document.addEventListener("DOMContentLoaded", initNFT);
