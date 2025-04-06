@@ -7,7 +7,6 @@ const netConfig = config.testnet ?? config;
 
 let provider, signer, nftContract;
 
-// Инициализация NFT
 async function initNFT() {
   if (!window.ethereum) {
     alert("MetaMask не установлен. Установите расширение для работы с NFT.");
@@ -16,24 +15,11 @@ async function initNFT() {
   }
   
   provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-  
-  // Проверяем, подключен ли кошелек
   let accounts = await provider.listAccounts();
   if (accounts.length === 0) {
-    console.log("Кошелек не подключен. Запрос подключения...");
-    try {
-      // Импортируем функцию подключения из wallet.js и вызываем её
-      const walletModule = await import("./wallet.js");
-      await walletModule.connectWallet();
-      accounts = await provider.listAccounts();
-      if (accounts.length === 0) {
-        console.warn("Пользователь не подключил кошелек.");
-        return;
-      }
-    } catch (e) {
-      console.error("Ошибка подключения кошелька для NFT:", e);
-      return;
-    }
+    alert("Кошелек не подключен. Пожалуйста, нажмите кнопку «Подключить кошелек» на главной странице.");
+    console.warn("Кошелек не подключен.");
+    return;
   }
   
   signer = provider.getSigner();
@@ -50,7 +36,6 @@ async function initNFT() {
   await getNFTBalance();
 }
 
-// Функция получения баланса NFT
 async function getNFTBalance() {
   try {
     const address = await signer.getAddress();
@@ -61,7 +46,6 @@ async function getNFTBalance() {
   }
 }
 
-// Обработка покупки NFT
 async function handleNFTPurchase(discount, uri) {
   if (!window.ethereum) {
     Swal.fire({
