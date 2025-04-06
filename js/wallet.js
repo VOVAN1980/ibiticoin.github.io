@@ -16,61 +16,78 @@ const IBITI_TOKEN_ADDRESS      = "0xBCbB45CE07e6026Ed6A4911b2DCabd0544615fBe";
 const NFTSALEMANAGER_ADDRESS   = "0xdBae91e49da7096f451C8D3db67E274EB5919e48";
 const NFT_DISCOUNT_ADDRESS     = "0x680C093B347C7d6C2DAd24D4796e67eF9694096C";
 
-// ABI
+// ABI импортов
 import { ibitiTokenAbi }      from "./abis/ibitiTokenAbi.js";
 import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 
 // -----------------------------
-// 2) Web3Modal настройка с двумя провайдерами
+// 2) Конфигурация Web3Modal для WalletConnect
 // -----------------------------
 const WalletConnectProviderConstructor = window.WalletConnectProvider?.default || window.WalletConnectProvider;
-
-const providerOptions = {
-  injected: {
-    display: {
-      name: "MetaMask",
-      description: "Используйте встроенный кошелек (например, MetaMask)"
-    },
-    package: null
-  },
-  walletconnect: {
-    package: WalletConnectProviderConstructor,
-    options: {
-      projectId: PROJECT_ID,
-      relayUrl: "wss://relay.walletconnect.com", // Актуальный relay-сервер для v2
-      metadata: {
-        name: "My Dapp",
-        description: "Описание моего Dapp",
-        url: "https://your-dapp-url.com",
-        icons: ["https://your-dapp-url.com/icon.png"]
-      }
+const walletConnectOptions = {
+  package: WalletConnectProviderConstructor,
+  options: {
+    projectId: PROJECT_ID,
+    relayUrl: "wss://relay.walletconnect.com", // Актуальный relay-сервер для v2
+    metadata: {
+      name: "My Dapp",
+      description: "Описание моего Dapp",
+      url: "https://your-dapp-url.com",
+      icons: ["https://your-dapp-url.com/icon.png"]
     }
   }
 };
 
-const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
-  cacheProvider: false,           // не сохраняем выбор провайдера
-  disableInjectedProvider: false,  // разрешаем наличие Injected-провайдера в списке
-  providerOptions
+const walletConnectProviderOptions = {
+  walletconnect: walletConnectOptions
+};
+
+const web3ModalWC = new (window.Web3Modal?.default || window.Web3Modal)({
+  cacheProvider: false,
+  providerOptions: walletConnectProviderOptions
 });
 
 // -----------------------------
-// 3) Подключение кошелька с принудительным открытием модального окна
+// 3) Функции подключения для разных кошельков
 // -----------------------------
-async function connectWallet() {
-  try {
-    console.log("Подключение кошелька...");
-    // Очистка кэша провайдера
-    web3Modal.clearCachedProvider();
 
-    // Если метод openModal доступен, вызываем его для принудительного показа окна выбора
-    if (typeof web3Modal.openModal === "function") {
-      web3Modal.openModal();
+// Подключение MetaMask
+async function connectMetaMask() {
+  if (typeof window.ethereum === "undefined") {
+    alert("MetaMask не установлен. Перейдите на https://metamask.io для установки.");
+    return;
+  }
+  try {
+    // Запрос подключения через MetaMask
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+    // Создаем провайдер через ethers, используя window.ethereum
+    const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+    signer = web3Provider.getSigner();
+    const accounts = await web3Provider.listAccounts();
+    if (!accounts.length) {
+      console.warn("Нет аккаунтов");
+      return;
     }
-    
-    // Дожидаемся выбора пользователя (модальное окно должно появиться)
-    provider = await web3Modal.connect();
+    selectedAccount = accounts[0];
+    provider = window.ethereum; // Для консистентности
+    const walletDisplay = document.getElementById("walletAddress");
+    if (walletDisplay) walletDisplay.innerText = selectedAccount;
+    console.log("MetaMask подключен:", selectedAccount);
+    await initContracts(web3Provider);
+  } catch (err) {
+    console.error("Ошибка подключения MetaMask:", err);
+    alert("Ошибка подключения MetaMask");
+  }
+}
+
+// Подключение через WalletConnect
+async function connectWalletConnect() {
+  try {
+    console.log("Подключение через WalletConnect...");
+    // Очищаем кэш, чтобы всегда показывалось окно выбора внутри Web3Modal
+    web3ModalWC.clearCachedProvider();
+    provider = await web3ModalWC.connect();
     const web3Provider = new ethers.providers.Web3Provider(provider);
     signer = web3Provider.getSigner();
     const accounts = await web3Provider.listAccounts();
@@ -82,21 +99,19 @@ async function connectWallet() {
     const walletDisplay = document.getElementById("walletAddress");
     if (walletDisplay) walletDisplay.innerText = selectedAccount;
 
-    // Обработка изменения аккаунтов
     provider.on("accountsChanged", (accs) => {
       if (!accs.length) return disconnectWallet();
       selectedAccount = accs[0];
       if (walletDisplay) walletDisplay.innerText = selectedAccount;
     });
 
-    // Обработка отключения
     provider.on("disconnect", () => disconnectWallet());
 
-    console.log("Кошелек подключен:", selectedAccount);
+    console.log("WalletConnect подключен:", selectedAccount);
     await initContracts(web3Provider);
   } catch (err) {
-    console.error("Ошибка подключения:", err);
-    alert("Ошибка подключения кошелька");
+    console.error("Ошибка подключения WalletConnect:", err);
+    alert("Ошибка подключения через WalletConnect");
   }
 }
 
@@ -129,7 +144,9 @@ async function initContracts(web3Provider) {
 // 5) Отключение кошелька
 // -----------------------------
 async function disconnectWallet() {
-  if (provider?.close) await provider.close();
+  if (provider && provider.close) {
+    await provider.close();
+  }
   provider = null;
   signer = null;
   selectedAccount = null;
@@ -139,20 +156,74 @@ async function disconnectWallet() {
 }
 
 // -----------------------------
-// 6) Обработчик кнопки подключения
+// 6) Кастомное модальное окно для выбора кошелька
+// -----------------------------
+function showWalletSelectionModal() {
+  // Создаем overlay
+  const overlay = document.createElement("div");
+  overlay.id = "walletSelectionOverlay";
+  overlay.style.position = "fixed";
+  overlay.style.top = 0;
+  overlay.style.left = 0;
+  overlay.style.width = "100%";
+  overlay.style.height = "100%";
+  overlay.style.backgroundColor = "rgba(0,0,0,0.6)";
+  overlay.style.display = "flex";
+  overlay.style.justifyContent = "center";
+  overlay.style.alignItems = "center";
+  overlay.style.zIndex = 1000;
+
+  // Создаем контейнер модального окна
+  const modal = document.createElement("div");
+  modal.style.backgroundColor = "#fff";
+  modal.style.padding = "20px";
+  modal.style.borderRadius = "8px";
+  modal.style.textAlign = "center";
+
+  // Заголовок
+  const title = document.createElement("h2");
+  title.innerText = "Выберите кошелек для подключения";
+  modal.appendChild(title);
+
+  // Кнопка MetaMask
+  const btnMetaMask = document.createElement("button");
+  btnMetaMask.innerText = "MetaMask";
+  btnMetaMask.style.margin = "10px";
+  btnMetaMask.onclick = () => {
+    document.body.removeChild(overlay);
+    connectMetaMask();
+  };
+  modal.appendChild(btnMetaMask);
+
+  // Кнопка WalletConnect
+  const btnWalletConnect = document.createElement("button");
+  btnWalletConnect.innerText = "WalletConnect";
+  btnWalletConnect.style.margin = "10px";
+  btnWalletConnect.onclick = () => {
+    document.body.removeChild(overlay);
+    connectWalletConnect();
+  };
+  modal.appendChild(btnWalletConnect);
+
+  // Добавляем модальное окно на страницу
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+}
+
+// -----------------------------
+// 7) Обработчик кнопки подключения
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
   if (connectBtn) {
     connectBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      connectWallet();
+      showWalletSelectionModal();
     });
   }
 });
 
 // -----------------------------
-// 7) Экспорт
+// 8) Экспорт функций
 // -----------------------------
 export { connectWallet, disconnectWallet, provider, signer, selectedAccount };
-
