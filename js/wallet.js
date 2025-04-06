@@ -61,7 +61,7 @@ const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
 web3Modal.clearCachedProvider();
 
 // -----------------------------
-// 3) Функция подключения кошелька
+// 3) Функция подключения кошелька (вызывается только по клику)
 // -----------------------------
 async function connectWallet() {
   try {
