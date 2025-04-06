@@ -9,7 +9,6 @@ let signer = null;
 let selectedAccount = null;
 
 const INFURA_ID = "1faccf0f1fdc4532ad7a1a38a67ee906";
-const WALLETCONNECT_PROJECT_ID = "95f126f3a088cebcf781d2a1c10711fc";
 
 // Адреса контрактов
 const IBITI_TOKEN_ADDRESS      = "0xBCbB45CE07e6026Ed6A4911b2DCabd0544615fBe";
@@ -27,31 +26,9 @@ import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 const WalletConnectProviderConstructor = window.WalletConnectProvider?.default || window.WalletConnectProvider;
 
 const providerOptions = {
-  // Поддержка встроенных провайдеров (например, MetaMask)
-  injected: {
-    display: {
-      name: "MetaMask",
-      description: "Подключитесь через MetaMask"
-    },
-    package: null
-  },
-  // Настройка WalletConnect v2 с новыми параметрами
   walletconnect: {
     package: WalletConnectProviderConstructor,
-    options: {
-      projectId: WALLETCONNECT_PROJECT_ID,
-      rpcMap: {
-        1: `https://mainnet.infura.io/v3/${INFURA_ID}`
-        // При необходимости добавьте другие сети
-      },
-      metadata: {
-        name: "IBITIcoin",
-        description: "Подключение к IBITIcoin DApp",
-        url: "https://ibiticoin.com",
-        icons: ["https://ibiticoin.com/logo.png"]
-      },
-      mobileLinks: ["trust", "metamask"]
-    }
+    options: { infuraId: INFURA_ID }
   }
 };
 
