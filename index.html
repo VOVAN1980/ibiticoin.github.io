@@ -23,10 +23,8 @@
   <meta name="twitter:description" content="Узнайте, как IBITIcoin делает криптовалюту доступной и безопасной для всех.">
   <meta name="twitter:image" content="img/og-image.png">
   
-  <!-- Подключаем общий CSS -->
+  <!-- CSS -->
   <link rel="stylesheet" href="css/style.css">
-  
-  <!-- Подключаем AOS для анимаций -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
 
   <!-- Google Tag Manager -->
@@ -38,7 +36,7 @@
     gtag('config', 'G-T5DF4BLR5S');
   </script>
   
-  <!-- Виджет Google Translate -->
+  <!-- Google Translate -->
   <script type="text/javascript">
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
@@ -49,13 +47,32 @@
     }
   </script>
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
+  
   <!-- Подключаем необходимые библиотеки для работы кошельков -->
   <script src="https://unpkg.com/@walletconnect/web3-provider/dist/umd/index.min.js"></script>
-  <script src="https://unpkg.com/web3modal"></script>
+  <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
   
   <style>
-    /* Пример базовых стилей для модального окна шаринга */
+    /* Стили для элементов подключения кошелька */
+    .wallet-section {
+      text-align: center;
+      margin: 20px auto;
+    }
+    .wallet-section button {
+      background: gold;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #walletAddress {
+      margin-top: 10px;
+      font-weight: bold;
+      color: gold;
+    }
+    /* Стили для модального окна шаринга */
     .modal {
       display: none;
       position: fixed;
@@ -78,23 +95,6 @@
       text-align: center;
       color: gold;
       position: relative;
-    }
-    .modal-content h3 {
-      margin-top: 0;
-      font-size: 1.8em;
-    }
-    .modal-content .share-options a {
-      display: inline-block;
-      margin: 10px;
-      padding: 10px 20px;
-      background: gold;
-      color: #000;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: transform 0.3s;
-    }
-    .modal-content .share-options a:hover {
-      transform: scale(1.1);
     }
     .modal-content .close {
       position: absolute;
@@ -128,7 +128,13 @@
     <p>Stability | Innovation | Accessibility</p>
   </header>
 
-  <!-- Пример главного контента -->
+  <!-- Секция подключения кошелька -->
+  <section class="wallet-section">
+    <button id="connectWalletBtn">Подключить кошелек</button>
+    <div id="walletAddress">Disconnected</div>
+  </section>
+
+  <!-- Основной контент -->
   <section class="gold-section" data-aos="fade-up">
     <h2>WHY CHOOSE IBITIcoin?</h2>
     <p>
@@ -150,7 +156,7 @@
     <a class="btn-small" id="openShareModal" href="#">Поделиться</a>
   </section>
   
-  <!-- Пример футера -->
+  <!-- Футер -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p>
@@ -165,7 +171,7 @@
     </p>
     <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
   </footer>
-
+  
   <!-- Модальное окно шаринга -->
   <div id="shareModal" class="modal">
     <div class="modal-content">
@@ -182,32 +188,45 @@
       </div>
     </div>
   </div>
-
-  <!-- Внешние библиотеки -->
-<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-<script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
-<script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
-
-<!-- Дополнительные скрипты -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script>
-  AOS.init({ once: true });
-</script>
-
-<!-- Tawk.to -->
-<script>
-  var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-  (function(){
-    var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-    s1.async = true;
-    s1.src = 'https://embed.tawk.to/67db03deb73265190d550119/1imnoe7rb';
-    s1.charset = 'UTF-8';
-    s1.setAttribute('crossorigin', '*');
-    s0.parentNode.insertBefore(s1, s0);
-  })();
-</script>
-
-<!-- Модули проекта -->
-<script type="module" src="js/config.js"></script>
-<script type="module" src="js/wallet.js"></script>
-<script type="module" src="js/nft.js"></script> <!-- если используется на главной -->
+  
+  <!-- Подключение внешних библиотек -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script>
+    AOS.init({ once: true });
+  </script>
+  
+  <!-- Tawk.to -->
+  <script>
+    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+    (function(){
+      var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+      s1.async = true;
+      s1.src = 'https://embed.tawk.to/67db03deb73265190d550119/1imnoe7rb';
+      s1.charset = 'UTF-8';
+      s1.setAttribute('crossorigin', '*');
+      s0.parentNode.insertBefore(s1, s0);
+    })();
+  </script>
+  
+  <!-- Модули проекта -->
+  <script type="module" src="js/config.js"></script>
+  <script type="module" src="js/wallet.js"></script>
+  <script type="module" src="js/nft.js"></script>
+  
+  <!-- Скрипт для управления модальным окном шаринга -->
+  <script>
+    document.getElementById('openShareModal').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('shareModal').style.display = 'block';
+    });
+    document.getElementById('closeShareModal').addEventListener('click', function() {
+      document.getElementById('shareModal').style.display = 'none';
+    });
+    window.onclick = function(event) {
+      if (event.target === document.getElementById('shareModal')) {
+        document.getElementById('shareModal').style.display = 'none';
+      }
+    };
+  </script>
+</body>
+</html>
