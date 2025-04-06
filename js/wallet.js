@@ -135,4 +135,3 @@ document.addEventListener("DOMContentLoaded", () => {
 // 7) Экспорт функций для внешнего использования
 // -----------------------------
 export { connectWallet, disconnectWallet, provider, signer };
-
