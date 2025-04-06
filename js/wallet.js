@@ -30,7 +30,7 @@ const providerOptions = {
   injected: {
     display: {
       name: "MetaMask",
-      description: "Используйте встроенный кошелёк (например, MetaMask)"
+      description: "Используйте встроенный кошелек (например, MetaMask)"
     },
     package: null
   },
@@ -50,7 +50,8 @@ const providerOptions = {
 };
 
 const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
-  cacheProvider: false, // всегда показывать окно выбора
+  cacheProvider: false,           // не кэшировать выбор провайдера
+  disableInjectedProvider: true,  // отключаем автоматическое подключение встроенного кошелька
   providerOptions
 });
 
@@ -61,7 +62,6 @@ async function connectWallet() {
   try {
     console.log("Подключение кошелька...");
     provider = await web3Modal.connect();
-    // Создаем провайдер для работы с кошельком (используем Web3Modal-провайдер)
     const web3Provider = new ethers.providers.Web3Provider(provider);
     signer = web3Provider.getSigner();
     const accounts = await web3Provider.listAccounts();
@@ -71,7 +71,9 @@ async function connectWallet() {
     }
     selectedAccount = accounts[0];
     const walletDisplay = document.getElementById("walletAddress");
-    if (walletDisplay) walletDisplay.innerText = selectedAccount;
+    if (walletDisplay) {
+      walletDisplay.innerText = selectedAccount;
+    }
 
     // Обработка изменения аккаунтов
     provider.on("accountsChanged", (accs) => {
@@ -96,11 +98,10 @@ async function connectWallet() {
 // 4) Инициализация контрактов
 // -----------------------------
 async function initContracts(web3Provider) {
-  // Создаем объект провайдера Infura для взаимодействия с сетью
+  // Создаем провайдер Infura для операций чтения (если нужно)
   const infuraProvider = new ethers.providers.InfuraProvider("homestead", INFURA_ID);
-  // Если необходимо, можно объединить данные из обоих провайдеров:
-  // Например, для чтения данных используем infuraProvider, а для отправки транзакций signer.
-  
+  // Здесь можно комбинировать: signer используется для транзакций, а infuraProvider — для чтения данных
+
   window.ibitiToken = new ethers.Contract(
     IBITI_TOKEN_ADDRESS,
     ibitiTokenAbi,
@@ -129,12 +130,14 @@ async function disconnectWallet() {
   signer = null;
   selectedAccount = null;
   const walletDisplay = document.getElementById("walletAddress");
-  if (walletDisplay) walletDisplay.innerText = "Wallet disconnected";
+  if (walletDisplay) {
+    walletDisplay.innerText = "Wallet disconnected";
+  }
   console.log("Кошелек отключен");
 }
 
 // -----------------------------
-// 6) Обработчик кнопки
+// 6) Обработчик кнопки подключения
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
