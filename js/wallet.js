@@ -1,3 +1,4 @@
+// js/wallet.js
 console.log("wallet.js загружен");
 
 // -----------------------------
@@ -10,9 +11,9 @@ let selectedAccount = null;
 const INFURA_ID = "1faccf0f1fdc4532ad7a1a38a67ee906";
 
 // Адреса контрактов
-const IBITI_TOKEN_ADDRESS      = "0x5fab4e25c0E75aB4a50Cac19Bf62f58dB8E597c6";
-const NFTSALEMANAGER_ADDRESS   = "0xf2A9cB2F09C1f1A8103441D13a78330B028a41DA";
-const NFT_DISCOUNT_ADDRESS     = "0x776D125B0abf3a6B10d446e9F8c0a96bBDcbC511";
+const IBITI_TOKEN_ADDRESS      = "0xBCbB45CE07e6026Ed6A4911b2DCabd0544615fBe";
+const NFTSALEMANAGER_ADDRESS   = "0xdBae91e49da7096f451C8D3db67E274EB5919e48";
+const NFT_DISCOUNT_ADDRESS     = "0x680C093B347C7d6C2DAd24D4796e67eF9694096C";
 
 // ABI
 import { ibitiTokenAbi }      from "./abis/ibitiTokenAbi.js";
@@ -20,62 +21,28 @@ import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 
 // -----------------------------
-// 2) Вспомогательная функция для определения мобильного устройства
+// 2) Web3Modal настройка
 // -----------------------------
-function isMobileDevice() {
-  return /android|iphone|ipad|ipod/i.test(navigator.userAgent);
-}
-
-// -----------------------------
-// 3) Web3Modal и WalletConnect v2 настройка
-// -----------------------------
-// Используйте свой projectId, полученный на WalletConnect Cloud
-const WALLETCONNECT_PROJECT_ID = "95f126f3a088cebcf781d2a1c10711fc";
-
 const WalletConnectProviderConstructor = window.WalletConnectProvider?.default || window.WalletConnectProvider;
 
 const providerOptions = {
-  injected: {
-    display: {
-      name: "MetaMask",
-      description: "Подключитесь через MetaMask"
-    },
-    package: null
-  },
   walletconnect: {
     package: WalletConnectProviderConstructor,
-    options: {
-      projectId: WALLETCONNECT_PROJECT_ID,
-      rpcMap: {
-        1: https://mainnet.infura.io/v3/${INFURA_ID},
-        56: "https://bsc-dataseed.binance.org/"
-      },
-      metadata: {
-        name: "IBITIcoin",
-        description: "Подключение к IBITIcoin DApp",
-        url: "https://ibiticoin.com",
-        icons: ["https://ibiticoin.com/logo.png"]
-      }
-    }
+    options: { infuraId: INFURA_ID }
   }
 };
 
 const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
   cacheProvider: false,
-  disableInjectedProvider: isMobileDevice(),
   providerOptions
 });
 
-// Очистка кэша (на всякий случай)
-web3Modal.clearCachedProvider();
-
 // -----------------------------
-// 4) Подключение кошелька
+// 3) Подключение кошелька
 // -----------------------------
 async function connectWallet() {
   try {
     console.log("Подключение кошелька...");
-    // При каждом вызове будет показано окно выбора
     provider = await web3Modal.connect();
     const web3Provider = new ethers.providers.Web3Provider(provider);
     signer = web3Provider.getSigner();
@@ -95,6 +62,7 @@ async function connectWallet() {
     provider.on("disconnect", () => disconnectWallet());
 
     console.log("Кошелек подключен:", selectedAccount);
+
     await initContracts(web3Provider);
   } catch (err) {
     console.error("Ошибка подключения:", err);
@@ -103,7 +71,7 @@ async function connectWallet() {
 }
 
 // -----------------------------
-// 5) Инициализация контрактов
+// 4) Инициализация контрактов
 // -----------------------------
 async function initContracts(web3Provider) {
   const signer = web3Provider.getSigner();
@@ -128,7 +96,7 @@ async function initContracts(web3Provider) {
 }
 
 // -----------------------------
-// 6) Отключение кошелька
+// 5) Отключение
 // -----------------------------
 async function disconnectWallet() {
   if (provider?.close) await provider.close();
@@ -141,7 +109,7 @@ async function disconnectWallet() {
 }
 
 // -----------------------------
-// 7) Обработчик кнопки
+// 6) Обработчик кнопки
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
@@ -154,6 +122,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // -----------------------------
-// 8) Экспорт
+// 7) Экспорт
 // -----------------------------
-export { connectWallet, disconnectWallet, p
+export { connectWallet, disconnectWallet, provider, signer, selectedAccount };
