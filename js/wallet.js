@@ -15,17 +15,26 @@ const IBITI_TOKEN_ADDRESS    = "0xBCbB45CE07e6026Ed6A4911b2DCabd0544615fBe";
 const NFTSALEMANAGER_ADDRESS = "0xdBae91e49da7096f451C8D3db67E274EB5919e48";
 const NFT_DISCOUNT_ADDRESS   = "0x680C093B347C7d6C2DAd24D4796e67eF9694096C";
 
-// ABI импортов
+// Импорт ABI
 import { ibitiTokenAbi }     from "./abis/ibitiTokenAbi.js";
 import { nftSaleManagerAbi } from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }    from "./abis/nftDiscountAbi.js";
 
 // -----------------------------
-// 2) Настройка Web3Modal с WalletConnect v2
+// 2) Настройка Web3Modal с несколькими провайдерами
 // -----------------------------
 const WalletConnectProviderConstructor = window.WalletConnectProvider?.default || window.WalletConnectProvider;
 
 const providerOptions = {
+  // Встроенный кошелёк (например, MetaMask или другие Injected решения)
+  injected: {
+    display: {
+      name: "Browser Wallet",
+      description: "Используйте встроенный кошелек (например, MetaMask)"
+    },
+    package: null
+  },
+  // WalletConnect v2
   walletconnect: {
     package: WalletConnectProviderConstructor,
     options: {
@@ -42,7 +51,7 @@ const providerOptions = {
 };
 
 const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
-  cacheProvider: false,
+  cacheProvider: false, // не кэшируем выбранного провайдера, чтобы всегда показывать окно выбора
   providerOptions
 });
 
@@ -56,15 +65,23 @@ async function connectWallet() {
     const web3Provider = new ethers.providers.Web3Provider(provider);
     signer = web3Provider.getSigner();
     const accounts = await web3Provider.listAccounts();
-    if (!accounts.length) return console.warn("Нет аккаунтов");
-
+    if (!accounts.length) {
+      console.warn("Нет аккаунтов");
+      return;
+    }
     selectedAccount = accounts[0];
+
     const walletDisplay = document.getElementById("walletAddress");
-    if (walletDisplay) walletDisplay.innerText = selectedAccount;
+    if (walletDisplay) {
+      walletDisplay.innerText = selectedAccount;
+    }
 
     // Обработка изменения аккаунтов
     provider.on("accountsChanged", (accs) => {
-      if (!accs.length) return disconnectWallet();
+      if (!accs.length) {
+        disconnectWallet();
+        return;
+      }
       selectedAccount = accs[0];
       if (walletDisplay) walletDisplay.innerText = selectedAccount;
     });
@@ -109,12 +126,17 @@ async function initContracts(web3Provider) {
 // 5) Отключение кошелька
 // -----------------------------
 async function disconnectWallet() {
-  if (provider?.close) await provider.close();
+  if (provider?.close) {
+    await provider.close();
+  }
   provider = null;
   signer = null;
   selectedAccount = null;
+
   const walletDisplay = document.getElementById("walletAddress");
-  if (walletDisplay) walletDisplay.innerText = "Wallet disconnected";
+  if (walletDisplay) {
+    walletDisplay.innerText = "Wallet disconnected";
+  }
   console.log("Кошелек отключен");
 }
 
