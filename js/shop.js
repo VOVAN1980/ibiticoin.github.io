@@ -138,5 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
     paymentToken.addEventListener('change', function () {
       confirmBtn.disabled = this.value === "";
     });
+  } else {
+    console.error("Элементы paymentToken или confirmBtn не найдены");
   }
 });
