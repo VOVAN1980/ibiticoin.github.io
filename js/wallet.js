@@ -22,12 +22,12 @@ import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 
 // -----------------------------
-// 2) Web3Modal настройка (с WalletConnect v2)
+// 2) Web3Modal настройка
 // -----------------------------
 const WalletConnectProviderConstructor = window.WalletConnectProvider?.default || window.WalletConnectProvider;
 
 const providerOptions = {
-  // Если нужно использовать встроенный провайдер (например, MetaMask), можно добавить его сюда:
+  // Поддержка встроенных провайдеров (например, MetaMask)
   injected: {
     display: {
       name: "MetaMask",
@@ -35,6 +35,7 @@ const providerOptions = {
     },
     package: null
   },
+  // Настройка WalletConnect v2 с новыми параметрами
   walletconnect: {
     package: WalletConnectProviderConstructor,
     options: {
@@ -43,7 +44,6 @@ const providerOptions = {
         1: `https://mainnet.infura.io/v3/${INFURA_ID}`
         // При необходимости добавьте другие сети
       },
-      // metadata опционально
       metadata: {
         name: "IBITIcoin",
         description: "Подключение к IBITIcoin DApp",
@@ -119,7 +119,7 @@ async function initContracts(web3Provider) {
 }
 
 // -----------------------------
-// 5) Отключение кошелька
+// 5) Отключение
 // -----------------------------
 async function disconnectWallet() {
   if (provider?.close) await provider.close();
@@ -132,7 +132,7 @@ async function disconnectWallet() {
 }
 
 // -----------------------------
-// 6) Обработчик кнопки подключения
+// 6) Обработчик кнопки
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
@@ -145,6 +145,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // -----------------------------
-// 7) Экспорт функций
+// 7) Экспорт
 // -----------------------------
-export { connectWallet, disconnectWallet, provider };
+export { connectWallet, disconnectWallet, provider, signer, selectedAccount };
