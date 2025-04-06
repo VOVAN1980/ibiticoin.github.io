@@ -9,24 +9,26 @@
   <meta name="description" content="IBITIcoin – инновационная криптовалюта для быстрой, безопасной и доступной работы в цифровой экономике.">
   <meta name="keywords" content="IBITIcoin, криптовалюта, инвестиции, блокчейн, DeFi">
   <meta name="author" content="IBITIcoin Team">
-  
+
   <!-- Open Graph -->
   <meta property="og:title" content="IBITIcoin – Будущее цифровых финансов">
   <meta property="og:description" content="Узнайте, как IBITIcoin делает криптовалюту доступной и безопасной для всех.">
   <meta property="og:image" content="img/og-image.png">
   <meta property="og:url" content="index.html">
   <meta property="og:type" content="website">
-  
+
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="IBITIcoin – Будущее цифровых финансов">
   <meta name="twitter:description" content="Узнайте, как IBITIcoin делает криптовалюту доступной и безопасной для всех.">
   <meta name="twitter:image" content="img/og-image.png">
   
-  <!-- CSS -->
+  <!-- Подключаем общий CSS -->
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
   
+  <!-- Подключаем AOS для анимаций -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
   <!-- Google Tag Manager -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-T5DF4BLR5S"></script>
   <script>
@@ -36,7 +38,7 @@
     gtag('config', 'G-T5DF4BLR5S');
   </script>
   
-  <!-- Google Translate -->
+  <!-- Виджет Google Translate -->
   <script type="text/javascript">
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
@@ -47,51 +49,60 @@
     }
   </script>
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  
-  <!-- Подключаем внешние библиотеки для работы кошельков -->
-  <!-- WalletConnect -->
+
+  <!-- Подключаем необходимые библиотеки для работы кошельков -->
   <script src="https://unpkg.com/@walletconnect/web3-provider/dist/umd/index.min.js"></script>
-  <!-- Web3Modal -->
-  <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
-  <!-- Ethers.js -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="https://unpkg.com/web3modal"></script>
   
   <style>
-    /* Стили для подключения кошелька и базовые стили страницы */
-    .wallet-section {
-      text-align: center;
-      margin: 20px auto;
+    /* Пример базовых стилей для модального окна шаринга */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.7);
     }
-    .wallet-section button {
+    .modal-content {
+      background-color: #111;
+      margin: 10% auto;
+      padding: 20px;
+      border: 2px solid gold;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 10px;
+      text-align: center;
+      color: gold;
+      position: relative;
+    }
+    .modal-content h3 {
+      margin-top: 0;
+      font-size: 1.8em;
+    }
+    .modal-content .share-options a {
+      display: inline-block;
+      margin: 10px;
+      padding: 10px 20px;
       background: gold;
       color: #000;
-      border: none;
-      padding: 10px 20px;
+      text-decoration: none;
       border-radius: 5px;
+      transition: transform 0.3s;
+    }
+    .modal-content .share-options a:hover {
+      transform: scale(1.1);
+    }
+    .modal-content .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.5em;
       font-weight: bold;
       cursor: pointer;
-    }
-    #walletAddress {
-      margin-top: 10px;
-      font-weight: bold;
-      color: gold;
-    }
-    /* Пример базовых стилей для шапки и контента */
-    .hero-header {
-      text-align: center;
-      padding: 20px;
-    }
-    .hero-header img {
-      max-width: 200px;
-    }
-    .hero-header h1 {
-      margin: 10px 0;
-      font-size: 2.5em;
-      color: gold;
-    }
-    .hero-header p {
-      font-size: 1.2em;
-      color: #fff;
     }
   </style>
 </head>
@@ -112,18 +123,12 @@
   
   <!-- Шапка сайта -->
   <header class="hero-header">
-    <img src="img/logo.png" alt="IBITIcoin Logo">
+    <img src="img/logo.png" alt="IBITIcoin Logo" width="200">
     <h1>IBITIcoin</h1>
     <p>Stability | Innovation | Accessibility</p>
   </header>
-  
-  <!-- Секция подключения кошелька -->
-  <section class="wallet-section">
-    <button id="connectWalletBtn">Подключить кошелек</button>
-    <div id="walletAddress">Wallet disconnected</div>
-  </section>
-  
-  <!-- Основной контент -->
+
+  <!-- Пример главного контента -->
   <section class="gold-section" data-aos="fade-up">
     <h2>WHY CHOOSE IBITIcoin?</h2>
     <p>
@@ -141,10 +146,11 @@
     <a class="btn-small" href="nft.html">NFT Галерея</a>
     <a class="btn-small" href="shop.html">Магазин</a>
     <a class="btn-small" href="book.html">Книга</a>
+    <!-- Кнопка "Поделиться" открывает модальное окно -->
     <a class="btn-small" id="openShareModal" href="#">Поделиться</a>
   </section>
   
-  <!-- Футер -->
+  <!-- Пример футера -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p>
@@ -159,7 +165,7 @@
     </p>
     <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
   </footer>
-  
+
   <!-- Модальное окно шаринга -->
   <div id="shareModal" class="modal">
     <div class="modal-content">
@@ -176,47 +182,32 @@
       </div>
     </div>
   </div>
-  
-  <!-- Инициализация AOS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-  <script>
-    AOS.init({ once: true });
-  </script>
-  
-  <!-- Скрипт для модального окна шаринга -->
-  <script>
-    document.getElementById('openShareModal').addEventListener('click', function(e) {
-      e.preventDefault();
-      document.getElementById('shareModal').style.display = 'block';
-    });
-    document.getElementById('closeShareModal').addEventListener('click', function() {
-      document.getElementById('shareModal').style.display = 'none';
-    });
-    window.onclick = function(event) {
-      if (event.target === document.getElementById('shareModal')) {
-        document.getElementById('shareModal').style.display = 'none';
-      }
-    };
-  </script>
-  
-  <!-- Модули проекта -->
-  <script type="module" src="js/config.js"></script>
-  <script type="module" src="js/wallet.js"></script>
-  <script type="module" src="js/nft.js"></script>
-  <script type="module" src="js/shop.js"></script>
-  
-  <!-- Виджет Tawk.to - загружаем последним, чтобы не мешал работе других скриптов -->
-  <script>
-    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-    (function(){
-      var s1 = document.createElement("script"),
-          s0 = document.getElementsByTagName("script")[0];
-      s1.async = true;
-      s1.src = 'https://embed.tawk.to/67db03deb73265190d550119/1imnoe7rb';
-      s1.charset = 'UTF-8';
-      s1.setAttribute('crossorigin', '*');
-      s0.parentNode.insertBefore(s1, s0);
-    })();
-  </script>
-</body>
-</html>
+
+  <!-- Внешние библиотеки -->
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
+<script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
+
+<!-- Дополнительные скрипты -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+  AOS.init({ once: true });
+</script>
+
+<!-- Tawk.to -->
+<script>
+  var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+  (function(){
+    var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+    s1.async = true;
+    s1.src = 'https://embed.tawk.to/67db03deb73265190d550119/1imnoe7rb';
+    s1.charset = 'UTF-8';
+    s1.setAttribute('crossorigin', '*');
+    s0.parentNode.insertBefore(s1, s0);
+  })();
+</script>
+
+<!-- Модули проекта -->
+<script type="module" src="js/config.js"></script>
+<script type="module" src="js/wallet.js"></script>
+<script type="module" src="js/nft.js"></script> <!-- если используется на главной -->
