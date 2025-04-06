@@ -9,8 +9,7 @@ let provider, signer, nftContract;
 
 async function initNFT() {
   if (!window.ethereum) {
-    alert("MetaMask не установлен. Установите расширение для работы с NFT.");
-    console.warn("MetaMask не обнаружен. NFT-модуль не активен.");
+    console.warn("MetaMask не установлен. NFT-модуль не активен.");
     return;
   }
   
@@ -18,8 +17,7 @@ async function initNFT() {
   const accounts = await provider.listAccounts();
   
   if (accounts.length === 0) {
-    alert("Кошелек не подключен. Пожалуйста, нажмите кнопку «Подключить кошелек» на главной странице.");
-    console.warn("Кошелек не подключен.");
+    console.log("Кошелек не подключён – для работы с NFT подключите кошелек через кнопку на главной странице.");
     return;
   }
   
@@ -49,11 +47,7 @@ async function getNFTBalance() {
 
 async function handleNFTPurchase(discount, uri) {
   if (!window.ethereum) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'MetaMask не найден',
-      text: 'Установите MetaMask для выполнения покупки.',
-    });
+    console.warn("MetaMask не найден – для покупки NFT установите расширение.");
     return;
   }
 
@@ -88,5 +82,5 @@ async function handleNFTPurchase(discount, uri) {
   }
 }
 
-// Загрузка NFT-модуля без попытки автоматического подключения
+// Загрузка NFT-модуля – автоматически ничего не запускается, если кошелек не подключён
 document.addEventListener("DOMContentLoaded", initNFT);
