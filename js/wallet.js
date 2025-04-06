@@ -28,6 +28,7 @@ const WalletConnectProviderConstructor = window.WalletConnectProvider?.default |
 
 // Параметры подключения для провайдеров
 const providerOptions = {
+  // Инжектированный провайдер (например, MetaMask)
   injected: {
     display: {
       name: "MetaMask",
@@ -35,6 +36,7 @@ const providerOptions = {
     },
     package: null
   },
+  // Провайдер WalletConnect
   walletconnect: {
     package: WalletConnectProviderConstructor,
     options: {
@@ -54,14 +56,14 @@ const providerOptions = {
   }
 };
 
-// Всегда разрешаем встроенные провайдеры (для всех устройств)
+// Здесь мы устанавливаем disableInjectedProvider: true, чтобы всегда показывать модальное окно выбора кошельков
 const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
   cacheProvider: false,
-  disableInjectedProvider: false,
+  disableInjectedProvider: true,
   providerOptions
 });
 
-// Очистка кэша провайдера
+// Очистка кэша провайдера на всякий случай
 web3Modal.clearCachedProvider();
 
 // -----------------------------
@@ -70,6 +72,7 @@ web3Modal.clearCachedProvider();
 async function connectWallet() {
   try {
     console.log("Подключение кошелька...");
+    // При вызове web3Modal.connect() всегда будет появляться модальное окно выбора кошелька
     provider = await web3Modal.connect();
     const web3Provider = new ethers.providers.Web3Provider(provider);
     signer = web3Provider.getSigner();
