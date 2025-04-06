@@ -20,7 +20,14 @@ import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 
 // -----------------------------
-// 2) Web3Modal настройка
+// 2) Вспомогательная функция для определения мобильного устройства
+// -----------------------------
+function isMobileDevice() {
+  return /android|iphone|ipad|ipod/i.test(navigator.userAgent);
+}
+
+// -----------------------------
+// 3) Web3Modal настройка
 // -----------------------------
 const WalletConnectProviderConstructor = window.WalletConnectProvider?.default || window.WalletConnectProvider;
 
@@ -41,20 +48,23 @@ const providerOptions = {
 };
 
 const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
-  cacheProvider: false, // Кэширование отключено
+  cacheProvider: false,
+  // Для мобильных отключаем встроенный инжектированный провайдер, чтобы показать окно выбора
+  disableInjectedProvider: isMobileDevice(),
   providerOptions
 });
 
-// Очистка кэша, если вдруг там что-то осталось
+// Сброс кэша, если он вдруг остался
 web3Modal.clearCachedProvider();
 
 // -----------------------------
-// 3) Подключение кошелька
+// 4) Подключение кошелька
 // -----------------------------
 async function connectWallet() {
   try {
     console.log("Подключение кошелька...");
-    provider = await web3Modal.connect(); // Должно открываться окно выбора
+    // При каждом вызове будет показано окно выбора
+    provider = await web3Modal.connect();
     const web3Provider = new ethers.providers.Web3Provider(provider);
     signer = web3Provider.getSigner();
     const accounts = await web3Provider.listAccounts();
@@ -81,7 +91,7 @@ async function connectWallet() {
 }
 
 // -----------------------------
-// 4) Инициализация контрактов
+// 5) Инициализация контрактов
 // -----------------------------
 async function initContracts(web3Provider) {
   const signer = web3Provider.getSigner();
@@ -106,7 +116,7 @@ async function initContracts(web3Provider) {
 }
 
 // -----------------------------
-// 5) Отключение кошелька
+// 6) Отключение кошелька
 // -----------------------------
 async function disconnectWallet() {
   if (provider?.close) await provider.close();
@@ -119,7 +129,7 @@ async function disconnectWallet() {
 }
 
 // -----------------------------
-// 6) Обработчик кнопки
+// 7) Обработчик кнопки
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
@@ -132,7 +142,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // -----------------------------
-// 7) Экспорт
+// 8) Экспорт
 // -----------------------------
 export { connectWallet, disconnectWallet, provider, signer };
-
