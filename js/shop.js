@@ -125,10 +125,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+// ... остальной код вашего shop.js
+
 console.log("✅ shop.js загружен");
 
-// Активация кнопки после выбора способа оплаты
-document.getElementById('paymentToken').addEventListener('change', function () {
-  const btn = document.getElementById('confirmBtn');
-  btn.disabled = this.value === "";
+// Активация кнопки после выбора способа оплаты (выполняется после полной загрузки DOM)
+document.addEventListener("DOMContentLoaded", () => {
+  const paymentToken = document.getElementById('paymentToken');
+  const confirmBtn = document.getElementById('confirmBtn');
+  
+  if (paymentToken && confirmBtn) {
+    paymentToken.addEventListener('change', function () {
+      confirmBtn.disabled = this.value === "";
+    });
+  }
 });
