@@ -21,14 +21,20 @@ import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 
 // -----------------------------
-// 2) Настройка Web3Modal и WalletConnect v2
+// 2) Функция для определения мобильного устройства
+// -----------------------------
+function isMobileDevice() {
+  return /android|iphone|ipad|ipod/i.test(navigator.userAgent);
+}
+
+// -----------------------------
+// 3) Настройка Web3Modal и WalletConnect v2
 // -----------------------------
 // Получаем конструктор WalletConnectProvider
 const WalletConnectProviderConstructor = window.WalletConnectProvider?.default || window.WalletConnectProvider;
 
 // Параметры подключения для провайдеров
 const providerOptions = {
-  // Инжектированный провайдер (например, MetaMask)
   injected: {
     display: {
       name: "MetaMask",
@@ -36,7 +42,6 @@ const providerOptions = {
     },
     package: null
   },
-  // Провайдер WalletConnect
   walletconnect: {
     package: WalletConnectProviderConstructor,
     options: {
@@ -56,23 +61,22 @@ const providerOptions = {
   }
 };
 
-// Здесь мы устанавливаем disableInjectedProvider: true, чтобы всегда показывать модальное окно выбора кошельков
+// Оригинальный вариант: на мобильных отключаем инжектированный провайдер, на десктопе оставляем его
 const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
   cacheProvider: false,
-  disableInjectedProvider: true,
+  disableInjectedProvider: isMobileDevice(),
   providerOptions
 });
 
-// Очистка кэша провайдера на всякий случай
+// Очистка кэша провайдера (на всякий случай)
 web3Modal.clearCachedProvider();
 
 // -----------------------------
-// 3) Функция подключения кошелька
+// 4) Функция подключения кошелька
 // -----------------------------
 async function connectWallet() {
   try {
     console.log("Подключение кошелька...");
-    // При вызове web3Modal.connect() всегда будет появляться модальное окно выбора кошелька
     provider = await web3Modal.connect();
     const web3Provider = new ethers.providers.Web3Provider(provider);
     signer = web3Provider.getSigner();
@@ -86,7 +90,7 @@ async function connectWallet() {
     if (walletDisplay) {
       walletDisplay.innerText = selectedAccount;
     }
-    // Логирование для отладки смены аккаунтов
+    // Обработка смены аккаунтов
     provider.on("accountsChanged", (accs) => {
       console.log("accountsChanged:", accs);
       if (!accs.length) return disconnectWallet();
@@ -106,7 +110,7 @@ async function connectWallet() {
 }
 
 // -----------------------------
-// 4) Инициализация контрактов
+// 5) Инициализация контрактов
 // -----------------------------
 async function initContracts(web3Provider) {
   const signer = web3Provider.getSigner();
@@ -129,7 +133,7 @@ async function initContracts(web3Provider) {
 }
 
 // -----------------------------
-// 5) Функция отключения кошелька
+// 6) Функция отключения кошелька
 // -----------------------------
 async function disconnectWallet() {
   if (provider?.close) await provider.close();
@@ -142,7 +146,7 @@ async function disconnectWallet() {
 }
 
 // -----------------------------
-// 6) Привязка обработчика к кнопке подключения
+// 7) Привязка обработчика к кнопке подключения
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
@@ -159,6 +163,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // -----------------------------
-// 7) Экспорт функций для подключения и отключения
+// 8) Экспорт функций для подключения и отключения
 // -----------------------------
 export { connectWallet, disconnectWallet };
