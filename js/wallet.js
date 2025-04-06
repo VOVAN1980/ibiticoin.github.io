@@ -27,8 +27,12 @@ function isMobileDevice() {
 }
 
 // -----------------------------
-// 3) Web3Modal настройка
+// 3) Web3Modal и WalletConnect v2 настройка
 // -----------------------------
+// Получите свой projectId на https://cloud.walletconnect.com/
+const WALLETCONNECT_PROJECT_ID = "ВАШ_PROJECT_ID";  // Замените на ваш projectId
+
+// Используем последнюю версию WalletConnectProvider v2
 const WalletConnectProviderConstructor = window.WalletConnectProvider?.default || window.WalletConnectProvider;
 
 const providerOptions = {
@@ -42,19 +46,29 @@ const providerOptions = {
   walletconnect: {
     package: WalletConnectProviderConstructor,
     options: {
-      infuraId: INFURA_ID
+      projectId: WALLETCONNECT_PROJECT_ID,
+      rpcMap: {
+        1: `https://mainnet.infura.io/v3/${INFURA_ID}`,
+        56: "https://bsc-dataseed.binance.org/"
+      },
+      metadata: {
+        name: "IBITIcoin",
+        description: "Подключение к IBITIcoin DApp",
+        url: "https://ibiticoin.com",
+        icons: ["https://ibiticoin.com/logo.png"]
+      }
     }
   }
 };
 
 const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
-  cacheProvider: false,
-  // Для мобильных отключаем встроенный инжектированный провайдер, чтобы показать окно выбора
+  cacheProvider: false, // не запоминаем выбор, чтобы каждый раз показывался выбор кошельков
+  // Для мобильных отключаем инжектированный провайдер, чтобы выбор отображался всегда
   disableInjectedProvider: isMobileDevice(),
   providerOptions
 });
 
-// Сброс кэша, если он вдруг остался
+// Сброс кэша (на всякий случай)
 web3Modal.clearCachedProvider();
 
 // -----------------------------
@@ -63,7 +77,7 @@ web3Modal.clearCachedProvider();
 async function connectWallet() {
   try {
     console.log("Подключение кошелька...");
-    // При каждом вызове будет показано окно выбора
+    // При каждом вызове должно показываться окно выбора
     provider = await web3Modal.connect();
     const web3Provider = new ethers.providers.Web3Provider(provider);
     signer = web3Provider.getSigner();
