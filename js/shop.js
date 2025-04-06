@@ -130,13 +130,38 @@ document.addEventListener("DOMContentLoaded", () => {
 console.log("✅ shop.js загружен");
 
 // Активация кнопки после выбора способа оплаты (выполняется после полной загрузки DOM)
+console.log("✅ shop.js загружен");
+
+// Обработчик формы покупки, навешанный через DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById('purchaseForm');
+  if (form) {
+    form.addEventListener('submit', async function(event) {
+      event.preventDefault();
+      const amount = document.getElementById('nftAmount').value;
+      const walletDisplay = document.getElementById("walletAddress");
+      if (!walletDisplay || walletDisplay.innerText.trim() === '' ||
+          walletDisplay.innerText.toLowerCase().includes("disconnect")) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Кошелек не подключен',
+          text: 'Сначала подключите кошелек.',
+        });
+        return;
+      }
+      closePurchaseModal();
+      await handlePurchase(amount, currentProduct);
+    });
+  } else {
+    console.error("Форма покупки не найдена");
+  }
+
+  // Навешиваем обработчик на селектор способа оплаты
   const paymentToken = document.getElementById('paymentToken');
   const confirmBtn = document.getElementById('confirmBtn');
-  
   if (paymentToken && confirmBtn) {
     paymentToken.addEventListener('change', function () {
-      confirmBtn.disabled = this.value === "";
+      confirmBtn.disabled = (this.value === "");
     });
   } else {
     console.error("Элементы paymentToken или confirmBtn не найдены");
