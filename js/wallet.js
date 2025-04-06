@@ -9,6 +9,7 @@ let signer = null;
 let selectedAccount = null;
 
 const INFURA_ID = "1faccf0f1fdc4532ad7a1a38a67ee906";
+const WALLETCONNECT_PROJECT_ID = "95f126f3a088cebcf781d2a1c10711fc";
 
 // Адреса контрактов
 const IBITI_TOKEN_ADDRESS      = "0xBCbB45CE07e6026Ed6A4911b2DCabd0544615fBe";
@@ -21,19 +22,40 @@ import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 
 // -----------------------------
-// 2) Web3Modal настройка
+// 2) Web3Modal настройка (WalletConnect v2)
 // -----------------------------
 const WalletConnectProviderConstructor = window.WalletConnectProvider?.default || window.WalletConnectProvider;
 
 const providerOptions = {
+  injected: {
+    display: {
+      name: "MetaMask",
+      description: "Подключитесь через MetaMask"
+    },
+    package: null
+  },
   walletconnect: {
     package: WalletConnectProviderConstructor,
-    options: { infuraId: INFURA_ID }
+    options: {
+      projectId: WALLETCONNECT_PROJECT_ID,
+      rpcMap: {
+        1: `https://mainnet.infura.io/v3/${INFURA_ID}`
+        // Добавьте другие сети, если необходимо
+      },
+      metadata: {
+        name: "IBITIcoin",
+        description: "Подключение к IBITIcoin DApp",
+        url: "https://ibiticoin.com",
+        icons: ["https://ibiticoin.com/logo.png"]
+      },
+      mobileLinks: ["trust", "metamask"]
+    }
   }
 };
 
 const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
   cacheProvider: false,
+  disableInjectedProvider: false,
   providerOptions
 });
 
@@ -96,7 +118,7 @@ async function initContracts(web3Provider) {
 }
 
 // -----------------------------
-// 5) Отключение
+// 5) Отключение кошелька
 // -----------------------------
 async function disconnectWallet() {
   if (provider?.close) await provider.close();
@@ -109,7 +131,7 @@ async function disconnectWallet() {
 }
 
 // -----------------------------
-// 6) Обработчик кнопки
+// 6) Обработчик кнопки подключения
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
@@ -122,6 +144,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // -----------------------------
-// 7) Экспорт
+// 7) Экспорт функций
 // -----------------------------
-export { connectWallet, disconnectWallet, provider, signer, selectedAccount };
+export { connectWallet, disconnectWallet, provider };
