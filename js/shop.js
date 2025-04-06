@@ -2,29 +2,51 @@
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
 import config from "./config.js";
 import { ibitiTokenAbi } from "./abis/ibitiTokenAbi.js";
+import { connectWallet } from "./wallet.js"; // Импорт функции подключения кошелька
 
-// Провайдер и signer
-const provider = new ethers.providers.Web3Provider(window.ethereum);
-const signer = provider.getSigner();
-
-// Контракт IBITIcoin
-const ibitiContract = new ethers.Contract(
-  config.testnet.contracts.IBITI_TOKEN_ADDRESS,
-  ibitiTokenAbi,
-  signer
-);
-
-// Покупка токенов
-async function handlePurchase(amount, productName) {
+// Функция для получения экземпляра контракта IBITIcoin
+function getIbitiContract() {
   if (!window.ethereum) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'MetaMask не найден',
-      text: 'Установите MetaMask для выполнения покупки.',
-    });
-    return;
+    console.error("Ethereum объект не найден. Подключите кошелек.");
+    return null;
   }
+  // Создаем провайдер и signer из window.ethereum
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+  return new ethers.Contract(
+    config.testnet.contracts.IBITI_TOKEN_ADDRESS,
+    ibitiTokenAbi,
+    signer
+  );
+}
 
+// Функция покупки токенов
+async function handlePurchase(amount, productName) {
+  // Проверяем, подключен ли кошелек, используя элемент walletAddress
+  const walletDisplay = document.getElementById("walletAddress");
+  if (
+    !walletDisplay ||
+    walletDisplay.innerText.trim() === '' ||
+    walletDisplay.innerText.toLowerCase().includes("disconnect")
+  ) {
+    // Если кошелек не подключен – вызываем модальное окно подключения
+    await connectWallet();
+    // Ждем, пока пользователь не подключится
+    if (
+      !walletDisplay ||
+      walletDisplay.innerText.trim() === '' ||
+      walletDisplay.innerText.toLowerCase().includes("disconnect")
+    ) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Кошелек не подключен',
+        text: 'Сначала подключите кошелек.',
+      });
+      return;
+    }
+  }
+  
+  // Показываем индикатор ожидания подтверждения транзакции
   Swal.fire({
     title: 'Ожидание подтверждения...',
     html: 'Подтвердите транзакцию в кошельке',
@@ -37,6 +59,12 @@ async function handlePurchase(amount, productName) {
     const decimals = 8;
     const amountFormatted = ethers.utils.parseUnits(amount.toString(), decimals);
     const paymentMethod = document.getElementById("paymentToken")?.value;
+    
+    // Получаем контракт через функцию, которая использует window.ethereum
+    const ibitiContract = getIbitiContract();
+    if (!ibitiContract) {
+      throw new Error("Контракт не инициализирован, кошелек не подключен.");
+    }
 
     if (productName === "IBITIcoin") {
       if (paymentMethod === "IBITI") {
@@ -73,9 +101,8 @@ async function handlePurchase(amount, productName) {
 window.handlePurchase = handlePurchase;
 
 // ----------------------
-// Модальное окно
+// Модальное окно покупки
 // ----------------------
-
 let currentProduct = null;
 
 function openPurchaseModal(productName) {
@@ -99,9 +126,8 @@ window.openPurchaseModal = openPurchaseModal;
 window.closePurchaseModal = closePurchaseModal;
 
 // ----------------------
-// Обработчик формы
+// Обработчики формы покупки и выбора способа оплаты
 // ----------------------
-
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById('purchaseForm');
   if (form) {
@@ -110,7 +136,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const amount = document.getElementById('nftAmount').value;
 
       const walletDisplay = document.getElementById("walletAddress");
-      if (!walletDisplay || walletDisplay.innerText.trim() === '' || walletDisplay.innerText.toLowerCase().includes("disconnect")) {
+      if (
+        !walletDisplay ||
+        walletDisplay.innerText.trim() === '' ||
+        walletDisplay.innerText.toLowerCase().includes("disconnect")
+      ) {
         Swal.fire({
           icon: 'warning',
           title: 'Кошелек не подключен',
@@ -119,36 +149,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      closePurchaseModal();
-      await handlePurchase(amount, currentProduct);
-    });
-  }
-});
-
-// ... остальной код вашего shop.js
-
-console.log("✅ shop.js загружен");
-
-// Активация кнопки после выбора способа оплаты (выполняется после полной загрузки DOM)
-console.log("✅ shop.js загружен");
-
-// Обработчик формы покупки, навешанный через DOMContentLoaded
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById('purchaseForm');
-  if (form) {
-    form.addEventListener('submit', async function(event) {
-      event.preventDefault();
-      const amount = document.getElementById('nftAmount').value;
-      const walletDisplay = document.getElementById("walletAddress");
-      if (!walletDisplay || walletDisplay.innerText.trim() === '' ||
-          walletDisplay.innerText.toLowerCase().includes("disconnect")) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Кошелек не подключен',
-          text: 'Сначала подключите кошелек.',
-        });
-        return;
-      }
       closePurchaseModal();
       await handlePurchase(amount, currentProduct);
     });
@@ -156,7 +156,6 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Форма покупки не найдена");
   }
 
-  // Навешиваем обработчик на селектор способа оплаты
   const paymentToken = document.getElementById('paymentToken');
   const confirmBtn = document.getElementById('confirmBtn');
   if (paymentToken && confirmBtn) {
@@ -167,3 +166,5 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Элементы paymentToken или confirmBtn не найдены");
   }
 });
+
+console.log("✅ shop.js загружен");
