@@ -1,3 +1,4 @@
+// js/nft.js
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
 import config from "./config.js";
 import { ibitiNftAbi } from "./abis/ibitiNftAbi.js";
@@ -7,34 +8,31 @@ const netConfig = config.testnet ?? config;
 
 let provider, signer, nftContract;
 
+// Проверка MetaMask и инициализация
 async function initNFT() {
   if (!window.ethereum) {
-    console.warn("MetaMask не установлен. NFT-модуль не активен.");
+    alert("MetaMask не установлен. Установите расширение для работы с NFT.");
+    console.warn("MetaMask не обнаружен. NFT-модуль не активен.");
     return;
   }
-  
+
   provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-  const accounts = await provider.listAccounts();
-  
-  if (accounts.length === 0) {
-    console.log("Кошелек не подключён – для работы с NFT подключите кошелек через кнопку на главной странице.");
-    return;
-  }
-  
   signer = provider.getSigner();
+
   nftContract = new ethers.Contract(
     netConfig.contracts.IBITI_NFT_ADDRESS,
     ibitiNftAbi,
     signer
   );
-  
+
   window.nftContract = nftContract;
   window.getNFTBalance = getNFTBalance;
   window.handleNFTPurchase = handleNFTPurchase;
-  
+
   await getNFTBalance();
 }
 
+// Проверка баланса
 async function getNFTBalance() {
   try {
     const address = await signer.getAddress();
@@ -45,9 +43,14 @@ async function getNFTBalance() {
   }
 }
 
+// Обработка покупки NFT
 async function handleNFTPurchase(discount, uri) {
   if (!window.ethereum) {
-    console.warn("MetaMask не найден – для покупки NFT установите расширение.");
+    Swal.fire({
+      icon: 'warning',
+      title: 'MetaMask не найден',
+      text: 'Установите MetaMask для выполнения покупки.',
+    });
     return;
   }
 
@@ -82,5 +85,5 @@ async function handleNFTPurchase(discount, uri) {
   }
 }
 
-// Загрузка NFT-модуля – автоматически ничего не запускается, если кошелек не подключён
+// Инициализация при загрузке
 document.addEventListener("DOMContentLoaded", initNFT);
