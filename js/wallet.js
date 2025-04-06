@@ -30,7 +30,7 @@ const providerOptions = {
     package: WalletConnectProviderConstructor,
     options: {
       projectId: PROJECT_ID,
-      relayUrl: "wss://relay.walletconnect.com", // Используем официальный relay-сервер для v2
+      relayUrl: "wss://relay.walletconnect.com", // Актуальный relay-сервер для v2
       metadata: {
         name: "My Dapp", // Название вашего приложения
         description: "Описание моего Dapp",
