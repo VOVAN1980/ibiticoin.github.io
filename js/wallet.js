@@ -1,3 +1,4 @@
+// js/wallet.js
 console.log("wallet.js загружен");
 
 // -----------------------------
@@ -8,60 +9,36 @@ let signer = null;
 let selectedAccount = null;
 
 const INFURA_ID = "1faccf0f1fdc4532ad7a1a38a67ee906";
-const WALLETCONNECT_PROJECT_ID = "95f126f3a088cebcf781d2a1c10711fc";
 
 // Адреса контрактов
-const IBITI_TOKEN_ADDRESS      = "0x5fab4e25c0E75aB4a50Cac19Bf62f58dB8E597c6";
-const NFTSALEMANAGER_ADDRESS   = "0xf2A9cB2F09C1f1A8103441D13a78330B028a41DA";
-const NFT_DISCOUNT_ADDRESS     = "0x776D125B0abf3a6B10d446e9F8c0a96bBDcbC511";
+const IBITI_TOKEN_ADDRESS      = "0xBCbB45CE07e6026Ed6A4911b2DCabd0544615fBe";
+const NFTSALEMANAGER_ADDRESS   = "0xdBae91e49da7096f451C8D3db67E274EB5919e48";
+const NFT_DISCOUNT_ADDRESS     = "0x680C093B347C7d6C2DAd24D4796e67eF9694096C";
 
-// Импорт ABI для контрактов
+// ABI
 import { ibitiTokenAbi }      from "./abis/ibitiTokenAbi.js";
 import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 
 // -----------------------------
-// 2) Настройка Web3Modal и WalletConnect v2
+// 2) Web3Modal настройка
 // -----------------------------
 const WalletConnectProviderConstructor = window.WalletConnectProvider?.default || window.WalletConnectProvider;
 
 const providerOptions = {
-  injected: {
-    display: {
-      name: "MetaMask",
-      description: "Подключитесь через MetaMask"
-    },
-    package: null
-  },
   walletconnect: {
     package: WalletConnectProviderConstructor,
-    options: {
-      projectId: WALLETCONNECT_PROJECT_ID,
-      rpcMap: {
-        1: `https://mainnet.infura.io/v3/${INFURA_ID}`,
-        56: "https://bsc-dataseed.binance.org/"
-      },
-      metadata: {
-        name: "IBITIcoin",
-        description: "Подключение к IBITIcoin DApp",
-        url: "https://ibiticoin.com",
-        icons: ["https://ibiticoin.com/logo.png"]
-      },
-      mobileLinks: ["trust", "metamask"]
-    }
+    options: { infuraId: INFURA_ID }
   }
 };
 
 const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
   cacheProvider: false,
-  disableInjectedProvider: true,
   providerOptions
 });
 
-web3Modal.clearCachedProvider();
-
 // -----------------------------
-// 3) Функция подключения кошелька (вызывается только по клику)
+// 3) Подключение кошелька
 // -----------------------------
 async function connectWallet() {
   try {
@@ -70,26 +47,22 @@ async function connectWallet() {
     const web3Provider = new ethers.providers.Web3Provider(provider);
     signer = web3Provider.getSigner();
     const accounts = await web3Provider.listAccounts();
-    if (!accounts.length) {
-      console.warn("Нет аккаунтов");
-      return;
-    }
+    if (!accounts.length) return console.warn("Нет аккаунтов");
+
     selectedAccount = accounts[0];
     const walletDisplay = document.getElementById("walletAddress");
-    if (walletDisplay) {
-      walletDisplay.innerText = selectedAccount;
-    }
+    if (walletDisplay) walletDisplay.innerText = selectedAccount;
+
     provider.on("accountsChanged", (accs) => {
-      console.log("accountsChanged:", accs);
       if (!accs.length) return disconnectWallet();
       selectedAccount = accs[0];
       if (walletDisplay) walletDisplay.innerText = selectedAccount;
     });
-    provider.on("disconnect", () => {
-      console.log("provider disconnect event");
-      disconnectWallet();
-    });
+
+    provider.on("disconnect", () => disconnectWallet());
+
     console.log("Кошелек подключен:", selectedAccount);
+
     await initContracts(web3Provider);
   } catch (err) {
     console.error("Ошибка подключения:", err);
@@ -102,6 +75,7 @@ async function connectWallet() {
 // -----------------------------
 async function initContracts(web3Provider) {
   const signer = web3Provider.getSigner();
+
   window.ibitiToken = new ethers.Contract(
     IBITI_TOKEN_ADDRESS,
     ibitiTokenAbi,
@@ -117,11 +91,12 @@ async function initContracts(web3Provider) {
     nftDiscountAbi,
     signer
   );
+
   console.log("Контракты инициализированы");
 }
 
 // -----------------------------
-// 5) Функция отключения кошелька
+// 5) Отключение
 // -----------------------------
 async function disconnectWallet() {
   if (provider?.close) await provider.close();
@@ -134,23 +109,19 @@ async function disconnectWallet() {
 }
 
 // -----------------------------
-// 6) Привязка обработчика к кнопке подключения
+// 6) Обработчик кнопки
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
-  if (!connectBtn) {
-    console.error("Элемент с id 'connectWalletBtn' не найден");
-    return;
+  if (connectBtn) {
+    connectBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      connectWallet();
+    });
   }
-  console.log("Элемент connectWalletBtn найден:", connectBtn);
-  connectBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    console.log("Кнопка подключения нажата");
-    connectWallet();
-  });
 });
 
 // -----------------------------
-// 7) Экспорт функций для подключения и отключения
+// 7) Экспорт
 // -----------------------------
-export { connectWallet, disconnectWallet };
+export { connectWallet, disconnectWallet, provider, signer, selectedAccount };
