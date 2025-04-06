@@ -1,8 +1,0 @@
-{
-  "routes": [
-    {
-      "src": "/.well-known/walletconnect.txt",
-      "dest": "/.well-known/walletconnect.txt"
-    }
-  ]
-}
