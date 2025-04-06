@@ -1,8 +1,7 @@
-// js/shop.js
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
 import config from "./config.js";
 import { ibitiTokenAbi } from "./abis/ibitiTokenAbi.js";
-import { connectWallet } from "./wallet.js"; // Импорт функции подключения кошелька
+import { connectWallet } from "./wallet.js"; // Функция подключения кошелька
 
 // Функция для получения экземпляра контракта IBITIcoin
 function getIbitiContract() {
@@ -10,7 +9,6 @@ function getIbitiContract() {
     console.error("Ethereum объект не найден. Подключите кошелек.");
     return null;
   }
-  // Создаем провайдер и signer из window.ethereum
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
   return new ethers.Contract(
@@ -27,23 +25,14 @@ async function handlePurchase(amount, productName) {
   if (
     !walletDisplay ||
     walletDisplay.innerText.trim() === '' ||
-    walletDisplay.innerText.toLowerCase().includes("disconnect")
+    walletDisplay.innerText.toLowerCase().includes("disconnected")
   ) {
-    // Если кошелек не подключен – вызываем модальное окно подключения
-    await connectWallet();
-    // Ждем, пока пользователь не подключится
-    if (
-      !walletDisplay ||
-      walletDisplay.innerText.trim() === '' ||
-      walletDisplay.innerText.toLowerCase().includes("disconnect")
-    ) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Кошелек не подключен',
-        text: 'Сначала подключите кошелек.',
-      });
-      return;
-    }
+    Swal.fire({
+      icon: 'warning',
+      title: 'Кошелек не подключен',
+      text: 'Пожалуйста, нажмите кнопку «Подключить кошелек».',
+    });
+    return;
   }
   
   // Показываем индикатор ожидания подтверждения транзакции
@@ -60,7 +49,6 @@ async function handlePurchase(amount, productName) {
     const amountFormatted = ethers.utils.parseUnits(amount.toString(), decimals);
     const paymentMethod = document.getElementById("paymentToken")?.value;
     
-    // Получаем контракт через функцию, которая использует window.ethereum
     const ibitiContract = getIbitiContract();
     if (!ibitiContract) {
       throw new Error("Контракт не инициализирован, кошелек не подключен.");
@@ -84,7 +72,7 @@ async function handlePurchase(amount, productName) {
     Swal.fire({
       icon: 'success',
       title: 'Покупка успешна!',
-      text: 'Ура!!! вы стали миллионером!',
+      text: 'Ура! Вы приобрели товар.',
       timer: 5000,
       showConfirmButton: false
     });
@@ -100,19 +88,15 @@ async function handlePurchase(amount, productName) {
 
 window.handlePurchase = handlePurchase;
 
-// ----------------------
 // Модальное окно покупки
-// ----------------------
 let currentProduct = null;
 
 function openPurchaseModal(productName) {
   currentProduct = productName;
-
   if (productName === 'NFT') {
     window.location.href = 'nft.html';
     return;
   }
-
   document.getElementById('purchaseTitle').innerText = 'Покупка ' + productName;
   document.getElementById('purchaseModal').style.display = 'block';
 }
@@ -125,9 +109,7 @@ function closePurchaseModal() {
 window.openPurchaseModal = openPurchaseModal;
 window.closePurchaseModal = closePurchaseModal;
 
-// ----------------------
 // Обработчики формы покупки и выбора способа оплаты
-// ----------------------
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById('purchaseForm');
   if (form) {
@@ -139,12 +121,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (
         !walletDisplay ||
         walletDisplay.innerText.trim() === '' ||
-        walletDisplay.innerText.toLowerCase().includes("disconnect")
+        walletDisplay.innerText.toLowerCase().includes("disconnected")
       ) {
         Swal.fire({
           icon: 'warning',
           title: 'Кошелек не подключен',
-          text: 'Сначала подключите кошелек.',
+          text: 'Пожалуйста, нажмите кнопку «Подключить кошелек».',
         });
         return;
       }
