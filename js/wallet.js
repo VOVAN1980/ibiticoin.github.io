@@ -22,13 +22,13 @@ import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 
 // -----------------------------
-// 2) Web3Modal v2 настройка
+// 2) Web3Modal v2 настройка через @web3modal/wagmi
 // -----------------------------
-import { Web3Modal } from "@web3modal/html";
-import { EthereumClient, modalConnectors, walletConnectProvider } from "@web3modal/ethereum";
-import { configureChains, createClient } from "@wagmi/core";
-import { mainnet } from "@wagmi/core/chains";
-import { publicProvider } from "@wagmi/core/providers/public";
+import { Web3Modal, modalConnectors, EthereumClient } from "@web3modal/wagmi";
+import { configureChains, createClient } from "wagmi";
+import { mainnet } from "wagmi/chains";
+import { walletConnectProvider } from "@wagmi/core/providers/walletConnect";
+import { publicProvider } from "wagmi/providers/public";
 
 const chains = [mainnet];
 
@@ -37,15 +37,15 @@ const { provider: configuredProvider } = configureChains(chains, [
   publicProvider(),
 ]);
 
-const wagmiClient = createClient({
-  autoConnect: false, // Отключаем авто-подключение, чтобы всегда показывалось окно выбора
+const client = createClient({
+  autoConnect: true,
   connectors: modalConnectors({ appName: "IBITIcoin", chains }),
   provider: configuredProvider,
 });
 
-const ethereumClient = new EthereumClient(wagmiClient, chains);
+const ethereumClient = new EthereumClient(client, chains);
 
-// Настройки темы (настраиваем по желанию, чтобы UI был максимально похож на оригинал)
+// Настройки темы для Web3Modal v2
 const themeVariables = {
   "--w3m-accent-color": "#ff007a",
   "--w3m-background-color": "#1a1a1a",
@@ -63,10 +63,8 @@ const web3Modal = new Web3Modal({
 // -----------------------------
 async function connectWallet() {
   try {
-    console.log("Открытие окна выбора кошелька...");
-    // При вызове connect() должно открыться модальное окно выбора кошелька
+    console.log("Подключение кошелька...");
     const instance = await web3Modal.connect();
-    console.log("Окно выбора отработало, выбран instance:", instance);
     const web3Provider = new ethers.providers.Web3Provider(instance);
     signer = web3Provider.getSigner();
     const accounts = await web3Provider.listAccounts();
@@ -86,7 +84,7 @@ async function connectWallet() {
     console.log("Кошелек подключен:", selectedAccount);
     await initContracts(web3Provider);
   } catch (err) {
-    console.error("Ошибка подключения кошелька:", err);
+    console.error("Ошибка подключения:", err);
     alert("Ошибка подключения кошелька");
   }
 }
