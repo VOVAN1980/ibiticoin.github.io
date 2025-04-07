@@ -23,9 +23,8 @@
   <meta name="twitter:description" content="Узнайте, как IBITIcoin делает криптовалюту доступной и безопасной для всех.">
   <meta name="twitter:image" content="img/og-image.png">
   
-  <!-- Подключаем общий CSS -->
+  <!-- Подключаем общий CSS и AOS -->
   <link rel="stylesheet" href="css/style.css">
-  <!-- AOS CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
 
   <!-- Google Tag Manager -->
@@ -192,6 +191,20 @@
       background: #000;
       color: gold;
     }
+    .modal-content select {
+      padding: 10px;
+      width: 85%;
+      border: 1px solid gold;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      background: #000;
+      color: gold;
+      font-weight: bold;
+    }
+    .modal-content select option {
+      background: #000;
+      color: gold;
+    }
     .modal-content button[type="submit"],
     .modal-content button.cancel {
       background: gold;
@@ -207,20 +220,6 @@
     .modal-content button[type="submit"]:hover,
     .modal-content button.cancel:hover {
       background: #c0a000;
-    }
-     .modal-content select {
-      padding: 10px;
-      width: 85%;
-      border: 1px solid gold;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      background: #000;
-      color: gold;
-      font-weight: bold;
-    }
-    .modal-content select option {
-      background: #000;
-      color: gold;
     }
 
     /* --- Футер --- */
@@ -238,13 +237,14 @@
     footer a:hover {
       text-decoration: underline;
     }
-</style>
+  </style>
 </head>
 <body>
   <header class="hero-header">
     <h1>Магазин IBITIcoin</h1>
     <p>Приобретайте эксклюзивные товары, связанные с IBITIcoin!</p>
   </header>
+
   <!-- Секция подключения кошелька -->
   <section class="wallet-section">
     <button id="connectWalletBtn">Подключить кошелек</button>
@@ -270,47 +270,47 @@
   </section>
 
   <!-- Модальное окно для покупки -->
-<div id="purchaseModal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closePurchaseModal()">&times;</span>
-    <h2 id="purchaseTitle">Покупка</h2>
-    <form id="purchaseForm">
-      <label for="nftAmount">Введите количество:</label>
-      <input type="number" id="nftAmount" name="nftAmount" min="1" required>
+  <div id="purchaseModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closePurchaseModal()">&times;</span>
+      <h2 id="purchaseTitle">Покупка</h2>
+      <form id="purchaseForm">
+        <label for="nftAmount">Введите количество:</label>
+        <input type="number" id="nftAmount" name="nftAmount" min="1" required>
 
-      <label for="paymentToken">Способ оплаты:</label>
-      <select id="paymentToken" required>
-        <option value="">-- Выберите --</option>
-        <option value="IBITI">IBITI</option>
-        <option value="USDT">USDT</option>
-      </select>
+        <label for="paymentToken">Способ оплаты:</label>
+        <select id="paymentToken" required>
+          <option value="">-- Выберите --</option>
+          <option value="IBITI">IBITI</option>
+          <option value="USDT">USDT</option>
+        </select>
 
-      <br><br>
-      <button type="submit" id="confirmBtn" disabled>Подтвердить покупку</button>
-      <button type="button" class="cancel" onclick="closePurchaseModal()">Отмена</button>
-    </form>
+        <br><br>
+        <button type="submit" id="confirmBtn" disabled>Подтвердить покупку</button>
+        <button type="button" class="cancel" onclick="closePurchaseModal()">Отмена</button>
+      </form>
+    </div>
   </div>
-</div>
 
-<footer>
+  <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
   </footer>
 
   <!-- Внешние библиотеки -->
-<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-<script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
-<script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
+  <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
 
-<!-- Дополнительные библиотеки -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script>
-  AOS.init({ once: true });
-</script>
+  <!-- Дополнительные библиотеки -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script>
+    AOS.init({ once: true });
+  </script>
 
-<!-- Модульные скрипты проекта -->
-<script type="module" src="js/wallet.js"></script>
-<script type="module" src="js/nft.js"></script>
-<script type="module" src="js/shop.js"></script>
+  <!-- Модульные скрипты проекта -->
+  <script type="module" src="js/wallet.js"></script>
+  <script type="module" src="js/nft.js"></script>
+  <script type="module" src="js/shop.js"></script>
 </body>
 </html>
