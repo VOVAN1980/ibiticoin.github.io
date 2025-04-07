@@ -1,7 +1,7 @@
 // wallet.js (обновленная версия для Web3Modal v2 / WalletConnect v2)
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
 import Web3Modal from "https://unpkg.com/web3modal@2.0.8/dist/index.js";
-import WalletConnectProvider from "@walletconnect/ethereum-provider";
+import WalletConnectProvider from "https://cdn.skypack.dev/@walletconnect/ethereum-provider";
 
 // Обновленные настройки для WalletConnect v2
 const providerOptions = {
