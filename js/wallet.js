@@ -1,68 +1,81 @@
 // js/wallet.js
-console.log("wallet.js загружен");
+import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
+import { Web3Modal } from '@web3modal/html';
+import { EthereumClient, walletConnectProvider, modalConnectors } from '@web3modal/ethereum';
+import { configureChains, createClient } from '@wagmi/core';
+import { mainnet } from '@wagmi/core/chains';
+import { publicProvider } from '@wagmi/core/providers/public';
 
-// -----------------------------
-// 1) Глобальные переменные
-// -----------------------------
+// Глобальные переменные
 let provider = null;
 let signer = null;
 let selectedAccount = null;
 
-const INFURA_ID = "1faccf0f1fdc4532ad7a1a38a67ee906";
+// Адреса контрактов (оставляем как были)
+const IBITI_TOKEN_ADDRESS    = "0xBCbB45CE07e6026Ed6A4911b2DCabd0544615fBe";
+const NFTSALEMANAGER_ADDRESS = "0xdBae91e49da7096f451C8D3db67E274EB5919e48";
+const NFT_DISCOUNT_ADDRESS   = "0x680C093B347C7d6C2DAd24D4796e67eF9694096C";
 
-// Адреса контрактов
-const IBITI_TOKEN_ADDRESS      = "0x5fab4e25c0E75aB4a50Cac19Bf62f58dB8E597c6";
-const NFTSALEMANAGER_ADDRESS   = "0xf2A9cB2F09C1f1A8103441D13a78330B028a41DA";
-const NFT_DISCOUNT_ADDRESS     = "0x776D125B0abf3a6B10d446e9F8c0a96bBDcbC511";
+// ABI импортируем, как раньше
+import { ibitiTokenAbi } from "./abis/ibitiTokenAbi.js";
+import { nftSaleManagerAbi } from "./abis/nftSaleManagerAbi.js";
+import { nftDiscountAbi } from "./abis/nftDiscountAbi.js";
 
-// ABI
-import { ibitiTokenAbi }      from "./abis/ibitiTokenAbi.js";
-import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
-import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
+// Настройка сети и создание клиента для Web3Modal v2
+const chains = [mainnet];
+const projectId = '95f126f3a088cebcf781d2a1c10711fc';  // ваш projectId
 
-// -----------------------------
-// 2) Web3Modal настройка
-// -----------------------------
-const WalletConnectProviderConstructor = window.WalletConnectProvider?.default || window.WalletConnectProvider;
+const { provider: wagmiProvider } = configureChains(chains, [
+  walletConnectProvider({ projectId }),
+  publicProvider()
+]);
 
-const providerOptions = {
-  walletconnect: {
-    package: WalletConnectProviderConstructor,
-    options: { infuraId: INFURA_ID }
-  }
-};
-
-const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
-  cacheProvider: false,
-  providerOptions
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors: modalConnectors({ appName: 'IBITIcoin', chains }),
+  provider: wagmiProvider
 });
 
-// -----------------------------
-// 3) Подключение кошелька
-// -----------------------------
+const ethereumClient = new EthereumClient(wagmiClient, chains);
+
+export const web3Modal = new Web3Modal({
+  projectId,
+  themeMode: 'dark',
+  themeVariables: {
+    '--w3m-accent-color': '#ff007a',
+    '--w3m-background-color': '#1a1a1a'
+  }
+}, ethereumClient);
+
+// Функция подключения кошелька
 async function connectWallet() {
   try {
     console.log("Подключение кошелька...");
-    provider = await web3Modal.connect();
-    const web3Provider = new ethers.providers.Web3Provider(provider);
+    // Открываем модальное окно
+    await web3Modal.openModal();
+    
+    // Используем поставщика из wagmiClient для получения провайдера
+    const web3Provider = new ethers.providers.Web3Provider(await wagmiClient.provider);
     signer = web3Provider.getSigner();
     const accounts = await web3Provider.listAccounts();
-    if (!accounts.length) return console.warn("Нет аккаунтов");
-
+    if (!accounts.length) {
+      console.warn("Нет аккаунтов");
+      return;
+    }
     selectedAccount = accounts[0];
     const walletDisplay = document.getElementById("walletAddress");
     if (walletDisplay) walletDisplay.innerText = selectedAccount;
 
+    // Подписываемся на изменения аккаунта и отключение
+    provider = await wagmiClient.provider;
     provider.on("accountsChanged", (accs) => {
       if (!accs.length) return disconnectWallet();
       selectedAccount = accs[0];
       if (walletDisplay) walletDisplay.innerText = selectedAccount;
     });
-
     provider.on("disconnect", () => disconnectWallet());
 
     console.log("Кошелек подключен:", selectedAccount);
-
     await initContracts(web3Provider);
   } catch (err) {
     console.error("Ошибка подключения:", err);
@@ -70,36 +83,32 @@ async function connectWallet() {
   }
 }
 
-// -----------------------------
-// 4) Инициализация контрактов
-// -----------------------------
+// Функция инициализации контрактов
 async function initContracts(web3Provider) {
-  const signer = web3Provider.getSigner();
+  const signerInstance = web3Provider.getSigner();
 
   window.ibitiToken = new ethers.Contract(
     IBITI_TOKEN_ADDRESS,
     ibitiTokenAbi,
-    signer
+    signerInstance
   );
   window.saleManager = new ethers.Contract(
     NFTSALEMANAGER_ADDRESS,
     nftSaleManagerAbi,
-    signer
+    signerInstance
   );
   window.nftDiscount = new ethers.Contract(
     NFT_DISCOUNT_ADDRESS,
     nftDiscountAbi,
-    signer
+    signerInstance
   );
 
   console.log("Контракты инициализированы");
 }
 
-// -----------------------------
-// 5) Отключение
-// -----------------------------
+// Функция отключения кошелька
 async function disconnectWallet() {
-  if (provider?.close) await provider.close();
+  await web3Modal.clearCachedProvider();
   provider = null;
   signer = null;
   selectedAccount = null;
@@ -108,9 +117,7 @@ async function disconnectWallet() {
   console.log("Кошелек отключен");
 }
 
-// -----------------------------
-// 6) Обработчик кнопки
-// -----------------------------
+// Обработчик кнопки подключения (не меняется)
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
   if (connectBtn) {
@@ -121,7 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// -----------------------------
-// 7) Экспорт
-// -----------------------------
-export { connectWallet, disconnectWallet, provider, signer, selectedAccount };
+// Экспортируем функции и переменные
+export { connectWallet, disconnectWallet, signer, selectedAccount };
+
