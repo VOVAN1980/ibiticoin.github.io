@@ -12,14 +12,14 @@ const INFURA_ID = "1faccf0f1fdc4532ad7a1a38a67ee906";
 const projectId = "95f126f3a088cebcf781d2a1c10711fc";
 
 // Адреса контрактов
-const IBITI_TOKEN_ADDRESS      = "0xBCbB45CE07e6026Ed6A4911b2DCabd0544615fBe";
-const NFTSALEMANAGER_ADDRESS   = "0xdBae91e49da7096f451C8D3db67E274EB5919e48";
-const NFT_DISCOUNT_ADDRESS     = "0x680C093B347C7d6C2DAd24D4796e67eF9694096C";
+const IBITI_TOKEN_ADDRESS    = "0xBCbB45CE07e6026Ed6A4911b2DCabd0544615fBe";
+const NFTSALEMANAGER_ADDRESS = "0xdBae91e49da7096f451C8D3db67E274EB5919e48";
+const NFT_DISCOUNT_ADDRESS   = "0x680C093B347C7d6C2DAd24D4796e67eF9694096C";
 
 // ABI
-import { ibitiTokenAbi }      from "./abis/ibitiTokenAbi.js";
-import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
-import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
+import { ibitiTokenAbi }     from "./abis/ibitiTokenAbi.js";
+import { nftSaleManagerAbi } from "./abis/nftSaleManagerAbi.js";
+import { nftDiscountAbi }    from "./abis/nftDiscountAbi.js";
 
 // -----------------------------
 // 2) Web3Modal v2 настройка
@@ -45,9 +45,17 @@ const wagmiClient = createClient({
 
 const ethereumClient = new EthereumClient(wagmiClient, chains);
 
+// Настройки темы для сохранения оригинального вида
+const themeVariables = {
+  "--w3m-accent-color": "#ff007a",
+  "--w3m-background-color": "#1a1a1a",
+  "--w3m-border-radius": "10px",
+};
+
 const web3Modal = new Web3Modal({
   projectId,
-  themeMode: "dark"
+  themeMode: "dark",
+  themeVariables,
 }, ethereumClient);
 
 // -----------------------------
@@ -56,7 +64,7 @@ const web3Modal = new Web3Modal({
 async function connectWallet() {
   try {
     console.log("Подключение кошелька...");
-    // Открываем окно выбора кошелька (UI останется таким же, как и раньше)
+    // Открываем модальное окно выбора кошелька – внешний вид и логика остаются такими же, как были
     const instance = await web3Modal.connect();
     const web3Provider = new ethers.providers.Web3Provider(instance);
     signer = web3Provider.getSigner();
