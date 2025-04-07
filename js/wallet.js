@@ -1,48 +1,41 @@
-import { EthereumClient, w3mConnectors, w3mProvider } from 'https://cdn.jsdelivr.net/npm/@web3modal/ethereum@2.7.1/+esm';
-import { Web3Modal } from 'https://cdn.jsdelivr.net/npm/@web3modal/html@2.7.1/+esm';
-import { createConfig, getAccount, watchAccount } from 'https://cdn.jsdelivr.net/npm/@wagmi/core@2.5.6/+esm';
-import { bscTestnet } from 'https://cdn.jsdelivr.net/npm/@wagmi/core@2.5.6/chains/+esm';
+import { Web3Modal } from 'https://unpkg.com/@web3modal/html@2.7.1/dist/index.js';
+import { EthereumClient, w3mConnectors, w3mProvider } from 'https://unpkg.com/@web3modal/ethereum@2.7.1/dist/index.js';
+import { bscTestnet } from 'https://cdn.skypack.dev/@wagmi/core/chains';
+import { createConfig, getAccount, watchAccount } from 'https://cdn.skypack.dev/@wagmi/core';
 import { ethers } from 'https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js';
 
-// ⚙️ Project ID Reown
-const projectId = '95f126f3a088...d2a1c10711fc'; // Замени на свой
+// Project ID
+const projectId = '95f126f3a088...d2a1c10711fc';
 
-// 🔗 Сеть
+// Сеть
 const chains = [bscTestnet];
 
-// ⚙️ Wagmi config
+// Конфиг
 const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: w3mConnectors({ projectId, chains }),
   publicClient: w3mProvider({ projectId }),
 });
 
-// 🔌 Web3Modal
+// Web3Modal init
 const ethereumClient = new EthereumClient(wagmiConfig, chains);
-const modal = new Web3Modal(
-  {
-    projectId,
-    themeMode: 'dark',
-    themeVariables: {
-      '--w3m-accent': '#FFD700',
-      '--w3m-background': '#000000',
-    },
-  },
-  ethereumClient
-);
-
-// 📡 Подключение кошелька
-async function connectWallet() {
-  try {
-    const account = getAccount();
-    if (account?.address) return;
-    modal.openModal();
-  } catch (err) {
-    console.error('Ошибка подключения:', err);
+const modal = new Web3Modal({
+  projectId,
+  themeMode: 'dark',
+  themeVariables: {
+    '--w3m-accent': '#FFD700',
+    '--w3m-background': '#000000'
   }
+}, ethereumClient);
+
+// Подключение
+async function connectWallet() {
+  const account = getAccount();
+  if (account?.address) return;
+  modal.openModal();
 }
 
-// 👛 UI
+// Обновление UI
 function updateWalletUI(address) {
   const btn = document.getElementById('walletAddress');
   if (!btn) return;
@@ -51,7 +44,7 @@ function updateWalletUI(address) {
     : 'Подключить кошелёк';
 }
 
-// 🔄 Слежение
+// Слежение за аккаунтом
 watchAccount((account) => {
   updateWalletUI(account.address);
   window.connectedAddress = account.address;
@@ -60,7 +53,7 @@ watchAccount((account) => {
   }
 });
 
-// ▶️ DOM
+// Навешивание обработчика
 document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('walletAddress');
   if (btn) btn.addEventListener('click', connectWallet);
