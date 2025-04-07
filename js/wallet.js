@@ -1,71 +1,54 @@
-// js/wallet.js
-import { createWeb3Modal, defaultWagmiConfig } from 'https://cdn.jsdelivr.net/npm/@reown/appkit@1/+esm';
-import { bscTestnet } from 'https://cdn.jsdelivr.net/npm/@wagmi/core/chains/+esm';
+import { EthereumClient, w3mConnectors, w3mProvider } from 'https://cdn.jsdelivr.net/npm/@web3modal/ethereum@2.7.1/+esm';
+import { Web3Modal } from 'https://cdn.jsdelivr.net/npm/@web3modal/html@2.7.1/+esm';
+import { createConfig, getAccount, watchAccount } from 'https://cdn.jsdelivr.net/npm/@wagmi/core@2.6.1/+esm';
+import { bscTestnet } from 'https://cdn.jsdelivr.net/npm/@wagmi/core@2.6.1/chains/+esm';
 import { ethers } from 'https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js';
 
-const projectId = '95f126f3a088...d2a1c10711fc'; // Заменить на актуальный если обрезан
+// ✅ Укажи актуальный Project ID Reown (ex-Web3Modal)
+const projectId = '95f126f3a088...d2a1c10711fc';
 
-const metadata = {
-  name: 'IBITIcoin',
-  description: 'IBITIcoin – новая эра Web3',
-  url: 'https://www.ibiticoin.com',
-  icons: ['https://www.ibiticoin.com/img/logo.png']
-};
+// 🔗 Сеть (можно заменить на mainnet или другую при необходимости)
+const chains = [bscTestnet];
 
-// Конфигурация Wagmi
-const config = defaultWagmiConfig({
-  chains: [bscTestnet],
-  projectId,
-  metadata
+// 🔧 Конфигурация Wagmi
+const wagmiConfig = createConfig({
+  autoConnect: true,
+  connectors: w3mConnectors({ projectId, chains }),
+  publicClient: w3mProvider({ projectId }),
+  chains
 });
 
-// Инициализация Web3Modal
-createWeb3Modal({
-  wagmiConfig: config,
-  projectId,
-  chains: [bscTestnet],
-  themeMode: 'dark'
-});
+// ⚙️ Клиент и модалка
+const ethereumClient = new EthereumClient(wagmiConfig, chains);
+const web3Modal = new Web3Modal({ projectId, themeMode: 'dark' }, ethereumClient);
 
-// Обновление интерфейса
-function updateWalletUI(address) {
-  const btn = document.getElementById('walletAddress');
-  if (!btn) return;
-
-  if (!address) {
-    btn.innerText = 'Подключить кошелёк';
-  } else {
-    const short = `${address.slice(0, 6)}...${address.slice(-4)}`;
-    btn.innerText = short;
+// 👛 Подключение кошелька
+async function connectWallet() {
+  try {
+    const account = getAccount();
+    if (account?.address) return;
+    web3Modal.openModal();
+  } catch (err) {
+    console.error('Ошибка подключения:', err);
   }
 }
 
-// Отслеживание состояния
-import { watchAccount, getAccount } from 'https://cdn.jsdelivr.net/npm/@wagmi/core/+esm';
+// 🔁 Обновление интерфейса
+function updateWalletUI(address) {
+  const btn = document.getElementById('walletAddress');
+  if (!btn) return;
+  btn.innerText = address ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'Подключить кошелёк';
+}
 
+// 📡 Отслеживание состояния
 watchAccount((account) => {
-  if (account?.address) {
-    window.connectedAddress = account.address;
-    window.signer = new ethers.providers.Web3Provider(window.ethereum).getSigner();
-  } else {
-    window.connectedAddress = null;
-    window.signer = null;
-  }
-
   updateWalletUI(account.address);
+  window.connectedAddress = account.address || null;
+  window.signer = account.address ? new ethers.providers.Web3Provider(window.ethereum).getSigner() : null;
 });
 
-// Подключение по клику
+// ⏱️ Навешиваем кнопку
 document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('walletAddress');
-  if (btn) {
-    btn.addEventListener('click', async () => {
-      const { open } = await import('https://cdn.jsdelivr.net/npm/@reown/appkit@1/+esm');
-      open(); // Открыть окно подключения
-    });
-
-    // Первичная отрисовка
-    const account = getAccount();
-    updateWalletUI(account.address);
-  }
+  if (btn) btn.addEventListener('click', connectWallet);
 });
