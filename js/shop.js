@@ -14,7 +14,7 @@ const ibitiContract = new ethers.Contract(
   signer
 );
 
-// Покупка токенов
+// Функция покупки токенов
 async function handlePurchase(amount, productName) {
   if (!window.ethereum) {
     Swal.fire({
@@ -72,73 +72,40 @@ async function handlePurchase(amount, productName) {
 
 window.handlePurchase = handlePurchase;
 
-// ----------------------
-// Модальное окно
-// ----------------------
-
+// Модальное окно для покупки
 let currentProduct = null;
-
 function openPurchaseModal(productName) {
   currentProduct = productName;
-
   if (productName === 'NFT') {
     window.location.href = 'nft.html';
     return;
   }
-
-  document.getElementById('purchaseTitle').innerText = 'Покупка ' + productName;
-  document.getElementById('purchaseModal').style.display = 'block';
+  const titleElem = document.getElementById('purchaseTitle');
+  if (titleElem) {
+    titleElem.innerText = 'Покупка ' + productName;
+  }
+  const modal = document.getElementById('purchaseModal');
+  if (modal) {
+    modal.style.display = 'block';
+  }
 }
-
 function closePurchaseModal() {
-  document.getElementById('purchaseModal').style.display = 'none';
-  document.getElementById('nftAmount').value = '';
+  const modal = document.getElementById('purchaseModal');
+  if (modal) modal.style.display = 'none';
+  const amountInput = document.getElementById('nftAmount');
+  if (amountInput) amountInput.value = '';
 }
-
 window.openPurchaseModal = openPurchaseModal;
 window.closePurchaseModal = closePurchaseModal;
 
-// ----------------------
-// Обработчик формы
-// ----------------------
-
+// Обработчики формы и селектора способа оплаты
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById('purchaseForm');
   if (form) {
     form.addEventListener('submit', async function(event) {
       event.preventDefault();
-      const amount = document.getElementById('nftAmount').value;
-
-      const walletDisplay = document.getElementById("walletAddress");
-      if (!walletDisplay || walletDisplay.innerText.trim() === '' || walletDisplay.innerText.toLowerCase().includes("disconnect")) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Кошелек не подключен',
-          text: 'Сначала подключите кошелек.',
-        });
-        return;
-      }
-
-      closePurchaseModal();
-      await handlePurchase(amount, currentProduct);
-    });
-  }
-});
-
-// ... остальной код вашего shop.js
-
-console.log("✅ shop.js загружен");
-
-// Активация кнопки после выбора способа оплаты (выполняется после полной загрузки DOM)
-console.log("✅ shop.js загружен");
-
-// Обработчик формы покупки, навешанный через DOMContentLoaded
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById('purchaseForm');
-  if (form) {
-    form.addEventListener('submit', async function(event) {
-      event.preventDefault();
-      const amount = document.getElementById('nftAmount').value;
+      const amountElem = document.getElementById('nftAmount');
+      const amount = amountElem ? amountElem.value : null;
       const walletDisplay = document.getElementById("walletAddress");
       if (!walletDisplay || walletDisplay.innerText.trim() === '' ||
           walletDisplay.innerText.toLowerCase().includes("disconnect")) {
@@ -153,17 +120,16 @@ document.addEventListener("DOMContentLoaded", () => {
       await handlePurchase(amount, currentProduct);
     });
   } else {
-    console.error("Форма покупки не найдена");
+    // Если форма отсутствует, ничего не делаем
   }
 
-  // Навешиваем обработчик на селектор способа оплаты
   const paymentToken = document.getElementById('paymentToken');
   const confirmBtn = document.getElementById('confirmBtn');
   if (paymentToken && confirmBtn) {
     paymentToken.addEventListener('change', function () {
       confirmBtn.disabled = (this.value === "");
     });
-  } else {
-    console.error("Элементы paymentToken или confirmBtn не найдены");
   }
 });
+
+console.log("✅ shop.js загружен");
