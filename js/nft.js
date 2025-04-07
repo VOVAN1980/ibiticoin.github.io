@@ -3,36 +3,42 @@ import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.es
 import config from "./config.js";
 import { ibitiNftAbi } from "./abis/ibitiNftAbi.js";
 
-// Определяем активную сеть
+// Определяем активную сеть (используем тестовую сеть, если она указана, иначе основную)
 const netConfig = config.testnet ?? config;
 
 let provider, signer, nftContract;
 
-// Проверка MetaMask и инициализация
+// Функция инициализации NFT-модуля
 async function initNFT() {
+  // Проверяем наличие MetaMask
   if (!window.ethereum) {
     alert("MetaMask не установлен. Установите расширение для работы с NFT.");
     console.warn("MetaMask не обнаружен. NFT-модуль не активен.");
     return;
   }
 
+  // Инициализируем провайдер и запрашиваем доступ к аккаунтам
   provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+  await provider.send("eth_requestAccounts", []); // запрос разрешения
   signer = provider.getSigner();
 
+  // Создаём экземпляр контракта NFT
   nftContract = new ethers.Contract(
     netConfig.contracts.IBITI_NFT_ADDRESS,
     ibitiNftAbi,
     signer
   );
 
+  // Делаем контракт и функции доступными глобально для отладки
   window.nftContract = nftContract;
   window.getNFTBalance = getNFTBalance;
   window.handleNFTPurchase = handleNFTPurchase;
 
+  // Получаем начальный баланс NFT
   await getNFTBalance();
 }
 
-// Проверка баланса
+// Функция получения баланса NFT для подключённого аккаунта
 async function getNFTBalance() {
   try {
     const address = await signer.getAddress();
@@ -43,8 +49,9 @@ async function getNFTBalance() {
   }
 }
 
-// Обработка покупки NFT
+// Функция обработки покупки NFT через контракт saleManager
 async function handleNFTPurchase(discount, uri) {
+  // Проверяем наличие MetaMask
   if (!window.ethereum) {
     Swal.fire({
       icon: 'warning',
@@ -54,6 +61,7 @@ async function handleNFTPurchase(discount, uri) {
     return;
   }
 
+  // Показываем уведомление о ожидании подтверждения
   Swal.fire({
     title: 'Ожидание подтверждения...',
     html: 'Подтвердите транзакцию в кошельке',
@@ -65,6 +73,7 @@ async function handleNFTPurchase(discount, uri) {
     const saleManager = window.saleManager;
     if (!saleManager) throw new Error("Контракт saleManager не инициализирован");
 
+    // Отправляем транзакцию на покупку NFT
     const tx = await saleManager.buyNFTWithIBITI(discount, uri);
     await tx.wait();
 
@@ -85,5 +94,5 @@ async function handleNFTPurchase(discount, uri) {
   }
 }
 
-// Инициализация при загрузке
+// Инициализация NFT-модуля после загрузки DOM
 document.addEventListener("DOMContentLoaded", initNFT);
