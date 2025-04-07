@@ -56,7 +56,8 @@ const web3Modal = new Web3Modal({
 async function connectWallet() {
   try {
     console.log("Подключение кошелька...");
-    const instance = await web3Modal.connect(); // Открывает окно выбора кошелька (как раньше)
+    // Открываем окно выбора кошелька (UI останется таким же, как и раньше)
+    const instance = await web3Modal.connect();
     const web3Provider = new ethers.providers.Web3Provider(instance);
     signer = web3Provider.getSigner();
     const accounts = await web3Provider.listAccounts();
@@ -71,11 +72,9 @@ async function connectWallet() {
       selectedAccount = accs[0];
       if (walletDisplay) walletDisplay.innerText = selectedAccount;
     });
-
     instance.on("disconnect", () => disconnectWallet());
 
     console.log("Кошелек подключен:", selectedAccount);
-
     await initContracts(web3Provider);
   } catch (err) {
     console.error("Ошибка подключения:", err);
@@ -109,7 +108,7 @@ async function initContracts(web3Provider) {
 }
 
 // -----------------------------
-// 5) Отключение
+// 5) Отключение кошелька
 // -----------------------------
 async function disconnectWallet() {
   if (provider?.close) await provider.close();
