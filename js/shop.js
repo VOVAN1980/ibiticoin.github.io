@@ -75,7 +75,7 @@ let currentProduct = null;
 
 function openPurchaseModal(productName) {
   currentProduct = productName;
-  // Если покупка NFT – переходим на страницу NFT
+  // Если выбран NFT – переходим на страницу NFT
   if (productName === 'NFT') {
     window.location.href = 'nft.html';
     return;
@@ -85,8 +85,6 @@ function openPurchaseModal(productName) {
   if (titleElem && modalElem) {
     titleElem.innerText = 'Покупка ' + productName;
     modalElem.style.display = 'block';
-  } else {
-    console.error("Не найдены элементы для модального окна покупки.");
   }
 }
 
@@ -103,16 +101,13 @@ window.openPurchaseModal = openPurchaseModal;
 window.closePurchaseModal = closePurchaseModal;
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Обработчик формы покупки
+  // Обработчик формы покупки (если она присутствует)
   const form = document.getElementById('purchaseForm');
   if (form) {
     form.addEventListener('submit', async function(event) {
       event.preventDefault();
       const amountInput = document.getElementById('nftAmount');
-      if (!amountInput) {
-        console.error("Элемент ввода количества (nftAmount) не найден.");
-        return;
-      }
+      if (!amountInput) return;
       const amount = amountInput.value;
       const walletDisplay = document.getElementById("walletAddress");
       if (!walletDisplay || walletDisplay.innerText.trim() === '' ||
@@ -127,19 +122,15 @@ document.addEventListener("DOMContentLoaded", () => {
       closePurchaseModal();
       await handlePurchase(amount, currentProduct);
     });
-  } else {
-    console.error("Форма покупки не найдена");
   }
 
-  // Обработчик для селектора способа оплаты
+  // Обработчик для селектора способа оплаты (если элементы существуют)
   const paymentToken = document.getElementById('paymentToken');
   const confirmBtn = document.getElementById('confirmBtn');
   if (paymentToken && confirmBtn) {
     paymentToken.addEventListener('change', function () {
       confirmBtn.disabled = (this.value === "");
     });
-  } else {
-    console.error("Элементы paymentToken или confirmBtn не найдены");
   }
 });
 
