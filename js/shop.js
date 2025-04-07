@@ -1,4 +1,3 @@
-// js/shop.js
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
 import config from "./config.js";
 import { ibitiTokenAbi } from "./abis/ibitiTokenAbi.js";
@@ -14,7 +13,7 @@ const ibitiContract = new ethers.Contract(
   signer
 );
 
-// Покупка токенов
+// Функция покупки токенов
 async function handlePurchase(amount, productName) {
   if (!window.ethereum) {
     Swal.fire({
@@ -72,73 +71,49 @@ async function handlePurchase(amount, productName) {
 
 window.handlePurchase = handlePurchase;
 
-// ----------------------
-// Модальное окно
-// ----------------------
-
 let currentProduct = null;
 
 function openPurchaseModal(productName) {
   currentProduct = productName;
-
+  // Если покупка NFT – переходим на страницу NFT
   if (productName === 'NFT') {
     window.location.href = 'nft.html';
     return;
   }
-
-  document.getElementById('purchaseTitle').innerText = 'Покупка ' + productName;
-  document.getElementById('purchaseModal').style.display = 'block';
+  const titleElem = document.getElementById('purchaseTitle');
+  const modalElem = document.getElementById('purchaseModal');
+  if (titleElem && modalElem) {
+    titleElem.innerText = 'Покупка ' + productName;
+    modalElem.style.display = 'block';
+  } else {
+    console.error("Не найдены элементы для модального окна покупки.");
+  }
 }
 
 function closePurchaseModal() {
-  document.getElementById('purchaseModal').style.display = 'none';
-  document.getElementById('nftAmount').value = '';
+  const modalElem = document.getElementById('purchaseModal');
+  if (modalElem) {
+    modalElem.style.display = 'none';
+  }
+  const amountInput = document.getElementById('nftAmount');
+  if (amountInput) amountInput.value = '';
 }
 
 window.openPurchaseModal = openPurchaseModal;
 window.closePurchaseModal = closePurchaseModal;
 
-// ----------------------
-// Обработчик формы
-// ----------------------
-
 document.addEventListener("DOMContentLoaded", () => {
+  // Обработчик формы покупки
   const form = document.getElementById('purchaseForm');
   if (form) {
     form.addEventListener('submit', async function(event) {
       event.preventDefault();
-      const amount = document.getElementById('nftAmount').value;
-
-      const walletDisplay = document.getElementById("walletAddress");
-      if (!walletDisplay || walletDisplay.innerText.trim() === '' || walletDisplay.innerText.toLowerCase().includes("disconnect")) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Кошелек не подключен',
-          text: 'Сначала подключите кошелек.',
-        });
+      const amountInput = document.getElementById('nftAmount');
+      if (!amountInput) {
+        console.error("Элемент ввода количества (nftAmount) не найден.");
         return;
       }
-
-      closePurchaseModal();
-      await handlePurchase(amount, currentProduct);
-    });
-  }
-});
-
-// ... остальной код вашего shop.js
-
-console.log("✅ shop.js загружен");
-
-// Активация кнопки после выбора способа оплаты (выполняется после полной загрузки DOM)
-console.log("✅ shop.js загружен");
-
-// Обработчик формы покупки, навешанный через DOMContentLoaded
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById('purchaseForm');
-  if (form) {
-    form.addEventListener('submit', async function(event) {
-      event.preventDefault();
-      const amount = document.getElementById('nftAmount').value;
+      const amount = amountInput.value;
       const walletDisplay = document.getElementById("walletAddress");
       if (!walletDisplay || walletDisplay.innerText.trim() === '' ||
           walletDisplay.innerText.toLowerCase().includes("disconnect")) {
@@ -156,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Форма покупки не найдена");
   }
 
-  // Навешиваем обработчик на селектор способа оплаты
+  // Обработчик для селектора способа оплаты
   const paymentToken = document.getElementById('paymentToken');
   const confirmBtn = document.getElementById('confirmBtn');
   if (paymentToken && confirmBtn) {
@@ -167,3 +142,5 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Элементы paymentToken или confirmBtn не найдены");
   }
 });
+
+console.log("✅ shop.js загружен");
