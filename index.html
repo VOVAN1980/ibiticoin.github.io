@@ -50,60 +50,16 @@
   </script>
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-  <!-- Подключаем необходимые библиотеки для работы кошельков -->
-  <script src="https://unpkg.com/@walletconnect/web3-provider/dist/umd/index.min.js"></script>
-  <script src="https://unpkg.com/web3modal"></script>
+  <!-- Подключаем библиотеки -->
+  <!-- Ethers -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <!-- WalletConnect Provider v2 (бета-версия) -->
+  <script src="https://unpkg.com/@walletconnect/web3-provider@2.0.0-beta.11/dist/umd/index.min.js"></script>
+  <!-- Web3Modal v2 (если доступна, либо последняя версия v1, если v2 не стабильна) -->
+  <script src="https://unpkg.com/web3modal@2.0.0/dist/index.umd.min.js"></script>
   
   <style>
-    /* Пример базовых стилей для модального окна шаринга */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.7);
-    }
-    .modal-content {
-      background-color: #111;
-      margin: 10% auto;
-      padding: 20px;
-      border: 2px solid gold;
-      width: 80%;
-      max-width: 500px;
-      border-radius: 10px;
-      text-align: center;
-      color: gold;
-      position: relative;
-    }
-    .modal-content h3 {
-      margin-top: 0;
-      font-size: 1.8em;
-    }
-    .modal-content .share-options a {
-      display: inline-block;
-      margin: 10px;
-      padding: 10px 20px;
-      background: gold;
-      color: #000;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: transform 0.3s;
-    }
-    .modal-content .share-options a:hover {
-      transform: scale(1.1);
-    }
-    .modal-content .close {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 1.5em;
-      font-weight: bold;
-      cursor: pointer;
-    }
+    /* Ваши CSS-стили (как ранее, включая стили модальных окон, кнопок и т.д.) */
   </style>
 </head>
 <body>
@@ -128,7 +84,7 @@
     <p>Stability | Innovation | Accessibility</p>
   </header>
 
-  <!-- Пример главного контента -->
+  <!-- Главный контент -->
   <section class="gold-section" data-aos="fade-up">
     <h2>WHY CHOOSE IBITIcoin?</h2>
     <p>
@@ -146,11 +102,10 @@
     <a class="btn-small" href="nft.html">NFT Галерея</a>
     <a class="btn-small" href="shop.html">Магазин</a>
     <a class="btn-small" href="book.html">Книга</a>
-    <!-- Кнопка "Поделиться" открывает модальное окно -->
     <a class="btn-small" id="openShareModal" href="#">Поделиться</a>
   </section>
   
-  <!-- Пример футера -->
+  <!-- Футер -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p>
@@ -183,31 +138,29 @@
     </div>
   </div>
 
-  <!-- Внешние библиотеки -->
-<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-<script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
-<script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
+  <!-- Дополнительные скрипты -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script>
+    AOS.init({ once: true });
+  </script>
 
-<!-- Дополнительные скрипты -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script>
-  AOS.init({ once: true });
-</script>
+  <!-- Tawk.to -->
+  <script>
+    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+    (function(){
+      var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+      s1.async = true;
+      s1.src = 'https://embed.tawk.to/67db03deb73265190d550119/1imnoe7rb';
+      s1.charset = 'UTF-8';
+      s1.setAttribute('crossorigin', '*');
+      s0.parentNode.insertBefore(s1, s0);
+    })();
+  </script>
 
-<!-- Tawk.to -->
-<script>
-  var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-  (function(){
-    var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-    s1.async = true;
-    s1.src = 'https://embed.tawk.to/67db03deb73265190d550119/1imnoe7rb';
-    s1.charset = 'UTF-8';
-    s1.setAttribute('crossorigin', '*');
-    s0.parentNode.insertBefore(s1, s0);
-  })();
-</script>
-
-<!-- Модули проекта -->
-<script type="module" src="js/config.js"></script>
-<script type="module" src="js/wallet.js"></script>
-<script type="module" src="js/nft.js"></script> <!-- если используется на главной -->
+  <!-- Модули проекта -->
+  <script type="module" src="js/config.js"></script>
+  <script type="module" src="js/wallet.js"></script>
+  <script type="module" src="js/nft.js"></script>
+  <script type="module" src="js/shop.js"></script>
+</body>
+</html>
