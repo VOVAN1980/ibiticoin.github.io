@@ -1,138 +1,140 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Правила стейкинга IBITI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="css/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
   <style>
     body {
+      margin: 0;
+      padding: 40px 20px;
+      font-family: sans-serif;
       background: #000;
       color: gold;
-      font-family: sans-serif;
-      padding: 40px 20px;
-      line-height: 1.6;
     }
-    h1, h2, h3 {
-      text-align: center;
+    .back-btn {
       color: gold;
+      text-decoration: none;
+      font-weight: bold;
+      background: #1a1a1a;
+      padding: 10px 20px;
+      border-radius: 6px;
+      border: 1px solid gold;
     }
     .container {
       max-width: 800px;
-      margin: auto;
+      margin: 0 auto;
+    }
+    h1, h2, h3 {
+      text-align: center;
+      margin-top: 30px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
-      margin-bottom: 30px;
+      color: gold;
     }
-    table th, table td {
+    th, td {
       border: 1px solid gold;
       padding: 10px;
       text-align: center;
     }
-    a {
+    .alert {
+      color: red;
+      font-weight: bold;
+    }
+    .tips {
       color: gold;
+      font-size: 0.95em;
+    }
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      font-size: 0.9em;
+    }
+    footer a {
+      color: gold;
+      margin: 0 5px;
       text-decoration: underline;
     }
-    .back-btn {
-      display: inline-block;
+    .button-row {
+      display: flex;
+      justify-content: space-between;
       margin-bottom: 30px;
-      background: transparent;
-      color: gold;
-      padding: 10px 20px;
-      border: 2px solid gold;
-      border-radius: 8px;
-      text-decoration: none;
-    }
-    ul {
-      padding-left: 20px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <a href="staking.html" class="back-btn">← Назад к стейкингу</a>
+    <div class="button-row">
+      <a href="index.html" class="back-btn">← Главная</a>
+      <a href="staking.html" class="back-btn">← Назад к стейкингу</a>
+    </div>
+
     <h1>📘 Правила стейкинга IBITI</h1>
 
-    <h2>Основное</h2>
+    <h2>📅 Сроки и награды</h2>
+    <p>Вы можете застейкать токены на срок от 1 до 12 месяцев. За каждый месяц начисляется процентная награда.</p>
+
+    <table>
+      <tr><th>Срок (мес)</th><th>Награда</th><th>Штраф при раннем анстейке</th></tr>
+      <tr><td>1</td><td>1%</td><td>1%</td></tr>
+      <tr><td>2</td><td>3%</td><td>3%</td></tr>
+      <tr><td>3</td><td>5%</td><td>5%</td></tr>
+      <tr><td>4</td><td>7%</td><td>7%</td></tr>
+      <tr><td>5</td><td>10%</td><td>10%</td></tr>
+      <tr><td>6</td><td>12%</td><td>12%</td></tr>
+      <tr><td>7</td><td>14%</td><td>14%</td></tr>
+      <tr><td>8</td><td>18%</td><td>18%</td></tr>
+      <tr><td>9</td><td>20%</td><td>20%</td></tr>
+      <tr><td>10</td><td>22%</td><td>22%</td></tr>
+      <tr><td>11</td><td>25%</td><td>25%</td></tr>
+      <tr><td>12</td><td>30%</td><td>30%</td></tr>
+    </table>
+
+    <h2>🎁 NFT за срок</h2>
     <ul>
-      <li>Минимальный стейк: <strong>10 IBITI</strong></li>
-      <li>Срок: от <strong>1 до 12 месяцев</strong></li>
-      <li>Вы выбираете срок при создании стейка</li>
-      <li>Чем дольше срок — тем выше награда</li>
+      <li>3 месяца — 🎉 обычный NFT</li>
+      <li>6 месяцев — 🟦 редкий NFT</li>
+      <li>9 месяцев — 🟪 эпический NFT</li>
+      <li>12 месяцев — 🟨 легендарный NFT</li>
     </ul>
+    <p>❗ NFT выдаются только если срок был соблюдён полностью.</p>
 
-    <h2>📈 Таблица наград и NFT</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Срок (мес.)</th>
-          <th>Награда (%)</th>
-          <th>NFT</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>1</td><td>1%</td><td>—</td></tr>
-        <tr><td>2</td><td>3%</td><td>—</td></tr>
-        <tr><td>3</td><td>5%</td><td>🟢 NFT ID 1 (обычный)</td></tr>
-        <tr><td>4</td><td>7%</td><td>—</td></tr>
-        <tr><td>5</td><td>10%</td><td>—</td></tr>
-        <tr><td>6</td><td>12%</td><td>🔵 NFT ID 2 (редкий)</td></tr>
-        <tr><td>7</td><td>14%</td><td>—</td></tr>
-        <tr><td>8</td><td>18%</td><td>—</td></tr>
-        <tr><td>9</td><td>20%</td><td>🟣 NFT ID 3 (эпический)</td></tr>
-        <tr><td>10</td><td>22%</td><td>—</td></tr>
-        <tr><td>11</td><td>25%</td><td>—</td></tr>
-        <tr><td>12</td><td>30%</td><td>🟡 NFT ID 4 (легендарный)</td></tr>
-      </tbody>
-    </table>
-
-    <h2>🧨 Штрафы за досрочный анстейк</h2>
-    <p>Если вы выводите IBITI до завершения срока — применяется штраф, и награды не начисляются.</p>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Выбранный срок (мес.)</th>
-          <th>Штраф с суммы стейка</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>1</td><td>1%</td></tr>
-        <tr><td>2</td><td>3%</td></tr>
-        <tr><td>3</td><td>5%</td></tr>
-        <tr><td>4</td><td>7%</td></tr>
-        <tr><td>5</td><td>10%</td></tr>
-        <tr><td>6</td><td>12%</td></tr>
-        <tr><td>7</td><td>14%</td></tr>
-        <tr><td>8</td><td>18%</td></tr>
-        <tr><td>9</td><td>20%</td></tr>
-        <tr><td>10</td><td>22%</td></tr>
-        <tr><td>11</td><td>25%</td></tr>
-        <tr><td>12</td><td>30%</td></tr>
-      </tbody>
-    </table>
-
+    <h2 class="alert">⚠️ Штрафы при раннем анстейке</h2>
     <ul>
-      <li>🔻 Штраф вычитается из <strongвашего стейка</strong></li>
-      <li>❌ Награды обнуляются</li>
+      <li>🔻 <b>Штраф вычитается из вашего основного стейка</b></li>
+      <li>❌ Награды не начисляются</li>
       <li>❌ NFT не выдаются</li>
     </ul>
 
     <h2>⏳ Что если не забрать вовремя?</h2>
-    <ul>
-      <li>После окончания срока у вас есть <strong>180 дней</strong>, чтобы забрать IBITI, награды и NFT</li>
-      <li>Если вы не забрали в течение 180 дней — <strong>всё безвозвратно уходит в казну</strong></li>
-    </ul>
+    <p>После окончания срока у вас есть <b>180 дней</b>, чтобы забрать IBITI, награды и NFT.</p>
+    <p class="alert">Если не забрали вовремя — всё <b>безвозвратно уходит в казну</b>.</p>
 
-    <h2>💡 Советы</h2>
-    <ul>
+    <h2>📌 Советы</h2>
+    <ul class="tips">
       <li>Выбирайте 3, 6, 9 или 12 месяцев, чтобы получить NFT</li>
       <li>Не анстейкайте раньше срока — вы потеряете и награду, и часть стейка</li>
       <li>Ставьте напоминание, чтобы не забыть вывести IBITI вовремя</li>
     </ul>
+
+    <footer>
+      <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
+      <p>
+        <a href="privacy.html">Политика конфиденциальности</a> |
+        <a href="terms.html">Пользовательское соглашение</a>
+      </p>
+      <p>
+        <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> |
+        <a href="https://t.me/IBITIcoin_chat" target="_blank">Telegram</a> |
+        <a href="https://instagram.com/IBITIcoin_official" target="_blank">Instagram</a> |
+        <a href="https://facebook.com/IBITIcoin" target="_blank">Facebook</a>
+      </p>
+      <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
+    </footer>
   </div>
 </body>
 </html>
