@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       margin: 0;
@@ -13,10 +14,21 @@
       font-family: sans-serif;
       background: linear-gradient(to bottom, #000000, #111111);
       color: gold;
-      text-align: center;
     }
 
-    a.home-btn {
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .column {
+      flex: 1 1 300px;
+      max-width: 400px;
+    }
+
+    .home-btn {
       position: absolute;
       top: 20px;
       left: 20px;
@@ -27,28 +39,19 @@
       padding: 10px 20px;
       border-radius: 6px;
       border: 1px solid gold;
-      transition: background 0.3s;
     }
 
-    a.home-btn:hover {
-      background: gold;
-      color: #000;
-    }
-
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 10px;
-    }
-
-    p {
+    .hero-header {
+      text-align: center;
       margin-bottom: 30px;
-      font-size: 1.1em;
     }
 
-    .wallet-section, .staking-section {
-      margin: 20px auto;
-      max-width: 420px;
-      width: 100%;
+    .staking-box {
+      background: #1a1a1a;
+      padding: 30px 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.35);
+      text-align: center;
     }
 
     button, input[type="number"] {
@@ -77,7 +80,6 @@
     }
 
     #stakeAmount {
-      margin-top: 20px;
       background: #1c1c1c;
       color: gold;
       border: 1px solid #444;
@@ -87,33 +89,27 @@
       background: gold;
       color: #000;
       cursor: pointer;
+    }
+
+    #progress-bar {
+      width: 100%;
+      background: #333;
+      border-radius: 8px;
       margin-top: 10px;
     }
 
-    .staking-section {
-      background: #1a1a1a;
-      padding: 30px 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(255, 215, 0, 0.35);
-    }
-
-    #walletAddress {
-      margin-top: 10px;
-      word-break: break-word;
-      font-size: 0.9em;
-      opacity: 0.9;
-    }
-
-    #stakeInfo, #rewardInfo, #unlockInfo {
-      margin: 10px 0;
-      font-size: 1.1em;
+    #progress-fill {
+      height: 16px;
+      background: gold;
+      border-radius: 8px;
+      width: 0%;
     }
 
     footer {
       margin-top: 60px;
-      padding: 20px;
-      font-size: 0.95em;
+      text-align: center;
       color: gold;
+      font-size: 0.95em;
     }
 
     footer a {
@@ -122,18 +118,16 @@
       margin: 0 5px;
     }
 
-    @media (max-width: 480px) {
-      body { padding: 20px 10px; }
-      a.home-btn {
-        padding: 8px 14px;
-        font-size: 0.9em;
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        align-items: center;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Кнопка "Главная" -->
   <a class="home-btn" href="index.html">← Главная</a>
 
   <header class="hero-header">
@@ -141,24 +135,44 @@
     <p>Застейкай токены и получай награды</p>
   </header>
 
-  <section class="wallet-section">
-    <button id="connectWalletBtn">🔗 Подключить кошелёк</button>
-    <div id="walletAddress"></div>
-  </section>
+  <div class="container">
+    <!-- Левая колонка -->
+    <div class="column">
+      <div class="staking-box">
+        <h3>Прогресс до разблокировки</h3>
+        <div id="progress-bar"><div id="progress-fill"></div></div>
+        <p id="progress-time">Осталось: 7д 00ч 00м</p>
+      </div>
+    </div>
 
-  <section class="staking-section">
-    <h2 style="margin-bottom: 20px;">Ваш стейкинг</h2>
-    <div id="stakeInfo">Ваш стейк: ...</div>
-    <div id="rewardInfo">Награды: ...</div>
-    <div id="unlockInfo">Разблокировка: ...</div>
+    <!-- Центральный блок -->
+    <div class="column">
+      <div class="staking-box">
+        <button id="connectWalletBtn">🔗 Подключить кошелёк</button>
+        <div id="walletAddress" style="margin-top: 10px;"></div>
+        <h3>Ваш стейкинг</h3>
+        <div id="stakeInfo">Ваш стейк: 0.00000000 IBITI</div>
+        <div id="rewardInfo">Награды: 0.00000000 IBITI</div>
+        <div id="unlockInfo">Разблокировка: Через 7 дней</div>
 
-    <form id="stakeForm">
-      <input type="number" id="stakeAmount" placeholder="Введите количество IBITI (мин. 10)" required min="0" />
-      <button type="submit">⚡ Стейкать</button>
-    </form>
+        <form id="stakeForm">
+          <input type="number" id="stakeAmount" placeholder="Введите количество IBITI (мин. 10)" required min="0" />
+          <button type="submit">⚡ Стейкать</button>
+        </form>
 
-    <button id="unstakeBtn">↩️ Анстейк</button>
-  </section>
+        <button id="unstakeBtn">↩️ Анстейк</button>
+      </div>
+    </div>
+
+    <!-- Правая колонка -->
+    <div class="column">
+      <div class="staking-box">
+        <h3>Рост награды</h3>
+        <canvas id="rewardChart" width="100%" height="200"></canvas>
+        <p style="font-size: 0.9em;">Награды растут каждые 10 секунд</p>
+      </div>
+    </div>
+  </div>
 
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
@@ -174,6 +188,63 @@
     </p>
     <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
   </footer>
+
+  <script>
+    // Прогресс‑бар заглушка (7 дней всего)
+    let progressPercent = 0;
+    let secondsLeft = 7 * 24 * 60 * 60;
+    setInterval(() => {
+      progressPercent += 0.01;
+      secondsLeft -= 10;
+      if (progressPercent > 100) progressPercent = 100;
+
+      const fill = document.getElementById("progress-fill");
+      const time = document.getElementById("progress-time");
+
+      fill.style.width = progressPercent + "%";
+
+      const d = Math.floor(secondsLeft / 86400);
+      const h = Math.floor((secondsLeft % 86400) / 3600);
+      const m = Math.floor((secondsLeft % 3600) / 60);
+      time.innerText = `Осталось: ${d}д ${h}ч ${m}м`;
+    }, 10000);
+
+    // График псевдо-наград
+    const ctx = document.getElementById("rewardChart").getContext("2d");
+    const rewardChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Награды IBITI',
+          data: [],
+          borderColor: 'gold',
+          backgroundColor: 'rgba(255,215,0,0.2)',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+    let rewardAmount = 0;
+    setInterval(() => {
+      rewardAmount += 0.5;
+      const now = new Date().toLocaleTimeString();
+      rewardChart.data.labels.push(now);
+      rewardChart.data.datasets[0].data.push(rewardAmount.toFixed(2));
+      if (rewardChart.data.labels.length > 10) {
+        rewardChart.data.labels.shift();
+        rewardChart.data.datasets[0].data.shift();
+      }
+      rewardChart.update();
+    }, 10000);
+  </script>
 
   <script type="module" src="js/staking.js"></script>
   <script type="module" src="js/wallet.js"></script>
