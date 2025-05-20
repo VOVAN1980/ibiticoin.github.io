@@ -3,7 +3,7 @@ export const nftSaleManagerAbi = [
     inputs: [
       {
         internalType: "address",
-        name: "_nftContract",
+        name: "_nftDiscount",
         type: "address"
       },
       {
@@ -29,7 +29,7 @@ export const nftSaleManagerAbi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
+        indexed: true,
         internalType: "address",
         name: "buyer",
         type: "address"
@@ -37,7 +37,7 @@ export const nftSaleManagerAbi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "tokenId",
+        name: "discountPercent",
         type: "uint256"
       },
       {
@@ -61,12 +61,57 @@ export const nftSaleManagerAbi = [
     inputs: [
       {
         indexed: false,
+        internalType: "bool",
+        name: "enabled",
+        type: "bool"
+      }
+    ],
+    name: "OracleToggled",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "address",
         name: "newOracle",
         type: "address"
       }
     ],
     name: "OracleUpdated",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "previousOwner",
+        type: "address"
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newOwner",
+        type: "address"
+      }
+    ],
+    name: "OwnershipTransferred",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "account",
+        type: "address"
+      }
+    ],
+    name: "Paused",
     type: "event"
   },
   {
@@ -86,6 +131,19 @@ export const nftSaleManagerAbi = [
       }
     ],
     name: "PriceSet",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "account",
+        type: "address"
+      }
+    ],
+    name: "Unpaused",
     type: "event"
   },
   {
@@ -167,7 +225,7 @@ export const nftSaleManagerAbi = [
     name: "ibitiToken",
     outputs: [
       {
-        internalType: "contract IERC20",
+        internalType: "contract IERC20Metadata",
         name: "",
         type: "address"
       }
@@ -177,10 +235,10 @@ export const nftSaleManagerAbi = [
   },
   {
     inputs: [],
-    name: "nftContract",
+    name: "nftDiscount",
     outputs: [
       {
-        internalType: "address",
+        internalType: "contract NFTDiscount",
         name: "",
         type: "address"
       }
@@ -209,6 +267,19 @@ export const nftSaleManagerAbi = [
   },
   {
     inputs: [],
+    name: "oracleEnabled",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [],
     name: "owner",
     outputs: [
       {
@@ -222,15 +293,42 @@ export const nftSaleManagerAbi = [
   },
   {
     inputs: [],
+    name: "pause",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [],
+    name: "paused",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [],
     name: "priceOracle",
     outputs: [
       {
-        internalType: "contract IPriceOracle",
+        internalType: "contract VolumeWeightedOracle",
         name: "",
         type: "address"
       }
     ],
     stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [],
+    name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function"
   },
   {
@@ -254,6 +352,39 @@ export const nftSaleManagerAbi = [
   {
     inputs: [
       {
+        internalType: "bool",
+        name: "_on",
+        type: "bool"
+      }
+    ],
+    name: "setOracleEnabled",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "newOwner",
+        type: "address"
+      }
+    ],
+    name: "transferOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [],
+    name: "unpause",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "newOracle",
         type: "address"
@@ -269,7 +400,7 @@ export const nftSaleManagerAbi = [
     name: "usdtToken",
     outputs: [
       {
-        internalType: "contract IERC20",
+        internalType: "contract IERC20Metadata",
         name: "",
         type: "address"
       }
