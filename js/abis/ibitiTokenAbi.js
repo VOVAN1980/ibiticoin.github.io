@@ -3,12 +3,12 @@ export const ibitiTokenAbi = [
     inputs: [
       {
         internalType: "string",
-        name: "name",
+        name: "name_",
         type: "string"
       },
       {
         internalType: "string",
-        name: "symbol",
+        name: "symbol_",
         type: "string"
       },
       {
@@ -22,13 +22,18 @@ export const ibitiTokenAbi = [
         type: "address"
       },
       {
-        internalType: "address",
-        name: "_teamVesting",
+        internalType: "contract FeeManager",
+        name: "_feeManager",
         type: "address"
       },
       {
-        internalType: "address",
-        name: "_feeManager",
+        internalType: "contract UserStatusManager",
+        name: "_userStatusManager",
+        type: "address"
+      },
+      {
+        internalType: "contract BridgeManager",
+        name: "_bridgeManager",
         type: "address"
       },
       {
@@ -39,21 +44,6 @@ export const ibitiTokenAbi = [
       {
         internalType: "address",
         name: "_daoModule",
-        type: "address"
-      },
-      {
-        internalType: "address",
-        name: "_userStatusManager",
-        type: "address"
-      },
-      {
-        internalType: "address",
-        name: "_bridgeManager",
-        type: "address"
-      },
-      {
-        internalType: "address",
-        name: "_nftContract",
         type: "address"
       }
     ],
@@ -75,6 +65,45 @@ export const ibitiTokenAbi = [
     ],
     name: "StringTooLong",
     type: "error"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "account",
+        type: "address"
+      }
+    ],
+    name: "AccountFrozen",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "account",
+        type: "address"
+      }
+    ],
+    name: "AccountUnfrozen",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "enabled",
+        type: "bool"
+      }
+    ],
+    name: "ActivityTrackingSet",
+    type: "event"
   },
   {
     anonymous: false,
@@ -105,45 +134,32 @@ export const ibitiTokenAbi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
-        internalType: "bool",
-        name: "enabled",
-        type: "bool"
-      }
-    ],
-    name: "BurnEnabledUpdated",
-    type: "event"
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "newBurnPercentage",
-        type: "uint256"
-      }
-    ],
-    name: "BurnPercentageUpdated",
-    type: "event"
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
         indexed: true,
         internalType: "address",
-        name: "to",
+        name: "sender",
         type: "address"
       },
       {
         indexed: false,
         internalType: "uint256",
-        name: "amount",
+        name: "totalAmount",
         type: "uint256"
       }
     ],
-    name: "BuybackWithdrawal",
+    name: "BatchTransfer",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "burnPct",
+        type: "uint256"
+      }
+    ],
+    name: "BurnPercentageUpdated",
     type: "event"
   },
   {
@@ -164,7 +180,7 @@ export const ibitiTokenAbi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "paymentAmount",
+        name: "cost",
         type: "uint256"
       },
       {
@@ -181,19 +197,76 @@ export const ibitiTokenAbi = [
     anonymous: false,
     inputs: [
       {
+        indexed: true,
+        internalType: "address",
+        name: "seller",
+        type: "address"
+      },
+      {
         indexed: false,
-        internalType: "bool",
-        name: "daoEnabled",
-        type: "bool"
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256"
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "payout",
+        type: "uint256"
       },
       {
         indexed: false,
         internalType: "address",
-        name: "daoWallet",
+        name: "paymentToken",
+        type: "address"
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "nftId",
+        type: "uint256"
+      }
+    ],
+    name: "CoinSold",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "enabled",
+        type: "bool"
+      }
+    ],
+    name: "DaoEnabled",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newDao",
         type: "address"
       }
     ],
-    name: "DaoSettingsUpdated",
+    name: "DaoModuleUpdated",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "wallet",
+        type: "address"
+      }
+    ],
+    name: "DaoWalletSet",
     type: "event"
   },
   {
@@ -261,21 +334,52 @@ export const ibitiTokenAbi = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "wallet",
-        type: "address"
-      }
-    ],
-    name: "DistributionWalletUpdated",
+    inputs: [],
+    name: "EIP712DomainChanged",
     type: "event"
   },
   {
     anonymous: false,
-    inputs: [],
-    name: "EIP712DomainChanged",
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "token",
+        type: "address"
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "to",
+        type: "address"
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256"
+      }
+    ],
+    name: "ERC20Rescued",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "to",
+        type: "address"
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256"
+      }
+    ],
+    name: "ETHRescued",
     type: "event"
   },
   {
@@ -301,7 +405,7 @@ export const ibitiTokenAbi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
+        indexed: true,
         internalType: "address",
         name: "newOwner",
         type: "address"
@@ -335,24 +439,37 @@ export const ibitiTokenAbi = [
       {
         indexed: false,
         internalType: "address",
-        name: "newStakingModule",
+        name: "account",
         type: "address"
       }
     ],
-    name: "StakingModuleUpdated",
+    name: "Paused",
     type: "event"
   },
   {
     anonymous: false,
     inputs: [
       {
-        indexed: true,
-        internalType: "address",
-        name: "teamVesting",
-        type: "address"
+        indexed: false,
+        internalType: "bool",
+        name: "enabled",
+        type: "bool"
       }
     ],
-    name: "TeamVestingSet",
+    name: "PurchaseFeeEnabledUpdated",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "enabled",
+        type: "bool"
+      }
+    ],
+    name: "SaleFeeEnabledUpdated",
     type: "event"
   },
   {
@@ -381,6 +498,36 @@ export const ibitiTokenAbi = [
     type: "event"
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "enabled",
+        type: "bool"
+      }
+    ],
+    name: "TransferFeeEnabledUpdated",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "account",
+        type: "address"
+      }
+    ],
+    name: "Unpaused",
+    type: "event"
+  },
+  {
+    stateMutability: "payable",
+    type: "fallback"
+  },
+  {
     inputs: [],
     name: "CLOCK_MODE",
     outputs: [
@@ -388,6 +535,19 @@ export const ibitiTokenAbi = [
         internalType: "string",
         name: "",
         type: "string"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [],
+    name: "DECIMALS",
+    outputs: [
+      {
+        internalType: "uint8",
+        name: "",
+        type: "uint8"
       }
     ],
     stateMutability: "view",
@@ -407,6 +567,32 @@ export const ibitiTokenAbi = [
     type: "function"
   },
   {
+    inputs: [],
+    name: "MAX_BATCH_TRANSFER",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [],
+    name: "PANDORA_LEVEL",
+    outputs: [
+      {
+        internalType: "uint8",
+        name: "",
+        type: "uint8"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -415,6 +601,19 @@ export const ibitiTokenAbi = [
       }
     ],
     name: "acceptedPayment",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [],
+    name: "activityTrackingEnabled",
     outputs: [
       {
         internalType: "bool",
@@ -495,13 +694,37 @@ export const ibitiTokenAbi = [
   {
     inputs: [
       {
+        internalType: "address[]",
+        name: "r",
+        type: "address[]"
+      },
+      {
+        internalType: "uint256[]",
+        name: "v",
+        type: "uint256[]"
+      }
+    ],
+    name: "batchTransfer",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool"
+      }
+    ],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "from",
         type: "address"
       },
       {
         internalType: "uint256",
-        name: "amount",
+        name: "amt",
         type: "uint256"
       }
     ],
@@ -532,7 +755,7 @@ export const ibitiTokenAbi = [
       },
       {
         internalType: "uint256",
-        name: "amount",
+        name: "amt",
         type: "uint256"
       }
     ],
@@ -550,19 +773,6 @@ export const ibitiTokenAbi = [
       }
     ],
     name: "burn",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256"
-      }
-    ],
-    name: "burnBuybackTokens",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"
@@ -606,19 +816,6 @@ export const ibitiTokenAbi = [
         internalType: "uint256",
         name: "",
         type: "uint256"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "buybackWallet",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address"
       }
     ],
     stateMutability: "view",
@@ -722,13 +919,26 @@ export const ibitiTokenAbi = [
     inputs: [
       {
         internalType: "string",
-        name: "description",
+        name: "d",
         type: "string"
       }
     ],
     name: "createProposalSimple",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [],
+    name: "daoEnableTime",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
     type: "function"
   },
   {
@@ -780,7 +990,7 @@ export const ibitiTokenAbi = [
         type: "uint8"
       }
     ],
-    stateMutability: "view",
+    stateMutability: "pure",
     type: "function"
   },
   {
@@ -949,8 +1159,21 @@ export const ibitiTokenAbi = [
   {
     inputs: [
       {
+        internalType: "bool",
+        name: "en",
+        type: "bool"
+      }
+    ],
+    name: "enableDAO",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
-        name: "proposalId",
+        name: "id",
         type: "uint256"
       }
     ],
@@ -989,7 +1212,39 @@ export const ibitiTokenAbi = [
     inputs: [
       {
         internalType: "address",
-        name: "user",
+        name: "a",
+        type: "address"
+      }
+    ],
+    name: "freezeAccount",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address"
+      }
+    ],
+    name: "frozenAccounts",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "u",
         type: "address"
       }
     ],
@@ -998,24 +1253,6 @@ export const ibitiTokenAbi = [
       {
         internalType: "uint256",
         name: "",
-        type: "uint256"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "getLatestPriceData",
-    outputs: [
-      {
-        internalType: "int256",
-        name: "price",
-        type: "int256"
-      },
-      {
-        internalType: "uint256",
-        name: "updatedAt",
         type: "uint256"
       }
     ],
@@ -1123,10 +1360,10 @@ export const ibitiTokenAbi = [
   },
   {
     inputs: [],
-    name: "nftContract",
+    name: "nftDiscount",
     outputs: [
       {
-        internalType: "address",
+        internalType: "contract INFTDiscount",
         name: "",
         type: "address"
       }
@@ -1187,12 +1424,19 @@ export const ibitiTokenAbi = [
   },
   {
     inputs: [],
-    name: "ownerFunds",
+    name: "pause",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [],
+    name: "paused",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "bool",
         name: "",
-        type: "uint256"
+        type: "bool"
       }
     ],
     stateMutability: "view",
@@ -1246,7 +1490,7 @@ export const ibitiTokenAbi = [
     name: "priceFeed",
     outputs: [
       {
-        internalType: "contract AggregatorV3Interface",
+        internalType: "contract IAggregatorV3",
         name: "",
         type: "address"
       }
@@ -1265,23 +1509,78 @@ export const ibitiTokenAbi = [
     inputs: [
       {
         internalType: "address",
-        name: "token",
+        name: "payTok",
         type: "address"
       },
       {
         internalType: "uint256",
-        name: "amountTokens",
+        name: "amt",
         type: "uint256"
       }
     ],
     name: "purchaseCoinToken",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool"
+      }
+    ],
     stateMutability: "nonpayable",
     type: "function"
   },
   {
     inputs: [],
+    name: "purchaseFeeEnabled",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [],
     name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "token",
+        type: "address"
+      },
+      {
+        internalType: "address",
+        name: "to",
+        type: "address"
+      },
+      {
+        internalType: "uint256",
+        name: "amt",
+        type: "uint256"
+      }
+    ],
+    name: "rescueERC20",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address payable",
+        name: "to",
+        type: "address"
+      }
+    ],
+    name: "rescueETH",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"
@@ -1300,15 +1599,81 @@ export const ibitiTokenAbi = [
     type: "function"
   },
   {
+    inputs: [],
+    name: "saleFeeEnabled",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "a",
+        type: "uint256"
+      },
+      {
+        internalType: "uint256",
+        name: "id",
+        type: "uint256"
+      }
+    ],
+    name: "sellCoinBNB",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool"
+      }
+    ],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
     inputs: [
       {
         internalType: "address",
-        name: "token",
+        name: "p",
+        type: "address"
+      },
+      {
+        internalType: "uint256",
+        name: "a",
+        type: "uint256"
+      },
+      {
+        internalType: "uint256",
+        name: "id",
+        type: "uint256"
+      }
+    ],
+    name: "sellCoinToken",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool"
+      }
+    ],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "t",
         type: "address"
       },
       {
         internalType: "bool",
-        name: "accepted",
+        name: "v",
         type: "bool"
       }
     ],
@@ -1321,7 +1686,33 @@ export const ibitiTokenAbi = [
     inputs: [
       {
         internalType: "bool",
-        name: "enabled",
+        name: "e",
+        type: "bool"
+      }
+    ],
+    name: "setActivityTracking",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "a",
+        type: "address"
+      }
+    ],
+    name: "setBridgeManager",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "bool",
+        name: "e",
         type: "bool"
       }
     ],
@@ -1334,7 +1725,7 @@ export const ibitiTokenAbi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "newBurnPercentage",
+        name: "pct",
         type: "uint256"
       }
     ],
@@ -1347,7 +1738,7 @@ export const ibitiTokenAbi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "newPrice",
+        name: "v",
         type: "uint256"
       }
     ],
@@ -1360,12 +1751,12 @@ export const ibitiTokenAbi = [
     inputs: [
       {
         internalType: "address",
-        name: "token",
+        name: "t",
         type: "address"
       },
       {
         internalType: "uint256",
-        name: "newPrice",
+        name: "p",
         type: "uint256"
       }
     ],
@@ -1378,7 +1769,7 @@ export const ibitiTokenAbi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_priceUSD",
+        name: "v",
         type: "uint256"
       }
     ],
@@ -1390,17 +1781,25 @@ export const ibitiTokenAbi = [
   {
     inputs: [
       {
-        internalType: "bool",
-        name: "_daoEnabled",
-        type: "bool"
-      },
-      {
         internalType: "address",
-        name: "_daoWallet",
+        name: "a",
         type: "address"
       }
     ],
-    name: "setDaoSettings",
+    name: "setDaoModule",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_w",
+        type: "address"
+      }
+    ],
+    name: "setDaoWallet",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"
@@ -1409,7 +1808,7 @@ export const ibitiTokenAbi = [
     inputs: [
       {
         internalType: "bool",
-        name: "enabled",
+        name: "e",
         type: "bool"
       }
     ],
@@ -1422,7 +1821,7 @@ export const ibitiTokenAbi = [
     inputs: [
       {
         internalType: "address",
-        name: "wallet",
+        name: "_wallet",
         type: "address"
       }
     ],
@@ -1434,8 +1833,13 @@ export const ibitiTokenAbi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "u",
+        type: "address"
+      },
+      {
         internalType: "bool",
-        name: "_disabled",
+        name: "d",
         type: "bool"
       }
     ],
@@ -1448,11 +1852,49 @@ export const ibitiTokenAbi = [
     inputs: [
       {
         internalType: "address",
-        name: "_priceFeed",
+        name: "a",
         type: "address"
       }
     ],
-    name: "setPriceFeedAddress",
+    name: "setFeeManager",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "bool",
+        name: "b",
+        type: "bool"
+      },
+      {
+        internalType: "bool",
+        name: "d",
+        type: "bool"
+      },
+      {
+        internalType: "bool",
+        name: "pf",
+        type: "bool"
+      },
+      {
+        internalType: "bool",
+        name: "tf",
+        type: "bool"
+      },
+      {
+        internalType: "bool",
+        name: "sf",
+        type: "bool"
+      },
+      {
+        internalType: "bool",
+        name: "at",
+        type: "bool"
+      }
+    ],
+    name: "setFlags",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"
@@ -1461,7 +1903,59 @@ export const ibitiTokenAbi = [
     inputs: [
       {
         internalType: "address",
-        name: "_stakingModule",
+        name: "a",
+        type: "address"
+      }
+    ],
+    name: "setNFTDiscount",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "f",
+        type: "address"
+      }
+    ],
+    name: "setPriceFeed",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "bool",
+        name: "e",
+        type: "bool"
+      }
+    ],
+    name: "setPurchaseFeeEnabled",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "bool",
+        name: "e",
+        type: "bool"
+      }
+    ],
+    name: "setSaleFeeEnabled",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "a",
         type: "address"
       }
     ],
@@ -1473,12 +1967,12 @@ export const ibitiTokenAbi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_teamVesting",
-        type: "address"
+        internalType: "bool",
+        name: "e",
+        type: "bool"
       }
     ],
-    name: "setTeamVesting",
+    name: "setTransferFeeEnabled",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"
@@ -1487,7 +1981,7 @@ export const ibitiTokenAbi = [
     inputs: [
       {
         internalType: "bool",
-        name: "_useOracle",
+        name: "v",
         type: "bool"
       }
     ],
@@ -1499,13 +1993,26 @@ export const ibitiTokenAbi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "a",
+        type: "address"
+      }
+    ],
+    name: "setUserStatusManager",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
-        name: "amount",
+        name: "amt",
         type: "uint256"
       },
       {
         internalType: "uint256",
-        name: "duration",
+        name: "dur",
         type: "uint256"
       }
     ],
@@ -1549,19 +2056,6 @@ export const ibitiTokenAbi = [
   },
   {
     inputs: [],
-    name: "teamVesting",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [],
     name: "totalSupply",
     outputs: [
       {
@@ -1590,12 +2084,12 @@ export const ibitiTokenAbi = [
     inputs: [
       {
         internalType: "address",
-        name: "recipient",
+        name: "to",
         type: "address"
       },
       {
         internalType: "uint256",
-        name: "amount",
+        name: "amt",
         type: "uint256"
       }
     ],
@@ -1611,20 +2105,33 @@ export const ibitiTokenAbi = [
     type: "function"
   },
   {
+    inputs: [],
+    name: "transferFeeEnabled",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
     inputs: [
       {
         internalType: "address",
-        name: "sender",
+        name: "f",
         type: "address"
       },
       {
         internalType: "address",
-        name: "recipient",
+        name: "t",
         type: "address"
       },
       {
         internalType: "uint256",
-        name: "amount",
+        name: "amt",
         type: "uint256"
       }
     ],
@@ -1656,28 +2163,19 @@ export const ibitiTokenAbi = [
     inputs: [
       {
         internalType: "address",
-        name: "recipient",
+        name: "a",
         type: "address"
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256"
-      },
-      {
-        internalType: "uint256",
-        name: "nftId",
-        type: "uint256"
       }
     ],
-    name: "transferWithNFTDiscount",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool"
-      }
-    ],
+    name: "unfreezeAccount",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [],
+    name: "unpause",
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function"
   },
@@ -1718,12 +2216,12 @@ export const ibitiTokenAbi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "proposalId",
+        name: "id",
         type: "uint256"
       },
       {
         internalType: "bool",
-        name: "support",
+        name: "sup",
         type: "bool"
       }
     ],
@@ -1736,25 +2234,22 @@ export const ibitiTokenAbi = [
     inputs: [
       {
         internalType: "address",
-        name: "to",
+        name: "t",
         type: "address"
       },
       {
         internalType: "uint256",
-        name: "amount",
+        name: "a",
         type: "uint256"
       }
     ],
-    name: "withdrawBuybackTokens",
+    name: "w",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"
   },
   {
-    inputs: [],
-    name: "withdrawOwnerFunds",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
+    stateMutability: "payable",
+    type: "receive"
   }
 ]
