@@ -1,4 +1,3 @@
-// js/shop.js
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
 import config from "./config.js";
 import { ibitiTokenAbi } from "./abis/ibitiTokenAbi.js";
@@ -9,7 +8,7 @@ const signer = provider.getSigner();
 
 // Контракт IBITIcoin
 const ibitiContract = new ethers.Contract(
-  config.mainnet.contracts.IBITI_TOKEN_ADDRESS
+  config.mainnet.contracts.IBITI_TOKEN_ADDRESS,
   ibitiTokenAbi,
   signer
 );
@@ -33,28 +32,29 @@ async function handlePurchase(amount, productName) {
   });
 
   try {
-    let tx;
     const decimals = 8;
     const amountFormatted = ethers.utils.parseUnits(amount.toString(), decimals);
     const paymentMethod = document.getElementById("paymentToken")?.value;
 
+    let tx;
+
     if (productName === "IBITIcoin") {
-  if (paymentMethod === "USDT") {
-    const usdtAddress = config.mainnet.contracts.ERC20_MOCK_ADDRESS;
-    tx = await ibitiContract.purchaseCoinToken(usdtAddress, amountFormatted);
-  } else {
-    throw new Error("Оплата через BNB временно отключена.");
-  }
-} else {
-  throw new Error("Покупка данного продукта не поддерживается.");
-}
+      if (paymentMethod === "USDT") {
+        const usdtAddress = config.mainnet.contracts.ERC20_MOCK_ADDRESS;
+        tx = await ibitiContract.purchaseCoinToken(usdtAddress, amountFormatted);
+      } else {
+        throw new Error("Оплата через BNB временно отключена.");
+      }
+    } else {
+      throw new Error("Покупка данного продукта не поддерживается.");
+    }
 
     await tx.wait();
 
     Swal.fire({
       icon: 'success',
       title: 'Покупка успешна!',
-      text: 'Ура!!! вы стали миллионером!',
+      text: 'Ура! Вы стали миллионером!',
       timer: 5000,
       showConfirmButton: false
     });
@@ -120,36 +120,6 @@ document.addEventListener("DOMContentLoaded", () => {
       closePurchaseModal();
       await handlePurchase(amount, currentProduct);
     });
-  }
-});
-
-// ... остальной код вашего shop.js
-
-console.log("✅ shop.js загружен");
-
-// Активация кнопки после выбора способа оплаты (выполняется после полной загрузки DOM)
-console.log("✅ shop.js загружен");
-
-// Обработчик формы покупки, навешанный через DOMContentLoaded
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById('purchaseForm');
-  if (form) {
-    form.addEventListener('submit', async function(event) {
-      event.preventDefault();
-      const amount = document.getElementById('nftAmount').value;
-      const walletDisplay = document.getElementById("walletAddress");
-      if (!walletDisplay || walletDisplay.innerText.trim() === '' ||
-          walletDisplay.innerText.toLowerCase().includes("disconnect")) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Кошелек не подключен',
-          text: 'Сначала подключите кошелек.',
-        });
-        return;
-      }
-      closePurchaseModal();
-      await handlePurchase(amount, currentProduct);
-    });
   } else {
     console.error("Форма покупки не найдена");
   }
@@ -165,3 +135,5 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Элементы paymentToken или confirmBtn не найдены");
   }
 });
+
+console.log("✅ shop.js загружен");
