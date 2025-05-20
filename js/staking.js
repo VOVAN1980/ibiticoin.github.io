@@ -1,16 +1,13 @@
-// js/staking.js
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
 import { stakingAbi } from "./abis/stakingAbi.js";
-import { ibitiTokenAbi } from "./abis/ibitiTokenAbi.js";
 
-const STAKING_ADDRESS = "0xd5D138855C7D8F24CD9eE52B65864bC3929a0aA5";
-const IBITI_TOKEN_ADDRESS = "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196";
+const STAKING_ADDRESS = "0x..."; // Вставь сюда адрес твоего StakingModule
 const DECIMALS = 8;
 
-let provider, signer, userAddress, stakingContract, ibitiToken;
+let provider, signer, stakingContract, userAddress;
 
-async function connectWallet() {
-  if (!window.ethereum) return alert("MetaMask не найден");
+async function connect() {
+  if (!window.ethereum) return Swal.fire("MetaMask не найден");
 
   provider = new ethers.providers.Web3Provider(window.ethereum);
   await provider.send("eth_requestAccounts", []);
@@ -18,47 +15,81 @@ async function connectWallet() {
   userAddress = await signer.getAddress();
 
   stakingContract = new ethers.Contract(STAKING_ADDRESS, stakingAbi, signer);
-  ibitiToken = new ethers.Contract(IBITI_TOKEN_ADDRESS, ibitiTokenAbi, signer);
 
   document.getElementById("walletAddress").innerText = userAddress;
   await updateStakeInfo();
 }
 
-async function stake() {
-  const amount = document.getElementById("stakeAmount").value;
-  if (!amount || amount <= 0) return alert("Введите количество IBITI");
+async function updateStakeInfo() {
+  if (!stakingContract || !userAddress) return;
 
-  const value = ethers.utils.parseUnits(amount.toString(), DECIMALS);
-  const allowance = await ibitiToken.allowance(userAddress, STAKING_ADDRESS);
+  const stake = await stakingContract.stakedBalance(userAddress);
+  const reward = await stakingContract.pendingReward(userAddress);
+  const unlockTime = await stakingContract.unlockTime(userAddress);
 
-  if (allowance.lt(value)) {
-    const txApprove = await ibitiToken.approve(STAKING_ADDRESS, value);
-    await txApprove.wait();
+  const stakeFormatted = ethers.utils.formatUnits(stake, DECIMALS);
+  const rewardFormatted = ethers.utils.formatUnits(reward, DECIMALS);
+
+  document.getElementById("stakeInfo").innerText = `Ваш стейк: ${stakeFormatted} IBITI`;
+  document.getElementById("rewardInfo").innerText = `Награды: ${rewardFormatted} IBITI`;
+
+  const now = Math.floor(Date.now() / 1000);
+  const unlockTs = unlockTime.toNumber ? unlockTime.toNumber() : 0;
+  const secondsLeft = unlockTs - now;
+
+  document.getElementById("unlockInfo").innerText =
+    unlockTs === 0 ? "Без блокировки" :
+    secondsLeft <= 0 ? "Можно вывести" :
+    `Разблокируется через ${Math.floor(secondsLeft / 60)}м ${secondsLeft % 60}с`;
+}
+
+async function stake(amount) {
+  if (!stakingContract || !userAddress) return;
+  const amountFormatted = ethers.utils.parseUnits(amount.toString(), DECIMALS);
+
+  try {
+    const tokenAddress = await stakingContract.token();
+    const token = new ethers.Contract(tokenAddress, [
+      "function approve(address spender, uint256 amount) external returns (bool)",
+      "function allowance(address owner, address spender) external view returns (uint256)"
+    ], signer);
+
+    const allowance = await token.allowance(userAddress, STAKING_ADDRESS);
+    if (allowance.lt(amountFormatted)) {
+      const approveTx = await token.approve(STAKING_ADDRESS, amountFormatted);
+      await approveTx.wait();
+    }
+
+    const tx = await stakingContract.stake(amountFormatted);
+    await tx.wait();
+    Swal.fire("✅ Успешно застейкано!");
+    await updateStakeInfo();
+  } catch (err) {
+    console.error(err);
+    Swal.fire("❌ Ошибка при стейке", err.message);
   }
-
-  const tx = await stakingContract.stake(value);
-  await tx.wait();
-  await updateStakeInfo();
-  alert("Успешно застейкано!");
 }
 
 async function unstake() {
-  const tx = await stakingContract.unstake();
-  await tx.wait();
-  await updateStakeInfo();
-  alert("Вы вывели свои токены");
+  try {
+    const tx = await stakingContract.unstake();
+    await tx.wait();
+    Swal.fire("✅ Анстейк выполнен");
+    await updateStakeInfo();
+  } catch (err) {
+    console.error(err);
+    Swal.fire("❌ Ошибка при анстейке", err.message);
+  }
 }
 
-async function updateStakeInfo() {
-  if (!stakingContract || !userAddress) return;
-  const stake = await stakingContract.stakedBalance(userAddress);
-  const formatted = ethers.utils.formatUnits(stake, DECIMALS);
-  document.getElementById("stakeInfo").innerText = `Ваш стейк: ${formatted} IBITI`;
-}
-
-// Кнопки
-document.getElementById("connectWalletBtn").onclick = connectWallet;
-document.getElementById("stakeBtn").onclick = stake;
-document.getElementById("unstakeBtn").onclick = unstake;
-
-console.log("✅ staking.js загружен");
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("connectWalletBtn")?.addEventListener("click", connect);
+  document.getElementById("stakeForm")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const amt = document.getElementById("stakeAmount").value;
+    if (!amt || isNaN(amt)) return;
+    await stake(amt);
+  });
+  document.getElementById("unstakeBtn")?.addEventListener("click", unstake);
+  setInterval(updateStakeInfo, 15000); // автообновление
+});
