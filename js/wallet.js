@@ -41,7 +41,6 @@ const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
 // -----------------------------
 async function connectWallet() {
   try {
-    // 🔁 Принудительное переключение на BSC Mainnet (chainId = 56 / 0x38)
     if (window.ethereum) {
       try {
         await window.ethereum.request({
@@ -50,7 +49,6 @@ async function connectWallet() {
         });
       } catch (switchError) {
         if (switchError.code === 4902) {
-          // Сеть не добавлена в MetaMask
           await window.ethereum.request({
             method: "wallet_addEthereumChain",
             params: [{
@@ -79,10 +77,11 @@ async function connectWallet() {
     const walletDisplay = document.getElementById("walletAddress");
     if (walletDisplay) walletDisplay.innerText = selectedAccount;
 
-    provider.on("accountsChanged", (accs) => {
+    provider.on("accountsChanged", async (accs) => {
       if (!accs.length) return disconnectWallet();
       selectedAccount = accs[0];
       if (walletDisplay) walletDisplay.innerText = selectedAccount;
+      await showIbitiBalance(true);
     });
 
     provider.on("disconnect", () => disconnectWallet());
@@ -90,6 +89,7 @@ async function connectWallet() {
     console.log("✅ Кошелек подключен:", selectedAccount);
 
     await initContracts(web3Provider);
+    await showIbitiBalance(true);
   } catch (err) {
     console.error("❌ Ошибка подключения:", err);
     alert("Ошибка подключения кошелька");
@@ -122,7 +122,31 @@ async function initContracts(web3Provider) {
 }
 
 // -----------------------------
-// 5) Отключение кошелька
+// 5) Показ баланса IBITI с анимацией
+// -----------------------------
+async function showIbitiBalance(highlight = false) {
+  if (!window.ibitiToken || !selectedAccount) return;
+
+  try {
+    const balance = await window.ibitiToken.balanceOf(selectedAccount);
+    const formatted = ethers.utils.formatUnits(balance, 8);
+    const el = document.getElementById("ibitiBalance");
+    if (el) {
+      el.innerText = `Ваш баланс IBITI: ${formatted}`;
+
+      if (highlight) {
+        el.style.transition = "background 0.3s ease";
+        el.style.background = "rgba(255, 215, 0, 0.2)";
+        setTimeout(() => (el.style.background = "transparent"), 500);
+      }
+    }
+  } catch (err) {
+    console.error("Ошибка при получении баланса:", err);
+  }
+}
+
+// -----------------------------
+// 6) Отключение кошелька
 // -----------------------------
 async function disconnectWallet() {
   if (provider?.close) await provider.close();
@@ -133,11 +157,14 @@ async function disconnectWallet() {
   const walletDisplay = document.getElementById("walletAddress");
   if (walletDisplay) walletDisplay.innerText = "Wallet disconnected";
 
+  const el = document.getElementById("ibitiBalance");
+  if (el) el.innerText = "";
+
   console.log("🔌 Кошелек отключен");
 }
 
 // -----------------------------
-// 6) Обработчик кнопки подключения
+// 7) Обработчик кнопки подключения
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
@@ -150,7 +177,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // -----------------------------
-// 7) Экспорт
+// 8) Экспорт
 // -----------------------------
-export { connectWallet, disconnectWallet, provider, signer };
-
+export { connectWallet, disconnectWallet, provider, signer, showIbitiBalance };
