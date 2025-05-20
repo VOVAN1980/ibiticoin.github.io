@@ -1,5 +1,5 @@
 // js/wallet.js
-console.log("wallet.js загружен");
+console.log("✅ wallet.js загружен");
 
 // -----------------------------
 // 1) Глобальные переменные
@@ -10,10 +10,9 @@ let selectedAccount = null;
 
 const INFURA_ID = "1faccf0f1fdc4532ad7a1a38a67ee906";
 
-// Адреса контрактов
-const IBITI_TOKEN_ADDRESS      = "0x5fab4e25c0E75aB4a50Cac19Bf62f58dB8E597c6";
-const NFTSALEMANAGER_ADDRESS   = "0xf2A9cB2F09C1f1A8103441D13a78330B028a41DA";
-const NFT_DISCOUNT_ADDRESS     = "0x776D125B0abf3a6B10d446e9F8c0a96bBDcbC511";
+const IBITI_TOKEN_ADDRESS      = "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196";
+const NFTSALEMANAGER_ADDRESS   = "0x5572F3AE84319Fbd6e285a0CB854f92Afd31dd6D";
+const NFT_DISCOUNT_ADDRESS     = "0x26C4E3D3E40943D2d569e832A243e329E14ecb02";
 
 // ABI
 import { ibitiTokenAbi }      from "./abis/ibitiTokenAbi.js";
@@ -38,16 +37,43 @@ const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
 });
 
 // -----------------------------
-// 3) Подключение кошелька
+// 3) Подключение кошелька с переключением на Mainnet
 // -----------------------------
 async function connectWallet() {
   try {
-    console.log("Подключение кошелька...");
+    // 🔁 Принудительное переключение на BSC Mainnet (chainId = 56 / 0x38)
+    if (window.ethereum) {
+      try {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: "0x38" }]
+        });
+      } catch (switchError) {
+        if (switchError.code === 4902) {
+          // Сеть не добавлена в MetaMask
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [{
+              chainId: "0x38",
+              chainName: "Binance Smart Chain",
+              nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+              rpcUrls: ["https://bsc-dataseed.binance.org/"],
+              blockExplorerUrls: ["https://bscscan.com"]
+            }]
+          });
+        } else {
+          console.error("Ошибка переключения сети:", switchError);
+          return;
+        }
+      }
+    }
+
+    console.log("🔌 Подключение кошелька...");
     provider = await web3Modal.connect();
     const web3Provider = new ethers.providers.Web3Provider(provider);
     signer = web3Provider.getSigner();
     const accounts = await web3Provider.listAccounts();
-    if (!accounts.length) return console.warn("Нет аккаунтов");
+    if (!accounts.length) return console.warn("❌ Нет аккаунтов");
 
     selectedAccount = accounts[0];
     const walletDisplay = document.getElementById("walletAddress");
@@ -61,11 +87,11 @@ async function connectWallet() {
 
     provider.on("disconnect", () => disconnectWallet());
 
-    console.log("Кошелек подключен:", selectedAccount);
+    console.log("✅ Кошелек подключен:", selectedAccount);
 
     await initContracts(web3Provider);
   } catch (err) {
-    console.error("Ошибка подключения:", err);
+    console.error("❌ Ошибка подключения:", err);
     alert("Ошибка подключения кошелька");
   }
 }
@@ -92,24 +118,26 @@ async function initContracts(web3Provider) {
     signer
   );
 
-  console.log("Контракты инициализированы");
+  console.log("✅ Контракты инициализированы");
 }
 
 // -----------------------------
-// 5) Отключение
+// 5) Отключение кошелька
 // -----------------------------
 async function disconnectWallet() {
   if (provider?.close) await provider.close();
   provider = null;
   signer = null;
   selectedAccount = null;
+
   const walletDisplay = document.getElementById("walletAddress");
   if (walletDisplay) walletDisplay.innerText = "Wallet disconnected";
-  console.log("Кошелек отключен");
+
+  console.log("🔌 Кошелек отключен");
 }
 
 // -----------------------------
-// 6) Обработчик кнопки
+// 6) Обработчик кнопки подключения
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
@@ -124,4 +152,5 @@ document.addEventListener("DOMContentLoaded", () => {
 // -----------------------------
 // 7) Экспорт
 // -----------------------------
-export { connectWallet, disconnectWallet, provider, signer, selectedAccount };
+export { connectWallet, disconnectWallet, provider, signer };
+
