@@ -1,7 +1,7 @@
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
 import { stakingAbi } from "./abis/stakingAbi.js";
 
-const STAKING_ADDRESS = "0x..."; // Вставь сюда адрес твоего StakingModule
+const STAKING_ADDRESS = "0xd5D138855C7D8F24CD9eE52B65864bC3929a0aA5"; // твой StakingModule
 const DECIMALS = 8;
 
 let provider, signer, stakingContract, userAddress;
@@ -23,9 +23,9 @@ async function connect() {
 async function updateStakeInfo() {
   if (!stakingContract || !userAddress) return;
 
-  const stake = await stakingContract.stakedBalance(userAddress);
-  const reward = await stakingContract.pendingReward(userAddress);
-  const unlockTime = await stakingContract.unlockTime(userAddress);
+  const stake = await stakingContract.stakeOf(userAddress);
+  const unlockTime = await stakingContract.unlockTimeOf(userAddress);
+  const reward = await stakingContract.calculateReward(userAddress);
 
   const stakeFormatted = ethers.utils.formatUnits(stake, DECIMALS);
   const rewardFormatted = ethers.utils.formatUnits(reward, DECIMALS);
