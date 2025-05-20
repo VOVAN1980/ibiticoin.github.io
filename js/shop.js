@@ -51,6 +51,11 @@ async function handlePurchase(amount, productName) {
 
     await tx.wait();
 
+    // 🔁 Обновляем баланс с подсветкой
+       if (window.showIbitiBalance) {
+       await window.showIbitiBalance(true);
+    }
+
     Swal.fire({
       icon: 'success',
       title: 'Покупка успешна!',
