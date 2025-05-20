@@ -39,17 +39,15 @@ async function handlePurchase(amount, productName) {
     const paymentMethod = document.getElementById("paymentToken")?.value;
 
     if (productName === "IBITIcoin") {
-      if (paymentMethod === "IBITI") {
-        tx = await ibitiContract.purchaseCoinBNB({ value: amountFormatted });
-      } else if (paymentMethod === "USDT") {
-        const usdtAddress = config.mainnet.contracts.ERC20_MOCK_ADDRESS;
-        tx = await ibitiContract.purchaseCoinToken(usdtAddress, amountFormatted);
-      } else {
-        throw new Error("Выберите способ оплаты.");
-      }
-    } else {
-      throw new Error("Покупка данного продукта не поддерживается.");
-    }
+  if (paymentMethod === "USDT") {
+    const usdtAddress = config.mainnet.contracts.ERC20_MOCK_ADDRESS;
+    tx = await ibitiContract.purchaseCoinToken(usdtAddress, amountFormatted);
+  } else {
+    throw new Error("Оплата через BNB временно отключена.");
+  }
+} else {
+  throw new Error("Покупка данного продукта не поддерживается.");
+}
 
     await tx.wait();
 
