@@ -9,7 +9,7 @@ const signer = provider.getSigner();
 
 // Контракт IBITIcoin
 const ibitiContract = new ethers.Contract(
-  config.testnet.contracts.IBITI_TOKEN_ADDRESS,
+  config.mainnet.contracts.IBITI_TOKEN_ADDRESS
   ibitiTokenAbi,
   signer
 );
@@ -42,7 +42,7 @@ async function handlePurchase(amount, productName) {
       if (paymentMethod === "IBITI") {
         tx = await ibitiContract.purchaseCoinBNB({ value: amountFormatted });
       } else if (paymentMethod === "USDT") {
-        const usdtAddress = config.testnet.contracts.ERC20_MOCK_ADDRESS;
+        const usdtAddress = config.mainnet.contracts.ERC20_MOCK_ADDRESS;
         tx = await ibitiContract.purchaseCoinToken(usdtAddress, amountFormatted);
       } else {
         throw new Error("Выберите способ оплаты.");
