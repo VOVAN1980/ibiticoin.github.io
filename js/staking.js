@@ -1,7 +1,7 @@
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
 import { stakingAbi } from "./abis/stakingAbi.js";
 
-const STAKING_ADDRESS = "0xd5D138855C7D8F24CD9eE52B65864bC3929a0aA5"; // твой StakingModule
+const STAKING_ADDRESS = "0xd5D138855C7D8F24CD9eE52B65864bC3929a0aA5";
 const DECIMALS = 8;
 
 let provider, signer, stakingContract, userAddress;
@@ -23,27 +23,31 @@ async function connect() {
 async function updateStakeInfo() {
   if (!stakingContract || !userAddress) return;
 
-  const stake = await stakingContract.stakeOf(userAddress);
-  const unlockTime = await stakingContract.unlockTimeOf(userAddress);
-  const reward = await stakingContract.calculateReward(userAddress);
+  try {
+    const stake = await stakingContract.stakeOf(userAddress);
+    const unlockTime = await stakingContract.unlockTimeOf(userAddress);
+    const reward = await stakingContract.calculateReward(userAddress);
 
-  const stakeFormatted = ethers.utils.formatUnits(stake, DECIMALS);
-  const rewardFormatted = ethers.utils.formatUnits(reward, DECIMALS);
+    const stakeFormatted = ethers.utils.formatUnits(stake, DECIMALS);
+    const rewardFormatted = ethers.utils.formatUnits(reward, DECIMALS);
 
-  document.getElementById("stakeInfo").innerText = `Ваш стейк: ${stakeFormatted} IBITI`;
-  document.getElementById("rewardInfo").innerText = `Награды: ${rewardFormatted} IBITI`;
+    document.getElementById("stakeInfo").innerText = `Ваш стейк: ${stakeFormatted} IBITI`;
+    document.getElementById("rewardInfo").innerText = `Награды: ${rewardFormatted} IBITI`;
 
-  const now = Math.floor(Date.now() / 1000);
-  const unlockTs = unlockTime.toNumber ? unlockTime.toNumber() : 0;
-  const secondsLeft = unlockTs - now;
+    const now = Math.floor(Date.now() / 1000);
+    const unlockTs = unlockTime.toNumber ? unlockTime.toNumber() : 0;
+    const secondsLeft = unlockTs - now;
 
-  document.getElementById("unlockInfo").innerText =
-    unlockTs === 0 ? "Без блокировки" :
-    secondsLeft <= 0 ? "Можно вывести" :
-    `Разблокируется через ${Math.floor(secondsLeft / 60)}м ${secondsLeft % 60}с`;
+    document.getElementById("unlockInfo").innerText =
+      unlockTs === 0 ? "Без блокировки" :
+      secondsLeft <= 0 ? "Можно вывести" :
+      `Разблокируется через ${Math.floor(secondsLeft / 86400)}д ${Math.floor((secondsLeft % 86400) / 3600)}ч`;
+  } catch (err) {
+    console.warn("Ошибка при получении информации о стейке", err);
+  }
 }
 
-async function stake(amount) {
+async function stake(amount, duration) {
   if (!stakingContract || !userAddress) return;
   const amountFormatted = ethers.utils.parseUnits(amount.toString(), DECIMALS);
 
@@ -60,7 +64,7 @@ async function stake(amount) {
       await approveTx.wait();
     }
 
-    const tx = await stakingContract.stake(amountFormatted);
+    const tx = await stakingContract.stake(amountFormatted, duration);
     await tx.wait();
     Swal.fire("✅ Успешно застейкано!");
     await updateStakeInfo();
@@ -87,9 +91,10 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("stakeForm")?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const amt = document.getElementById("stakeAmount").value;
-    if (!amt || isNaN(amt)) return;
-    await stake(amt);
+    const duration = parseInt(document.getElementById("stakeDuration").value);
+    if (!amt || isNaN(amt) || isNaN(duration)) return;
+    await stake(amt, duration);
   });
   document.getElementById("unstakeBtn")?.addEventListener("click", unstake);
-  setInterval(updateStakeInfo, 15000); // автообновление
+  setInterval(updateStakeInfo, 15000);
 });
