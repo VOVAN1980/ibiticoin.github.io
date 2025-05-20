@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>IBITI Staking</title>
+  <script type="module" src="js/staking.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body { background: #000; color: gold; font-family: sans-serif; text-align: center; padding: 40px; }
+    input, button { padding: 10px; margin: 10px; font-weight: bold; }
+    input { width: 200px; }
+    button { background: gold; color: #000; border: none; cursor: pointer; }
+    #stakeInfo { margin-top: 20px; font-size: 1.2em; }
+  </style>
+</head>
+<body>
+  <h1>📈 IBITIcoin Staking</h1>
+
+  <div>
+    <button id="connectWalletBtn">🔗 Подключить кошелек</button>
+    <div id="walletAddress"></div>
+  </div>
+
+  <div>
+    <input type="number" id="stakeAmount" placeholder="Количество IBITI" min="0">
+    <button id="stakeBtn">Стейкать</button>
+    <button id="unstakeBtn">Анстейк</button>
+  </div>
+
+  <div id="stakeInfo">Ваш стейк: ...</div>
+</body>
+</html>
