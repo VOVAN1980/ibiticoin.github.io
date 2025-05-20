@@ -6,6 +6,89 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      font-family: sans-serif;
+      background: linear-gradient(to bottom, #000000, #111111);
+      color: gold;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 30px;
+      font-size: 1.1em;
+    }
+
+    .wallet-section, .staking-section {
+      margin: 20px auto;
+      max-width: 420px;
+    }
+
+    button, input[type="number"] {
+      padding: 12px;
+      font-size: 1em;
+      font-weight: bold;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 10px;
+    }
+
+    #connectWalletBtn {
+      background: gold;
+      color: #000;
+      cursor: pointer;
+    }
+
+    #unstakeBtn {
+      background: transparent;
+      color: gold;
+      border: 2px solid gold;
+      cursor: pointer;
+    }
+
+    #stakeAmount {
+      margin-top: 20px;
+      background: #1c1c1c;
+      color: gold;
+      border: 1px solid #444;
+    }
+
+    #stakeForm button {
+      background: gold;
+      color: #000;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .staking-section {
+      background: #1a1a1a;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+    }
+
+    #walletAddress {
+      margin-top: 10px;
+      word-break: break-word;
+      font-size: 0.9em;
+      opacity: 0.9;
+    }
+
+    #stakeInfo, #rewardInfo, #unlockInfo {
+      margin: 10px 0;
+      font-size: 1.1em;
+    }
+  </style>
 </head>
 <body>
   <header class="hero-header">
@@ -14,12 +97,12 @@
   </header>
 
   <section class="wallet-section">
-    <button id="connectWalletBtn">Подключить кошелёк</button>
+    <button id="connectWalletBtn">🔗 Подключить кошелёк</button>
     <div id="walletAddress"></div>
   </section>
 
   <section class="staking-section">
-    <h2>Ваш стейкинг</h2>
+    <h2 style="margin-bottom: 20px;">Ваш стейкинг</h2>
     <div id="stakeInfo">Ваш стейк: ...</div>
     <div id="rewardInfo">Награды: ...</div>
     <div id="unlockInfo">Разблокировка: ...</div>
