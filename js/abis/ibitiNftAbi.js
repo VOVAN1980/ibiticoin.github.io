@@ -1,6 +1,42 @@
 export const ibitiNftAbi = [
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "string",
+        name: "_name",
+        type: "string"
+      },
+      {
+        internalType: "string",
+        name: "_symbol",
+        type: "string"
+      },
+      {
+        internalType: "uint256",
+        name: "_nftPrice",
+        type: "uint256"
+      },
+      {
+        internalType: "uint256",
+        name: "_nftPriceUSDT",
+        type: "uint256"
+      },
+      {
+        internalType: "uint256",
+        name: "_priceGrowthRate",
+        type: "uint256"
+      },
+      {
+        internalType: "uint256",
+        name: "_salesThreshold",
+        type: "uint256"
+      },
+      {
+        internalType: "address",
+        name: "_ibitiToken",
+        type: "address"
+      }
+    ],
     stateMutability: "nonpayable",
     type: "constructor"
   },
@@ -92,6 +128,62 @@ export const ibitiNftAbi = [
       {
         indexed: true,
         internalType: "address",
+        name: "buyer",
+        type: "address"
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256"
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "price",
+        type: "uint256"
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "paymentToken",
+        type: "address"
+      }
+    ],
+    name: "NFTPurchased",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "oldTokenId",
+        type: "uint256"
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "newTokenId",
+        type: "uint256"
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "newURI",
+        type: "string"
+      }
+    ],
+    name: "NFTUpdated",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
         name: "previousOwner",
         type: "address"
       },
@@ -103,6 +195,38 @@ export const ibitiNftAbi = [
       }
     ],
     name: "OwnershipTransferred",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "account",
+        type: "address"
+      }
+    ],
+    name: "Paused",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "newPrice",
+        type: "uint256"
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "timestamp",
+        type: "uint256"
+      }
+    ],
+    name: "PriceParametersUpdated",
     type: "event"
   },
   {
@@ -131,34 +255,17 @@ export const ibitiNftAbi = [
     type: "event"
   },
   {
-    stateMutability: "payable",
-    type: "fallback"
-  },
-  {
-    inputs: [],
-    name: "COOLDOWN",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
+    anonymous: false,
     inputs: [
       {
+        indexed: false,
         internalType: "address",
-        name: "token",
+        name: "account",
         type: "address"
       }
     ],
-    name: "addSupportedPaymentToken",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
+    name: "Unpaused",
+    type: "event"
   },
   {
     inputs: [
@@ -205,23 +312,23 @@ export const ibitiNftAbi = [
         type: "uint256"
       }
     ],
-    name: "burn",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256"
-      }
-    ],
     name: "getApproved",
     outputs: [
       {
         internalType: "address",
+        name: "",
+        type: "address"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [],
+    name: "ibitiToken",
+    outputs: [
+      {
+        internalType: "contract IIBITIcoin",
         name: "",
         type: "address"
       }
@@ -269,25 +376,6 @@ export const ibitiNftAbi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    name: "lastTransferTime",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
         internalType: "string",
         name: "",
         type: "string"
@@ -319,7 +407,33 @@ export const ibitiNftAbi = [
   },
   {
     inputs: [],
+    name: "nextTokenId",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [],
     name: "nftPrice",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [],
+    name: "nftPriceUSDT",
     outputs: [
       {
         internalType: "uint256",
@@ -364,6 +478,26 @@ export const ibitiNftAbi = [
   },
   {
     inputs: [],
+    name: "pause",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [],
+    name: "paused",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [],
     name: "priceGrowthRate",
     outputs: [
       {
@@ -394,33 +528,22 @@ export const ibitiNftAbi = [
         internalType: "string",
         name: "tokenURI",
         type: "string"
-      },
-      {
-        internalType: "address",
-        name: "_paymentToken",
-        type: "address"
       }
     ],
     name: "purchaseNFT",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256"
-      }
-    ],
-    stateMutability: "payable",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function"
   },
   {
     inputs: [
       {
-        internalType: "address",
-        name: "token",
-        type: "address"
+        internalType: "string",
+        name: "tokenURI",
+        type: "string"
       }
     ],
-    name: "removeSupportedPaymentToken",
+    name: "purchaseNFTWithUSDT",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"
@@ -484,6 +607,19 @@ export const ibitiNftAbi = [
     type: "function"
   },
   {
+    inputs: [],
+    name: "salesThreshold",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -504,51 +640,19 @@ export const ibitiNftAbi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_newPrice",
-        type: "uint256"
-      }
-    ],
-    name: "setNFTPrice",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_interval",
-        type: "uint256"
+        internalType: "address",
+        name: "_usdtToken",
+        type: "address"
       },
       {
         internalType: "uint256",
-        name: "_growthRate",
+        name: "_nftPriceUSDT",
         type: "uint256"
       }
     ],
-    name: "setPriceParameters",
+    name: "setUSDTParameters",
     outputs: [],
     stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address"
-      }
-    ],
-    name: "supportedPaymentTokens",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool"
-      }
-    ],
-    stateMutability: "view",
     type: "function"
   },
   {
@@ -603,6 +707,19 @@ export const ibitiNftAbi = [
     type: "function"
   },
   {
+    inputs: [],
+    name: "totalNFTPurchasesThisMonth",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -640,7 +757,7 @@ export const ibitiNftAbi = [
   },
   {
     inputs: [],
-    name: "updateNFTPrice",
+    name: "unpause",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"
@@ -658,38 +775,29 @@ export const ibitiNftAbi = [
         type: "string"
       }
     ],
-    name: "updateTokenURI",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "tokenAddress",
-        type: "address"
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256"
-      }
-    ],
-    name: "withdrawERC20",
+    name: "updateNFT",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"
   },
   {
     inputs: [],
-    name: "withdrawNative",
+    name: "updateNFTPriceMonthly",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"
   },
   {
-    stateMutability: "payable",
-    type: "receive"
+    inputs: [],
+    name: "usdtToken",
+    outputs: [
+      {
+        internalType: "contract IERC20Extended",
+        name: "",
+        type: "address"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
   }
 ]
