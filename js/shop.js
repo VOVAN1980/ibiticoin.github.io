@@ -1,17 +1,11 @@
+// js/shop.js
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
-import config from "./config.js";
-import { ibitiTokenAbi } from "./abis/ibitiTokenAbi.js";
+import config      from "./config.js";
+import { buyIBITI } from "./sale.js";
 
 // Провайдер и signer
 const provider = new ethers.providers.Web3Provider(window.ethereum);
-const signer = provider.getSigner();
-
-// Контракт IBITIcoin
-const ibitiContract = new ethers.Contract(
-  config.mainnet.contracts.IBITI_TOKEN_ADDRESS,
-  ibitiTokenAbi,
-  signer
-);
+const signer   = provider.getSigner();
 
 // Покупка токенов
 async function handlePurchase(amount, productName) {
@@ -32,16 +26,16 @@ async function handlePurchase(amount, productName) {
   });
 
   try {
-    const decimals = 8;
-    const amountFormatted = ethers.utils.parseUnits(amount.toString(), decimals);
-    const paymentMethod = document.getElementById("paymentToken")?.value;
-
+    const decimals         = 8;
+    const amountFormatted  = ethers.utils.parseUnits(amount.toString(), decimals);
+    const paymentMethod    = document.getElementById("paymentToken")?.value;
     let tx;
 
     if (productName === "IBITIcoin") {
       if (paymentMethod === "USDT") {
-        const usdtAddress = config.mainnet.contracts.ERC20_MOCK_ADDRESS;
-        tx = await ibitiContract.purchaseCoinToken(usdtAddress, amountFormatted);
+        // берём сохранённого реферера или 0x0
+        const referrer = localStorage.getItem("referrer") || ethers.constants.AddressZero;
+        tx = await buyIBITI(amountFormatted, referrer);
       } else {
         throw new Error("Оплата через BNB временно отключена.");
       }
@@ -51,9 +45,9 @@ async function handlePurchase(amount, productName) {
 
     await tx.wait();
 
-    // 🔁 Обновляем баланс с подсветкой
-       if (window.showIbitiBalance) {
-       await window.showIbitiBalance(true);
+    // 🔁 Обновляем баланс
+    if (window.showIbitiBalance) {
+      await window.showIbitiBalance(true);
     }
 
     Swal.fire({
@@ -98,7 +92,7 @@ function closePurchaseModal() {
   document.getElementById('nftAmount').value = '';
 }
 
-window.openPurchaseModal = openPurchaseModal;
+window.openPurchaseModal  = openPurchaseModal;
 window.closePurchaseModal = closePurchaseModal;
 
 // ----------------------
@@ -113,7 +107,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const amount = document.getElementById('nftAmount').value;
 
       const walletDisplay = document.getElementById("walletAddress");
-      if (!walletDisplay || walletDisplay.innerText.trim() === '' || walletDisplay.innerText.toLowerCase().includes("disconnect")) {
+      if (!walletDisplay ||
+          walletDisplay.innerText.trim() === '' ||
+          walletDisplay.innerText.toLowerCase().includes("disconnect")
+      ) {
         Swal.fire({
           icon: 'warning',
           title: 'Кошелек не подключен',
@@ -131,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Навешиваем обработчик на селектор способа оплаты
   const paymentToken = document.getElementById('paymentToken');
-  const confirmBtn = document.getElementById('confirmBtn');
+  const confirmBtn   = document.getElementById('confirmBtn');
   if (paymentToken && confirmBtn) {
     paymentToken.addEventListener('change', function () {
       confirmBtn.disabled = (this.value === "");
