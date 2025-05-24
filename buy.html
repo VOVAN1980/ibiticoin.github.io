@@ -20,8 +20,8 @@
 
   <!-- Кнопки справа (Roadmap + язык) -->
   <div class="corner-box corner-box-right">
-    <a href="roadmap.html">Roadmap</a> |
-    <a href="?lang=ru">RU</a> |
+    <a href="roadmap.html">Roadmap</a> | 
+    <a href="?lang=ru">RU</a> | 
     <a href="?lang=en">EN</a>
   </div>
 
@@ -32,47 +32,51 @@
   </header>
 
   <section class="buy-section">
-  <h2>How to Buy IBITIcoin</h2>
-  <ol class="buy-steps">…</ol>
-  <div class="buy-store-button">
-    <a class="btn-small" href="shop.html">Перейти в магазин</a>
-  </div>
+    <h2>How to Buy IBITIcoin</h2>
 
-  <div class="buy-content-grid">
-    <!-- Видео -->
-    <div class="buy-video">
-      <iframe src="https://www.youtube.com/embed/VIDEO_ID"
-              title="How to Buy IBITIcoin"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen>
-      </iframe>
-      <p class="video-caption">
-        В этом коротком ролике вы увидите, как мультяшный персонаж легко покупает IBITIcoin!
-      </p>
+    <ol class="buy-steps">
+      <li>Создайте криптокошелёк (MetaMask, Trust Wallet)</li>
+      <li>Пополните баланс (BNB, ETH, USDT)</li>
+      <li>Обменяйте на IBITIcoin на нашей DEX-платформе</li>
+      <li>Храните, инвестируйте и пользуйтесь всеми преимуществами IBITIcoin</li>
+    </ol>
+
+    <!-- Кнопка «Перейти в магазин» над видео, по центру -->
+    <div style="text-align: center; margin: 20px 0;">
+      <a class="btn-small" href="shop.html">Перейти в магазин</a>
     </div>
 
-    <!-- Ликвидность -->
-    <aside class="buy-liquidity">
-      <h3>Ликвидность IBITIcoin ↔ USDT</h3>
-      <dl>
-        <dt>IBITI в пуле:</dt>
-        <dd id="reserveToken">—</dd>
-        <dt>USDT в пуле:</dt>
-        <dd id="reserveUSDT">—</dd>
-      </dl>
-      <button id="refreshLiquidityBtn">Обновить</button>
-    </aside>
-  </div>
-</section>
+    <iframe width="560" height="315"
+      src="https://www.youtube.com/embed/VIDEO_ID"
+      title="How to Buy IBITIcoin" frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen>
+    </iframe>
+
+    <p>В этом коротком ролике вы увидите, как мультяшный персонаж легко покупает IBITIcoin!</p>
+  </section>
 
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
   </footer>
 
-  <!-- Подключаем модули проекта -->
-  <script type="module" src="js/config.js"></script>
-  <script type="module" src="js/wallet.js"></script>
-  <script type="module" src="js/liquidity.js"></script>
+  <!-- Повторный (или основной) футер – объедините, если нужно -->
+  <footer>
+    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
+    <p>
+      <a href="privacy.html">Политика конфиденциальности</a> |
+      <a href="terms.html">Пользовательское соглашение</a>
+    </p>
+    <p>
+      <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> |
+      <a href="https://t.me/IBITIcoin_chat" target="_blank">Telegram</a> |
+      <a href="https://instagram.com/IBITIcoin_official" target="_blank">Instagram</a> |
+      <a href="https://facebook.com/IBITIcoin" target="_blank">Facebook</a>
+    </p>
+    <p>
+      <a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a>
+    </p>
+  </footer>
+
 </body>
 </html>
