@@ -178,5 +178,11 @@ document.addEventListener("DOMContentLoaded", () => {
 // -----------------------------
 // 8) Экспорт
 // -----------------------------
-export { connectWallet, disconnectWallet, provider, signer, showIbitiBalance };
-er, signer, selectedAccount
+export {
+  connectWallet,
+  disconnectWallet,
+  provider,
+  signer,
+  showIbitiBalance,
+  selectedAccount
+};
