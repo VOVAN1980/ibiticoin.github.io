@@ -1,60 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBITIcoin - The Future of Digital Finance</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #000;
-            color: #fff;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            padding: 50px;
-        }
-        .logo {
-            width: 200px;
-        }
-        .btn {
-            background-color: gold;
-            color: black;
-            padding: 15px 30px;
-            border: none;
-            cursor: pointer;
-            font-size: 18px;
-            margin: 20px;
-            text-decoration: none;
-        }
-        .btn:hover {
-            background-color: #c0a000;
-        }
-        .socials a {
-            color: gold;
-            text-decoration: none;
-            margin: 0 10px;
-            font-size: 20px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IBITIcoin – Будущее цифровых финансов</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Минимальные правки для лендинга */
+    body {
+      background: #000;
+      color: #fff;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    .hero {
+      padding: 80px 20px;
+      text-align: center;
+      color: gold;
+    }
+    .hero .logo {
+      width: 180px;
+      margin-bottom: 20px;
+    }
+    .hero h1 { font-size: 2.8rem; margin: .5em 0; }
+    .hero p  { font-size: 1.2rem; margin-bottom: 1.5em; color: #eee; }
+    .hero .btn {
+      margin: 0 10px;
+      padding: 15px 30px;
+      font-size: 1rem;
+      background: gold;
+      color: #000;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .hero .btn:hover { background: #c0a000; }
+    #about {
+      padding: 60px 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      color: #ddd;
+      line-height: 1.6;
+    }
+    #about h2 { color: gold; margin-bottom: .5em; }
+    .socials a {
+      color: gold;
+      text-decoration: none;
+      margin: 0 10px;
+      font-size: 1.2rem;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <img src="logo.png" alt="IBITIcoin Logo" class="logo">
-        <h1>IBITIcoin - The Future of Digital Finance</h1>
-        <p>Secure, fast, and innovative cryptocurrency for the modern world.</p>
-        <a href="#buy" class="btn">Buy IBITIcoin</a>
-        <a href="#about" class="btn">Learn More</a>
-        <h2>Join Our Community</h2>
-        <div class="socials">
-            <a href="https://twitter.com/IBITIcoin">Twitter</a> |
-            <a href="https://t.me/IBITIcoin">Telegram</a> |
-            <a href="https://instagram.com/IBITIcoin">Instagram</a> |
-            <a href="https://facebook.com/IBITIcoin">Facebook</a>
-        </div>
-        <h3>Secure - Fast - Accessible</h3>
+  <!-- Hero -->
+  <section class="hero">
+    <img src="logo.png" alt="IBITIcoin Logo" class="logo" />
+    <h1>IBITIcoin – Будущее цифровых финансов</h1>
+    <p>Безопасная, быстрая и инновационная криптовалюта для современного мира.</p>
+    <!-- Здесь ведём на shop.html, где уже есть модалка -->
+    <a href="shop.html" class="btn">Купить IBITIcoin</a>
+    <a href="#about"       class="btn">Узнать больше</a>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <h2>О проекте</h2>
+    <p>IBITIcoin – это децентрализованный токен с фиксированным предложением и прозрачным механизмом фазовой продажи. 
+    Вы участвуете в трёх этапах с разными ценами и бонусами, а после окончания всех фаз покупка доступна по гибкой «fallback» цене.</p>
+    <p>Мы уже запустили NFT-джекпот аирдроп, готовимся к листингу на ведущих биржах и планируем интеграцию в DeFi-экосистемы и запуск стейкинг-платформы этой осенью.</p>
+  </section>
+
+  <!-- Socials -->
+  <footer style="text-align:center; padding:40px 20px; background:#111;">
+    <h2>Присоединяйтесь к сообществу</h2>
+    <div class="socials">
+      <a href="https://twitter.com/IBITIcoin">Twitter</a> |
+      <a href="https://t.me/IBITIcoin">Telegram</a> |
+      <a href="https://instagram.com/IBITIcoin">Instagram</a> |
+      <a href="https://facebook.com/IBITIcoin">Facebook</a>
     </div>
+    <p style="margin-top:20px;color:#666;">&copy; 2025 IBITIcoin. Все права защищены.</p>
+  </footer>
+
+  <!-- Подключаем только нужные модули -->
+  <script type="module" src="js/config.js"></script>
+  <script type="module" src="js/wallet.js"></script>
 </body>
 </html>
