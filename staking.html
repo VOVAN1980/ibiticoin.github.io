@@ -80,19 +80,6 @@
       color: #000;
       cursor: pointer;
     }
-    footer {
-      margin-top: 60px;
-      text-align: center;
-      color: gold;
-      font-size: 0.95em;
-      position: relative;
-    }
-    footer a {
-      color: gold;
-      text-decoration: underline;
-      margin: 0 5px;
-    }
-    /* кнопка шаринга внизу */
     #shareButton {
       display: inline-block;
       margin: 30px auto;
@@ -110,7 +97,7 @@
         align-items: center;
       }
     }
-    /* стили модалки */
+    /* Модалка шаринга */
     .modal {
       display: none;
       position: fixed;
@@ -124,8 +111,7 @@
       margin: 10% auto;
       padding: 20px;
       border: 2px solid gold;
-      width: 90%;
-      max-width: 400px;
+      width: 90%; max-width: 400px;
       border-radius: 10px;
       color: gold;
       text-align: center;
@@ -134,7 +120,8 @@
     .modal-content .close {
       position: absolute;
       top: 10px; right: 15px;
-      font-size: 1.5em; cursor: pointer;
+      font-size: 1.5em; font-weight: bold;
+      cursor: pointer;
     }
     .share-options a {
       display: inline-block;
@@ -162,25 +149,33 @@
   </header>
 
   <div class="container">
+    <!-- Левая колонка -->
     <div class="column">
       <div class="staking-box">
         <h3>🎁 Бонусы за срок</h3>
-        <ul style="text-align:left;">
+        <ul style="text-align: left;">
           <li>3 месяца — NFT бонус</li>
           <li>6 месяцев — редкий NFT</li>
           <li>9 месяцев — легендарный NFT</li>
           <li>12 месяцев — эпический NFT</li>
         </ul>
-        <p style="font-size:0.9em;">NFT награды начисляются при завершении срока стейка.</p>
+        <p style="font-size: 0.9em;">NFT награды начисляются при завершении срока стейка.</p>
       </div>
       <a href="rules.html" style="
-        display:block; margin-top:20px; padding:12px;
-        text-align:center; font-weight:bold; color:gold;
-        border:2px solid gold; border-radius:8px;
-        text-decoration:none; background:transparent;"
-      >📘 Правила</a>
+        display:block;
+        margin-top:20px;
+        padding:12px;
+        text-align:center;
+        font-weight:bold;
+        color:gold;
+        border:2px solid gold;
+        border-radius:8px;
+        text-decoration:none;
+        background:transparent;
+      ">📘 Правила</a>
     </div>
 
+    <!-- Центральный блок -->
     <div class="column">
       <div class="staking-box">
         <button id="connectWalletBtn">🔗 Подключить кошелёк</button>
@@ -194,10 +189,17 @@
           <input type="number" id="stakeAmount" placeholder="Количество IBITI" required min="0" />
           <select id="stakeDuration" required>
             <option value="" disabled selected>Срок (в месяцах)</option>
-            <!-- ... опции ... -->
+            <option value="1">1 месяц</option>
+            <option value="2">2 месяца</option>
             <option value="3">3 месяца</option>
+            <option value="4">4 месяца</option>
+            <option value="5">5 месяцев</option>
             <option value="6">6 месяцев</option>
+            <option value="7">7 месяцев</option>
+            <option value="8">8 месяцев</option>
             <option value="9">9 месяцев</option>
+            <option value="10">10 месяцев</option>
+            <option value="11">11 месяцев</option>
             <option value="12">12 месяцев</option>
           </select>
           <button type="submit">⚡ Стейкать</button>
@@ -207,11 +209,12 @@
       </div>
     </div>
 
+    <!-- Правая колонка -->
     <div class="column">
       <div class="staking-box">
         <h3>📈 Награды со временем</h3>
-        <canvas id="rewardChart" style="width:100%;height:150px;"></canvas>
-        <p style="font-size:0.9em;">График обновляется каждые 10 секунд</p>
+        <canvas id="rewardChart" style="width:100%; height:150px;"></canvas>
+        <p style="font-size: 0.9em;">График обновляется каждые 10 секунд</p>
       </div>
     </div>
   </div>
@@ -231,8 +234,9 @@
         <a id="share-twitter" href="#" target="_blank">Twitter</a>
         <a id="share-vk" href="#" target="_blank">VK</a>
         <a id="share-telegram" href="#" target="_blank">Telegram</a>
-        <a id="share-ok" href="#" target="_blank">OK</a>
+        <a id="share-ok" href="#" target="_blank">Одноклассники</a>
         <a id="share-linkedin" href="#" target="_blank">LinkedIn</a>
+        <a id="share-weibo" href="#" target="_blank">Weibo</a>
       </div>
     </div>
   </div>
@@ -245,27 +249,53 @@
     const pageUrl    = encodeURIComponent(window.location.href);
     const pageTitle  = encodeURIComponent(document.title);
 
-    document.getElementById('share-facebook').href  = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
-    document.getElementById('share-twitter').href   = `https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageTitle}`;
-    document.getElementById('share-vk').href        = `https://vk.com/share.php?url=${pageUrl}&title=${pageTitle}`;
-    document.getElementById('share-telegram').href = `https://telegram.me/share/url?url=${pageUrl}&text=${pageTitle}`;
-    document.getElementById('share-ok').href        = `https://connect.ok.ru/offer?url=${pageUrl}`;
-    document.getElementById('share-linkedin').href = `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`;
+    document.getElementById('share-facebook').href  =
+      `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+    document.getElementById('share-twitter').href   =
+      `https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageTitle}`;
+    document.getElementById('share-vk').href        =
+      `https://vk.com/share.php?url=${pageUrl}&title=${pageTitle}`;
+    document.getElementById('share-telegram').href =
+      `https://telegram.me/share/url?url=${pageUrl}&text=${pageTitle}`;
+    document.getElementById('share-ok').href        =
+      `https://connect.ok.ru/offer?url=${pageUrl}`;
+    document.getElementById('share-linkedin').href =
+      `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`;
+    document.getElementById('share-weibo').href    =
+      `http://service.weibo.com/share/share.php?url=${pageUrl}&title=${pageTitle}`;
 
     shareBtn.addEventListener('click', e => {
       e.preventDefault();
       shareModal.style.display = 'block';
     });
-    closeBtn.addEventListener('click', () => shareModal.style.display = 'none');
+    closeBtn.addEventListener('click', () => {
+      shareModal.style.display = 'none';
+    });
     window.addEventListener('click', e => {
       if (e.target === shareModal) shareModal.style.display = 'none';
     });
   </script>
 
-  <!-- Подключаем логику стейкинга и кошелёк -->
+  <!-- Скрипты стейкинга и кошелька -->
   <script type="module" src="js/staking.js"></script>
   <script type="module" src="js/wallet.js"></script>
   <script src="js/rewardChart.js"></script>
+
+  <!-- Футер -->
+  <footer>
+    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
+    <p>
+      <a href="privacy.html">Политика конфиденциальности</a> |
+      <a href="terms.html">Пользовательское соглашение</a>
+    </p>
+    <p>
+      <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> |
+      <a href="https://t.me/IBITIcoin_chat" target="_blank">Telegram</a> |
+      <a href="https://instagram.com/IBITIcoin_official" target="_blank">Instagram</a> |
+      <a href="https://facebook.com/IBITIcoin" target="_blank">Facebook</a>
+    </p>
+    <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
+  </footer>
 
 </body>
 </html>
