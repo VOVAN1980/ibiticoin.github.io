@@ -32,42 +32,39 @@
   </header>
 
   <section class="buy-section">
-    <h2>How to Buy IBITIcoin</h2>
-    <ol class="buy-steps">
-      <li>Создайте криптокошелёк (MetaMask, Trust Wallet)</li>
-      <li>Пополните баланс (BNB, ETH, USDT)</li>
-      <li>Обменяйте на IBITIcoin на нашей DEX-платформе</li>
-      <li>Храните, инвестируйте и пользуйтесь всеми преимуществами IBITIcoin</li>
-    </ol>
+  <h2>How to Buy IBITIcoin</h2>
+  <ol class="buy-steps">…</ol>
+  <div class="buy-store-button">
+    <a class="btn-small" href="shop.html">Перейти в магазин</a>
+  </div>
 
-    <div class="buy-store-button">
-      <a class="btn-small" href="shop.html">Перейти в магазин</a>
+  <div class="buy-content-grid">
+    <!-- Видео -->
+    <div class="buy-video">
+      <iframe src="https://www.youtube.com/embed/VIDEO_ID"
+              title="How to Buy IBITIcoin"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen>
+      </iframe>
+      <p class="video-caption">
+        В этом коротком ролике вы увидите, как мультяшный персонаж легко покупает IBITIcoin!
+      </p>
     </div>
 
-    <div class="buy-content">
-      <!-- Видео -->
-      <div class="buy-video">
-        <iframe width="100%" height="315"
-          src="https://www.youtube.com/embed/VIDEO_ID"
-          title="How to Buy IBITIcoin"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen>
-        </iframe>
-        <p class="video-caption">
-          В этом коротком ролике вы увидите, как мультяшный персонаж легко покупает IBITIcoin!
-        </p>
-      </div>
-
-      <!-- Блок ликвидности -->
-      <div class="buy-liquidity">
-        <h3>Ликвидность IBITIcoin ↔ USDT</h3>
-        <p>IBITI в пуле: <strong><span id="reserveToken">—</span></strong></p>
-        <p>USDT в пуле:  <strong><span id="reserveUSDT">—</span></strong></p>
-        <button id="refreshLiquidityBtn">Обновить ликвидность</button>
-      </div>
-    </div>
-  </section>
+    <!-- Ликвидность -->
+    <aside class="buy-liquidity">
+      <h3>Ликвидность IBITIcoin ↔ USDT</h3>
+      <dl>
+        <dt>IBITI в пуле:</dt>
+        <dd id="reserveToken">—</dd>
+        <dt>USDT в пуле:</dt>
+        <dd id="reserveUSDT">—</dd>
+      </dl>
+      <button id="refreshLiquidityBtn">Обновить</button>
+    </aside>
+  </div>
+</section>
 
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
