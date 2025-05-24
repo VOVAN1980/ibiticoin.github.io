@@ -1,109 +1,60 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Крипто новости IBITIcoin</title>
-  <link rel="stylesheet" href="css/style.css">
-  <style>
-    /* Дополнительные стили для страницы новостей */
-    .news-section {
-      padding: 40px 20px;
-      max-width: 1200px;
-      margin: 0 auto;
-      text-align: left;
-    }
-    .news-item {
-      background: #111;
-      border: 1px solid gold;
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 20px;
-      color: gold;
-    }
-    .news-item h2 {
-      margin-top: 0;
-      font-size: 1.8em;
-      color: gold;
-    }
-    .news-item p {
-      font-size: 1.1em;
-      line-height: 1.6;
-    }
-    .news-item a {
-      display: inline-block;
-      margin-top: 10px;
-      background: gold;
-      color: #000;
-      padding: 10px 20px;
-      border-radius: 5px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: background 0.3s;
-    }
-    .news-item a:hover {
-      background: #c0a000;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBITIcoin - The Future of Digital Finance</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            padding: 50px;
+        }
+        .logo {
+            width: 200px;
+        }
+        .btn {
+            background-color: gold;
+            color: black;
+            padding: 15px 30px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 20px;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: #c0a000;
+        }
+        .socials a {
+            color: gold;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 20px;
+        }
+    </style>
 </head>
 <body>
-  <header class="hero-header">
-    <h1>Крипто новости IBITIcoin</h1>
-  </header>
-
-  <section class="news-section">
-    <div id="news-container">
-      <!-- Новости будут динамически подгружаться сюда -->
+    <div class="container">
+        <img src="logo.png" alt="IBITIcoin Logo" class="logo">
+        <h1>IBITIcoin - The Future of Digital Finance</h1>
+        <p>Secure, fast, and innovative cryptocurrency for the modern world.</p>
+        <a href="#buy" class="btn">Buy IBITIcoin</a>
+        <a href="#about" class="btn">Learn More</a>
+        <h2>Join Our Community</h2>
+        <div class="socials">
+            <a href="https://twitter.com/IBITIcoin">Twitter</a> |
+            <a href="https://t.me/IBITIcoin">Telegram</a> |
+            <a href="https://instagram.com/IBITIcoin">Instagram</a> |
+            <a href="https://facebook.com/IBITIcoin">Facebook</a>
+        </div>
+        <h3>Secure - Fast - Accessible</h3>
     </div>
-  </section>
-
-  <footer>
-    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
-    <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
-  </footer>
-
-  <script>
-    // API ключ и URL для запроса новостей по теме криптовалют
-    const API_KEY = 'f210f84964a9499b86786073260b1d02';
-    const url = `https://newsapi.org/v2/everything?q=cryptocurrency OR crypto&language=ru&sortBy=publishedAt&apiKey=${API_KEY}`;
-
-    // Функция для загрузки новостей
-    async function loadCryptoNews() {
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        
-        if (data.status === "ok") {
-          displayNews(data.articles);
-        } else {
-          document.getElementById('news-container').innerHTML = `<p>Ошибка при получении новостей.</p>`;
-        }
-      } catch (error) {
-        console.error('Ошибка:', error);
-        document.getElementById('news-container').innerHTML = `<p>Ошибка загрузки новостей.</p>`;
-      }
-    }
-
-    // Функция для отображения новостей
-    function displayNews(articles) {
-      const container = document.getElementById('news-container');
-      container.innerHTML = ''; // Очистка контейнера
-
-      articles.forEach(article => {
-        const newsItem = document.createElement('article');
-        newsItem.className = 'news-item';
-        newsItem.innerHTML = `
-          <h2>${article.title}</h2>
-          <p>${article.description || 'Нет описания.'}</p>
-          <p><em>${new Date(article.publishedAt).toLocaleString()}</em></p>
-          <a class="btn-small" href="${article.url}" target="_blank">Читать далее</a>
-        `;
-        container.appendChild(newsItem);
-      });
-    }
-
-    // Загружаем новости при загрузке страницы
-    loadCryptoNews();
-  </script>
 </body>
 </html>
