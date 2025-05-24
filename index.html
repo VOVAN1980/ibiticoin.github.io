@@ -207,6 +207,32 @@
   })();
 </script>
 
+   <!-- Инициализация модалки «Поделиться» -->
+  <script>
+    const shareModal   = document.getElementById('shareModal');
+    const openBtn      = document.getElementById('openShareModal');
+    const closeBtn     = document.getElementById('closeShareModal');
+    const pageUrl      = encodeURIComponent(window.location.href);
+    const pageTitle    = encodeURIComponent(document.title);
+
+    document.getElementById('share-facebook').href  = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+    document.getElementById('share-twitter').href   = `https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageTitle}`;
+    document.getElementById('share-vk').href        = `https://vk.com/share.php?url=${pageUrl}&title=${pageTitle}`;
+    document.getElementById('share-telegram').href = `https://telegram.me/share/url?url=${pageUrl}&text=${pageTitle}`;
+    document.getElementById('share-ok').href        = `https://connect.ok.ru/offer?url=${pageUrl}`;
+    document.getElementById('share-linkedin').href = `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`;
+    document.getElementById('share-weibo').href    = `http://service.weibo.com/share/share.php?url=${pageUrl}&title=${pageTitle}`;
+
+    openBtn.addEventListener('click', ev => {
+      ev.preventDefault();
+      shareModal.style.display = 'block';
+    });
+    closeBtn.addEventListener('click', () => shareModal.style.display = 'none');
+    window.addEventListener('click', ev => {
+      if (ev.target === shareModal) shareModal.style.display = 'none';
+    });
+  </script>
+
 <!-- Модули проекта -->
 <script type="module" src="js/config.js"></script>
 <script type="module" src="js/wallet.js"></script>
