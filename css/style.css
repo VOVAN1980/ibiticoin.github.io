@@ -264,26 +264,23 @@ footer a:hover{text-decoration:underline}
   font-weight:700;
 }
 
-/* ---------- NFT MOBILE NAV ------------------------------ */
+/* ===== нижняя навигация в NFT-галерее ===== */
 .nft-mobile-nav{
+  display:none;                 /* по умолчанию скрыта (desktop)   */
   margin:24px 0 8px;
   text-align:center;
-  display:none;                     /* desktop прячем */
 }
 .nft-mobile-nav .btn-small{
   display:inline-block;
   width:46%;
   margin:4px 2%;
-  font-size:.82rem;
   padding:6px 0;
+  font-size:.8rem;
+  white-space:nowrap;
 }
 
-/* Показываем только на экранах ≤640 px */
+/* Показываем только на смартфонах */
 @media (max-width:640px){
-  /* скрываем верхние кнопки */
-  .nft-top-btn{display:none!important;}
-
-  /* показываем нижний блок */
   .nft-mobile-nav{display:block;}
 }
 
