@@ -30,8 +30,8 @@ body {
 
 /* Правый угол: Roadmap */
 .corner-box-right {
-  top: 20px;
-  right: 20px;
+  top: 15px;
+  right: 15px;
   background: rgba(0, 0, 0, 0.8);
   border: 2px solid gold;
   border-radius: 5px;
@@ -50,8 +50,8 @@ body {
 
 /* Правый угол: Языки */
 .corner-box-right-langs {
-  top: 80px;
-  right: 20px;
+  top: 40px;
+  right: 15px;
   background: rgba(0, 0, 0, 0.8);
   border: 2px solid gold;
   border-radius: 5px;
