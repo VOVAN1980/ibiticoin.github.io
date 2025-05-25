@@ -1,52 +1,23 @@
-/* ==========================================================================
-   1. Подключаем шрифт и глобальные сбросы
-   ========================================================================== */
+/* Подключаем шрифт Orbitron */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
-* {
+/* ====== Глобальные стили ====== */
+body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-}
-
-body {
   font-family: 'Orbitron', sans-serif;
   background: linear-gradient(135deg, #000, #333);
-  color: gold;
-  text-align: center;
-  line-height: 1.5;
-}
-
-/* ==========================================================================
-   2. Hero Header
-   ========================================================================== */
-.hero-header {
-  padding: 20px;
-}
-.hero-header img {
-  max-width: 200px;
-  margin-bottom: 10px;
-}
-.hero-header h1 {
-  color: gold;
-  font-size: 3em;
-  letter-spacing: 2px;
-}
-.hero-header p {
   color: #fff;
-  font-size: 1.2em;
-  margin-top: 5px;
+  text-align: center;
 }
 
-/* ==========================================================================
-   3. Corner navigation (угловые кнопки)
-   ========================================================================== */
+/* ====== Corner-box (угловые кнопки) ====== */
 .corner-box {
   position: absolute;
   background: rgba(0,0,0,0.8);
   border: 2px solid gold;
   border-radius: 5px;
-  padding: 8px 12px;
+  padding: 5px 10px;
   z-index: 1000;
 }
 .corner-box a {
@@ -54,48 +25,47 @@ body {
   text-decoration: none;
   font-weight: bold;
 }
-.corner-box-left    { top: 16px; left: 16px; }
-.corner-box-left2   { top: 56px; left: 16px; }
-.corner-box-right   { top: 16px; right: 16px; }
-.corner-box-right-langs { top: 56px; right: 16px; }
+.corner-box-left   { top: 20px; left: 15px; }
+.corner-box-left2  { top: 60px; left: 15px; }
+.corner-box-right  { top: 20px; right: 15px; }
+.corner-box-right-langs { top: 60px; right: 15px; }
 
-/* ==========================================================================
-   4. Основные кнопки (btn) и малые кнопки (btn-small)
-   ========================================================================== */
-.btn {
+/* Настройка Google Translate */
+.goog-logo-link { display: inline-block !important; padding: 0 !important; margin: 0 !important; }
+.goog-logo-link img { width: 24px !important; height: auto !important; }
+#google_translate_element .goog-te-gadget .goog-te-combo { /* скрываем текстовый селектор */ display: none !important; }
+
+/* ====== Кнопки ====== */
+.btn, .btn-small {
   display: inline-block;
   background: linear-gradient(135deg, gold, #c0a000);
   color: #000;
   padding: 15px 30px;
-  border-radius: 5px;
   text-decoration: none;
   font-weight: bold;
-  transition: transform .2s, background .2s;
-}
-.btn:hover {
-  transform: scale(1.05);
-  background: #c0a000;
-}
-
-.btn-small {
-  display: inline-block;
-  background: gold;
-  color: #000;
-  padding: 8px 16px;
-  margin: 5px;
   border-radius: 5px;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: .9em;
-  transition: background .2s;
+  transition: background .3s, transform .3s;
 }
-.btn-small:hover {
-  background: #c0a000;
+.btn:hover, .btn-small:hover { transform: scale(1.05); background: #c0a000; }
+.btn-small { padding: 8px 16px; font-size: .9em; margin: 0 5px; }
+
+/* ====== Шапка ====== */
+.hero-header {
+  padding: 20px;
+}
+.hero-header img { max-width: 200px; }
+.hero-header h1 {
+  margin: 0;
+  font-size: 3em;
+  letter-spacing: 2px;
+  color: gold;
+}
+.hero-header p {
+  margin-top: 10px;
+  font-size: 1.2em;
 }
 
-/* ==========================================================================
-   5. Золотой раздел (gold-section)
-   ========================================================================== */
+/* ====== Gold-section ====== */
 .gold-section {
   background: #111;
   border-top: 2px solid gold;
@@ -103,63 +73,123 @@ body {
   padding: 60px 20px;
 }
 .gold-section h2 {
-  color: gold;
-  font-size: 2.5em;
-  text-transform: uppercase;
   margin-bottom: 20px;
+  font-size: 2.5em;
+  color: gold;
+  text-transform: uppercase;
 }
 .gold-section p {
-  color: #fff;
-  font-size: 1.2em;
   max-width: 800px;
-  margin: 0 auto 30px;
+  margin: 0 auto 20px;
+  font-size: 1.1em;
+  line-height: 1.5;
 }
 
-/* ==========================================================================
-   6. Extra-buttons section & mobile nav duplicates
-   ========================================================================== */
+/* ====== Wallet Section ====== */
+.wallet-section {
+  margin: 20px auto;
+}
+.wallet-section button {
+  background: gold;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.wallet-section button:hover { background: #c0a000; }
+.wallet-section #walletAddress {
+  margin-top: 10px; font-weight: bold; color: gold;
+}
+
+/* ====== Shop Items ====== */
+.shop-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+  gap: 20px;
+  padding: 20px;
+}
+.shop-item {
+  background: #111;
+  border: 1px solid gold;
+  border-radius: 10px;
+  overflow: hidden;
+  text-align: center;
+}
+.shop-item img { width: 100%; }
+.shop-item h3, .shop-item p { margin: 10px; color: gold; }
+.shop-item button {
+  background: gold;
+  color: #000;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 0 0 10px 10px;
+}
+.shop-item button:hover { background: #c0a000; }
+
+/* ====== Extra Buttons Section ====== */
 .extra-buttons-section {
-  padding: 40px 20px;
+  padding: 20px 0;
 }
-.nav-mobile {
+.extra-buttons-section .btn-small { margin: 5px; }
+
+/* ====== Modal ====== */
+.modal {
   display: none;
+  position: fixed;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  z-index: 2000;
+}
+.modal-content {
+  background: #111;
+  margin: 10% auto;
+  padding: 20px;
+  max-width: 400px;
+  border: 2px solid gold;
+  border-radius: 10px;
+  color: gold;
+  position: relative;
+}
+.modal-content .close {
+  position: absolute;
+  top: 10px; right: 15px;
+  font-size: 1.5em; cursor: pointer;
+}
+.share-options a {
+  display: inline-block;
+  margin: 5px;
+  padding: 10px 15px;
+  background: gold;
+  color: #000;
+  border-radius: 5px;
 }
 
-/* ==========================================================================
-   7. Footer
-   ========================================================================== */
+/* ====== Footer ====== */
 footer {
+  padding: 20px;
   background: rgba(0,0,0,0.8);
   border-top: 2px solid gold;
-  padding: 20px;
   font-size: .9em;
 }
-footer a {
-  color: gold;
-  text-decoration: none;
-}
-footer a:hover {
-  text-decoration: underline;
-}
+footer a { color: gold; text-decoration: none; }
+footer a:hover { text-decoration: underline; }
 
-/* ==========================================================================
-   8. Responsive: Mobile adjustments
-   ========================================================================== */
+/* ====== Mobile adjustments ====== */
 @media (max-width: 600px) {
-  /* Убираем угловые кнопки */
+  /* прячем угловые кнопки */
   .corner-box { display: none; }
 
-  /* Показываем мобильную навигацию внизу */
-  .nav-mobile {
-    display: inline-block;
-    margin: 5px;
-  }
+  /* внизу показываем навигацию */
+  .nav-mobile { display: inline-block !important; }
 
-  /* Уменьшаем заголовок */
-  .hero-header h1 { font-size: 1.8em; }
-  .hero-header p  { font-size: 1em; }
-
-  /* Подгон отступов */
-  body { padding: 0 10px; }
+  /* адаптивные отступы */
+  body { padding: 10px; }
+  .hero-header h1 { font-size: 2em; }
   .gold-section { padding: 40px 10px; }
+  .shop-items { grid-template-columns: 1fr; }
 }
