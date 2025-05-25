@@ -381,3 +381,60 @@ footer a:hover{text-decoration:underline}
     z-index: 2;
   }
 }
+
+ /* Восстанавливаем трёхколоночный лэйаут */
+.blog-layout {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  margin: 40px auto;
+  max-width: 1200px;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* Боковые панели и центральный контент */
+.blog-sidebar-left,
+.blog-sidebar-right,
+.blog-content {
+  background: #111;
+  border: 1px solid gold;
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Ширины колонок */
+.blog-sidebar-left,
+.blog-sidebar-right {
+  flex: 0 0 280px;  /* фиксированная ширина боковых панелей */
+}
+.blog-content {
+  flex: 1;          /* центральная колонка занимает всё остальное */
+}
+
+/* Отступы между новостными карточками */
+.blog-post {
+  border: 1px solid gold;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  background: #111;
+}
+
+/* Кнопка «Читать далее» */
+.blog-btn {
+  display: inline-block;
+  background: gold;
+  color: #000;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+/* Центрируем кнопки внутри карточек */
+.btn-wrapper {
+  text-align: center;
+  margin-top: 15px;
+}
