@@ -84,6 +84,33 @@ footer a:hover{text-decoration:underline}
 .goog-logo-link img{width:22px!important;height:auto!important}                   /* оставляем только мини-иконку */
 .goog-logo-link span{display:none!important}                                      /* убираем подпись */
 
+ /* ── Показать одну иконку Google вместо надписи «Выбрать язык» ───── */
+@media (max-width:640px){                    /* только мобильная     */
+  /* контейнер переводчика в нашем бокс-углу */
+  .corner-box-right-langs{
+      padding:3px;                      /* чуть меньше рамка       */
+      width:28px; height:28px;          /* квадрат под иконку      */
+      display:flex; align-items:center; justify-content:center;
+  }
+
+  /* 1. прячем сам combo-box, но оставляем кликабельным           */
+  #google_translate_element .goog-te-combo{
+      position:absolute;                /* кладём поверх иконки    */
+      top:0; left:0;
+      width:28px; height:28px;
+      opacity:0;                        /* невидим, но «живой»     */
+      cursor:pointer;
+  }
+
+  /* 2. показываем только logo  Google (G) без текста Powered by   */
+  #google_translate_element .goog-logo-link{
+      display:block!important;
+  }
+  #google_translate_element .goog-logo-link img{
+      width:22px!important; height:auto!important;
+  }
+}
+
 /* ---------- 8. EXTRA BUTTON GRID (НИЖНИЙ «ПУЛЬТ») ---------------------- */
 .extra-buttons-section{
     padding:36px 0 42px;
