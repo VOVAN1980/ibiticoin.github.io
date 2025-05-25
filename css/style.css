@@ -121,10 +121,6 @@ footer a:hover{text-decoration:underline}
    Они не дублируются и работают корректно.                                   */
 
 /* ---------- 10. MOBILE ≤ 640 PX --------------------------------------- */
-@media(max-width:640px){
-    /* Скрываем верхние угловые боксы полностью */
-    .corner-box{display:none}
-
     /* Немного меньше “WHY CHOOSE” */
     .hero-header h1{font-size:1.9rem}
     .hero-header p {font-size:1rem}
