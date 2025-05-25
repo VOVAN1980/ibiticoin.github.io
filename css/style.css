@@ -241,6 +241,29 @@ footer a:hover{text-decoration:underline}
   }
 }
 
+ /* ---------- BUY-STEPS (How-to-buy page) --------------------------- */
+.buy-steps{
+  list-style:none;          /* прячем 1 2 3 4 */
+  margin:0 auto 24px;       /* центр + отступ снизу */
+  padding:0;
+  max-width:420px;
+  text-align:left;          /* читается аккуратней */
+}
+.buy-steps li{
+  margin:0 0 8px 0;
+  position:relative;
+  padding-left:22px;        /* место под маркер */
+}
+
+/* галочка-маркер вместо цифры  */
+.buy-steps li::before{
+  content:"✓";
+  position:absolute;
+  left:0; top:0;
+  color:var(--gold);
+  font-weight:700;
+}
+
 /* ---------- 11. SHOP GRID (пример – без правок) ------------------------ */
 /* .shop-items, .shop-item … оставил, т.к. ошибок не было; при желании сделайте
    grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); чтобы плитки были
