@@ -1,276 +1,192 @@
-/* style.css - полная версия, аккуратно переработанная */
-
 /* Подключаем шрифт Orbitron */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
-/* ===== Глобальные сбросы и базовые стили ===== */
-*, *::before, *::after {
-  box-sizing: border-box;
+/* ===== Глобальные стили ===== */
+body {
   margin: 0;
-  padding: 0;
-}
-html, body {
-  width: 100%;
-  height: 100%;
+  padding: 20px 10px;
   font-family: 'Orbitron', sans-serif;
   background: linear-gradient(135deg, #000, #333);
   color: #fff;
-  line-height: 1.4;
+  text-align: center;
 }
-img, iframe {
-  max-width: 100%;
-  display: block;
+
+/* ===== Окошки в углах ===== */
+.corner-box {
+  position: absolute;
+  background: rgba(0,0,0,0.8);
+  border: 2px solid gold;
+  border-radius: 5px;
+  padding: 5px 10px;
+  z-index: 999;
 }
-a {
+.corner-box a {
   color: gold;
   text-decoration: none;
-  transition: color 0.3s;
+  font-weight: bold;
 }
-a:hover {
-  color: #c0a000;
-}
-button {
-  font-family: inherit;
-  cursor: pointer;
-}
+.corner-box-left  { top:  8px; left:  8px; }
+.corner-box-left2 { top: 48px; left:  8px; }
+.corner-box-right { top:  8px; right: 8px; }
+.corner-box-right-langs { top: 48px; right: 8px; }
 
-/* ===== Угловые кнопки (corner-btn) ===== */
-.corner-btn {
-  position: absolute;
-  width: 36px;
-  height: 36px;
-  background: rgba(0,0,0,0.6);
-  border: 1px solid gold;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
+/* Убираем текст из селектора Google Translate, оставляем только логотип */
+.goog-te-banner-frame.skiptranslate,
+.goog-logo-link > span {
+  display: none !important;
 }
-.corner-btn a, .corner-btn button, .corner-btn div {
-  color: gold;
-  font-size: 18px;
-}
-.corner-btn-home    { top: 8px;  left: 8px; }
-.corner-btn-blog    { top: 48px; left: 8px; }
-.corner-btn-roadmap { top: 8px;  right: 8px; }
-.corner-btn-lang    { top: 48px; right: 8px; }
-
-/* Стили для Google Translate внутри corner-btn-lang */
-.corner-btn-lang #google_translate_element {
-  transform: scale(0.7);
-  transform-origin: top right;
-}
-
-/* Скрываем селект, оставляем иконку */
-.goog-te-gadget .goog-te-combo { display: none !important; }
 .goog-logo-link {
-  display: inline-block !important;
   padding: 0 !important;
+  margin: 0 !important;
+  display: inline-block !important;
 }
-.goog-logo-link > img {
-  width: 24px !important;
-  height: auto !important;
+#google_translate_element .goog-te-combo {
+  display: none !important;
 }
 
-/* ===== Основные кнопки (.btn) ===== */
+/* ===== Кнопки ===== */
 .btn {
   display: inline-block;
   background: linear-gradient(135deg, gold, #c0a000);
   color: #000;
-  padding: 12px 24px;
+  padding: 15px 30px;
   border-radius: 5px;
+  text-decoration: none;
   font-weight: bold;
-  text-align: center;
-  transition: transform 0.2s, background 0.2s;
+  transition: transform .3s, background .3s;
 }
 .btn:hover {
   transform: scale(1.05);
   background: #c0a000;
 }
 
-/* Малые кнопки (.btn-small) для секции extra-buttons */
-.btn-small {
-  display: inline-block;
-  background: gold;
-  color: #000;
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 0.9em;
-  margin: 4px;
-  transition: background 0.2s;
-}
-.btn-small:hover {
-  background: #c0a000;
+/* для страниц блога */
+.blog-layout .btn {
+  display: block;
+  margin: 20px auto;
+  max-width: 220px;
 }
 
-/* ===== Extra Buttons Section ===== */
+/* компактные плитки внизу */
 .extra-buttons-section {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 8px;
-  padding: 20px 0;
+  padding: 10px 0;
+}
+.btn-small {
+  background: gold;
+  color: #000;
+  padding: 8px 16px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: .9em;
+  transition: background .3s;
+}
+.btn-small:hover {
+  background: #c0a000;
 }
 
-/* ===== Шапка сайта ===== */
+/* ===== Шапка ===== */
 .hero-header {
-  padding: 20px;
-  text-align: center;
+  padding: 15px 20px;
 }
 .hero-header img {
-  margin-bottom: 16px;
+  display: block;
+  margin: 0 auto 20px;
 }
 .hero-header h1 {
+  margin: 0;
   font-size: 2.5em;
   color: gold;
 }
 .hero-header p {
-  margin-top: 8px;
-  font-size: 1.2em;
+  margin: 10px 0 0;
+  font-size: 1em;
+  color: #fff;
 }
 
-/* ===== Секция подключения кошелька ===== */
-.wallet-section {
-  text-align: center;
-  margin: 20px auto;
-}
-.wallet-section button {
-  background: gold;
-  color: #000;
-  padding: 10px 20px;
-  border-radius: 5px;
-  border: none;
-  font-weight: bold;
-}
-.wallet-section button:hover {
-  background: #c0a000;
-}
-.wallet-section #walletAddress {
-  margin-top: 10px;
-  font-weight: bold;
-  color: gold;
-}
-
-/* ===== Стилизация модальных окон ===== */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.7);
-  z-index: 2000;
-}
-.modal-content {
+/* ===== Золотой блок ===== */
+.gold-section {
   background: #111;
-  margin: 10% auto;
-  padding: 20px;
-  border: 2px solid gold;
-  border-radius: 8px;
-  max-width: 400px;
+  border-top: 2px solid gold;
+  border-bottom: 2px solid gold;
+  padding: 40px 20px;
+}
+.gold-section h2 {
+  font-size: 2em;
+  margin-bottom: 20px;
   color: gold;
-  position: relative;
-  text-align: center;
+  text-transform: uppercase;
 }
-.modal-content .close {
-  position: absolute;
-  top: 10px; right: 12px;
-  font-size: 1.5em;
-  cursor: pointer;
-}
-
-/* ===== NFT Галерея: кнопка Купить ===== */
-.nft-item {
-  position: relative;
-}
-.nft-item .buy-button {
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 4px 8px;
-  font-size: 0.8em;
-  border-radius: 4px;
-  background: gold;
-  color: #000;
-  text-decoration: none;
-}
-.nft-item .buy-button:hover {
-  background: #c0a000;
-}
-
-/* ===== Адаптивность ===== */
-@media (max-width: 768px) {
-  .hero-header h1 { font-size: 2em; }
-  .btn { padding: 10px 20px; font-size: 0.9em; }
-  .btn-small { padding: 5px 10px; font-size: 0.8em; }
-  .corner-btn { width: 32px; height: 32px; font-size: 16px; }
-}
-
-@media (max-width: 480px) {
-  .extra-buttons-section .btn-small {
-    flex: 1 1 100%;
-    max-width: none;
-  }
-
-  /* ------------------------------------------- 
-   Corner navigation: inline — desktop & mobile
----------------------------------------------*/
-
-/* Общая обёртка — делаем её inline-block, чтобы соседние элементы стояли в ряд */
-.corner-box {
-  display: inline-block !important;
-  white-space: nowrap;
-  padding: 5px 10px !important;
-  margin: 4px;
-}
-
-/* Перенастраиваем позиционирование для мобильных */
-@media (max-width: 600px) {
-  .corner-box-left    { top:  8px; left:  8px; }
-  .corner-box-left2   { top: 48px; left:  8px; }
-  .corner-box-right   { top:  8px; right:  8px; }
-  .corner-box-right-langs { top: 48px; right:  8px; }
-}
-
-/* И для десктопа (чтобы они не съезжали) */
-@media (min-width: 601px) {
-  .corner-box-left    { top: 20px; left: 15px; }
-  .corner-box-left2   { top: 60px; left: 15px; }
-  .corner-box-right   { top: 20px; right: 15px; }
-  .corner-box-right-langs { top: 60px; right: 15px; }
-}
-
-/* Стили для языковой «коробки» — скрываем список и оставляем только иконку Google */
-.corner-box-right-langs .goog-te-combo {
-  display: none !important;
-}
-/* Показываем только логотип */
-.corner-box-right-langs .goog-logo-link {
-  display: inline-block !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-/* Подгоняем размер иконки */
-.corner-box-right-langs .goog-logo-link img {
-  width: 24px !important;
-  height: auto !important;
-}
-
-/* А чуть подвинем сам <div id="google_translate_element"> внутрь */
-.corner-box-right-langs #google_translate_element {
-  display: inline-block;
-  vertical-align: middle;
- }
+.gold-section p {
+  font-size: 1em;
+  line-height: 1.4;
+  max-width: 800px;
+  margin: 0 auto 20px;
 }
 
 /* ===== Футер ===== */
 footer {
-  padding: 20px;
+  padding: 20px 0;
   background: rgba(0,0,0,0.8);
   border-top: 2px solid gold;
-  text-align: center;
-  font-size: 0.9em;
+  font-size: .9em;
+  color: gold;
 }
-footer a { text-decoration: underline; }
-footer a:hover { color: #c0a000; }
+footer a {
+  color: gold;
+  text-decoration: underline;
+  margin: 0 5px;
+}
+
+/* ===== Специальные секции ===== */
+/* Roadmap */
+.roadmap, .blog, .social-feed, .subscribe, .calculator, .video-guides {
+  padding: 40px 20px;
+  margin-top: 40px;
+  background: #111;
+  color: gold;
+  text-align: center;
+}
+.roadmap h2, .blog h2, .social-feed h2, .subscribe h2, .calculator h2, .video-guides h2 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+/* Блог — трёхколоночная сетка */
+.blog-layout {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 40px auto;
+  gap: 20px;
+}
+.blog-sidebar-left,
+.blog-sidebar-right {
+  flex: 1 1 300px;
+  background: #222;
+  padding: 20px;
+  border: 1px solid gold;
+  border-radius: 10px;
+}
+.blog-content {
+  flex: 2 1 400px;
+  background: #111;
+  padding: 20px;
+  border: 1px solid gold;
+  border-radius: 10px;
+}
+
+/* ===== Мобильная адаптация ===== */
+@media (max-width: 600px) {
+  .corner-box { display: none; }
+  .extra-buttons-section .btn-small { flex: 1 1 100%; }
+  .hero-header h1 { font-size: 1.8em; }
+  .hero-header p { font-size: .9em; }
+  .gold-section { padding: 20px 10px; }
+  .buy-content-grid { display: block; }
+}
