@@ -801,7 +801,7 @@ section, .shop-items {
 .corner-btn-home    { top: 8px; left: 8px; }
 .corner-btn-blog    { top: 48px; left: 8px; }
 .corner-btn-roadmap { top: 8px; right: 8px; }
-.corner-btn-lang    { top: 48px; right: 8px; }
+.corner-btn-lang    { top: 30px; right: 8px; }
 
 /* Подгон для переводчика внутри блока */
 .corner-btn-lang #google_translate_element {
