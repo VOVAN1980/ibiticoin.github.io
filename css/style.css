@@ -214,4 +214,42 @@ footer a:hover { text-decoration:underline; }
   .extra-buttons-section {
     display:grid; grid-template-columns:1fr 1fr; gap:10px;
   }
+
+  /* Десктоп — без изменений */
+
+/* Мобильный (≤600px) */
+@media only screen and (max-width: 600px) {
+  /* Схлопываем размер блоков и убираем текст */
+  .corner-box {
+    padding: 4px;
+    border-width: 1px;
+  }
+  .corner-box a {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    font-size: 0;       /* прячем текст */
+  }
+
+  /* Вставляем эмоджи-иконку вместо текста */
+  .corner-box-left    a::after { content: "🏠"; font-size: 18px; }
+  .corner-box-left2   a::after { content: "📰"; font-size: 18px; }
+  .corner-box-right   a::after { content: "📈"; font-size: 18px; }
+
+  /* Google-переводчик — скрываем селект, оставляем логотип */
+  .corner-box-right-langs .goog-te-combo {
+    display: none !important;
+  }
+  .corner-box-right-langs .goog-logo-link > span {
+    display: none !important;
+  }
+  .corner-box-right-langs .goog-logo-link > img {
+    display: inline-block !important;
+    width: 24px !important;
+    height: auto !important;
+  }
+}
+
 }
