@@ -80,34 +80,32 @@ footer a{color:var(--gold);text-decoration:none}
 footer a:hover{text-decoration:underline}
 
 /* ---------- 7. GOOGLE-TRANSLATE MINI-ЛОГО ------------------------------ */
-#google_translate_element .goog-te-gadget .goog-te-combo{display:none!important}   /* dropdown скрыт */
-.goog-logo-link img{width:22px!important;height:auto!important}                   /* оставляем только мини-иконку */
-.goog-logo-link span{display:none!important}                                      /* убираем подпись */
 
- /* ── Показать одну иконку Google вместо надписи «Выбрать язык» ───── */
-@media (max-width:640px){                    /* только мобильная     */
-  /* контейнер переводчика в нашем бокс-углу */
+/* 0) Базово прячем подпись Powered by Google и ограничиваем размер иконки */
+#google_translate_element .goog-logo-link img {width:22px!important;height:auto!important;}
+#google_translate_element .goog-logo-link span {display:none!important;}
+
+/* ── Мобильная версия — показываем только иконку ─────────────────────── */
+@media (max-width:640px){                 /* ≤640px — смартфоны  */
   .corner-box-right-langs{
-      padding:3px;                      /* чуть меньше рамка       */
-      width:28px; height:28px;          /* квадрат под иконку      */
+      padding:3px;
+      width:28px; height:28px;            /* квадрат под иконку  */
       display:flex; align-items:center; justify-content:center;
+      position:relative;                  /* якорь для select    */
   }
 
-  /* 1. прячем сам combo-box, но оставляем кликабельным           */
+  /* 1. делаем combo-box прозрачным, но «живым»                   */
   #google_translate_element .goog-te-combo{
-      position:absolute;                /* кладём поверх иконки    */
+      position:absolute;
       top:0; left:0;
       width:28px; height:28px;
-      opacity:0;                        /* невидим, но «живой»     */
+      opacity:0;                          /* невидим, кликает    */
       cursor:pointer;
   }
 
-  /* 2. показываем только logo  Google (G) без текста Powered by   */
+  /* 2. отображаем только иконку-логотип Google                   */
   #google_translate_element .goog-logo-link{
       display:block!important;
-  }
-  #google_translate_element .goog-logo-link img{
-      width:22px!important; height:auto!important;
   }
 }
 
