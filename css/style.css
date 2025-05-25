@@ -1,255 +1,84 @@
-/* Подключаем шрифт Orbitron */
+/* 1. Подключаем шрифт */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
-/* ===== Глобальные стили ===== */
+/* 2. Базовые стили */
 * { box-sizing: border-box; margin:0; padding:0; }
 body {
   font-family: 'Orbitron', sans-serif;
-  background: linear-gradient(135deg, #000, #333);
-  color: gold;
+  background: linear-gradient(135deg,#000,#333);
+  color: #fff;
   text-align: center;
-  min-height: 100vh;
+  padding-bottom: 60px; /* место для bottom-плиток */
 }
 
-/* ===== Corner Buttons ===== */
+/* 3. Угловые кнопки (desktop only) */
 .corner-box {
   position: absolute;
+  padding: 5px 10px;
+  border:2px solid gold; border-radius:5px;
   background: rgba(0,0,0,0.8);
-  border: 2px solid gold;
-  border-radius: 5px;
-  padding: 6px 10px;
   z-index: 1000;
 }
+.corner-box-left  { top:20px; left:15px; }
+.corner-box-left2 { top:60px; left:15px; }
+.corner-box-right { top:20px; right:15px; }
+.corner-box-langs { top:60px; right:15px; }
+
+/* стили ссылок внутри corner-box */
 .corner-box a {
-  color: gold;
-  text-decoration: none;
-  font-weight: bold;
-  display: inline-flex;
-  align-items: center;
+  color: gold; text-decoration:none; font-weight:bold;
 }
-.corner-box-left   { top: 20px; left: 20px; }
-.corner-box-left2  { top: 60px; left: 20px; }
-.corner-box-right  { top: 20px; right: 20px; }
-.corner-box-right-langs { top: 60px; right: 20px; }
+.corner-box a:hover { text-decoration:underline; }
 
-/* Иконка вместо текста для языков */
-.corner-box-right-langs a img {
-  width: 24px; height: auto;
-}
-
-/* ===== Шапка ===== */
+/* 4. Hero-header */
 .hero-header {
-  padding: 20px;
+  padding: 15px 20px;
 }
 .hero-header img {
-  max-width: 150px;
-  display: block;
-  margin: 0 auto 10px;
+  max-width: 120px; margin-bottom:10px;
 }
 .hero-header h1 {
-  font-size: 2.5em;
-  color: gold;
-  margin-bottom: 5px;
+  font-size:3em; color:gold; letter-spacing:2px;
 }
 .hero-header p {
-  font-size: 1.2em;
-  color: #fff;
+  font-size:1.2em; margin-top:8px;
 }
 
-/* ===== Кнопки ===== */
-.btn, .btn-small {
-  display: inline-block;
-  background: linear-gradient(135deg, gold, #c0a000);
-  color: #000;
-  text-decoration: none;
-  font-weight: bold;
-  border-radius: 5px;
-  transition: background 0.3s, transform 0.3s;
-}
-.btn  { padding:15px 30px; font-size:1em; }
-.btn-small { padding:8px 16px; font-size:0.9em; margin:4px; }
-
-.btn:hover, .btn-small:hover {
-  background: #c0a000;
-  transform: scale(1.05);
-}
-
-/* ===== Золотой блок ===== */
+/* 5. Золотой блок */
 .gold-section {
-  background: #111;
-  border-top:2px solid gold;
-  border-bottom:2px solid gold;
-  padding:40px 20px;
+  background:#111; border-top:2px solid gold; border-bottom:2px solid gold;
+  padding:60px 20px; margin:20px 0;
 }
-.gold-section h2 {
-  font-size:2em; margin-bottom:15px;
-}
-.gold-section p {
-  max-width:800px; margin:0 auto; line-height:1.5;
-}
+.gold-section h2 { font-size:2.2em; color:gold; margin-bottom:20px; }
+.gold-section p  { max-width:800px; margin:0 auto 20px; line-height:1.4; }
 
-/* ===== Extra Buttons Section ===== */
+/* 6. Extra buttons (плитки внизу) */
 .extra-buttons-section {
-  padding:20px 0;
+  position: fixed; bottom:0; left:0; width:100%;
+  background:rgba(0,0,0,0.9);
+  padding:10px 0;
+  display: flex; flex-wrap: wrap; justify-content: center; gap:6px;
 }
-.extra-buttons-section .btn-small {
-  margin:5px;
+.btn-small {
+  background: gold; color:#000; text-decoration:none;
+  padding:8px 12px; border-radius:4px; font-weight:bold; font-size:0.9em;
+  flex: 1 1 auto; max-width:140px; text-align:center;
 }
+.btn-small:hover { background:#c0a000; }
 
-/* ===== Shop Items ===== */
-.shop-items {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:20px;
-  padding:20px;
-}
-.shop-item {
-  background:#111; border:1px solid gold; border-radius:10px;
-  overflow:hidden; text-align:center;
-}
-.shop-item img { width:100%; }
-.shop-item h3 { margin:10px 0; color:gold; }
-.shop-item p { padding:0 10px 10px; color:gold; }
-.shop-item button {
-  width:100%; border:none; background:gold; color:#000;
-  padding:10px; font-weight:bold; cursor:pointer;
-}
-.shop-item button:hover { background:#c0a000; }
-
-/* ===== Modal (Purchase, Share, etc.) ===== */
-.modal {
-  display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-  background:rgba(0,0,0,0.7); z-index:2000;
-}
-.modal-content {
-  background:#111; margin:10% auto; padding:20px;
-  border:2px solid gold; border-radius:10px;
-  width:90%; max-width:500px; color:gold; position:relative;
-}
-.modal-content .close {
-  position:absolute; top:10px; right:15px; font-size:1.5em;
-  cursor:pointer;
-}
-
-/* ===== Wallet Section ===== */
-.wallet-section {
-  margin:20px 0; text-align:center;
-}
-.wallet-section button {
-  background:gold; color:#000; border:none;
-  padding:10px 20px; border-radius:5px; font-weight:bold;
-  cursor:pointer; transition:background 0.3s;
-}
-.wallet-section button:hover { background:#c0a000; }
-.wallet-section #walletAddress { margin-top:10px; color:gold; }
-
-/* ===== Blog Layout ===== */
-.blog-layout {
-  display:flex; gap:20px; padding:20px; max-width:1400px; margin:40px auto;
-}
-.blog-sidebar-left, .blog-sidebar-right {
-  width:25%; background:#222; padding:20px; border:1px solid gold; border-radius:10px;
-}
-.blog-content {
-  width:50%; background:#111; padding:20px; border:1px solid gold; border-radius:10px;
-}
-.blog-post {
-  background:#222; padding:20px; margin-bottom:20px; border-radius:10px;
-}
-.blog-post h3 { color:gold; margin-bottom:10px; }
-.blog-post p { line-height:1.5; }
-
-/* ===== News Section ===== */
-.news-section {
-  padding:20px; max-width:1200px; margin:0 auto;
-}
-.news-item {
-  background:#111; border:1px solid gold; border-radius:10px;
-  padding:20px; margin-bottom:20px; text-align:left;
-}
-.news-item h2 { color:gold; margin-bottom:10px; }
-.news-item p { margin-bottom:8px; }
-.news-item a { margin-top:10px; }
-
-/* ===== Staking Page ===== */
-.staking-box {
-  background:#1a1a1a; border:1px solid gold; border-radius:10px;
-  padding:20px; margin-bottom:20px;
-}
-#rewardChart { width:100%; height:150px; }
-
-/* ===== Footer ===== */
+/* 7. Футер (под плитками) */
 footer {
-  background:rgba(0,0,0,0.8); padding:20px;
+  margin-top:40px; padding:20px; background:rgba(0,0,0,0.8);
   border-top:2px solid gold; font-size:0.9em;
 }
-footer a { color:gold; text-decoration:none; margin:0 5px; }
+footer a { color:gold; text-decoration:none; }
 footer a:hover { text-decoration:underline; }
 
-/* ===== Media Queries ===== */
-@media (max-width:900px) {
-  .blog-layout { flex-direction:column; }
-  .blog-sidebar-left, .blog-content, .blog-sidebar-right { width:100%; margin:10px 0; }
-}
-@media (max-width:600px) {
-  /* corner-box → иконки */
-  .corner-box {
-    padding:4px; border-width:1px;
-  }
-  .corner-box a { font-size:0; } /* текст скрываем */
-  .corner-box-left::after {
-    content:'🏠'; font-size:20px; color:gold;
-  }
-  .corner-box-left2::after {
-    content:'📰'; font-size:20px; color:gold;
-  }
-  .corner-box-right::after {
-    content:'📈'; font-size:20px; color:gold;
-  }
-  /* языки — остаётся только иконка Google */
-  .corner-box-right-langs a img {
-    width:20px; height:auto;
-  }
-  /* кнопки снизу в две колонки */
-  .extra-buttons-section {
-    display:grid; grid-template-columns:1fr 1fr; gap:10px;
-  }
-
-  /* Десктоп — без изменений */
-
-/* Мобильный (≤600px) */
-@media only screen and (max-width: 600px) {
-  /* Схлопываем размер блоков и убираем текст */
-  .corner-box {
-    padding: 4px;
-    border-width: 1px;
-  }
-  .corner-box a {
-    display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    font-size: 0;       /* прячем текст */
-  }
-
-  /* Вставляем эмоджи-иконку вместо текста */
-  .corner-box-left    a::after { content: "🏠"; font-size: 18px; }
-  .corner-box-left2   a::after { content: "📰"; font-size: 18px; }
-  .corner-box-right   a::after { content: "📈"; font-size: 18px; }
-
-  /* Google-переводчик — скрываем селект, оставляем логотип */
-  .corner-box-right-langs .goog-te-combo {
-    display: none !important;
-  }
-  .corner-box-right-langs .goog-logo-link > span {
-    display: none !important;
-  }
-  .corner-box-right-langs .goog-logo-link > img {
-    display: inline-block !important;
-    width: 24px !important;
-    height: auto !important;
-  }
-}
-
+/* 8. Медиа-запрос для мобильных */
+@media (max-width: 600px) {
+  /* скрываем угловые кнопки */
+  .corner-box { display:none; }
+  /* плитки на всю ширину */
+  .extra-buttons-section { position:static; padding:20px 0; }
+  .btn-small { flex:1 1 100%; max-width:none; }
 }
