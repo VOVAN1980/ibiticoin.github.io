@@ -833,26 +833,18 @@ section, .shop-items {
     right: 8px;
   }
 
-  /* обнуляем «жёсткую» ширину селекта и позволяем ему подстраиваться под контент */
-#google_translate_element .goog-te-gadget .goog-te-combo {
-  width: auto !important;
-  min-width: 40px !important; /* подберите под себя */
-  max-width: none !important;
+  /* Скрываем выпадающий список языков */
+.goog-te-gadget .goog-te-combo {
+  display: none !important;
 }
 
-/* для блоков «Блог» и «Языки» одинаковое поведение */
-.corner-box-left2,
-.corner-box-right-langs {
-  display: inline-block;
-  width: auto;           /* авто-ширина по содержимому */
-  padding: 10px 15px;    /* как у «Блог» */
+/* Оставляем только логотип Google (иконку) */
+.goog-logo-link {
+  display: inline-block !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
-
-/* уже в медиазапросе, если нужно, подвинуть */
-@media (max-width: 600px) {
-  .corner-box-right-langs {
-    top: 48px; /* или 64px, подстройте, чтобы не наезжало */
-    right: 8px;
-  }
-}
+.goog-logo-link > img {
+  width: 24px !important;
+  height: auto !important;
 }
