@@ -264,6 +264,29 @@ footer a:hover{text-decoration:underline}
   font-weight:700;
 }
 
+/* ---------- NFT MOBILE NAV ------------------------------ */
+.nft-mobile-nav{
+  margin:24px 0 8px;
+  text-align:center;
+  display:none;                     /* desktop прячем */
+}
+.nft-mobile-nav .btn-small{
+  display:inline-block;
+  width:46%;
+  margin:4px 2%;
+  font-size:.82rem;
+  padding:6px 0;
+}
+
+/* Показываем только на экранах ≤640 px */
+@media (max-width:640px){
+  /* скрываем верхние кнопки */
+  .nft-top-btn{display:none!important;}
+
+  /* показываем нижний блок */
+  .nft-mobile-nav{display:block;}
+}
+
 /* ---------- 11. SHOP GRID (пример – без правок) ------------------------ */
 /* .shop-items, .shop-item … оставил, т.к. ошибок не было; при желании сделайте
    grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); чтобы плитки были
