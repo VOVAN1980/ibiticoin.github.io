@@ -1,247 +1,103 @@
-/* ---------- 1. БАЗА ----------------------------------------------------- */
+/* ---------- 0. BASE & COLORS ------------------------------------------ */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
-
 :root{
-    --gold:#ffd700;
-    --gold-dark:#c0a000;
-    --bg-grad:linear-gradient(135deg,#000,#333);
-    --font:'Orbitron',sans-serif;
+  --gold:#ffd700;
+  --gold-dark:#c0a000;
+  --bg-grad:linear-gradient(135deg,#000,#333);
+  --font:'Orbitron',sans-serif;
 }
-
 *{box-sizing:border-box;scroll-behavior:smooth}
 body{
-    margin:0;
-    font-family:var(--font);
-    background:var(--bg-grad);
-    color:#fff;
-    text-align:center;
+  margin:0;font-family:var(--font);
+  background:var(--bg-grad);color:#fff;text-align:center
 }
-
-/* ---------- 2. КНОПКИ --------------------------------------------------- */
-.btn,
-.btn-small{
-    display:inline-block;
-    background:linear-gradient(135deg,var(--gold),var(--gold-dark));
-    color:#000;
-    font-weight:700;
-    text-decoration:none;
-    border-radius:5px;
-    transition:background .3s,transform .25s;
+/* ---------- 1. UNIVERSAL BUTTONS -------------------------------------- */
+.btn,.btn-small{
+  display:inline-block;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dark));
+  color:#000;font-weight:700;text-decoration:none;
+  border-radius:5px;transition:.25s;
 }
 .btn{padding:13px 28px;font-size:1rem}
 .btn-small{padding:7px 14px;font-size:.9rem;margin:4px 6px}
-
-.btn:hover,
-.btn-small:hover{background:var(--gold-dark);transform:scale(1.06)}
-
-/* ---------- 3. УГЛОВЫЕ КНОПКИ (DESKTOP) -------------------------------- */
+.btn:hover,.btn-small:hover{background:var(--gold-dark);transform:scale(1.05)}
+/* ---------- 2. CORNER BOXES (desktop) --------------------------------- */
 .corner-box{
-    position:absolute;
-    background:rgba(0,0,0,.82);
-    border:2px solid var(--gold);
-    border-radius:4px;
-    padding:4px 10px;
-    z-index:999;
-    font-size:.9rem;           /* меньше, чем было */
-    line-height:1;
+  position:absolute;z-index:999;
+  background:rgba(0,0,0,.8);border:2px solid var(--gold);border-radius:4px;
+  padding:4px 10px;font-size:.9rem;line-height:1
 }
 .corner-box a{color:var(--gold);text-decoration:none;font-weight:700}
 .corner-box a:hover{text-decoration:underline}
-
 .corner-box-left   {top:12px;left:12px}
-.corner-box-left2  {top:52px;left:12px}
+.corner-box-left2  {top:50px;left:12px}
 .corner-box-right  {top:12px;right:12px}
-.corner-box-right-langs{top:52px;right:12px}
-
-/* ---------- 4. HERO ----------------------------------------------------- */
+.corner-box-right-langs{top:50px;right:12px}
+/* ---------- 3. HERO --------------------------------------------------- */
 .hero-header{padding:15px 20px}
 .hero-header img{margin-bottom:22px}
 .hero-header h1{margin:0;font-size:3rem;color:var(--gold)}
-.hero-header p {margin:8px 0 0;font-size:1.4rem}
-
-/* ---------- 5. GOLD SECTION / GENERIC BLOCKS --------------------------- */
+.hero-header p{margin:8px 0 0;font-size:1.4rem}
+/* ---------- 4. GOLD SECTION ------------------------------------------- */
 .gold-section{
-    background:#111;
-    border-top:2px solid var(--gold);
-    border-bottom:2px solid var(--gold);
-    padding:56px 18px;
+  background:#111;border-block:2px solid var(--gold);padding:56px 18px
 }
 .gold-section h2{font-size:2.4rem;margin-bottom:18px;color:var(--gold);text-transform:uppercase}
-.gold-section p {font-size:1.15rem;max-width:800px;margin:0 auto 20px;line-height:1.55}
-
-/* ---------- 6. FOOTER --------------------------------------------------- */
+.gold-section p{font-size:1.15rem;max-width:800px;margin:0 auto 20px;line-height:1.55}
+/* ---------- 5. FOOTER -------------------------------------------------- */
 footer{
-    padding:18px 10px;
-    background:rgba(0,0,0,.8);
-    border-top:2px solid var(--gold);
-    font-size:.9rem;
+  padding:18px 10px;background:rgba(0,0,0,.8);border-top:2px solid var(--gold);font-size:.9rem
 }
 footer a{color:var(--gold);text-decoration:none}
 footer a:hover{text-decoration:underline}
-
-/* ---------- 7. GOOGLE-TRANSLATE MINI-ЛОГО ------------------------------ */
-
-/* 0) Базово прячем подпись Powered by Google и ограничиваем размер иконки */
-#google_translate_element .goog-logo-link img {width:22px!important;height:auto!important;}
-#google_translate_element .goog-logo-link span {display:none!important;}
-
-/* ── Мобильная версия — показываем только иконку ─────────────────────── */
-@media (max-width:640px){                 /* ≤640px — смартфоны  */
-  .corner-box-right-langs{
-      padding:3px;
-      width:28px; height:28px;            /* квадрат под иконку  */
-      display:flex; align-items:center; justify-content:center;
-      position:relative;                  /* якорь для select    */
-  }
-
-  /* 1. делаем combo-box прозрачным, но «живым»                   */
-  #google_translate_element .goog-te-combo{
-      position:absolute;
-      top:0; left:0;
-      width:28px; height:28px;
-      opacity:0;                          /* невидим, кликает    */
-      cursor:pointer;
-  }
-
-  /* 2. отображаем только иконку-логотип Google                   */
-  #google_translate_element .goog-logo-link{
-      display:block!important;
-  }
-}
-
-/* ---------- 8. EXTRA BUTTON GRID (НИЖНИЙ «ПУЛЬТ») ---------------------- */
+/* ---------- 6. EXTRA BUTTONS (нижний «пульт») -------------------------- */
 .extra-buttons-section{
-    padding:36px 0 42px;
-    display:flex;flex-wrap:wrap;justify-content:center;gap:8px;
+  display:flex;flex-wrap:wrap;justify-content:center;gap:8px;
+  padding:36px 0 42px
 }
-.extra-buttons-section .btn-small{flex:1 1 calc(50% - 16px);max-width:140px;white-space:nowrap}
-
-/* ---------- 9. БЛОГ / РОАДМАП / ПРОЧЕЕ (оставил без изменений) --------- */
-/* ...оставляем ваши существующие правила blog-layout, roadmap, и т.д.
-   Они не дублируются и работают корректно.                                   */
-
-/* ---------- 10. MOBILE ≤ 640 PX --------------------------------------- */
-@media(max-width:640px){
-    /* Скрываем верхние угловые боксы полностью */
-    .corner-box{display:none}
-
-    /* Немного меньше “WHY CHOOSE” */
-    .hero-header h1{font-size:1.9rem}
-    .hero-header p {font-size:1rem}
-
-    /* Галерея нижних кнопок – 2 в ряд, на совсем узких – 1 */
-    .extra-buttons-section{gap:6px;padding:20px 0}
-    .extra-buttons-section .btn-small{flex:1 0 calc(50% - 12px)}
-    @media(max-width:380px){
-        .extra-buttons-section .btn-small{flex:1 0 100%}
-    }
-
-    /* --- (необязательно) дублируем верхние ссылки внизу ---
-       <div class="mobile-nav">
-            <a class="btn-small" href="index.html">Главная</a>
-            <a class="btn-small" href="blog.html">Блог</a>
-            <a class="btn-small" href="roadmap.html">Roadmap</a>
-       </div>
-       .mobile-nav стилизуется так же, как extra-buttons-section.
-    --------------------------------------------------------- */
-}
-
-  /* ====  A) компактнее нижний «пульт» на desktop  ======================== */
-.extra-buttons-section           {gap:4px;padding:32px 0}
 .extra-buttons-section .btn-small{
-    padding:6px 12px;              /* меньше “мяса”   */
-    font-size:.8rem;               /* чуть мельче текст */
-    letter-spacing:-.2px;
+  flex:1 1 calc(50% - 16px);max-width:140px;white-space:nowrap
 }
-
-/* ====  B) та же сетка на мобильных  ==================================== */
+/* ---------- 7. GOOGLE TRANSLATE --------------------------------------- */
+/* desktop: просто уменьшаем combobox */
+#google_translate_element .goog-te-combo{
+  width:110px!important;font-size:.8rem!important
+}
+/* убираем “Powered by Google”, оставляем логотип */
+#google_translate_element .goog-logo-link img{width:22px!important;height:auto!important}
+#google_translate_element .goog-logo-link span{display:none!important}
+/* ---------- 8. MOBILE (≤640 px) --------------------------------------- */
 @media(max-width:640px){
-    .extra-buttons-section        {gap:4px;padding:18px 0}
-    .extra-buttons-section .btn-small{
-        flex:1 1 calc(50% - 8px);  /* ближе друг к другу */
-        max-width:130px;
-        padding:6px 8px;
-        font-size:.78rem;
-    }
-    @media(max-width:380px){
-        .extra-buttons-section .btn-small{
-            flex:1 0 100%;
-            max-width:none;
-        }
-    }
-}
-
-/* ====  C) шапка NFT-галереи (моб.)  ===================================== */
-/*  Две верхние кнопки “← Главная” и “Магазин” не должны закрывать заголовок */
-@media(max-width:640px){
-    .nft-top-btn{                 /* добавьте этот класс двум ссылкам  */
-        display:inline-block;
-        width:48%;
-        margin:0 1% 8px;
-        font-size:.75rem;
-        padding:6px 0;
-        white-space:nowrap;
-    }
-}
-/*  пример в nft.html
-    <a href="index.html" class="btn-small nft-top-btn">Главная</a>
-    <a href="shop.html"  class="btn-small nft-top-btn">Магазин</a>          */
-
-/* ====  D) необязательно: скрыть языковой селектор на desktop = компактнее */
-@media(min-width:641px){
-    #google_translate_element .goog-te-gadget .goog-te-combo{
-        width:110px!important;
-        font-size:.8rem!important;
-    }
-}
-
-  /* ------------------------------------------------------------------ */
-/*  MOBILE TOP-BAR: 4 compact corner-buttons (<= 640 px)              */
-/* ------------------------------------------------------------------ */
-@media (max-width:640px){
-
-  /* общий вид «окошек» */
-  .corner-box{
-    display:block;               /* снова показываем */
-    position:fixed;              /* фиксируем к вьюпорту */
-    background:rgba(0,0,0,.75);
-    border:1px solid gold;
-    border-radius:4px;
-    padding:4px 6px;
-    font-size:.75rem;
-    line-height:1;
-    z-index:999;
+  /* a) прячем старые большие corner-box’ы … */
+  .corner-box{display:none}
+  /* … и рисуем компактный набор в тех же углах */
+  .corner-box-small{
+    position:fixed;z-index:999;background:rgba(0,0,0,.75);
+    border:1px solid var(--gold);border-radius:4px;
+    width:34px;height:34px;display:flex;align-items:center;justify-content:center
   }
-  /* позиционирование */
-  .corner-box-left  {top:10px; left:10px;}       /* Главная   */
-  .corner-box-left2 {top:46px; left:10px;}       /* Блог      */
-  .corner-box-right {top:10px; right:10px;}      /* Roadmap   */
-  .corner-box-right-langs{top:46px; right:10px;} /* Язык      */
-
-  /* ссылки внутри – убираем лишние отступы */
-  .corner-box a{
-    color:gold;
-    text-decoration:none;
-    font-weight:700;
-  }
-
-  /* ───────── мини-дропдаун Google ───────── */
-  #google_translate_element .goog-te-gadget{
-    font-size:0;                 /* прячем “Powered by …” */
-  }
+  .corner-box-small a{color:var(--gold);font-size:18px;text-decoration:none;line-height:0}
+  .cb-home {top:8px;left:8px}
+  .cb-blog {top:48px;left:8px}
+  .cb-road {top:8px;right:8px}
+  .cb-lang {top:48px;right:8px;position:fixed;padding:0}
+  /* combobox перекрывает иконку, но невидим */
   #google_translate_element .goog-te-combo{
-    display:block!important;
-    width:90px!important;
-    padding:2px 4px !important;
-    background:#111!important;
-    color:gold!important;
-    border:1px solid gold!important;
-    border-radius:3px!important;
-    font-size:.72rem!important;
+    position:absolute;top:0;left:0;width:34px;height:34px;opacity:0;cursor:pointer
+  }
+  /* показываем только G-иконку */
+  #google_translate_element .goog-logo-link{display:block!important}
+  #google_translate_element .goog-logo-link img{width:24px!important}
+  /* b) шрифт в hero меньше */
+  .hero-header h1{font-size:1.9rem}.hero-header p{font-size:1rem}
+  /* c) нижние плитки – две в ряд, на <380 px — по одной */
+  .extra-buttons-section{gap:6px;padding:20px 0}
+  .extra-buttons-section .btn-small{flex:1 1 calc(50% - 12px);max-width:130px;padding:6px 8px;font-size:.78rem}
+  @media(max-width:380px){
+    .extra-buttons-section .btn-small{flex:1 0 100%;max-width:none}
   }
 }
-
-/* ---------- 11. SHOP GRID (пример – без правок) ------------------------ */
-/* .shop-items, .shop-item … оставил, т.к. ошибок не было; при желании сделайте
-   grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); чтобы плитки были
-   адаптивными.                                                            */
+/* ---------- 9. OPTIONAL: NFT-gallery top buttons (<640) --------------- */
+@media(max-width:640px){
+  .nft-top-btn{display:inline-block;width:48%;margin:0 1% 8px;padding:6px 0;font-size:.75rem}
+}
