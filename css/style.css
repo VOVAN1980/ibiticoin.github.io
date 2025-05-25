@@ -438,3 +438,30 @@ footer a:hover{text-decoration:underline}
   text-align: center;
   margin-top: 15px;
 }
+
+.blog-sidebar-left,
+.blog-sidebar-right,
+.blog-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.blog-sidebar-left label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.blog-sidebar-left input,
+.blog-sidebar-left textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  background: #000;
+  border: 1px solid gold;
+  border-radius: 4px;
+  color: #fff;
+  font-family: var(--font);
+}
