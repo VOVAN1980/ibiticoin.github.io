@@ -264,36 +264,50 @@ footer a:hover{text-decoration:underline}
   font-weight:700;
 }
 
-/* -----------------------------------------------------------------
-   Мобильная навигация внизу NFT-галереи
-   -----------------------------------------------------------------*/
-
-/* 1. по умолчанию (desktop ≥ 641 px) блок прячем */
-.nft-mobile-nav{
-  display:none;                 /* скрыт на больших экранах          */
-  margin:24px 0 6px;
-  text-align:center;
+/* -------------------------------------------------------------------
+   Общие стили для btn-small (копируем из основной темы)
+   ------------------------------------------------------------------- */
+.btn-small {
+  display: inline-block;
+  background: linear-gradient(135deg, #ffd700, #c0a000);
+  color: #000;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background .3s, transform .25s;
+  padding: 7px 14px;
+  font-size: .9rem;
+  margin: 4px 6px;
+}
+.btn-small:hover {
+  background: #c0a000;
+  transform: scale(1.05);
 }
 
-/* сами кнопки выглядят так же, как .btn-small */
-.nft-mobile-nav .btn-small{
-  display:inline-block;
-  width:46%;                    /* две в строку                     */
-  margin:4px 2%;
-  padding:7px 0;
-  background:gold;
-  color:#000;
-  font-weight:bold;
-  border-radius:5px;
-  text-decoration:none;
-  font-size:.8rem;
-  transition:background .25s;
+/* -------------------------------------------------------------------
+   Навигация только для мобильных внизу NFT-галереи
+   ------------------------------------------------------------------- */
+/* по умолчанию скрываем на десктопе */
+.nft-mobile-nav {
+  display: none;
+  text-align: center;
+  margin: 24px 0 12px;
 }
-.nft-mobile-nav .btn-small:hover{background:#c0a000;}
+/* кнопки внутри */
+.nft-mobile-nav .btn-small {
+  width: 46%;
+  margin: 4px 2%;
+  padding: 6px 0;
+  font-size: .8rem;
+}
 
-/* 2. показываем блок только на смартфонах / планшетах ≤ 640 px */
-@media (max-width:640px){
-  .nft-mobile-nav{display:block;}
+/* показываем блок только до 640px */
+@media (max-width: 640px) {
+  .nft-mobile-nav {
+    display: block;
+  }
+  /* прячем уголковые кнопки на мобилке */
+  .corner-box { display: none; }
 }
 
 /* ---------- 11. SHOP GRID (пример – без правок) ------------------------ */
