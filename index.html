@@ -243,3 +243,21 @@
 <script type="module" src="js/config.js"></script>
 <script type="module" src="js/wallet.js"></script>
 <script type="module" src="js/nft.js"></script> <!-- если используется на главной -->
+
+<script>
+  i18next
+    .use(i18nextHttpBackend)
+    .use(i18nextBrowserLanguageDetector)
+    .init({
+      fallbackLng: 'ru',
+      debug: false,
+      backend: {
+        loadPath: 'locales/{{lng}}/translation.json'
+      }
+    }, function(err, t) {
+      jqueryI18next.init(i18next, $, { useOptionsAttr: true });
+      $('body').localize();
+    });
+</script>
+
+</body>
