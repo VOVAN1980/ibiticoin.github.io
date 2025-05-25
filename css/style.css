@@ -212,6 +212,56 @@ button {
     flex: 1 1 100%;
     max-width: none;
   }
+
+  /* ------------------------------------------- 
+   Corner navigation: inline — desktop & mobile
+---------------------------------------------*/
+
+/* Общая обёртка — делаем её inline-block, чтобы соседние элементы стояли в ряд */
+.corner-box {
+  display: inline-block !important;
+  white-space: nowrap;
+  padding: 5px 10px !important;
+  margin: 4px;
+}
+
+/* Перенастраиваем позиционирование для мобильных */
+@media (max-width: 600px) {
+  .corner-box-left    { top:  8px; left:  8px; }
+  .corner-box-left2   { top: 48px; left:  8px; }
+  .corner-box-right   { top:  8px; right:  8px; }
+  .corner-box-right-langs { top: 48px; right:  8px; }
+}
+
+/* И для десктопа (чтобы они не съезжали) */
+@media (min-width: 601px) {
+  .corner-box-left    { top: 20px; left: 15px; }
+  .corner-box-left2   { top: 60px; left: 15px; }
+  .corner-box-right   { top: 20px; right: 15px; }
+  .corner-box-right-langs { top: 60px; right: 15px; }
+}
+
+/* Стили для языковой «коробки» — скрываем список и оставляем только иконку Google */
+.corner-box-right-langs .goog-te-combo {
+  display: none !important;
+}
+/* Показываем только логотип */
+.corner-box-right-langs .goog-logo-link {
+  display: inline-block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+/* Подгоняем размер иконки */
+.corner-box-right-langs .goog-logo-link img {
+  width: 24px !important;
+  height: auto !important;
+}
+
+/* А чуть подвинем сам <div id="google_translate_element"> внутрь */
+.corner-box-right-langs #google_translate_element {
+  display: inline-block;
+  vertical-align: middle;
+ }
 }
 
 /* ===== Футер ===== */
