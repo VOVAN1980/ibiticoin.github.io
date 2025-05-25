@@ -233,9 +233,7 @@
       ev.preventDefault();
       shareModal.style.display = 'block';
     });
-    closeBtn.addEventListener('click', () => {
-      shareModal.style.display = 'none';
-    });
+    closeBtn.addEventListener('click', () => shareModal.style.display = 'none');
     window.addEventListener('click', ev => {
       if (ev.target === shareModal) shareModal.style.display = 'none';
     });
@@ -263,4 +261,3 @@
 </script>
 
 </body>
-</html>
