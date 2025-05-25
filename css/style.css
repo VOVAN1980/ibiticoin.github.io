@@ -1,195 +1,184 @@
-/* Подключаем шрифт Orbitron */
+/* ==========================================================================
+   1. Сброс и глобальные стили
+   ========================================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
-/* ====== Глобальные стили ====== */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Orbitron', sans-serif;
-  background: linear-gradient(135deg, #000, #333);
-  color: #fff;
-  text-align: center;
-}
+* { box-sizing: border-box; margin:0; padding:0; }
+html { font-family:'Orbitron',sans-serif; background:linear-gradient(135deg,#000,#333); color:#fff; }
+a, button { text-decoration:none; color:inherit; font-family:inherit; }
+button { cursor:pointer; border:none; }
 
-/* ====== Corner-box (угловые кнопки) ====== */
-.corner-box {
+/* ==========================================================================
+   2. Угловые кнопки (десктоп) — скрываются на мобильном
+   ========================================================================== */
+.corner-btn {
   position: absolute;
-  background: rgba(0,0,0,0.8);
-  border: 2px solid gold;
-  border-radius: 5px;
-  padding: 5px 10px;
-  z-index: 1000;
+  display: flex; align-items:center; justify-content:center;
+  padding:8px; background:rgba(0,0,0,0.8);
+  border:2px solid gold; border-radius:5px; color:gold; font-weight:bold;
+  z-index:999; transition:background .2s;
 }
-.corner-box a {
-  color: gold;
-  text-decoration: none;
-  font-weight: bold;
+.corner-btn:hover { background:rgba(0,0,0,0.95); }
+.corner-btn-home    { top:20px; left:20px; }
+.corner-btn-blog    { top:60px; left:20px; }
+.corner-btn-roadmap { top:20px; right:20px; }
+.corner-btn-lang    { top:60px; right:20px; }
+
+/* Оставляем только иконку Google, прячем текст в выпадашке */
+.corner-btn-lang .goog-logo-link > span { display:none !important; }
+.corner-btn-lang .goog-te-combo { display:none !important; }
+
+/* ==========================================================================
+   3. Плитки-кнопки внизу (.extra-buttons-section)
+   ========================================================================== */
+.extra-buttons-section {
+  display:flex; flex-wrap:wrap; justify-content:center; gap:8px;
+  padding:20px; background:#111;
 }
-.corner-box-left   { top: 20px; left: 15px; }
-.corner-box-left2  { top: 60px; left: 15px; }
-.corner-box-right  { top: 20px; right: 15px; }
-.corner-box-right-langs { top: 60px; right: 15px; }
-
-/* Настройка Google Translate */
-.goog-logo-link { display: inline-block !important; padding: 0 !important; margin: 0 !important; }
-.goog-logo-link img { width: 24px !important; height: auto !important; }
-#google_translate_element .goog-te-gadget .goog-te-combo { /* скрываем текстовый селектор */ display: none !important; }
-
-/* ====== Кнопки ====== */
-.btn, .btn-small {
-  display: inline-block;
-  background: linear-gradient(135deg, gold, #c0a000);
-  color: #000;
-  padding: 15px 30px;
-  text-decoration: none;
-  font-weight: bold;
-  border-radius: 5px;
-  transition: background .3s, transform .3s;
+.extra-buttons-section .btn-small {
+  flex:1 1 calc(25% - 16px); max-width:160px;
+  padding:8px 12px; background:gold; color:#000; border-radius:5px;
+  text-align:center; font-weight:bold; transition:background .2s;
 }
-.btn:hover, .btn-small:hover { transform: scale(1.05); background: #c0a000; }
-.btn-small { padding: 8px 16px; font-size: .9em; margin: 0 5px; }
+.extra-buttons-section .btn-small:hover { background:#c0a000; }
 
-/* ====== Шапка ====== */
+/* ==========================================================================
+   4. Герой-блок (везде)
+   ========================================================================== */
 .hero-header {
-  padding: 20px;
+  text-align:center; padding:20px;
 }
-.hero-header img { max-width: 200px; }
-.hero-header h1 {
-  margin: 0;
-  font-size: 3em;
-  letter-spacing: 2px;
-  color: gold;
+.hero-header img {
+  display:block; margin:0 auto 10px; max-width:120px;
 }
-.hero-header p {
-  margin-top: 10px;
-  font-size: 1.2em;
-}
+.hero-header h1 { color:gold; font-size:2.5em; margin-bottom:8px; }
+.hero-header p  { font-size:1.2em; }
 
-/* ====== Gold-section ====== */
+/* ==========================================================================
+   5. Gold-section “WHY CHOOSE...”
+   ========================================================================== */
 .gold-section {
-  background: #111;
-  border-top: 2px solid gold;
-  border-bottom: 2px solid gold;
-  padding: 60px 20px;
+  background:#111; border-top:2px solid gold; border-bottom:2px solid gold;
+  padding:40px 20px; text-align:center;
 }
-.gold-section h2 {
-  margin-bottom: 20px;
-  font-size: 2.5em;
-  color: gold;
-  text-transform: uppercase;
+.gold-section h2 { color:gold; font-size:2em; margin-bottom:12px; }
+.gold-section p  { color:#ddd; max-width:600px; margin:0 auto 20px; line-height:1.4; }
+.gold-section .btn {
+  display:inline-block; background:gold; color:#000;
+  padding:12px 24px; border-radius:5px; font-weight:bold;
+  transition:background .2s;
 }
-.gold-section p {
-  max-width: 800px;
-  margin: 0 auto 20px;
-  font-size: 1.1em;
-  line-height: 1.5;
+.gold-section .btn:hover { background:#c0a000; }
+
+/* ==========================================================================
+   6. Footer
+   ========================================================================== */
+footer {
+  background:rgba(0,0,0,0.8); border-top:2px solid gold;
+  padding:20px; text-align:center; font-size:.9em;
+}
+footer a { color:gold; margin:0 6px; }
+footer a:hover { text-decoration:underline; }
+
+/* ==========================================================================
+   7. Roadmap
+   ========================================================================== */
+.roadmap {
+  background:#111; padding:40px 20px; text-align:center; color:gold; margin:40px 0;
+}
+.roadmap-item {
+  max-width:800px; margin:20px auto;
+  padding:20px; border:1px solid gold; border-radius:10px;
 }
 
-/* ====== Wallet Section ====== */
-.wallet-section {
-  margin: 20px auto;
-}
-.wallet-section button {
-  background: gold;
-  color: #000;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.wallet-section button:hover { background: #c0a000; }
-.wallet-section #walletAddress {
-  margin-top: 10px; font-weight: bold; color: gold;
-}
-
-/* ====== Shop Items ====== */
+/* ==========================================================================
+   8. Магазин (shop)
+   ========================================================================== */
 .shop-items {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
-  gap: 20px;
-  padding: 20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:20px; padding:20px;
 }
 .shop-item {
-  background: #111;
-  border: 1px solid gold;
-  border-radius: 10px;
-  overflow: hidden;
-  text-align: center;
+  background:#111; border:1px solid gold; border-radius:10px;
+  overflow:hidden; text-align:center;
 }
-.shop-item img { width: 100%; }
-.shop-item h3, .shop-item p { margin: 10px; color: gold; }
+.shop-item img { width:100%; display:block; }
+.shop-item h3,p { color:gold; margin:10px; }
 .shop-item button {
-  background: gold;
-  color: #000;
-  border: none;
-  padding: 10px;
-  width: 100%;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 0 0 10px 10px;
+  background:gold; color:#000; width:100%; padding:10px;
+  border:none; font-weight:bold; cursor:pointer; transition:background .2s;
 }
-.shop-item button:hover { background: #c0a000; }
+.shop-item button:hover { background:#c0a000; }
 
-/* ====== Extra Buttons Section ====== */
-.extra-buttons-section {
-  padding: 20px 0;
+/* ==========================================================================
+   9. NFT-галерея (пример)
+   ========================================================================== */
+.nft-item {
+  position:relative; /* чтобы .buy-button сработала */
 }
-.extra-buttons-section .btn-small { margin: 5px; }
+.nft-item .buy-button {
+  position:absolute; top:10px; left:50%; transform:translateX(-50%);
+  background:gold; color:#000; padding:5px 10px; border-radius:5px;
+  font-size:.8em; font-weight:bold; transition:background .2s;
+}
+.nft-item .buy-button:hover { background:#c0a000; }
 
-/* ====== Modal ====== */
-.modal {
-  display: none;
-  position: fixed;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.7);
-  z-index: 2000;
-}
-.modal-content {
-  background: #111;
-  margin: 10% auto;
-  padding: 20px;
-  max-width: 400px;
-  border: 2px solid gold;
-  border-radius: 10px;
-  color: gold;
-  position: relative;
-}
-.modal-content .close {
-  position: absolute;
-  top: 10px; right: 15px;
-  font-size: 1.5em; cursor: pointer;
-}
-.share-options a {
-  display: inline-block;
-  margin: 5px;
-  padding: 10px 15px;
-  background: gold;
-  color: #000;
-  border-radius: 5px;
+/* ==========================================================================
+   10. Стейкинг (staking)
+   ========================================================================== */
+/* Здесь просто базовые стили, детали внутри js/staking.js */
+#connectWalletBtn { background:gold; color:#000; padding:12px; border-radius:6px; }
+#unstakeBtn       { border:2px solid gold; background:transparent; color:gold; padding:12px; border-radius:6px; }
+.staking-box {
+  background:#111; padding:20px; border-radius:10px;
+  box-shadow:0 0 15px rgba(255,215,0,0.3); text-align:center;
 }
 
-/* ====== Footer ====== */
-footer {
-  padding: 20px;
-  background: rgba(0,0,0,0.8);
-  border-top: 2px solid gold;
-  font-size: .9em;
+/* ==========================================================================
+   11. Блог (blog.html)
+   ========================================================================== */
+.blog-layout {
+  display:flex; justify-content:space-between;
+  max-width:1400px; margin:40px auto; padding:0 20px;
 }
-footer a { color: gold; text-decoration: none; }
-footer a:hover { text-decoration: underline; }
+.blog-sidebar-left,
+.blog-sidebar-right {
+  flex:1; max-width:30%;
+  background:#222; color:gold; padding:20px;
+  border:1px solid gold; border-radius:10px;
+}
+.blog-content {
+  flex:1; max-width:40%;
+  background:#111; color:gold; padding:20px;
+  border:1px solid gold; border-radius:10px;
+}
+.blog-post {
+  background:#222; padding:20px; margin-bottom:20px;
+  border:1px solid gold; border-radius:10px;
+}
+.blog-post h3 { color:gold; margin-top:0; }
 
-/* ====== Mobile adjustments ====== */
-@media (max-width: 600px) {
-  /* прячем угловые кнопки */
-  .corner-box { display: none; }
+/* ==========================================================================
+   12. Мобильные адаптации
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* прячем уголки */
+  .corner-btn { display:none; }
 
-  /* внизу показываем навигацию */
-  .nav-mobile { display: inline-block !important; }
+  /* блог — в колонку */
+  .blog-layout {
+    flex-direction:column;
+    align-items:center;
+  }
+  .blog-sidebar-left,
+  .blog-sidebar-right,
+  .blog-content {
+    max-width:90%; margin:10px 0;
+  }
 
-  /* адаптивные отступы */
-  body { padding: 10px; }
-  .hero-header h1 { font-size: 2em; }
-  .gold-section { padding: 40px 10px; }
-  .shop-items { grid-template-columns: 1fr; }
+  /* плитки-кнопки внизу — по одной */
+  .extra-buttons-section .btn-small {
+    flex:1 1 100%; max-width:none;
+  }
 }
