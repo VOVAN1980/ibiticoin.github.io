@@ -337,3 +337,46 @@ footer a:hover{text-decoration:underline}
 /* .shop-items, .shop-item … оставил, т.к. ошибок не было; при желании сделайте
    grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); чтобы плитки были
    адаптивными.                                           
+
+@media (max-width:640px){
+  .corner-box-right-langs {
+    overflow: hidden;
+    max-width: 32px;
+    right: 10px;
+  }
+
+  #google_translate_element {
+    width: 28px;
+    height: 28px;
+  }
+
+  #google_translate_element .goog-te-gadget {
+    font-size: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  #google_translate_element .goog-logo-link {
+    display: block!important;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+  }
+
+  #google_translate_element .goog-logo-link img {
+    width: 100%!important;
+    height: auto!important;
+    display: block;
+  }
+
+  #google_translate_element .goog-te-combo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%!important;
+    height: 100%!important;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+  }
+}
