@@ -1,3 +1,7 @@
+этот код идеален но сука эта языковое окно, просто сука неуменьшаеться и всё
+
+
+
 /* ---------- 1. БАЗА ----------------------------------------------------- */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
@@ -241,48 +245,7 @@ footer a:hover{text-decoration:underline}
   }
 }
 
-/* === Google-Translate: только иконка G (мобильный ≤640 px) ============= */
-@media (max-width:640px){
-
-  /* контейнер в углу */
-  .corner-box-right-langs{
-      width:28px; height:28px;          /* квадрат под иконку   */
-      padding:3px;
-      display:flex;align-items:center;justify-content:center;
-      position:relative;                /* якорь для <select>   */
-      overflow:hidden;                  /* обрезаем лишнее      */
-  }
-
-  /* мини-логотип Google */
-  #google_translate_element .goog-logo-link{
-      display:block!important;
-  }
-  #google_translate_element .goog-logo-link img{
-      width:22px!important;height:auto!important;
-  }
-  #google_translate_element .goog-logo-link span{display:none!important;}
-
-  /* сам <select> — прозрачный, но кликабельный */
-  #google_translate_element .goog-te-combo{
-      position:absolute;
-      top:0;left:0;
-      width:28px;height:28px;           /* ровно по контейнеру  */
-      opacity:0;                        /* невидим, «живой»     */
-      cursor:pointer;
-      /* убираем системную стрелку на iOS / Android */
-      appearance:none;-webkit-appearance:none;-moz-appearance:none;
-  }
-}
-
-/* === на десктопе просто делаем селект компактным (по желанию) ========= */
-@media (min-width:641px){
-  #google_translate_element .goog-te-combo{
-      width:110px!important;
-      font-size:.8rem!important;
-  }
-}
-
 /* ---------- 11. SHOP GRID (пример – без правок) ------------------------ */
 /* .shop-items, .shop-item … оставил, т.к. ошибок не было; при желании сделайте
    grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); чтобы плитки были
-   адаптивными.    
+   адаптивными.                                           
