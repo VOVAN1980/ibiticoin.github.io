@@ -809,11 +809,11 @@ section, .shop-items {
   }
   .corner-box-left2 {
     top: 8px !important;
-    left: calc(8px + 80px) !important; /* чуть правее «Главная» */
+    left: calc(8px + 40px) !important; /* чуть правее «Главная» */
   }
   .corner-box-right {
     top: 8px !important;
-    right: calc(8px + 80px) !important;
+    right: calc(8px + 40px) !important;
   }
   .corner-box-right-langs {
     top: 8px !important;
