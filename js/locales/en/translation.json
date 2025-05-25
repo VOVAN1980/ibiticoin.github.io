@@ -1,6 +1,20 @@
 {
-  "title": "IBITIcoin – Home",
-  "subtitle": "Stability | Innovation | Accessibility",
-  "why_choose": "WHY CHOOSE IBITIcoin?",
-  "main_paragraph": "IBITIcoin is an innovative cryptocurrency for fast, secure, and accessible operation in the digital economy..."
+  "site": {
+    "title": "IBITIcoin",
+    "slogan": "Stability | Innovation | Accessibility",
+    "why": "WHY CHOOSE IBITIcoin?",
+    "description": "IBITIcoin is an innovative cryptocurrency for fast, secure, and accessible work in the digital economy...",
+    "buy": "Buy IBITIcoin",
+    "calculator": "Calculator",
+    "guides": "Video Guides",
+    "news": "News",
+    "chart": "Chart",
+    "nft": "NFT Gallery",
+    "shop": "Shop",
+    "book": "Book",
+    "staking": "Staking",
+    "share": "Share",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  }
 }
