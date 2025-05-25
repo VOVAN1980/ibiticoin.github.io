@@ -322,6 +322,30 @@ footer a:hover{text-decoration:underline}
   font-size: 0.9rem;
 }
 
+/* ---------- КНОПКИ ПОД ГАЛЕРЕЕЙ NFT ------------------- */
+.nft-footer-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 40px 0 20px;
+}
+
+.nft-footer-buttons .btn-small {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: #000;
+  font-weight: bold;
+  padding: 10px 22px;
+  font-size: 1rem;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.3s, transform 0.25s;
+}
+
+.nft-footer-buttons .btn-small:hover {
+  background: var(--gold-dark);
+  transform: scale(1.05);
+}
+
 /* ---------- 11. SHOP GRID (пример – без правок) ------------------------ */
 /* .shop-items, .shop-item … оставил, т.к. ошибок не было; при желании сделайте
    grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); чтобы плитки были
