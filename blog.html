@@ -33,59 +33,60 @@
     <aside class="blog-sidebar-left">
       <h2>Напишите нам</h2>
       <form action="https://formspree.io/f/mdkeadvl" method="POST">
-        <label>
-          Ваш email:
-          <input type="email" name="email" required>
-        </label>
-        <label>
-          Ваше сообщение:
-          <textarea name="message" required></textarea>
-        </label>
-        <!-- Используем тот же класс .btn -->
+        <label for="email">Ваш email:</label>
+        <input id="email" type="email" name="email" required>
+
+        <label for="message">Ваше сообщение:</label>
+        <textarea id="message" name="message" required></textarea>
+
         <button type="submit" class="btn">Отправить</button>
       </form>
     </aside>
 
     <!-- Основной контент блога -->
-<main class="blog-content">
-  <h2>Последние новости</h2>
+    <main class="blog-content">
+      <h2>Последние новости</h2>
 
-  <article class="blog-post">
-    <h3>Запуск фазовой продажи IBITIcoin</h3>
-    <p>Дата публикации: 01.07.2025</p>
-    <p>Первая фаза предпродажи IBITIcoin стартовала по цене 0.10 USDT с объёмными бонусами для ранних инвесторов.</p>
-    <div class="btn-wrapper" style="text-align: center;">
-      <a href="news/phase-sale.html" class="btn blog-btn">Читать далее</a>
-    </div>
-  </article>
+      <!-- 1 -->
+      <article class="blog-post">
+        <h3>Запуск фазовой продажи IBITIcoin</h3>
+        <p>Дата публикации: 01.07.2025</p>
+        <p>Первая фаза предпродажи IBITIcoin стартовала по цене 0.10 USDT с объёмными бонусами для ранних инвесторов.</p>
+        <div class="btn-wrapper" style="text-align: center;">
+          <a href="news/phase-sale.html" class="btn blog-btn">Читать далее</a>
+        </div>
+      </article>
 
-  <article class="blog-post">
-    <h3>Старт NFT-джекпот аирдропа</h3>
-    <p>Дата публикации: 08.07.2025</p>
-    <p>Каждому участнику фазовой продажи гарантирован шанс получить эксклюзивный NFT-джекпот с дополнительными привилегиями.</p>
-    <div class="btn-wrapper" style="text-align: center;">
-      <a href="news/nft-airdrop.html" class="btn blog-btn">Читать далее</a>
-    </div>
-  </article>
+      <!-- 2 -->
+      <article class="blog-post">
+        <h3>Старт NFT-джекпот аирдропа</h3>
+        <p>Дата публикации: 08.07.2025</p>
+        <p>Каждому участнику фазовой продажи гарантирован шанс получить эксклюзивный NFT-джекпот с дополнительными привилегиями.</p>
+        <div class="btn-wrapper" style="text-align: center;">
+          <a href="news/nft-airdrop.html" class="btn blog-btn">Читать далее</a>
+        </div>
+      </article>
 
-  <article class="blog-post">
-    <h3>Пост-фазовая продажа по гибкой цене</h3>
-    <p>Дата публикации: 15.07.2025</p>
-    <p>После завершения всех трёх фаз мы открыли продажу IBITIcoin по настраиваемой «fallback» цене через административную панель.</p>
-    <div class="btn-wrapper" style="text-align: center;">
-      <a href="news/fallback-sale.html" class="btn blog-btn">Читать далее</a>
-    </div>
-  </article>
+      <!-- 3 -->
+      <article class="blog-post">
+        <h3>Пост-фазовая продажа по гибкой цене</h3>
+        <p>Дата публикации: 15.07.2025</p>
+        <p>После завершения всех трёх фаз мы открыли продажу IBITIcoin по настраиваемой «fallback» цене через административную панель.</p>
+        <div class="btn-wrapper" style="text-align: center;">
+          <a href="news/fallback-sale.html" class="btn blog-btn">Читать далее</a>
+        </div>
+      </article>
 
-  <article class="blog-post">
-    <h3>Интеграция с ведущей DeFi-платформой</h3>
-    <p>Дата публикации: 22.07.2025</p>
-    <p>IBITIcoin теперь доступен в одной из крупнейших DeFi-экосистем: стейкинг, лендинг и прочие финансовые инструменты уже в вашем распоряжении.</p>
-    <div class="btn-wrapper" style="text-align: center;">
-      <a href="news/defi-integration.html" class="btn blog-btn">Читать далее</a>
-    </div>
-  </article>
-</main>
+      <!-- 4 -->
+      <article class="blog-post">
+        <h3>Интеграция с ведущей DeFi-платформой</h3>
+        <p>Дата публикации: 22.07.2025</p>
+        <p>IBITIcoin теперь доступен в одной из крупнейших DeFi-экосистем: стейкинг, лендинг и прочие финансовые инструменты уже в вашем распоряжении.</p>
+        <div class="btn-wrapper" style="text-align: center;">
+          <a href="news/defi-integration.html" class="btn blog-btn">Читать далее</a>
+        </div>
+      </article>
+    </main>
 
     <!-- Правая боковая панель (комментарии) -->
     <aside class="blog-sidebar-right">
@@ -93,8 +94,7 @@
       <a href="comment-policy.html" class="btn-small comment-policy-link">Правила комментариев</a>
       <div id="disqus_thread"></div>
       <script>
-        var disqus_config = function () {
-        };
+        var disqus_config = function () {};
         (function() {
           var d = document, s = d.createElement('script');
           s.src = 'https://https-vovan1980-github-io-ibiticoin-github-io.disqus.com/embed.js';
@@ -112,19 +112,22 @@
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p>
-      <a href="privacy.html">Политика конфиденциальности</a> |
+      <a href="privacy.html">Политика конфиденциальности</a> | 
       <a href="terms.html">Пользовательское соглашение</a>
-    </p>
-    <p>
-      <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> |
-      <a href="https://t.me/IBITIcoin_chat" target="_blank">Telegram</a> |
-      <a href="https://instagram.com/IBITIcoin_official" target="_blank">Instagram</a> |
-      <a href="https://facebook.com/IBITIcoin" target="_blank">Facebook</a>
     </p>
     <p>
       <a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a>
     </p>
+    <p>
+      <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> | 
+      <a href="https://t.me/IBITIcoin_chat" target="_blank">Telegram</a> | 
+      <a href="https://instagram.com/IBITIcoin_official" target="_blank">Instagram</a> | 
+      <a href="https://facebook.com/IBITIcoin" target="_blank">Facebook</a>
+    </p>
   </footer>
 
+  <!-- Модули проекта -->
+  <script type="module" src="js/config.js"></script>
+  <script type="module" src="js/wallet.js"></script>
 </body>
 </html>
