@@ -813,3 +813,23 @@ section, .shop-items {
 @media (min-width: 601px) {
   .corner-btn { width: 40px; height: 40px; font-size: 20px; }
 }
+
+@media (max-width: 600px) {
+  .corner-box-left {
+    top: 8px;    /* Главная */
+    left: 8px;
+  }
+  .corner-box-left2 {
+    top: 48px;   /* Блог */
+    left: 8px;
+  }
+
+  .corner-box-right {
+    top: 8px;    /* Roadmap */
+    right: 8px;
+  }
+  .corner-box-right-langs {
+    top: 48px;   /* Языки */
+    right: 8px;
+  }
+}
