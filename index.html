@@ -1,34 +1,35 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en"> <!-- язык по-умолчанию, i18next подставит нужный -->
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>IBITIcoin – Главная</title>
+  <title data-i18n="meta.title">IBITIcoin – Главная</title>
   
   <!-- Основные метатеги SEO -->
-  <meta name="description" content="IBITIcoin – инновационная криптовалюта для быстрой, безопасной и доступной работы в цифровой экономике.">
+  <meta name="description" content="IBITIcoin – инновационная криптовалюта для быстрой, безопасной и доступной работы в цифровой экономике." data-i18n="[attr]meta.description">
   <meta name="keywords" content="IBITIcoin, криптовалюта, инвестиции, блокчейн, DeFi">
   <meta name="author" content="IBITIcoin Team">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="IBITIcoin – Будущее цифровых финансов">
-  <meta property="og:description" content="Узнайте, как IBITIcoin делает криптовалюту доступной и безопасной для всех.">
+  <meta property="og:title" content="IBITIcoin – Будущее цифровых финансов" data-i18n="[attr]og.title">
+  <meta property="og:description" content="Узнайте, как IBITIcoin делает криптовалюту доступной и безопасной для всех." data-i18n="[attr]og.description">
   <meta property="og:image" content="img/og-image.png">
   <meta property="og:url" content="index.html">
   <meta property="og:type" content="website">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="IBITIcoin – Будущее цифровых финансов">
-  <meta name="twitter:description" content="Узнайте, как IBITIcoin делает криптовалюту доступной и безопасной для всех.">
+  <meta name="twitter:title" content="IBITIcoin – Будущее цифровых финансов" data-i18n="[attr]twitter.title">
+  <meta name="twitter:description" content="Узнайте, как IBITIcoin делает криптовалюту доступной и безопасной для всех." data-i18n="[attr]twitter.description">
   <meta name="twitter:image" content="img/og-image.png">
   
   <!-- Подключаем общий CSS -->
   <link rel="stylesheet" href="css/style.css">
   
-  <!-- Подключаем AOS для анимаций -->
+  <!-- AOS для анимаций -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
 
+  <!-- i18next -->
   <script src="https://unpkg.com/i18next@21.10.1/i18next.min.js"></script>
   <script src="https://unpkg.com/i18next-http-backend@1.4.1/i18nextHttpBackend.min.js"></script>
   <script src="https://unpkg.com/i18next-browser-languagedetector@6.1.3/i18nextBrowserLanguageDetector.min.js"></script>
@@ -44,7 +45,7 @@
     gtag('config', 'G-T5DF4BLR5S');
   </script>
   
-  <!-- Виджет Google Translate -->
+  <!-- Google Translate (временно, можно будет убрать) -->
   <script type="text/javascript">
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
@@ -54,129 +55,88 @@
       }, 'google_translate_element');
     }
   </script>
-  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-  <!-- Подключаем необходимые библиотеки для работы кошельков -->
+  <!-- Web3 -->
   <script src="https://unpkg.com/@walletconnect/web3-provider/dist/umd/index.min.js"></script>
   <script src="https://unpkg.com/web3modal"></script>
   
   <style>
-    /* Пример базовых стилей для модального окна шаринга */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.7);
-    }
-    .modal-content {
-      background-color: #111;
-      margin: 10% auto;
-      padding: 20px;
-      border: 2px solid gold;
-      width: 80%;
-      max-width: 500px;
-      border-radius: 10px;
-      text-align: center;
-      color: gold;
-      position: relative;
-    }
-    .modal-content h3 {
-      margin-top: 0;
-      font-size: 1.8em;
-    }
-    .modal-content .share-options a {
-      display: inline-block;
-      margin: 10px;
-      padding: 10px 20px;
-      background: gold;
-      color: #000;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: transform 0.3s;
-    }
-    .modal-content .share-options a:hover {
-      transform: scale(1.1);
-    }
-    .modal-content .close {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 1.5em;
-      font-weight: bold;
-      cursor: pointer;
-    }
+    /* Модалка шаринга */
+    .modal { display: none; position: fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.7); }
+    .modal-content { background:#111; margin:10% auto; padding:20px; border:2px solid gold; width:80%; max-width:500px; border-radius:10px; color:gold; text-align:center; position:relative; }
+    .modal-content h3 { font-size:1.8em; margin-top:0; }
+    .modal-content .share-options a { display:inline-block; margin:10px; padding:10px 20px; background:gold; color:#000; text-decoration:none; border-radius:5px; transition:transform .3s; }
+    .modal-content .share-options a:hover { transform:scale(1.1); }
+    .modal-content .close { position:absolute; top:10px; right:15px; font-size:1.5em; font-weight:bold; cursor:pointer; }
   </style>
 </head>
+
 <body>
-  <!-- Верхние угловые кнопки -->
+  <!-- Навигация в углах -->
   <div class="corner-box corner-box-left">
-    <a href="/">Главная</a>
+    <a href="/" data-i18n="nav.home">Главная</a>
   </div>
   <div class="corner-box corner-box-left2">
-    <a href="blog.html">Блог</a>
+    <a href="blog.html" data-i18n="nav.blog">Блог</a>
   </div>
   <div class="corner-box corner-box-right">
-    <a href="roadmap.html">Roadmap</a>
+    <a href="roadmap.html" data-i18n="nav.roadmap">Roadmap</a>
   </div>
   <div class="corner-box corner-box-right-langs">
     <div id="google_translate_element"></div>
   </div>
-  
-  <!-- Шапка сайта -->
+
+  <!-- Шапка -->
   <header class="hero-header">
-    <img src="img/logo.png" alt="IBITIcoin Logo" width="200">
-    <h1>IBITIcoin</h1>
-    <p>Stability | Innovation | Accessibility</p>
+    <img src="img/logo.png" alt="IBITIcoin Logo">
+    <h1 data-i18n="header.title">IBITIcoin</h1>
+    <p data-i18n="header.subtitle">Stability | Innovation | Accessibility</p>
   </header>
 
-  <!-- Пример главного контента -->
+  <!-- WHY CHOOSE -->
   <section class="gold-section" data-aos="fade-up">
-    <h2>WHY CHOOSE IBITIcoin?</h2>
-    <p>
+    <h2 data-i18n="section.whyChoose">WHY CHOOSE IBITIcoin?</h2>
+    <p data-i18n="section.description">
       IBITIcoin – это инновационная криптовалюта для быстрой, безопасной и доступной работы в цифровой экономике...
     </p>
-    <a class="btn" href="buy.html">Buy IBITIcoin</a>
+    <a class="btn" href="buy.html" data-i18n="section.buyButton">Buy IBITIcoin</a>
   </section>
-  
+
   <!-- Дополнительные кнопки -->
   <section class="extra-buttons-section">
-  <a class="btn-small" href="calculator.html">Калькулятор</a>
-  <a class="btn-small" href="video-guides.html">Видео-гайды</a>
-  <a class="btn-small" href="news.html">Новости</a>
-  <a class="btn-small" href="coin-chart.html">График</a>
-  <a class="btn-small" href="nft.html">NFT Галерея</a>
-  <a class="btn-small" href="shop.html">Магазин</a>
-  <a class="btn-small" href="book.html">Книга</a>
-  <a class="btn-small" href="staking.html">Стейкинг</a> <!-- 👈 ВСТАВЛЕНА ВОТ СЮДА -->
-  <a class="btn-small" id="openShareModal" href="#">Поделиться</a>
+    <a class="btn-small" href="calculator.html" data-i18n="menu.calculator">Калькулятор</a>
+    <a class="btn-small" href="video-guides.html" data-i18n="menu.videoGuides">Видео-гайды</a>
+    <a class="btn-small" href="news.html" data-i18n="menu.news">Новости</a>
+    <a class="btn-small" href="coin-chart.html" data-i18n="menu.chart">График</a>
+    <a class="btn-small" href="nft.html" data-i18n="menu.nft">NFT Галерея</a>
+    <a class="btn-small" href="shop.html" data-i18n="menu.shop">Магазин</a>
+    <a class="btn-small" href="book.html" data-i18n="menu.book">Книга</a>
+    <a class="btn-small" href="staking.html" data-i18n="menu.staking">Стейкинг</a>
+    <a class="btn-small" id="openShareModal" href="#" data-i18n="menu.share">Поделиться</a>
   </section>
-  
-  <!-- Пример футера -->
+
+  <!-- Футер -->
   <footer>
-    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
+    <p data-i18n="footer.copyright">&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p>
-      <a href="privacy.html">Политика конфиденциальности</a> |
-      <a href="terms.html">Пользовательское соглашение</a>
+      <a href="privacy.html" data-i18n="footer.privacy">Политика конфиденциальности</a> |
+      <a href="terms.html" data-i18n="footer.terms">Пользовательское соглашение</a>
     </p>
     <p>
-      <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> |
-      <a href="https://t.me/IBITIcoin_chat" target="_blank">Telegram</a> |
-      <a href="https://instagram.com/IBITIcoin_official" target="_blank">Instagram</a> |
-      <a href="https://facebook.com/IBITIcoin" target="_blank">Facebook</a>
+      <a href="https://twitter.com/IBITIcoin" target="_blank" data-i18n="footer.twitter">Twitter</a> |
+      <a href="https://t.me/IBITIcoin_chat" target="_blank" data-i18n="footer.telegram">Telegram</a> |
+      <a href="https://instagram.com/IBITIcoin_official" target="_blank" data-i18n="footer.instagram">Instagram</a> |
+      <a href="https://facebook.com/IBITIcoin" target="_blank" data-i18n="footer.facebook">Facebook</a>
     </p>
-    <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
+    <p><a href="mailto:info@ibiticoin.com" data-i18n="footer.contact">info@ibiticoin.com</a></p>
   </footer>
 
-  <!-- Модальное окно шаринга -->
+  <!-- Модалка шаринга -->
   <div id="shareModal" class="modal">
     <div class="modal-content">
       <span class="close" id="closeShareModal">&times;</span>
-      <h3>Выберите соцсеть для шаринга</h3>
+      <h3 data-i18n="shareModal.title">Выберите соцсеть для шаринга</h3>
       <div class="share-options">
         <a id="share-facebook" href="#" target="_blank">Facebook</a>
         <a id="share-twitter" href="#" target="_blank">Twitter</a>
@@ -189,37 +149,32 @@
     </div>
   </div>
 
-  <!-- Внешние библиотеки -->
-<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-<script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
-<script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
-
-<!-- Дополнительные скрипты -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script>
-  AOS.init({ once: true });
-</script>
-
-<!-- Tawk.to -->
-<script>
-  var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-  (function(){
-    var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-    s1.async = true;
-    s1.src = 'https://embed.tawk.to/67db03deb73265190d550119/1imnoe7rb';
-    s1.charset = 'UTF-8';
-    s1.setAttribute('crossorigin', '*');
-    s0.parentNode.insertBefore(s1, s0);
-  })();
-</script>
-
-   <!-- Инициализация модалки «Поделиться» -->
+  <!-- Библиотеки -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
+  <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
-    const shareModal   = document.getElementById('shareModal');
-    const openBtn      = document.getElementById('openShareModal');
-    const closeBtn     = document.getElementById('closeShareModal');
-    const pageUrl      = encodeURIComponent(window.location.href);
-    const pageTitle    = encodeURIComponent(document.title);
+    AOS.init({ once: true });
+  </script>
+  <!-- Tawk.to чат -->
+  <script>
+    var Tawk_API=Tawk_API||{},Tawk_LoadStart=new Date();
+    (function(){
+      var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+      s1.async=true; s1.src='https://embed.tawk.to/67db03deb73265190d550119/1imnoe7rb';
+      s1.charset='UTF-8'; s1.setAttribute('crossorigin','*');
+      s0.parentNode.insertBefore(s1,s0);
+    })();
+  </script>
+
+  <!-- Модалка “Поделиться” -->
+  <script>
+    const shareModal = document.getElementById('shareModal'),
+          openBtn    = document.getElementById('openShareModal'),
+          closeBtn   = document.getElementById('closeShareModal'),
+          pageUrl    = encodeURIComponent(location.href),
+          pageTitle  = encodeURIComponent(document.title);
 
     document.getElementById('share-facebook').href  = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
     document.getElementById('share-twitter').href   = `https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageTitle}`;
@@ -229,35 +184,29 @@
     document.getElementById('share-linkedin').href = `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`;
     document.getElementById('share-weibo').href    = `http://service.weibo.com/share/share.php?url=${pageUrl}&title=${pageTitle}`;
 
-    openBtn.addEventListener('click', ev => {
-      ev.preventDefault();
-      shareModal.style.display = 'block';
-    });
-    closeBtn.addEventListener('click', () => shareModal.style.display = 'none');
-    window.addEventListener('click', ev => {
-      if (ev.target === shareModal) shareModal.style.display = 'none';
-    });
+    openBtn.onclick = e => { e.preventDefault(); shareModal.style.display='block'; };
+    closeBtn.onclick = () => shareModal.style.display='none';
+    window.onclick = e => { if(e.target===shareModal) shareModal.style.display='none'; };
   </script>
 
-<!-- Модули проекта -->
-<script type="module" src="js/config.js"></script>
-<script type="module" src="js/wallet.js"></script>
-<script type="module" src="js/nft.js"></script> <!-- если используется на главной -->
+  <!-- i18next и инициализация -->
+  <script>
+    i18next
+      .use(i18nextHttpBackend)
+      .use(i18nextBrowserLanguageDetector)
+      .init({
+        fallbackLng: 'ru',
+        debug: false,
+        backend: { loadPath: 'locales/{{lng}}/translation.json' }
+      }, (err, t) => {
+        jqueryI18next.init(i18next, $, { useOptionsAttr: true });
+        $('body').localize();
+      });
+  </script>
 
-<script>
-  i18next
-    .use(i18nextHttpBackend)
-    .use(i18nextBrowserLanguageDetector)
-    .init({
-      fallbackLng: 'ru',
-      debug: false,
-      backend: {
-        loadPath: 'locales/{{lng}}/translation.json'
-      }
-    }, function(err, t) {
-      jqueryI18next.init(i18next, $, { useOptionsAttr: true });
-      $('body').localize();
-    });
-</script>
-
+  <!-- Ваши модули -->
+  <script type="module" src="js/config.js"></script>
+  <script type="module" src="js/wallet.js"></script>
+  <script type="module" src="js/nft.js"></script>
 </body>
+</html>
