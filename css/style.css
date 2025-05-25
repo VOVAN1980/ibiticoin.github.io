@@ -310,6 +310,18 @@ footer a:hover{text-decoration:underline}
   .corner-box { display: none; }
 }
 
+ /* в конце style.css */
+.nft-footer-nav {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 24px 0;
+}
+.nft-footer-nav .btn-small {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+}
+
 /* ---------- 11. SHOP GRID (пример – без правок) ------------------------ */
 /* .shop-items, .shop-item … оставил, т.к. ошибок не было; при желании сделайте
    grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); чтобы плитки были
