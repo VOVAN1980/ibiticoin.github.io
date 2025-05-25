@@ -121,6 +121,55 @@ footer a:hover{text-decoration:underline}
     --------------------------------------------------------- */
 }
 
+  /* ====  A) компактнее нижний «пульт» на desktop  ======================== */
+.extra-buttons-section           {gap:4px;padding:32px 0}
+.extra-buttons-section .btn-small{
+    padding:6px 12px;              /* меньше “мяса”   */
+    font-size:.8rem;               /* чуть мельче текст */
+    letter-spacing:-.2px;
+}
+
+/* ====  B) та же сетка на мобильных  ==================================== */
+@media(max-width:640px){
+    .extra-buttons-section        {gap:4px;padding:18px 0}
+    .extra-buttons-section .btn-small{
+        flex:1 1 calc(50% - 8px);  /* ближе друг к другу */
+        max-width:130px;
+        padding:6px 8px;
+        font-size:.78rem;
+    }
+    @media(max-width:380px){
+        .extra-buttons-section .btn-small{
+            flex:1 0 100%;
+            max-width:none;
+        }
+    }
+}
+
+/* ====  C) шапка NFT-галереи (моб.)  ===================================== */
+/*  Две верхние кнопки “← Главная” и “Магазин” не должны закрывать заголовок */
+@media(max-width:640px){
+    .nft-top-btn{                 /* добавьте этот класс двум ссылкам  */
+        display:inline-block;
+        width:48%;
+        margin:0 1% 8px;
+        font-size:.75rem;
+        padding:6px 0;
+        white-space:nowrap;
+    }
+}
+/*  пример в nft.html
+    <a href="index.html" class="btn-small nft-top-btn">Главная</a>
+    <a href="shop.html"  class="btn-small nft-top-btn">Магазин</a>          */
+
+/* ====  D) необязательно: скрыть языковой селектор на desktop = компактнее */
+@media(min-width:641px){
+    #google_translate_element .goog-te-gadget .goog-te-combo{
+        width:110px!important;
+        font-size:.8rem!important;
+    }
+}
+
 /* ---------- 11. SHOP GRID (пример – без правок) ------------------------ */
 /* .shop-items, .shop-item … оставил, т.к. ошибок не было; при желании сделайте
    grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); чтобы плитки были
