@@ -727,4 +727,62 @@ body {
   .buy-video iframe {
     height: 240px;
   }
+
+  /* 1) Навигация в шапке — сделаем её адаптивной */
+.corner-box {
+  display: inline-block;
+  margin: 4px;
+}
+/* На маленьких экранах соберём все кнопки в один ряд с обтеканием */
+@media (max-width: 600px) {
+  .corner-box {
+    display: none;       /* Скрываем “Главная”, “Блог” и т.п. */
+  }
+  /* Вместо этого можно добавить гамбургер-меню или вывести их в выпадашке */
+}
+
+/* 2) Блок кнопок-ссылок внизу страницы */
+.extra-buttons-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+}
+/* Размер “плиток”-кнопок */
+.extra-buttons-section .btn-small {
+  flex: 1 1 calc(50% - 16px); /* две плитки в ряд */
+  max-width: 140px;
+  text-align: center;
+  margin: 4px 0;
+  white-space: nowrap;
+}
+/* На очень узких экранах — одна в ряд */
+@media (max-width: 380px) {
+  .extra-buttons-section .btn-small {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+}
+
+/* 3) Шапка “WHY CHOOSE...” уменьшаем шрифт на смартфоне */
+.hero-header h1 {
+  font-size: 2.5em;
+}
+@media (max-width: 480px) {
+  .hero-header h1 {
+    font-size: 1.8em;
+  }
+  .hero-header p {
+    font-size: 1em;
+  }
+}
+
+/* 4) Общие отступы для мобильных */
+body {
+  padding: 20px 10px;
+}
+section, .shop-items {
+  padding: 0 10px;
+ }
 }
