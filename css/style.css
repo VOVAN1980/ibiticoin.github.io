@@ -50,7 +50,7 @@ body {
 
 /* Правый угол: Языки */
 .corner-box-right-langs {
-  top: 40px;
+  top: 80px;
   right: 15px;
   background: rgba(0, 0, 0, 0.8);
   border: 2px solid gold;
