@@ -785,23 +785,22 @@ section, .shop-items {
   padding: 0 10px;
  }
 
-/* Убираем прежнее «скрытие» и выводим шапочные кнопки по-центру */
 @media (max-width: 600px) {
+  /* Делаем все угловые кнопки статичными и инлайн-блоками */
   .corner-box {
-    display: inline-block !important;  /* показываем */
-    position: static;                   /* отменяем абсолютное позиционирование */
-    margin: 5px;                        /* небольшой отступ */
+    position: static !important;
+    display: inline-block !important;
+    margin: 6px 4px;
   }
-  /* Оборачиваем их в центр */
-  body > .corner-box:first-child {
-    width: 100%;
+
+  /* Центрируем их в строке */
+  body {
     text-align: center;
   }
-  /* Уменьшаем шрифт самих кнопок, чтобы вписывались */
+
+  /* Немного уменьшаем шрифты на кнопках, чтобы помещались */
   .corner-box a {
     font-size: 0.9em;
-    padding: 6px 10px;
+    padding: 6px 12px;
   }
-}
-
 }
