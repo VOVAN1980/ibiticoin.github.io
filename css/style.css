@@ -297,15 +297,6 @@ footer a:hover{text-decoration:underline}
   font-size: .8rem;
 }
 
-/* показываем блок только до 640px */
-@media (max-width: 640px) {
-  .nft-mobile-nav {
-    display: block;
-  }
-  /* прячем уголковые кнопки на мобилке */
-  .corner-box { display: none; }
-}
-
  /* в конце style.css */
 .nft-footer-nav {
   display: flex;
