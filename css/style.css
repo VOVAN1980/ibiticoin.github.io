@@ -342,8 +342,8 @@ footer a:hover{text-decoration:underline}
 @media (max-width:640px) {
   .corner-box-right-langs {
     padding: 0;
-    width: 26px;
-    height: 26px;
+    width: 25px;
+    height: 25px;
     overflow: hidden;
     right: 10px;
     top: 46px;
