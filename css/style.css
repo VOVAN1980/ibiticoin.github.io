@@ -786,22 +786,43 @@ section, .shop-items {
  }
 
 @media (max-width: 600px) {
-  /* Уменьшаем все .corner-box (шапочные кнопки) */
-  .corner-box {
-    padding: 4px 8px !important;
-  }
-  .corner-box a {
-    font-size: 0.85rem !important;
+  /* Снова показываем все шапочные кнопки */
+  .corner-box,
+  .corner-box-left2,
+  .corner-box-right,
+  .corner-box-right-langs {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
-  /* Специально под Language-switcher */
+  /* Уменьшаем размер рамки и шрифта */
+  .corner-box a {
+    font-size: 0.8rem !important;
+    padding: 4px 8px !important;
+  }
+
+  /* Подправляем их координаты: 8px от края */
+  .corner-box-left {
+    top: 8px !important;
+    left: 8px !important;
+  }
+  .corner-box-left2 {
+    top: 8px !important;
+    left: calc(8px + 80px) !important; /* чуть правее «Главная» */
+  }
+  .corner-box-right {
+    top: 8px !important;
+    right: calc(8px + 80px) !important;
+  }
   .corner-box-right-langs {
     top: 8px !important;
     right: 8px !important;
   }
-  /* Масштабируем сам <select> Google Translate */
+
+  /* Сжимаем селектор Google Translate */
   #google_translate_element {
-    transform: scale(0.8);
+    transform: scale(0.75);
     transform-origin: top right;
   }
 }
