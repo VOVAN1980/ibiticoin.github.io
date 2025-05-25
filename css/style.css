@@ -786,21 +786,22 @@ section, .shop-items {
  }
 
 @media (max-width: 600px) {
-  /* Делаем все угловые кнопки статичными и инлайн-блоками */
+  /* Уменьшаем все .corner-box (шапочные кнопки) */
   .corner-box {
-    position: static !important;
-    display: inline-block !important;
-    margin: 6px 4px;
+    padding: 4px 8px !important;
   }
-
-  /* Центрируем их в строке */
-  body {
-    text-align: center;
-  }
-
-  /* Немного уменьшаем шрифты на кнопках, чтобы помещались */
   .corner-box a {
-    font-size: 0.9em;
-    padding: 6px 12px;
+    font-size: 0.85rem !important;
+  }
+
+  /* Специально под Language-switcher */
+  .corner-box-right-langs {
+    top: 8px !important;
+    right: 8px !important;
+  }
+  /* Масштабируем сам <select> Google Translate */
+  #google_translate_element {
+    transform: scale(0.8);
+    transform-origin: top right;
   }
 }
