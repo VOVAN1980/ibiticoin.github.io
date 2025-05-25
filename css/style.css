@@ -1,182 +1,165 @@
 /* ==========================================================================
-   1) Сброс + глобальные стили
+   1. Подключаем шрифт и глобальные сбросы
    ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
-html {
+
+body {
   font-family: 'Orbitron', sans-serif;
   background: linear-gradient(135deg, #000, #333);
-  color: #fff;
-}
-a {
-  text-decoration: none;
-  color: inherit;
-}
-button, input, select {
-  font-family: inherit;
-  font-size: 1em;
-  outline: none;
+  color: gold;
+  text-align: center;
+  line-height: 1.5;
 }
 
 /* ==========================================================================
-   2) Угловые кнопки (десктоп)
+   2. Hero Header
    ========================================================================== */
-.corner-btn {
+.hero-header {
+  padding: 20px;
+}
+.hero-header img {
+  max-width: 200px;
+  margin-bottom: 10px;
+}
+.hero-header h1 {
+  color: gold;
+  font-size: 3em;
+  letter-spacing: 2px;
+}
+.hero-header p {
+  color: #fff;
+  font-size: 1.2em;
+  margin-top: 5px;
+}
+
+/* ==========================================================================
+   3. Corner navigation (угловые кнопки)
+   ========================================================================== */
+.corner-box {
   position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
   background: rgba(0,0,0,0.8);
   border: 2px solid gold;
   border-radius: 5px;
+  padding: 8px 12px;
+  z-index: 1000;
+}
+.corner-box a {
   color: gold;
+  text-decoration: none;
   font-weight: bold;
-  z-index: 999;
-  transition: background .2s;
 }
-.corner-btn:hover {
-  background: rgba(0,0,0,0.95);
-}
-
-.corner-btn-home    { top: 20px; left: 20px; }
-.corner-btn-blog    { top: 60px; left: 20px; }
-.corner-btn-roadmap { top: 20px; right: 20px; }
-.corner-btn-lang    { top: 60px; right: 20px; }
-
-/* Прячет селектор текста и оставляет только логотип Google */
-.corner-btn-lang .goog-logo-link,
-.corner-btn-lang .goog-logo-link img {
-  display: block !important;
-}
-.corner-btn-lang .goog-te-combo {
-  display: none !important;
-}
+.corner-box-left    { top: 16px; left: 16px; }
+.corner-box-left2   { top: 56px; left: 16px; }
+.corner-box-right   { top: 16px; right: 16px; }
+.corner-box-right-langs { top: 56px; right: 16px; }
 
 /* ==========================================================================
-   3) Хидеры (кнопки внизу) — плитки со всеми ссылками
+   4. Основные кнопки (btn) и малые кнопки (btn-small)
    ========================================================================== */
-.extra-buttons-section {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  padding: 20px;
-  background: #111;
+.btn {
+  display: inline-block;
+  background: linear-gradient(135deg, gold, #c0a000);
+  color: #000;
+  padding: 15px 30px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: transform .2s, background .2s;
 }
-.extra-buttons-section .btn-small {
-  flex: 1 1 calc(25% - 16px);
-  max-width: 160px;
-  padding: 8px 12px;
+.btn:hover {
+  transform: scale(1.05);
+  background: #c0a000;
+}
+
+.btn-small {
+  display: inline-block;
   background: gold;
   color: #000;
+  padding: 8px 16px;
+  margin: 5px;
   border-radius: 5px;
-  text-align: center;
+  text-decoration: none;
   font-weight: bold;
+  font-size: .9em;
   transition: background .2s;
 }
-.extra-buttons-section .btn-small:hover {
+.btn-small:hover {
   background: #c0a000;
 }
 
 /* ==========================================================================
-   4) Google Translate в corner-btn-lang
-   ========================================================================== */
-#google_translate_element {
-  width: 100%;
-}
-
-/* ==========================================================================
-   5) Медиа для мобильных
-   ========================================================================== */
-/* Скрываем все угловые кнопки */
-@media (max-width: 768px) {
-  .corner-btn { display: none; }
-
-  /* Нижние плитки в одну колонку по одной на строку */
-  .extra-buttons-section .btn-small {
-    flex: 1 1 100%;
-    max-width: none;
-  }
-}
-
-/* ==========================================================================
-   6) Шапка и герой-блок
-   ========================================================================== */
-.hero-header {
-  text-align: center;
-  padding: 20px;
-}
-.hero-header img {
-  display: block;
-  margin: 0 auto 10px;
-  max-width: 120px;
-}
-.hero-header h1 {
-  color: gold;
-  font-size: 2.5em;
-  margin-bottom: 8px;
-}
-.hero-header p {
-  font-size: 1.2em;
-}
-
-/* ==========================================================================
-   7) Gold-section (“WHY CHOOSE...”)
+   5. Золотой раздел (gold-section)
    ========================================================================== */
 .gold-section {
   background: #111;
   border-top: 2px solid gold;
   border-bottom: 2px solid gold;
-  padding: 40px 20px;
-  text-align: center;
+  padding: 60px 20px;
 }
 .gold-section h2 {
   color: gold;
-  font-size: 2em;
-  margin-bottom: 12px;
+  font-size: 2.5em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
 }
 .gold-section p {
-  color: #ddd;
-  max-width: 600px;
-  margin: 0 auto 20px;
-  line-height: 1.4;
-}
-.gold-section .btn {
-  display: inline-block;
-  background: gold;
-  color: #000;
-  padding: 12px 24px;
-  border-radius: 5px;
-  font-weight: bold;
-  transition: background .2s;
-}
-.gold-section .btn:hover {
-  background: #c0a000;
+  color: #fff;
+  font-size: 1.2em;
+  max-width: 800px;
+  margin: 0 auto 30px;
 }
 
 /* ==========================================================================
-   8) Футер
+   6. Extra-buttons section & mobile nav duplicates
+   ========================================================================== */
+.extra-buttons-section {
+  padding: 40px 20px;
+}
+.nav-mobile {
+  display: none;
+}
+
+/* ==========================================================================
+   7. Footer
    ========================================================================== */
 footer {
   background: rgba(0,0,0,0.8);
   border-top: 2px solid gold;
   padding: 20px;
-  text-align: center;
   font-size: .9em;
 }
 footer a {
   color: gold;
-  margin: 0 6px;
+  text-decoration: none;
 }
 footer a:hover {
   text-decoration: underline;
 }
 
 /* ==========================================================================
-   9) Подключение шрифтов
+   8. Responsive: Mobile adjustments
    ========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+@media (max-width: 600px) {
+  /* Убираем угловые кнопки */
+  .corner-box { display: none; }
+
+  /* Показываем мобильную навигацию внизу */
+  .nav-mobile {
+    display: inline-block;
+    margin: 5px;
+  }
+
+  /* Уменьшаем заголовок */
+  .hero-header h1 { font-size: 1.8em; }
+  .hero-header p  { font-size: 1em; }
+
+  /* Подгон отступов */
+  body { padding: 0 10px; }
+  .gold-section { padding: 40px 10px; }
+}
