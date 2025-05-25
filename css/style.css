@@ -776,7 +776,6 @@ body {
   .hero-header p {
     font-size: 1em;
   }
-}
 
 /* 4) Общие отступы для мобильных */
 body {
@@ -785,4 +784,24 @@ body {
 section, .shop-items {
   padding: 0 10px;
  }
+
+/* Убираем прежнее «скрытие» и выводим шапочные кнопки по-центру */
+@media (max-width: 600px) {
+  .corner-box {
+    display: inline-block !important;  /* показываем */
+    position: static;                   /* отменяем абсолютное позиционирование */
+    margin: 5px;                        /* небольшой отступ */
+  }
+  /* Оборачиваем их в центр */
+  body > .corner-box:first-child {
+    width: 100%;
+    text-align: center;
+  }
+  /* Уменьшаем шрифт самих кнопок, чтобы вписывались */
+  .corner-box a {
+    font-size: 0.9em;
+    padding: 6px 10px;
+  }
+}
+
 }
