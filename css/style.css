@@ -337,7 +337,7 @@ footer a:hover{text-decoration:underline}
 
 /* .shop-items, .shop-item … оставил, т.к. ошибок не было; при желании сделайте
    grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); чтобы плитки были
-   адаптивными.                                           
+   адаптивными. */                                           
 
 @media (max-width:640px){
   .corner-box-right-langs {
