@@ -501,28 +501,57 @@ footer a:hover{text-decoration:underline}
 
 @media (max-width: 768px) {
   .blog-layout {
+    display: flex;
     flex-direction: column;
-    padding: 10px;
+    align-items: stretch;
+    padding: 12px;
+    gap: 20px;
   }
 
   .blog-sidebar-left,
-  .blog-content,
-  .blog-sidebar-right {
+  .blog-sidebar-right,
+  .blog-content {
     width: 100% !important;
     max-width: 100% !important;
-    margin-bottom: 20px;
-    flex: none;
+    flex: none !important;
+    margin: 0 auto;
+    padding: 16px;
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    background: #0d0d0d;
   }
 
   .blog-post {
-    text-align: left;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    background: #111;
+  }
+
+  .blog-post h3 {
+    font-size: 1rem;
+  }
+
+  .blog-btn {
+    font-size: 0.9rem;
+    padding: 8px 16px;
   }
 
   .btn-wrapper {
-    text-align: left;
+    text-align: center;
+    margin-top: 10px;
   }
 
   #disqus_thread {
-    min-height: 250px;
+    min-height: 280px;
+  }
+
+  .blog-sidebar-left input,
+  .blog-sidebar-left textarea {
+    font-size: 0.9rem;
+  }
+
+  .blog-sidebar-left label {
+    font-size: 0.9rem;
   }
 }
