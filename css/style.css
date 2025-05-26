@@ -498,3 +498,31 @@ footer a:hover{text-decoration:underline}
   margin-top: 20px;
   min-height: 320px;
 }
+
+@media (max-width: 768px) {
+  .blog-layout {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .blog-sidebar-left,
+  .blog-content,
+  .blog-sidebar-right {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 20px;
+    flex: none;
+  }
+
+  .blog-post {
+    text-align: left;
+  }
+
+  .btn-wrapper {
+    text-align: left;
+  }
+
+  #disqus_thread {
+    min-height: 250px;
+  }
+}
