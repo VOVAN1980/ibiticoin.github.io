@@ -555,3 +555,60 @@ footer a:hover{text-decoration:underline}
     font-size: 0.9rem;
   }
 }
+
+/* === ROADMAP СЕКЦИЯ === */
+.roadmap {
+  max-width: 900px;
+  margin: 60px auto 80px;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.roadmap h2 {
+  color: var(--gold);
+  font-size: 2.4rem;
+  margin-bottom: 40px;
+}
+
+.roadmap-item {
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  background: #0d0d0d;
+  padding: 20px 30px;
+  margin-bottom: 24px;
+  transition: transform 0.2s ease;
+}
+
+.roadmap-item:hover {
+  transform: scale(1.02);
+}
+
+.roadmap-item h3 {
+  color: var(--gold);
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+}
+
+.roadmap-item p {
+  margin: 5px 0;
+  font-size: 1.05rem;
+  color: #ccc;
+}
+
+@media (max-width: 768px) {
+  .roadmap h2 {
+    font-size: 1.8rem;
+  }
+
+  .roadmap-item {
+    padding: 16px 20px;
+  }
+
+  .roadmap-item h3 {
+    font-size: 1.2rem;
+  }
+
+  .roadmap-item p {
+    font-size: 1rem;
+  }
+}
