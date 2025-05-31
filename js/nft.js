@@ -1,14 +1,19 @@
 // js/nft.js
-import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
+
+import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 import config from "./config.js";
 import { ibitiNftAbi } from "./abis/ibitiNftAbi.js";
+import { connectWallet, signer, showIbitiBalance, selectedAccount } from "./wallet.js";
 
-// Определяем активную сеть
-const netConfig = config.testnet ?? config;
+// Определяем конфигурацию сети (mainnet или testnet)
+const netConfig = config.testnet ? config.testnet : config.mainnet;
+const IBITI_NFT_ADDRESS = netConfig.contracts.IBITI_NFT_ADDRESS;
 
-let provider, signer, nftContract;
+let nftContract;
 
-// Проверка MetaMask и инициализация
+// -----------------------------
+// 1) Инициализация NFT-модуля
+// -----------------------------
 async function initNFT() {
   if (!window.ethereum) {
     alert("MetaMask не установлен. Установите расширение для работы с NFT.");
@@ -16,34 +21,40 @@ async function initNFT() {
     return;
   }
 
-  provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-  signer = provider.getSigner();
+  // Подключаем кошелек и получаем signer из wallet.js
+  await connectWallet();
+  if (!signer) return;
 
-  nftContract = new ethers.Contract(
-    netConfig.contracts.IBITI_NFT_ADDRESS,
-    ibitiNftAbi,
-    signer
-  );
+  // Инициализируем контракт NFT
+  nftContract = new ethers.Contract(IBITI_NFT_ADDRESS, ibitiNftAbi, signer);
 
+  // Делаем его доступным в window (если нужно)
   window.nftContract = nftContract;
-  window.getNFTBalance = getNFTBalance;
-  window.handleNFTPurchase = handleNFTPurchase;
 
+  // Сразу проверяем баланс NFT
   await getNFTBalance();
 }
 
-// Проверка баланса
+// -----------------------------
+// 2) Проверка баланса NFT
+// -----------------------------
 async function getNFTBalance() {
   try {
-    const address = await signer.getAddress();
+    const address = selectedAccount;
+    if (!address) return;
+
     const balance = await nftContract.balanceOf(address);
     console.log(`NFT-баланс (${address}): ${balance.toString()}`);
+    // Здесь можно обновить любой DOM-элемент с балансом, если он есть:
+    // document.getElementById("nftBalance").innerText = balance.toString();
   } catch (error) {
     console.error("Ошибка получения баланса NFT:", error);
   }
 }
 
-// Обработка покупки NFT
+// -----------------------------
+// 3) Обработка покупки NFT
+// -----------------------------
 async function handleNFTPurchase(discount, uri) {
   if (!window.ethereum) {
     Swal.fire({
@@ -62,9 +73,11 @@ async function handleNFTPurchase(discount, uri) {
   });
 
   try {
+    // Убедимся, что saleManager инициализирован в window
     const saleManager = window.saleManager;
     if (!saleManager) throw new Error("Контракт saleManager не инициализирован");
 
+    // Предполагаем, что метод называется buyNFTWithIBITI(discount, uri)
     const tx = await saleManager.buyNFTWithIBITI(discount, uri);
     await tx.wait();
 
@@ -75,6 +88,11 @@ async function handleNFTPurchase(discount, uri) {
       timer: 5000,
       showConfirmButton: false
     });
+
+    // Обновляем баланс NFT после покупки
+    await getNFTBalance();
+    // При желании можно обновить баланс токена:
+    await showIbitiBalance(true);
   } catch (error) {
     Swal.fire({
       icon: 'error',
@@ -85,5 +103,14 @@ async function handleNFTPurchase(discount, uri) {
   }
 }
 
-// Инициализация при загрузке
+// -----------------------------
+// 4) Обработчики при загрузке
+// -----------------------------
 document.addEventListener("DOMContentLoaded", initNFT);
+
+// Экспорт, если нужно обращаться из других модулей
+export {
+  initNFT,
+  getNFTBalance,
+  handleNFTPurchase
+};
