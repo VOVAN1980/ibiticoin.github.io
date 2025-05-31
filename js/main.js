@@ -1,9 +1,11 @@
 import { signer, connectWallet } from "./wallet.js";
 import { ibitiTokenAbi } from "./abis/ibitiTokenAbi.js";
+import { IBITI_TOKEN_ADDRESS } from "./config.js"; // если у тебя адресы вынесены туда
 
-const IBITI_TOKEN_ADDRESS = "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196";
+import { Contract, parseEther } from "ethers";
 
-const ibitiContract = new ethers.Contract(IBITI_TOKEN_ADDRESS, ibitiTokenAbi, signer);
+// Контракт токена
+const ibitiContract = new Contract(IBITI_TOKEN_ADDRESS, ibitiTokenAbi, signer);
 
 // Получение общего предложения
 async function checkTotalSupply() {
@@ -25,7 +27,7 @@ async function buyTokens() {
       return;
     }
 
-    const value = ethers.utils.parseEther(amountBNB);
+    const value = parseEther(amountBNB); // ethers v6
     const tx = await ibitiContract.purchaseCoinBNB({ value });
     console.log("Транзакция отправлена:", tx.hash);
     await tx.wait();
@@ -37,7 +39,7 @@ async function buyTokens() {
 
 // Привязка к кнопке
 document.addEventListener("DOMContentLoaded", async () => {
-  await connectWallet(); // подключение кошелька
+  await connectWallet();
 
   const buyBtn = document.getElementById("buyBtn");
   if (buyBtn) {
