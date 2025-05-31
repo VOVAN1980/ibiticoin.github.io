@@ -12,11 +12,13 @@ const INFURA_ID = "1faccf0f1fdc4532ad7a1a38a67ee906";
 const IBITI_TOKEN_ADDRESS      = "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196";
 const NFTSALEMANAGER_ADDRESS   = "0x5572F3AE84319Fbd6e285a0CB854f92Afd31dd6D";
 const NFT_DISCOUNT_ADDRESS     = "0x26C4E3D3E40943D2d569e832A243e329E14ecb02";
+const PHASED_TOKENSALE_ADDRESS = "0x3092cFDfF6890F33b3227c3d2740F84772A465c7";
 
 // ABI
 import { ibitiTokenAbi }      from "./abis/ibitiTokenAbi.js";
 import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
+import { phasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 
 // -----------------------------
 // 2) Web3Modal настройка
@@ -115,6 +117,11 @@ async function initContracts(web3Provider) {
     NFT_DISCOUNT_ADDRESS,
     nftDiscountAbi,
     signer
+  );
+  window.phasedSale = new ethers.Contract(
+  PHASED_TOKENSALE_ADDRESS,
+  phasedTokenSaleAbi,
+  signer
   );
 
   console.log("✅ Контракты инициализированы");
