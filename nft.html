@@ -4,14 +4,16 @@
   <meta charset="UTF-8">
   <title>NFT Галерея IBITIcoin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Общие стили -->
   <link rel="stylesheet" href="css/style.css">
 
   <style>
     /* Базовые стили */
     body {
-      margin: 0; 
+      margin: 0;
       padding: 0;
-      background: #000; 
+      background: #000;
       font-family: sans-serif;
       color: #fff;
     }
@@ -27,103 +29,103 @@
     .corner-left { top: 20px; left: 20px; }
     .corner-right { top: 20px; right: 20px; }
     .corner-box a {
-      color: gold; 
-      text-decoration: none; 
-      font-weight: bold; 
+      color: gold;
+      text-decoration: none;
+      font-weight: bold;
       margin: 0 5px;
     }
     .corner-box a:hover {
       text-decoration: underline;
     }
     header {
-      text-align: center; 
+      text-align: center;
       padding: 20px;
     }
     header h1 {
-      font-size: 2em; 
-      color: gold; 
+      font-size: 2em;
+      color: gold;
       margin: 0;
     }
     header p {
-      font-size: 1.1em; 
+      font-size: 1.1em;
       margin: 10px auto 0 auto;
-      max-width: 900px; 
+      max-width: 900px;
       line-height: 1.4;
       color: #ccc;
     }
     .wallet-section {
-      text-align: center; 
+      text-align: center;
       margin: 20px auto;
     }
     .wallet-section button {
-      background: gold; 
-      color: #000; 
+      background: gold;
+      color: #000;
       border: none;
-      padding: 10px 20px; 
-      border-radius: 5px; 
+      padding: 10px 20px;
+      border-radius: 5px;
       font-weight: bold;
-      cursor: pointer; 
+      cursor: pointer;
       transition: background 0.3s;
     }
     .wallet-section button:hover {
       background: #c0a000;
     }
     #walletAddress {
-      margin-top: 10px; 
-      font-weight: bold; 
+      margin-top: 10px;
+      font-weight: bold;
       color: gold;
     }
     /* Галерея */
     .nft-gallery {
-      display: grid; 
+      display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px; 
-      padding: 40px; 
-      max-width: 1200px; 
+      gap: 20px;
+      padding: 40px;
+      max-width: 1200px;
       margin: 0 auto;
     }
     .nft-item {
-      position: relative; 
-      overflow: hidden; 
+      position: relative;
+      overflow: hidden;
       text-align: center;
-      border: 1px solid gold; 
+      border: 1px solid gold;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-      transition: transform 0.3s; 
+      transition: transform 0.3s;
       background: #111;
     }
     .nft-item:hover {
       transform: scale(1.02);
     }
     .nft-item img {
-      width: 100%; 
-      display: block; 
+      width: 100%;
+      display: block;
       border-bottom: 1px solid gold;
       cursor: pointer;
     }
     .rarity-label {
-      position: absolute; 
-      bottom: 0; 
-      left: 0; 
+      position: absolute;
+      bottom: 0;
+      left: 0;
       right: 0;
-      background: rgba(0, 0, 0, 0.7); 
+      background: rgba(0, 0, 0, 0.7);
       color: gold;
-      font-size: 1.2em; 
-      font-weight: bold; 
+      font-size: 1.2em;
+      font-weight: bold;
       padding: 10px;
     }
     .buy-button {
-      position: absolute; 
-      top: 10px; 
+      position: absolute;
+      top: 10px;
       left: 50%;
       transform: translateX(-50%);
-      background: gold; 
+      background: gold;
       color: #000;
-      padding: 10px 20px; 
-      border-radius: 5px; 
+      padding: 10px 20px;
+      border-radius: 5px;
       font-weight: bold;
-      text-decoration: none; 
-      cursor: pointer; 
+      text-decoration: none;
+      cursor: pointer;
       transition: background 0.3s;
     }
     .buy-button:hover {
@@ -131,78 +133,86 @@
     }
     /* Модальное окно */
     .modal {
-      display: none; 
-      position: fixed; 
-      z-index: 9999; 
-      left: 0; 
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
       top: 0;
-      width: 100%; 
-      height: 100%; 
+      width: 100%;
+      height: 100%;
       background: rgba(0,0,0,0.7);
     }
     .modal-content {
-      background: #111; 
-      color: gold; 
+      background: #111;
+      color: gold;
       border: 2px solid gold;
-      border-radius: 10px; 
-      width: 90%; 
+      border-radius: 10px;
+      width: 90%;
       max-width: 500px;
-      margin: 10% auto; 
-      padding: 20px; 
+      margin: 10% auto;
+      padding: 20px;
       position: relative;
       text-align: center;
     }
     .modal-content .close {
-      position: absolute; 
-      top: 10px; 
+      position: absolute;
+      top: 10px;
       right: 15px;
-      font-size: 1.5em; 
-      font-weight: bold; 
+      font-size: 1.5em;
+      font-weight: bold;
       cursor: pointer;
     }
     .modal-content button {
-      background: gold; 
-      color: #000; 
+      background: gold;
+      color: #000;
       border: none;
-      padding: 10px 20px; 
-      border-radius: 5px; 
+      padding: 10px 20px;
+      border-radius: 5px;
       font-weight: bold;
-      margin: 5px; 
-      cursor: pointer; 
+      margin: 5px;
+      cursor: pointer;
       transition: background 0.3s;
     }
     .modal-content button:hover {
       background: #c0a000;
     }
     #mintStatus {
-      margin-top: 15px; 
-      min-height: 20px; 
+      margin-top: 15px;
+      min-height: 20px;
       color: #ffecb3;
     }
     /* Футер */
     footer {
-      text-align: center; 
-      padding: 20px; 
-      background: #111; 
+      text-align: center;
+      padding: 20px;
+      background: #111;
       color: gold;
       border-top: 1px solid gold;
     }
-    footer a { 
-      color: gold; 
-      text-decoration: none; 
+    footer a {
+      color: gold;
+      text-decoration: none;
     }
-    footer a:hover { 
-      text-decoration: underline; 
+    footer a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
 
+  <!-- Уголковые кнопки -->
+  <div class="corner-box corner-left">
+    <a href="index.html">Главная</a>
+  </div>
+  <div class="corner-box corner-right">
+    <a href="shop.html">Магазин</a>
+  </div>
+
   <header>
     <h1>NFT Галерея IBITIcoin</h1>
     <p>
-      Нажмите на любую NFT (или «Купить»), чтобы открыть окно выбора валюты (IBITI / USDT).
-      Проверьте, что ваш кошелёк подключён, иначе покупка не сработает.
+      Нажмите на любую NFT или кнопку «Купить», чтобы открыть окно выбора валюты (IBITI / USDT).
+      Убедитесь, что ваш кошелек подключен, иначе покупка не сработает.
     </p>
   </header>
 
@@ -220,7 +230,6 @@
       <div class="rarity-label">Creation 1%</div>
       <a href="#" class="buy-button" onclick="openMintModal(1, 'Creation 1%')">Купить</a>
     </div>
-    <!-- Добавьте остальные карточки аналогичным образом -->
     <div class="nft-item">
       <img src="img/Awakening_2.webp" alt="Awakening 3%" onclick="openMintModal(3, 'Awakening 3%')" />
       <div class="rarity-label">Awakening 3%</div>
@@ -279,17 +288,18 @@
       <span class="close" onclick="closeMintModal()">&times;</span>
       <h2 id="nftTitle">Покупка NFT</h2>
       <p>Скидка: <span id="discountPercent">...</span>%</p>
-      <p>Цена: <span id="priceIBITI">...</span> IBITI / <span id="priceUSDT">...</span> USDT</p>
+      <p>Цена: <span id="priceIBITI">...</span> IBITI&nbsp;/&nbsp;<span id="priceUSDT">...</span> USDT</p>
       <button onclick="buyWithIBITI()">Купить за IBITI</button>
       <button onclick="buyWithUSDT()">Купить за USDT</button>
       <p id="mintStatus"></p>
     </div>
   </div>
 
-   <div class="nft-footer-buttons">
-  <a href="index.html" class="btn-small">Главная</a>
-  <a href="shop.html" class="btn-small">Магазин</a>
-</div>
+  <!-- Нижние кнопки навигации -->
+  <div class="nft-footer-buttons" style="text-align:center; margin: 20px;">
+    <a href="index.html" class="btn-small">Главная</a>
+    <a href="shop.html" class="btn-small">Магазин</a>
+  </div>
 
   <!-- Футер -->
   <footer>
@@ -307,17 +317,23 @@
     <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
   </footer>
 
-  <!-- Библиотеки Ethers и Web3Modal -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <!-- Web3Modal + WalletConnect -->
   <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
   <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
 
-  <!-- Модули проекта -->
+  <!-- AOS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script>
+    AOS.init({ once: true });
+  </script>
+
+  <!-- Модули проекта (ethers v6 загружен ранее в window.ethers) -->
+  <script type="module" src="js/config.js"></script>
   <script type="module" src="js/wallet.js"></script>
   <script type="module" src="js/nft.js"></script>
   <script type="module" src="js/shop.js"></script>
 
-  <!-- Глобальные функции для работы с модальным окном NFT -->
+  <!-- Глобальные функции для модального окна NFT -->
   <script>
     let selectedDiscount = 0;
     let nftUriPrefix = "ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/";
@@ -328,16 +344,22 @@
       document.getElementById('discountPercent').innerText = discount;
 
       // Проверка подключения кошелька
-      const addr = document.getElementById('walletAddress').innerText;
-      if (!addr || addr.toLowerCase().includes('disconnected')) {
-        alert('Кошелёк не подключён!\nСначала подключите кошелёк, затем покупайте NFT.');
+      const addrText = document.getElementById('walletAddress').innerText || "";
+      if (!addrText || addrText.toLowerCase().includes('disconnected')) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Кошелек не подключен',
+          text: 'Сначала подключите кошелек, затем покупайте NFT.',
+        });
         return;
       }
 
       document.getElementById('mintStatus').innerText = '';
+      // Запросим цены из saleManager (window.saleManager устанавливается в wallet.js)
       window.saleManager.getCurrentIBITIPrice(discount)
         .then(ibitiPrice => {
-          document.getElementById('priceIBITI').innerText = (ibitiPrice / 1e8).toFixed(4);
+          // ethers v6: результат BigInt; делим на 1e8 и форматируем
+          document.getElementById('priceIBITI').innerText = (Number(ibitiPrice) / 1e8).toFixed(4);
         })
         .catch(err => {
           console.warn('Ошибка getCurrentIBITIPrice:', err);
@@ -345,12 +367,13 @@
         });
       window.saleManager.getCurrentUSDTPrice(discount)
         .then(usdtPrice => {
-          document.getElementById('priceUSDT').innerText = (usdtPrice / 1e8).toFixed(4);
+          document.getElementById('priceUSDT').innerText = (Number(usdtPrice) / 1e8).toFixed(4);
         })
         .catch(err => {
           console.warn('Ошибка getCurrentUSDTPrice:', err);
           document.getElementById('priceUSDT').innerText = '???';
         });
+
       document.getElementById('mintModal').style.display = 'block';
     };
 
