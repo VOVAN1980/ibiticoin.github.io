@@ -1,11 +1,8 @@
 // js/shop.js
-import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
-import config      from "./config.js";
+import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
+import config       from "./config.js";
 import { buyIBITI } from "./sale.js";
-
-// Провайдер и signer
-const provider = new ethers.providers.Web3Provider(window.ethereum);
-const signer   = provider.getSigner();
+import { showIbitiBalance } from "./wallet.js";
 
 // Покупка токенов
 async function handlePurchase(amount, productName) {
@@ -13,7 +10,7 @@ async function handlePurchase(amount, productName) {
     Swal.fire({
       icon: 'warning',
       title: 'MetaMask не найден',
-      text: 'Установите MetaMask для выполнения покупки.',
+      text: 'Установите MetaMask для выполнения покупки.'
     });
     return;
   }
@@ -26,15 +23,16 @@ async function handlePurchase(amount, productName) {
   });
 
   try {
-    const decimals         = 8;
-    const amountFormatted  = ethers.utils.parseUnits(amount.toString(), decimals);
-    const paymentMethod    = document.getElementById("paymentToken")?.value;
+    const decimals        = 8;
+    // parseUnits в ethers@6:
+    const amountFormatted = ethers.parseUnits(amount.toString(), decimals);
+    const paymentMethod   = document.getElementById("paymentToken")?.value;
     let tx;
 
     if (productName === "IBITIcoin") {
       if (paymentMethod === "USDT") {
-        // берём сохранённого реферера или 0x0
-        const referrer = localStorage.getItem("referrer") || ethers.constants.AddressZero;
+        // берём сохранённого реферера или взаимозаменяем на нулевой адрес
+        const referrer = localStorage.getItem("referrer") || ethers.ZeroAddress;
         tx = await buyIBITI(amountFormatted, referrer);
       } else {
         throw new Error("Оплата через BNB временно отключена.");
@@ -46,9 +44,7 @@ async function handlePurchase(amount, productName) {
     await tx.wait();
 
     // 🔁 Обновляем баланс
-    if (window.showIbitiBalance) {
-      await window.showIbitiBalance(true);
-    }
+    await showIbitiBalance(true);
 
     Swal.fire({
       icon: 'success',
@@ -67,6 +63,7 @@ async function handlePurchase(amount, productName) {
   }
 }
 
+// Экспортируем на window, чтобы кнопки могли вызвать
 window.handlePurchase = handlePurchase;
 
 // ----------------------
