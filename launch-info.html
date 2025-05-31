@@ -4,8 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Старт продаж IBITIcoin</title>
+
+  <!-- Общий CSS -->
   <link rel="stylesheet" href="css/style.css">
+  <!-- AOS для анимаций -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
   <style>
     @media (max-width: 768px) {
       .hero-header h1 { font-size: 1.8rem; }
@@ -17,9 +21,38 @@
       position: relative;
       z-index: 1;
     }
+    /* Секция подключения кошелька */
+    .wallet-section {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .wallet-section button {
+      background: gold;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .wallet-section button:hover {
+      background: #c0a000;
+    }
+    #walletAddress {
+      margin-top: 10px;
+      font-weight: bold;
+      color: gold;
+    }
   </style>
 </head>
 <body>
+  <!-- Секция подключения кошелька -->
+  <section class="wallet-section">
+    <button id="connectWalletBtn">Подключить кошелек</button>
+    <div id="walletAddress">Disconnected</div>
+  </section>
+
   <header class="hero-header">
     <h1>Старт продаж IBITIcoin</h1>
     <p>Все подробности запуска: фазы, бонусы, NFT и привилегии</p>
@@ -70,19 +103,51 @@
 
   <!-- КНОПКА "ВЕРНУТЬСЯ НА ГЛАВНУЮ" -->
   <div style="text-align: center; margin: 20px 0;">
-  <a href="index.html" class="btn-small launch-return-btn">← Вернуться на главную</a>
-</div>
+    <a href="index.html" class="btn-small launch-return-btn">← Вернуться на главную</a>
+  </div>
 
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p>
-      <a href="privacy.html">Политика конфиденциальности</a> |
+      <a href="privacy.html">Политика конфиденциальности</a> | 
       <a href="terms.html">Пользовательское соглашение</a>
     </p>
     <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
   </footer>
 
+  <!-- AOS JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-  <script>AOS.init({ once: true });</script>
+  <script>
+    AOS.init({ once: true });
+  </script>
+
+  <!-- Web3Modal + WalletConnect -->
+  <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
+  <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
+
+  <!-- ethers.js v6 (UMD) -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.10.0/dist/ethers.umd.min.js"></script>
+
+  <!-- Конфигурация Mainnet (адреса контрактов и токенов) -->
+  <script type="module" src="js/config.js"></script>
+  <!-- Wallet.js: логика подключения кошелька и выставления window.saleManager -->
+  <script type="module" src="js/wallet.js"></script>
+  <!-- Sale.js: логика покупки токенов в разных фазах -->
+  <script type="module" src="js/sale.js"></script>
+
+  <script>
+    // Убедимся, что кнопка "Подключить кошелек" работает и сохраняет адрес
+    document.addEventListener("DOMContentLoaded", () => {
+      const connectBtn = document.getElementById("connectWalletBtn");
+      if (connectBtn) {
+        connectBtn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          if (typeof connectWallet === "function") {
+            await connectWallet(); // функция из wallet.js
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>
