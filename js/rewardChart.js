@@ -1,4 +1,3 @@
-
 let rewardHistory = [];
 let rewardChart;
 
@@ -7,7 +6,6 @@ function initRewardChart() {
   rewardChart = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: [],
       datasets: [{
         label: 'Награды IBITI',
         borderColor: 'gold',
@@ -15,12 +13,18 @@ function initRewardChart() {
         data: [],
         fill: true,
         tension: 0.3,
-        pointRadius: 3
+        pointRadius: 2
       }]
     },
     options: {
+      parsing: false, // работаем с объектами {x, y}
       plugins: {
-        legend: { display: true, labels: { color: 'gold' } }
+        legend: { display: true, labels: { color: 'gold' } },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => `+${ctx.raw.y.toFixed(2)} IBITI`
+          }
+        }
       },
       scales: {
         x: { ticks: { color: 'gold' } },
@@ -31,11 +35,13 @@ function initRewardChart() {
 }
 
 function updateRewardChart(newReward) {
-  const timestamp = new Date().toLocaleTimeString();
+  if (!rewardChart) return;
+
+  const timestamp = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   rewardHistory.push({ x: timestamp, y: parseFloat(newReward) });
 
-  if (rewardHistory.length > 20) rewardHistory.shift(); // ограничим до 20 точек
-  rewardChart.data.labels = rewardHistory.map(p => p.x);
-  rewardChart.data.datasets[0].data = rewardHistory.map(p => p.y);
+  if (rewardHistory.length > 20) rewardHistory.shift();
+
+  rewardChart.data.datasets[0].data = rewardHistory;
   rewardChart.update();
 }
