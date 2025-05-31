@@ -1,24 +1,9 @@
-// js/main.js
-
-import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.esm.min.js";
-import config from "./config.js";
+import { signer, connectWallet } from "./wallet.js";
 import { ibitiTokenAbi } from "./abis/ibitiTokenAbi.js";
 
-// Провайдер и signer
-const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-const signer = provider.getSigner();
+const IBITI_TOKEN_ADDRESS = "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196";
 
-// Контракт токена
-const ibitiContract = new ethers.Contract(
-  config.testnet.contracts.IBITI_TOKEN_ADDRESS,
-  ibitiTokenAbi,
-  signer
-);
-
-// Лог сетевого подключения
-provider.getNetwork().then(network => {
-  console.log("Подключены к сети:", network.name);
-});
+const ibitiContract = new ethers.Contract(IBITI_TOKEN_ADDRESS, ibitiTokenAbi, signer);
 
 // Получение общего предложения
 async function checkTotalSupply() {
@@ -40,7 +25,7 @@ async function buyTokens() {
       return;
     }
 
-    const value = ethers.parseEther(amountBNB);
+    const value = ethers.utils.parseEther(amountBNB);
     const tx = await ibitiContract.purchaseCoinBNB({ value });
     console.log("Транзакция отправлена:", tx.hash);
     await tx.wait();
@@ -51,15 +36,15 @@ async function buyTokens() {
 }
 
 // Привязка к кнопке
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await connectWallet(); // подключение кошелька
+
   const buyBtn = document.getElementById("buyBtn");
   if (buyBtn) {
     buyBtn.addEventListener("click", (e) => {
       e.preventDefault();
       buyTokens();
     });
-  } else {
-    console.warn("Кнопка #buyBtn не найдена.");
   }
 
   checkTotalSupply();
