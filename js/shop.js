@@ -87,19 +87,20 @@ async function handlePurchase(amount, productName) {
       showConfirmButton: false
     });
     } catch (error) {
-    console.error("Ошибка при покупке:", error);
+  console.error("Ошибка при покупке:", error);
 
-    let reason = error?.revert?.args?.[0] || error?.shortMessage || error?.message || "Неизвестная ошибка";
+  let rawReason = error?.revert?.args?.[0] || error?.shortMessage || error?.message || "Неизвестная ошибка";
+  let reason = rawReason === "not started"
+    ? "Продажа начнётся: 1 июля в 9:00 UTC"
+    : rawReason;
 
-    Swal.fire({
-      icon: 'error',
-      title: 'Ошибка',
-      text: reason,
-      confirmButtonText: 'Ок'
-    });
-  } // ✅ ← закрытие try/catch блока
-
-} // ✅ ← закрытие async function handlePurchase
+  Swal.fire({
+    icon: 'error',
+    title: 'Ошибка',
+    text: reason,
+    confirmButtonText: 'Ок'
+  });
+}
 
 window.handlePurchase = handlePurchase;
 
