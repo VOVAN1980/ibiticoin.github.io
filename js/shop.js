@@ -4,7 +4,7 @@ import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 import config       from "./config.js";
 import { buyIBITI } from "./sale.js";
 import { connectWallet, selectedAccount, showIbitiBalance } from "./wallet.js";
-import Swal from "sweetalert2";
+import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
 
 console.log("✅ shop.js загружен");
 
