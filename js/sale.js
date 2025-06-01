@@ -8,16 +8,22 @@ import { selectedAccount } from "./wallet.js";
 export let saleContract = null;
 
 async function initSaleContract() {
-  if (!window.phasedSale || !selectedAccount) {
-    return;
-  }
+  if (!window.phasedSale || !selectedAccount) return;
   if (saleContract) return;
 
-  const signer = window.phasedSale.signer;
+  // В ethers.js v6 контракт внутри window.phasedSale создаётся с runner,
+  // но это не полноценный signer — нужно достать его вручную
+  const signer = await window.phasedSale.runner;
+
+  if (!signer?.provider?.sendTransaction) {
+    console.error("❌ Runner не поддерживает отправку транзакций");
+    throw new Error("Signer не поддерживает отправку транзакций");
+  }
+
   saleContract = new ethers.Contract(
     config.mainnet.contracts.PHASED_TOKENSALE_ADDRESS_MAINNET,
-    PhasedTokenSaleAbi, // ✅ исправлено
-    signer
+    PhasedTokenSaleAbi,
+    signer // 👈 теперь это полноценный Signer (runner)
   );
 
   console.log("✅ sale.js: PhasedTokenSale инициализирован", saleContract.address);
