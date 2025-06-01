@@ -91,7 +91,7 @@ async function handlePurchase(amount, productName) {
 
   let rawReason = error?.revert?.args?.[0] || error?.shortMessage || error?.message || "Неизвестная ошибка";
   let reason = rawReason === "not started"
-    ? "Продажа начнётся: 1 июля в 9:00 UTC"
+    ? "📅 Продажа начнётся: 1 июля в 9:00 UTC"
     : rawReason;
 
   Swal.fire({
@@ -100,7 +100,7 @@ async function handlePurchase(amount, productName) {
     text: reason,
     confirmButtonText: 'Ок'
   });
-}
+} // <-- вот эта скобка закрывает try/catch
 
 window.handlePurchase = handlePurchase;
 
