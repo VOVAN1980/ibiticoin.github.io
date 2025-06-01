@@ -1,15 +1,12 @@
 // js/wallet.js
 console.log("✅ wallet.js загружен");
 
-// -----------------------------
 // 1) Глобальные переменные
-// -----------------------------
-let provider = null;      // внешняя обёртка от Web3Modal
+let provider = null;      
 let signer = null;
 let selectedAccount = null;
 
 const INFURA_ID = "1faccf0f1fdc4532ad7a1a38a67ee906";
-
 const IBITI_TOKEN_ADDRESS      = "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196";
 const NFTSALEMANAGER_ADDRESS   = "0x5572F3AE84319Fbd6e285a0CB854f92Afd31dd6D";
 const NFT_DISCOUNT_ADDRESS     = "0x26C4E3D3E40943D2d569e832A243e329E14ecb02";
@@ -23,9 +20,7 @@ import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 
-// -----------------------------
 // 2) Web3Modal настройка
-// -----------------------------
 const WalletConnectProviderConstructor =
   window.WalletConnectProvider?.default || window.WalletConnectProvider;
 
@@ -41,46 +36,15 @@ const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
   providerOptions
 });
 
-// -----------------------------
 // 3) Подключение кошелька с переключением на Mainnet
-// -----------------------------
 async function connectWallet() {
   try {
-    if (window.ethereum) {
-      try {
-        // переключаем MetaMask на BSC
-        await window.ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0x38" }]
-        });
-      } catch (switchError) {
-        if (switchError.code === 4902) {
-          // если у MetaMask нет BSC, добавляем сеть
-          await window.ethereum.request({
-            method: "wallet_addEthereumChain",
-            params: [{
-              chainId: "0x38",
-              chainName: "Binance Smart Chain",
-              nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
-              rpcUrls: ["https://bsc-dataseed.binance.org/"],
-              blockExplorerUrls: ["https://bscscan.com"]
-            }]
-          });
-        } else {
-          console.error("Ошибка переключения сети:", switchError);
-          return;
-        }
-      }
-    }
-
+    // … проверка window.ethereum и переключение на BSC …
     console.log("🔌 Подключение кошелька...");
-    // открываем Web3Modal — он даст нам «rawProvider»
-    const rawProvider = await web3Modal.connect();
-
-    // оборачиваем в BrowserProvider (ethers v6)
+    const rawProvider = await web3Modal.connect();      // <-- именно здесь открывается Web3Modal
     const web3Provider = new ethers.BrowserProvider(rawProvider);
     signer = await web3Provider.getSigner();
-    provider = web3Provider; // browserProvider
+    provider = web3Provider;
 
     const accounts = await signer.getAddress().then(addr => [addr]);
     if (!accounts.length) return console.warn("❌ Нет аккаунтов");
@@ -89,7 +53,6 @@ async function connectWallet() {
     const walletDisplay = document.getElementById("walletAddress");
     if (walletDisplay) walletDisplay.innerText = selectedAccount;
 
-    // следим за сменой аккаунтов
     rawProvider.on("accountsChanged", async (accs) => {
       if (!accs.length) return disconnectWallet();
       selectedAccount = accs[0];
@@ -109,32 +72,24 @@ async function connectWallet() {
   }
 }
 
-// -----------------------------
 // 4) Инициализация контрактов
-// -----------------------------
 async function initContracts() {
-  // signer уже инициализирован в connectWallet()
   window.ibitiToken   = new ethers.Contract(IBITI_TOKEN_ADDRESS,      ibitiTokenAbi,      signer);
   window.saleManager  = new ethers.Contract(NFTSALEMANAGER_ADDRESS,   nftSaleManagerAbi,  signer);
   window.nftDiscount  = new ethers.Contract(NFT_DISCOUNT_ADDRESS,     nftDiscountAbi,     signer);
-  window.phasedSale   = new ethers.Contract(PHASED_TOKENSALE_ADDRESS, phasedTokenSaleAbi, signer);
-
+  window.phasedSale   = new ethers.Contract(PHASED_TOKENSALE_ADDRESS, PhasedTokenSaleAbi, signer);
   console.log("✅ Контракты инициализированы");
 }
 
-// -----------------------------
 // 5) Показ баланса IBITI с анимацией
-// -----------------------------
 async function showIbitiBalance(highlight = false) {
   if (!window.ibitiToken || !selectedAccount) return;
-
   try {
     const balance = await window.ibitiToken.balanceOf(selectedAccount);
     const formatted = ethers.formatUnits(balance, 8);
     const el = document.getElementById("ibitiBalance");
     if (el) {
       el.innerText = `Ваш баланс IBITI: ${formatted}`;
-
       if (highlight) {
         el.style.transition = "background 0.3s ease";
         el.style.background = "rgba(255, 215, 0, 0.2)";
@@ -146,9 +101,7 @@ async function showIbitiBalance(highlight = false) {
   }
 }
 
-// -----------------------------
 // 6) Отключение кошелька
-// -----------------------------
 async function disconnectWallet() {
   if (provider?.provider?.disconnect) {
     await provider.provider.disconnect();
@@ -159,29 +112,24 @@ async function disconnectWallet() {
 
   const walletDisplay = document.getElementById("walletAddress");
   if (walletDisplay) walletDisplay.innerText = "Wallet disconnected";
-
   const el = document.getElementById("ibitiBalance");
   if (el) el.innerText = "";
 
   console.log("🔌 Кошелек отключен");
 }
 
-// -----------------------------
 // 7) Обработчик кнопки подключения
-// -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
   if (connectBtn) {
     connectBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      connectWallet();
+      connectWallet();   // <-- Web3Modal запускается только здесь
     });
   }
 });
 
-// -----------------------------
 // 8) Экспорт
-// -----------------------------
 export {
   connectWallet,
   disconnectWallet,
