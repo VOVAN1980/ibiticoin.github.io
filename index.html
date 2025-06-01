@@ -29,7 +29,7 @@
   <!-- Подключаем AOS для анимаций -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
 
-  <!-- i18next и jQuery (подключаются до инициализации i18next.init) -->
+  <!-- i18next и jQuery-библиотеки -->
   <script src="https://unpkg.com/i18next@21.10.1/i18next.min.js"></script>
   <script src="https://unpkg.com/i18next-http-backend@1.4.1/i18nextHttpBackend.min.js"></script>
   <script src="https://unpkg.com/i18next-browser-languagedetector@6.1.3/i18nextBrowserLanguageDetector.min.js"></script>
@@ -57,15 +57,17 @@
   </script>
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-  <!-- Web3Modal + WalletConnect (до wallet.js) -->
+  <!-- Web3Modal + WalletConnect -->
   <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
   <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
   
-  <!-- ethers.js v6 (UMD), создаёт window.ethers -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@6.10.0/dist/ethers.umd.min.js"></script>
-  
+  <!-- ethers.js v6, загружаем как ESM и сохраняем в window.ethers -->
+  <script type="module">
+    import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/dist/ethers.esm.min.js";
+    window.ethers = ethers;
+  </script>
+
   <style>
-    /* Пример базовых стилей для модального окна шаринга */
     .modal {
       display: none;
       position: fixed;
@@ -74,6 +76,7 @@
       top: 0;
       width: 100%;
       height: 100%;
+      overflow: auto;
       background-color: rgba(0,0,0,0.7);
     }
     .modal-content {
@@ -113,86 +116,37 @@
       font-weight: bold;
       cursor: pointer;
     }
-    /* Кнопки навигации */
-    .btn-small {
-      display: inline-block;
-      margin: 5px;
-      padding: 8px 12px;
-      background: gold;
-      color: #000;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-      transition: background 0.3s;
-    }
-    .btn-small:hover {
-      background: #c0a000;
-    }
-    /* Секция подключения кошелька */
-    .wallet-section {
-      text-align: center;
-      margin: 20px;
-    }
-    .wallet-section button {
-      background: gold;
-      color: #000;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .wallet-section button:hover {
-      background: #c0a000;
-    }
-    #walletAddress {
-      margin-top: 8px;
-      font-weight: bold;
-      color: gold;
-    }
   </style>
 </head>
 <body>
-  <!-- Секция подключения кошелька -->
-  <section class="wallet-section">
-    <button id="connectWalletBtn">Подключить кошелек</button>
-    <div id="walletAddress">Disconnected</div>
-  </section>
-
-  <!-- Верхние угловые кнопки -->
   <div class="corner-box corner-box-left">
-    <a href="/" class="btn-small">Главная</a>
+    <a href="/">Главная</a>
   </div>
   <div class="corner-box corner-box-left2">
-    <a href="blog.html" class="btn-small">Блог</a>
+    <a href="blog.html">Блог</a>
   </div>
   <div class="corner-box corner-box-right">
-    <a href="roadmap.html" class="btn-small">Roadmap</a>
+    <a href="roadmap.html">Roadmap</a>
   </div>
   <div class="corner-box corner-box-right-langs">
     <div id="google_translate_element"></div>
   </div>
   
-  <!-- Шапка сайта -->
-  <header class="hero-header" data-aos="fade-up">
+  <header class="hero-header">
     <img src="img/logo.png" alt="IBITIcoin Logo" width="200">
     <h1>IBITIcoin</h1>
     <p>Stability | Innovation | Accessibility</p>
   </header>
 
-  <!-- Пример главного контента -->
   <section class="gold-section" data-aos="fade-up">
     <h2>WHY CHOOSE IBITIcoin?</h2>
     <p>
-      IBITIcoin – это инновационная криптовалюта для быстрой, безопасной и доступной работе в цифровой экономике.
-      Используя передовые технологии блокчейн, мы гарантируем прозрачность каждой транзакции и устойчивость к централизации.
+      IBITIcoin – это инновационная криптовалюта для быстрой, безопасной и доступной работе в цифровой экономике...
     </p>
     <a class="btn" href="buy.html">Buy IBITIcoin</a>
   </section>
   
-  <!-- Дополнительные кнопки -->
-  <section class="extra-buttons-section" data-aos="fade-up">
+  <section class="extra-buttons-section">
     <a class="btn-small" href="calculator.html">Калькулятор</a>
     <a class="btn-small" href="video-guides.html">Видео-гайды</a>
     <a class="btn-small" href="news.html">Новости</a>
@@ -201,29 +155,26 @@
     <a class="btn-small" href="shop.html">Магазин</a>
     <a class="btn-small" href="book.html">Книга</a>
     <a class="btn-small" href="staking.html">Стейкинг</a>
-    <a class="btn-small" href="liquidity.html">Ликвидность</a>
     <a class="btn-small" id="openShareModal" href="#">Поделиться</a>
   </section>
   
-  <!-- Пример футера -->
-  <footer data-aos="fade-up">
+  <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p>
-      <a href="privacy.html" class="btn-small">Политика конфиденциальности</a> |
-      <a href="terms.html" class="btn-small">Пользовательское соглашение</a>
+      <a href="privacy.html">Политика конфиденциальности</a> |
+      <a href="terms.html">Пользовательское соглашение</a>
     </p>
     <p>
-      <a href="https://twitter.com/IBITIcoin" target="_blank" class="btn-small">Twitter</a> |
-      <a href="https://t.me/IBITIcoin_chat" target="_blank" class="btn-small">Telegram</a> |
-      <a href="https://instagram.com/IBITIcoin_official" target="_blank" class="btn-small">Instagram</a> |
-      <a href="https://facebook.com/IBITIcoin" target="_blank" class="btn-small">Facebook</a>
+      <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> |
+      <a href="https://t.me/IBITIcoin_chat" target="_blank">Telegram</a> |
+      <a href="https://instagram.com/IBITIcoin_official" target="_blank">Instagram</a> |
+      <a href="https://facebook.com/IBITIcoin" target="_blank">Facebook</a>
     </p>
-    <p><a href="mailto:info@ibiticoin.com" class="btn-small">info@ibiticoin.com</a></p>
+    <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
   </footer>
 
-  <!-- Модальное окно шаринга -->
   <div id="shareModal" class="modal">
-    <div class="modal-content" data-aos="fade-up">
+    <div class="modal-content">
       <span class="close" id="closeShareModal">&times;</span>
       <h3>Выберите соцсеть для шаринга</h3>
       <div class="share-options">
@@ -238,37 +189,23 @@
     </div>
   </div>
 
-  <!-- AOS JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-  <script> AOS.init({ once: true }); </script>
-
-  <!-- i18next -->
   <script>
-    i18next
-      .use(i18nextHttpBackend)
-      .use(i18nextBrowserLanguageDetector)
-      .init({
-        fallbackLng: 'ru',
-        debug: false,
-        backend: {
-          loadPath: 'locales/{{lng}}/translation.json'
-        }
-      }, function(err, t) {
-        jqueryI18next.init(i18next, $, { useOptionsAttr: true });
-        $('body').localize();
-      });
+    AOS.init({ once: true });
   </script>
-  
-  <!-- Собственные модули (работают с window.ethers) -->
-  <script type="module" src="js/config.js"></script>
-  <script type="module" src="js/wallet.js"></script>
-  <script type="module" src="js/nft.js"></script>
-  <script type="module" src="js/shop.js"></script>
-  <script type="module" src="js/sale.js"></script>
-  <script type="module" src="js/staking.js"></script>
-  <script type="module" src="js/liquidity.js"></script>
 
-  <!-- Скрипт «Поделиться» -->
+  <script>
+    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+    (function(){
+      var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+      s1.async = true;
+      s1.src = 'https://embed.tawk.to/67db03deb73265190d550119/1imnoe7rb';
+      s1.charset = 'UTF-8';
+      s1.setAttribute('crossorigin', '*');
+      s0.parentNode.insertBefore(s1, s0);
+    })();
+  </script>
+
   <script>
     const shareModal = document.getElementById('shareModal');
     const openBtn    = document.getElementById('openShareModal');
@@ -294,17 +231,28 @@
     });
   </script>
 
-  <!-- Обработчик кнопки «Подключить кошелек» -->
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const connectBtn = document.getElementById("connectWalletBtn");
-      if (connectBtn && typeof connectWallet === "function") {
-        connectBtn.addEventListener("click", async (e) => {
-          e.preventDefault();
-          await connectWallet(); // Функция из js/wallet.js
-        });
-      }
-    });
+    i18next
+      .use(i18nextHttpBackend)
+      .use(i18nextBrowserLanguageDetector)
+      .init({
+        fallbackLng: 'ru',
+        debug: false,
+        backend: {
+          loadPath: 'locales/{{lng}}/translation.json'
+        }
+      }, function(err, t) {
+        jqueryI18next.init(i18next, $, { useOptionsAttr: true });
+        $('body').localize();
+      });
   </script>
+  
+  <script type="module" src="js/config.js"></script>
+  <script type="module" src="js/wallet.js"></script>
+  <script type="module" src="js/nft.js"></script>
+  <script type="module" src="js/shop.js"></script>
+  <script type="module" src="js/sale.js"></script>
+  <script type="module" src="js/staking.js"></script>
+  <script type="module" src="js/liquidity.js"></script>
 </body>
 </html>
