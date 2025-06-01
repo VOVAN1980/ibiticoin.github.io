@@ -1,13 +1,28 @@
-// js/main.js
 import { signer, connectWallet } from "./wallet.js";
 import { ibitiTokenAbi }         from "./abis/ibitiTokenAbi.js";
 import { Contract, parseEther }   from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 
 const IBITI_TOKEN_ADDRESS = "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196";
-const ibitiContract = new Contract(IBITI_TOKEN_ADDRESS, ibitiTokenAbi, signer);
+let ibitiContract = null;
 
+// Вообще не вызываем connectWallet() автоматически,
+// а создаем инстанс контракта только после подключения.
+async function initContract() {
+  if (!signer) return;
+  ibitiContract = new Contract(
+    IBITI_TOKEN_ADDRESS,
+    ibitiTokenAbi,
+    signer
+  );
+}
+
+// Проверка totalSupply
 async function checkTotalSupply() {
   try {
+    if (!ibitiContract) {
+      console.warn("Контракт IBITI ещё не инициализирован");
+      return;
+    }
     const supply = await ibitiContract.totalSupply();
     console.log("Общее предложение токенов:", supply.toString());
   } catch (err) {
@@ -15,8 +30,17 @@ async function checkTotalSupply() {
   }
 }
 
+// Функция покупки
 async function buyTokens() {
   try {
+    if (!signer) {
+      alert("Сначала подключите кошелек!");
+      return;
+    }
+    if (!ibitiContract) {
+      await initContract();
+    }
+
     const amountInput = document.getElementById("buyAmount");
     const amountBNB = amountInput?.value;
     if (!amountBNB) {
@@ -34,9 +58,24 @@ async function buyTokens() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-  await connectWallet();
+document.addEventListener("DOMContentLoaded", () => {
+  // Удалили автоматический вызов connectWallet()
+  // await connectWallet();
 
+  // Навешиваем очередь на кнопку “Подключить кошелек” (если она есть в HTML)
+  const connectBtn = document.getElementById("connectWalletBtn");
+  if (connectBtn) {
+    connectBtn.addEventListener("click", async (e) => {
+      e.preventDefault();
+      await connectWallet();
+      // Инициализируем контракт сразу после подключения
+      await initContract();
+      // Теперь можно сразу показать totalSupply, если надо
+      checkTotalSupply();
+    });
+  }
+
+  // Навешиваем логику на кнопку “Купить”
   const buyBtn = document.getElementById("buyBtn");
   if (buyBtn) {
     buyBtn.addEventListener("click", (e) => {
@@ -46,6 +85,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   } else {
     console.warn("Кнопка #buyBtn не найдена.");
   }
-
-  checkTotalSupply();
 });
