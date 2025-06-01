@@ -17,7 +17,7 @@
       font-family: sans-serif;
       color: #fff;
     }
-    /* Уголковые кнопки */
+    /* Угловые кнопки */
     .corner-box {
       position: absolute;
       background: rgba(0, 0, 0, 0.7);
@@ -75,6 +75,7 @@
       font-weight: bold;
       color: gold;
     }
+
     /* Галерея */
     .nft-gallery {
       display: grid;
@@ -200,7 +201,7 @@
 </head>
 <body>
 
-  <!-- Уголковые кнопки -->
+  <!-- Угловые кнопки -->
   <div class="corner-box corner-left">
     <a href="index.html">Главная</a>
   </div>
@@ -224,7 +225,7 @@
 
   <!-- Галерея NFT -->
   <section class="nft-gallery">
-    <!-- Пример карточки NFT -->
+    <!-- Пример карточек NFT -->
     <div class="nft-item">
       <img src="img/Creation.webp" alt="Creation 1%" onclick="openMintModal(1, 'Creation 1%')" />
       <div class="rarity-label">Creation 1%</div>
@@ -327,7 +328,7 @@
     AOS.init({ once: true });
   </script>
 
-  <!-- Модули проекта (ethers v6 загружен ранее в window.ethers) -->
+  <!-- Наши модули -->
   <script type="module" src="js/config.js"></script>
   <script type="module" src="js/wallet.js"></script>
   <script type="module" src="js/nft.js"></script>
@@ -336,43 +337,37 @@
   <!-- Глобальные функции для модального окна NFT -->
   <script>
     let selectedDiscount = 0;
-    let nftUriPrefix = "ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/";
+    const nftUriPrefix = "ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/";
 
-    window.openMintModal = function(discount, title) {
+    window.openMintModal = async function(discount, title) {
       selectedDiscount = discount;
       document.getElementById('nftTitle').innerText = title;
       document.getElementById('discountPercent').innerText = discount;
 
-      // Проверка подключения кошелька
-      const addrText = document.getElementById('walletAddress').innerText || "";
-      if (!addrText || addrText.toLowerCase().includes('disconnected')) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Кошелек не подключен',
-          text: 'Сначала подключите кошелек, затем покупайте NFT.',
-        });
-        return;
+      // Если кошелёк не подключён — подключаем
+      if (!window.selectedAccount) {
+        try {
+          await window.connectWallet();
+        } catch (err) {
+          console.warn("Не удалось подключить кошелёк:", err);
+          return;
+        }
       }
 
+      // Запрашиваем цены из saleManager
       document.getElementById('mintStatus').innerText = '';
-      // Запросим цены из saleManager (window.saleManager устанавливается в wallet.js)
-      window.saleManager.getCurrentIBITIPrice(discount)
-        .then(ibitiPrice => {
-          // ethers v6: результат BigInt; делим на 1e8 и форматируем
-          document.getElementById('priceIBITI').innerText = (Number(ibitiPrice) / 1e8).toFixed(4);
-        })
-        .catch(err => {
-          console.warn('Ошибка getCurrentIBITIPrice:', err);
-          document.getElementById('priceIBITI').innerText = '???';
-        });
-      window.saleManager.getCurrentUSDTPrice(discount)
-        .then(usdtPrice => {
-          document.getElementById('priceUSDT').innerText = (Number(usdtPrice) / 1e8).toFixed(4);
-        })
-        .catch(err => {
-          console.warn('Ошибка getCurrentUSDTPrice:', err);
-          document.getElementById('priceUSDT').innerText = '???';
-        });
+      try {
+        const ibitiPrice = await window.saleManager.getCurrentIBITIPrice(discount);
+        document.getElementById('priceIBITI').innerText = (Number(ibitiPrice) / 1e8).toFixed(4);
+      } catch {
+        document.getElementById('priceIBITI').innerText = '???';
+      }
+      try {
+        const usdtPrice = await window.saleManager.getCurrentUSDTPrice(discount);
+        document.getElementById('priceUSDT').innerText = (Number(usdtPrice) / 1e8).toFixed(4);
+      } catch {
+        document.getElementById('priceUSDT').innerText = '???';
+      }
 
       document.getElementById('mintModal').style.display = 'block';
     };
