@@ -86,18 +86,20 @@ async function handlePurchase(amount, productName) {
       timer: 3000,
       showConfirmButton: false
     });
-  } catch (error) {
-  console.error("Ошибка при покупке:", error);
+    } catch (error) {
+    console.error("Ошибка при покупке:", error);
 
-  let reason = error?.revert?.args?.[0] || error?.shortMessage || error?.message || "Неизвестная ошибка";
+    let reason = error?.revert?.args?.[0] || error?.shortMessage || error?.message || "Неизвестная ошибка";
 
-  Swal.fire({
-    icon: 'error',
-    title: 'Ошибка',
-    text: reason,
-    confirmButtonText: 'Ок'
-  });
-}
+    Swal.fire({
+      icon: 'error',
+      title: 'Ошибка',
+      text: reason,
+      confirmButtonText: 'Ок'
+    });
+  } // ✅ ← закрытие try/catch блока
+
+} // ✅ ← закрытие async function handlePurchase
 
 window.handlePurchase = handlePurchase;
 
