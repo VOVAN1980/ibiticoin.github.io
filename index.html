@@ -157,6 +157,8 @@
     <p>Stability | Innovation | Accessibility</p>
   </header>
 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <!-- Пример главного контента -->
   <section class="gold-section" data-aos="fade-up">
     <h2>WHY CHOOSE IBITIcoin?</h2>
@@ -232,29 +234,77 @@
   </script>
 
   <!-- Инициализация модалки «Поделиться» -->
-  <script>
-    const shareModal = document.getElementById('shareModal');
-    const openBtn    = document.getElementById('openShareModal');
-    const closeBtn   = document.getElementById('closeShareModal');
-    const pageUrl    = encodeURIComponent(window.location.href);
-    const pageTitle  = encodeURIComponent(document.title);
+<script>
+  const shareModal = document.getElementById('shareModal');
+  const openBtn    = document.getElementById('openShareModal');
+  const closeBtn   = document.getElementById('closeShareModal');
+  const pageUrl    = encodeURIComponent(window.location.href);
+  const pageTitle  = encodeURIComponent(document.title);
 
-    document.getElementById('share-facebook').href  = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
-    document.getElementById('share-twitter').href   = `https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageTitle}`;
-    document.getElementById('share-vk').href        = `https://vk.com/share.php?url=${pageUrl}&title=${pageTitle}`;
-    document.getElementById('share-telegram').href = `https://telegram.me/share/url?url=${pageUrl}&text=${pageTitle}`;
-    document.getElementById('share-ok').href        = `https://connect.ok.ru/offer?url=${pageUrl}`;
-    document.getElementById('share-linkedin').href = `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`;
-    document.getElementById('share-weibo').href    = `http://service.weibo.com/share/share.php?url=${pageUrl}&title=${pageTitle}`;
+  document.getElementById('share-facebook').href  = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+  document.getElementById('share-twitter').href   = `https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageTitle}`;
+  document.getElementById('share-vk').href        = `https://vk.com/share.php?url=${pageUrl}&title=${pageTitle}`;
+  document.getElementById('share-telegram').href  = `https://telegram.me/share/url?url=${pageUrl}&text=${pageTitle}`;
+  document.getElementById('share-ok').href        = `https://connect.ok.ru/offer?url=${pageUrl}`;
+  document.getElementById('share-linkedin').href  = `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`;
+  document.getElementById('share-weibo').href     = `http://service.weibo.com/share/share.php?url=${pageUrl}&title=${pageTitle}`;
 
-    openBtn.addEventListener('click', ev => {
-      ev.preventDefault();
-      shareModal.style.display = 'block';
-    });
-    closeBtn.addEventListener('click', () => shareModal.style.display = 'none');
-    window.addEventListener('click', ev => {
-      if (ev.target === shareModal) shareModal.style.display = 'none';
-    });
-  </script>
+  openBtn.addEventListener('click', ev => {
+    ev.preventDefault();
+    shareModal.style.display = 'block';
+  });
+  closeBtn.addEventListener('click', () => shareModal.style.display = 'none');
+  window.addEventListener('click', ev => {
+    if (ev.target === shareModal) shareModal.style.display = 'none';
+  });
+</script> <!-- ⬅️ ВОТ ЭТОЙ СТРОКИ НЕ ХВАТАЛО -->
+
+<!-- Отсчёт до начала продаж -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const saleStart = new Date("2025-07-01T09:00:00Z");
+    const now = new Date();
+
+    if (now < saleStart) {
+      let timerInterval;
+
+      Swal.fire({
+        icon: 'info',
+        title: '🚀 Продажа IBITIcoin начнётся',
+        html: `
+          <b>1 июля в 9:00 UTC / 12:00 по Киеву</b><br><br>
+          <div id="swalCountdown" style="font-size:1.2em; font-weight:bold; color:#f8c400;">⏳ ...</div><br>
+          Подготовьте MetaMask заранее!
+        `,
+        confirmButtonText: 'Готово',
+        allowOutsideClick: true,
+        didOpen: () => {
+          const el = Swal.getHtmlContainer().querySelector('#swalCountdown');
+
+          function updateCountdown() {
+            const now = new Date();
+            const diff = saleStart - now;
+
+            if (diff <= 0) {
+              el.innerHTML = '🟢 Продажа уже началась!';
+              clearInterval(timerInterval);
+              return;
+            }
+
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const m = Math.floor((diff / (1000 * 60)) % 60);
+            const s = Math.floor((diff / 1000) % 60);
+
+            el.innerHTML = `Осталось: ${d}д ${h}ч ${m}м ${s}с`;
+          }
+
+          updateCountdown();
+          timerInterval = setInterval(updateCountdown, 1000);
+        }
+      });
+    }
+  });
+</script>
 </body>
 </html>
