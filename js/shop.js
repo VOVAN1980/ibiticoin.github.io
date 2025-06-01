@@ -1,10 +1,46 @@
 // js/shop.js
+
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 import config       from "./config.js";
 import { buyIBITI } from "./sale.js";
-import { showIbitiBalance } from "./wallet.js";
+import { connectWallet, selectedAccount, showIbitiBalance } from "./wallet.js";
+import Swal from "sweetalert2";
 
-// Покупка токенов
+console.log("✅ shop.js загружен");
+
+let currentProduct = null;
+
+// Открыть модальное окно покупки или перенаправить в NFT-галерею
+window.openPurchaseModal = async function(productName) {
+  currentProduct = productName;
+
+  // Если кошелёк не подключён — подключаем
+  if (!selectedAccount) {
+    try {
+      await connectWallet();
+    } catch (err) {
+      console.warn("Пользователь отказался или возникла ошибка при подключении кошелька:", err);
+      return;
+    }
+  }
+
+  // Если это товар NFT, перенаправляем на nft.html
+  if (productName === "NFT") {
+    window.location.href = "nft.html";
+    return;
+  }
+
+  // Иначе (IBITIcoin) показываем модалку
+  document.getElementById("purchaseTitle").innerText = "Покупка " + productName;
+  document.getElementById("purchaseModal").style.display = "block";
+};
+
+window.closePurchaseModal = function() {
+  document.getElementById("purchaseModal").style.display = "none";
+  document.getElementById("nftAmount").value = "";
+};
+
+// Обработчик формы покупки
 async function handlePurchase(amount, productName) {
   if (!window.ethereum) {
     Swal.fire({
@@ -24,14 +60,13 @@ async function handlePurchase(amount, productName) {
 
   try {
     const decimals        = 8;
-    // parseUnits в ethers@6:
     const amountFormatted = ethers.parseUnits(amount.toString(), decimals);
     const paymentMethod   = document.getElementById("paymentToken")?.value;
     let tx;
 
     if (productName === "IBITIcoin") {
       if (paymentMethod === "USDT") {
-        // берём сохранённого реферера или взаимозаменяем на нулевой адрес
+        // Берём сохранённого реферера или нулевой адрес
         const referrer = localStorage.getItem("referrer") || ethers.ZeroAddress;
         tx = await buyIBITI(amountFormatted, referrer);
       } else {
@@ -42,15 +77,13 @@ async function handlePurchase(amount, productName) {
     }
 
     await tx.wait();
-
-    // 🔁 Обновляем баланс
     await showIbitiBalance(true);
 
     Swal.fire({
       icon: 'success',
       title: 'Покупка успешна!',
-      text: 'Ура! Вы стали миллионером!',
-      timer: 5000,
+      text: 'Вы только что приобрели IBITI!',
+      timer: 3000,
       showConfirmButton: false
     });
   } catch (error) {
@@ -63,39 +96,9 @@ async function handlePurchase(amount, productName) {
   }
 }
 
-// Экспортируем на window, чтобы кнопки могли вызвать
 window.handlePurchase = handlePurchase;
 
-// ----------------------
-// Модальное окно
-// ----------------------
-
-let currentProduct = null;
-
-function openPurchaseModal(productName) {
-  currentProduct = productName;
-
-  if (productName === 'NFT') {
-    window.location.href = 'nft.html';
-    return;
-  }
-
-  document.getElementById('purchaseTitle').innerText = 'Покупка ' + productName;
-  document.getElementById('purchaseModal').style.display = 'block';
-}
-
-function closePurchaseModal() {
-  document.getElementById('purchaseModal').style.display = 'none';
-  document.getElementById('nftAmount').value = '';
-}
-
-window.openPurchaseModal  = openPurchaseModal;
-window.closePurchaseModal = closePurchaseModal;
-
-// ----------------------
-// Обработчик формы
-// ----------------------
-
+// Навешиваем логику на форму #purchaseForm и на select #paymentToken
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById('purchaseForm');
   if (form) {
@@ -103,11 +106,8 @@ document.addEventListener("DOMContentLoaded", () => {
       event.preventDefault();
       const amount = document.getElementById('nftAmount').value;
 
-      const walletDisplay = document.getElementById("walletAddress");
-      if (!walletDisplay ||
-          walletDisplay.innerText.trim() === '' ||
-          walletDisplay.innerText.toLowerCase().includes("disconnect")
-      ) {
+      // Ещё одна проверка: кошелёк подключён?
+      if (!selectedAccount) {
         Swal.fire({
           icon: 'warning',
           title: 'Кошелек не подключен',
@@ -123,7 +123,6 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Форма покупки не найдена");
   }
 
-  // Навешиваем обработчик на селектор способа оплаты
   const paymentToken = document.getElementById('paymentToken');
   const confirmBtn   = document.getElementById('confirmBtn');
   if (paymentToken && confirmBtn) {
@@ -134,5 +133,3 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Элементы paymentToken или confirmBtn не найдены");
   }
 });
-
-console.log("✅ shop.js загружен");
