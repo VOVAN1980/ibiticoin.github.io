@@ -2,7 +2,7 @@
 
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 import config from "./config.js";
-import { phasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
+import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 import { selectedAccount } from "./wallet.js";
 
 export let saleContract = null;
