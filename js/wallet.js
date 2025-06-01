@@ -19,7 +19,7 @@ const PHASED_TOKENSALE_ADDRESS = "0x3092cFDfF6890F33b3227c3d2740F84772A465c7";
 import { ibitiTokenAbi }      from "./abis/ibitiTokenAbi.js";
 import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
-import { phasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
+import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 
