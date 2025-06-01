@@ -1,61 +1,59 @@
 // js/nft.js
-
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 import config from "./config.js";
 import { ibitiNftAbi } from "./abis/ibitiNftAbi.js";
 import { connectWallet, signer, showIbitiBalance, selectedAccount } from "./wallet.js";
 
-// Определяем конфигурацию сети (mainnet или testnet)
+// Выбираем конфигурацию (mainnet или testnet)
 const netConfig = config.testnet ? config.testnet : config.mainnet;
 const IBITI_NFT_ADDRESS = netConfig.contracts.IBITI_NFT_ADDRESS;
 
-let nftContract;
+let nftContract = null;
 
-// -----------------------------
-// 1) Инициализация NFT-модуля
-// -----------------------------
-async function initNFT() {
+/**
+ * Инициализирует подключение кошелька и NFT-контракт.
+ * Вызываем вручную при клике на NFT-карточку.
+ */
+export async function initNFTModule() {
   if (!window.ethereum) {
     alert("MetaMask не установлен. Установите расширение для работы с NFT.");
     console.warn("MetaMask не обнаружен. NFT-модуль не активен.");
-    return;
+    return false;
   }
 
-  // Подключаем кошелек и получаем signer из wallet.js
+  // Подключаем кошелек (Web3Modal появится только здесь)
   await connectWallet();
-  if (!signer) return;
+  if (!signer) return false;
 
   // Инициализируем контракт NFT
   nftContract = new ethers.Contract(IBITI_NFT_ADDRESS, ibitiNftAbi, signer);
-
-  // Делаем его доступным в window (если нужно)
   window.nftContract = nftContract;
 
-  // Сразу проверяем баланс NFT
+  // Проверяем баланс NFT у пользователя (опционально)
   await getNFTBalance();
+  return true;
 }
 
-// -----------------------------
-// 2) Проверка баланса NFT
-// -----------------------------
-async function getNFTBalance() {
+/**
+ * Получает баланс NFT у текущего пользователя и логирует в консоль.
+ */
+export async function getNFTBalance() {
   try {
-    const address = selectedAccount;
-    if (!address) return;
-
-    const balance = await nftContract.balanceOf(address);
-    console.log(`NFT-баланс (${address}): ${balance.toString()}`);
-    // Здесь можно обновить любой DOM-элемент с балансом, если он есть:
+    if (!nftContract || !selectedAccount) return;
+    const balance = await nftContract.balanceOf(selectedAccount);
+    console.log(`NFT-баланс (${selectedAccount}): ${balance.toString()}`);
+    // По желанию можно обновить DOM-элемент, например:
     // document.getElementById("nftBalance").innerText = balance.toString();
   } catch (error) {
     console.error("Ошибка получения баланса NFT:", error);
   }
 }
 
-// -----------------------------
-// 3) Обработка покупки NFT
-// -----------------------------
-async function handleNFTPurchase(discount, uri) {
+/**
+ * Вызывается при подтверждении покупки NFT (после клика на “Купить NFT” внутри галереи).
+ * discount и uri должны приходить из атрибутов карточки NFT.
+ */
+export async function handleNFTPurchase(discount, uri) {
   if (!window.ethereum) {
     Swal.fire({
       icon: 'warning',
@@ -73,11 +71,9 @@ async function handleNFTPurchase(discount, uri) {
   });
 
   try {
-    // Убедимся, что saleManager инициализирован в window
     const saleManager = window.saleManager;
     if (!saleManager) throw new Error("Контракт saleManager не инициализирован");
 
-    // Предполагаем, что метод называется buyNFTWithIBITI(discount, uri)
     const tx = await saleManager.buyNFTWithIBITI(discount, uri);
     await tx.wait();
 
@@ -89,9 +85,8 @@ async function handleNFTPurchase(discount, uri) {
       showConfirmButton: false
     });
 
-    // Обновляем баланс NFT после покупки
+    // Обновляем баланс NFT и токенов
     await getNFTBalance();
-    // При желании можно обновить баланс токена:
     await showIbitiBalance(true);
   } catch (error) {
     Swal.fire({
@@ -103,14 +98,5 @@ async function handleNFTPurchase(discount, uri) {
   }
 }
 
-// -----------------------------
-// 4) Обработчики при загрузке
-// -----------------------------
-document.addEventListener("DOMContentLoaded", initNFT);
-
-// Экспорт, если нужно обращаться из других модулей
-export {
-  initNFT,
-  getNFTBalance,
-  handleNFTPurchase
-};
+// Больше НЕ вызываем initNFTModule автоматически.
+// document.addEventListener("DOMContentLoaded", initNFTModule);
