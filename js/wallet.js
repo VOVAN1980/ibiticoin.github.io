@@ -21,8 +21,7 @@ import { ibitiTokenAbi }      from "./abis/ibitiTokenAbi.js";
 import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
-
-import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
+import { ethers }             from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 
 // -----------------------------
 // 2) Web3Modal настройка
@@ -33,7 +32,9 @@ const WalletConnectProviderConstructor =
 const providerOptions = {
   walletconnect: {
     package: WalletConnectProviderConstructor,
-    options: { infuraId: INFURA_ID }
+    options: {
+      infuraId: INFURA_ID
+    }
   }
 };
 
@@ -43,7 +44,7 @@ const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
 });
 
 // -----------------------------
-// 3) Функция подключения кошелька (вызывается только по клику)
+// 3) Подключение кошелька
 // -----------------------------
 async function connectWallet() {
   try {
@@ -52,7 +53,7 @@ async function connectWallet() {
       return;
     }
 
-    // (Опционально) переключаем на BSC, если нужен BSC:
+    // Переключаем сеть на BSC
     try {
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
@@ -60,7 +61,6 @@ async function connectWallet() {
       });
     } catch (switchError) {
       if (switchError.code === 4902) {
-        // Если сети нет, добавляем
         await window.ethereum.request({
           method: "wallet_addEthereumChain",
           params: [{
@@ -73,24 +73,21 @@ async function connectWallet() {
         });
       } else {
         console.error("Ошибка переключения сети:", switchError);
-        // Не выходим — позволяем подключиться на текущей сети
       }
     }
 
     console.log("🔌 Открываем Web3Modal...");
+    await web3Modal.clearCachedProvider(); // ❗️ Сброс кэша — модальное окно покажется
     const rawProvider = await web3Modal.connect();
+
     const web3Provider = new ethers.BrowserProvider(rawProvider);
     signer = await web3Provider.getSigner();
     provider = web3Provider;
 
-    // Получаем адрес
     selectedAccount = await signer.getAddress();
     const walletDisplay = document.getElementById("walletAddress");
-    if (walletDisplay) {
-      walletDisplay.innerText = selectedAccount;
-    }
+    if (walletDisplay) walletDisplay.innerText = selectedAccount;
 
-    // Слушаем смену аккаунта
     rawProvider.on("accountsChanged", async (accs) => {
       if (accs.length === 0) {
         disconnectWallet();
@@ -128,7 +125,7 @@ async function initContracts() {
 }
 
 // -----------------------------
-// 5) Показ баланса IBITI (опционально)
+// 5) Показ баланса
 // -----------------------------
 async function showIbitiBalance(highlight = false) {
   if (!window.ibitiToken || !selectedAccount) return;
@@ -150,7 +147,7 @@ async function showIbitiBalance(highlight = false) {
 }
 
 // -----------------------------
-// 6) Отключение кошелька
+// 6) Отключение
 // -----------------------------
 async function disconnectWallet() {
   if (provider?.provider?.disconnect) {
@@ -170,7 +167,7 @@ async function disconnectWallet() {
 }
 
 // -----------------------------
-// 7) Навешиваем событие на кнопку по клику (никакого автозапуска!)
+// 7) Кнопка подключения
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
@@ -185,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // -----------------------------
-// 8) Экспорт, если кто-то захочет использовать эти функции из других модулей
+// 8) Экспорт
 // -----------------------------
 export {
   connectWallet,
