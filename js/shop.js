@@ -10,27 +10,23 @@ console.log("✅ shop.js загружен");
 
 let currentProduct = null;
 
-// Открыть модальное окно покупки или перенаправить в NFT-галерею
 window.openPurchaseModal = async function(productName) {
   currentProduct = productName;
 
-  // Если кошелёк не подключён — подключаем
   if (!selectedAccount) {
     try {
       await connectWallet();
     } catch (err) {
-      console.warn("Пользователь отказался или возникла ошибка при подключении кошелька:", err);
+      console.warn("Ошибка при подключении кошелька:", err);
       return;
     }
   }
 
-  // Если это товар NFT, перенаправляем на nft.html
   if (productName === "NFT") {
     window.location.href = "nft.html";
     return;
   }
 
-  // Иначе (IBITIcoin) показываем модалку
   document.getElementById("purchaseTitle").innerText = "Покупка " + productName;
   document.getElementById("purchaseModal").style.display = "block";
 };
@@ -40,7 +36,6 @@ window.closePurchaseModal = function() {
   document.getElementById("nftAmount").value = "";
 };
 
-// Обработчик формы покупки
 async function handlePurchase(amount, productName) {
   if (!window.ethereum) {
     Swal.fire({
@@ -66,7 +61,6 @@ async function handlePurchase(amount, productName) {
 
     if (productName === "IBITIcoin") {
       if (paymentMethod === "USDT") {
-        // Берём сохранённого реферера или нулевой адрес
         const referrer = localStorage.getItem("referrer") || ethers.ZeroAddress;
         tx = await buyIBITI(amountFormatted, referrer);
       } else {
@@ -86,26 +80,25 @@ async function handlePurchase(amount, productName) {
       timer: 3000,
       showConfirmButton: false
     });
-    } catch (error) {
-  console.error("Ошибка при покупке:", error);
 
-  let rawReason = error?.revert?.args?.[0] || error?.shortMessage || error?.message || "Неизвестная ошибка";
-  let reason = rawReason === "not started"
-    ? "📅 Продажа начнётся: 1 июля в 9:00 UTC"
-    : rawReason;
+  } catch (error) {
+    console.error("Ошибка при покупке:", error);
+    let rawReason = error?.revert?.args?.[0] || error?.shortMessage || error?.message || "Неизвестная ошибка";
+    let reason = rawReason === "not started"
+      ? "📅 Продажа начнётся: 1 июля в 9:00 UTC"
+      : rawReason;
 
-  Swal.fire({
-    icon: 'error',
-    title: 'Ошибка',
-    text: reason,
-    confirmButtonText: 'Ок'
-  });
- } // <-- вот эта скобка закрывает try/catch
+    Swal.fire({
+      icon: 'error',
+      title: 'Ошибка',
+      text: reason,
+      confirmButtonText: 'Ок'
+    });
+  }
 }
 
 window.handlePurchase = handlePurchase;
 
-// Навешиваем логику на форму #purchaseForm и на select #paymentToken
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById('purchaseForm');
   if (form) {
@@ -113,7 +106,6 @@ document.addEventListener("DOMContentLoaded", () => {
       event.preventDefault();
       const amount = document.getElementById('nftAmount').value;
 
-      // Ещё одна проверка: кошелёк подключён?
       if (!selectedAccount) {
         Swal.fire({
           icon: 'warning',
@@ -138,5 +130,31 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   } else {
     console.error("Элементы paymentToken или confirmBtn не найдены");
+  }
+
+  // ⏳ Обратный отсчёт
+  const countdownEl = document.getElementById("countdownNotice");
+  const saleStart = new Date("2025-07-01T09:00:00Z");
+  function updateCountdown() {
+    const now = new Date();
+    const diff = saleStart - now;
+
+    if (diff <= 0) {
+      countdownEl.innerText = "🟢 Продажа активна!";
+      clearInterval(timer);
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    countdownEl.innerText = `⏳ Продажа начнётся через: ${days}д ${hours}ч ${minutes}м ${seconds}с`;
+  }
+
+  if (countdownEl) {
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
   }
 });
