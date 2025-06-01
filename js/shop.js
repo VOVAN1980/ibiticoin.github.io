@@ -100,7 +100,8 @@ async function handlePurchase(amount, productName) {
     text: reason,
     confirmButtonText: 'Ок'
   });
-} // <-- вот эта скобка закрывает try/catch
+ } // <-- вот эта скобка закрывает try/catch
+}
 
 window.handlePurchase = handlePurchase;
 
