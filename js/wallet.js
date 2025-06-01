@@ -1,5 +1,4 @@
 // js/wallet.js
-
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 import Web3Modal from "web3modal";
 import { ibitiTokenAbi } from "./abis/ibitiTokenAbi.js";
@@ -19,7 +18,7 @@ const NFTSALEMANAGER_ADDRESS   = "0x5572F3AE84319Fbd6e285a0CB854f92Afd31dd6D";
 const NFT_DISCOUNT_ADDRESS     = "0x26C4E3D3E40943D2d569e832A243e329E14ecb02";
 const PHASED_TOKENSALE_ADDRESS = "0x3092cFDfF6890F33b3227c3d2740F84772A465c7";
 
-// Web3Modal provider options (walletconnect и т.д.)
+// 2) Web3Modal настройка с cacheProvider: true
 const providerOptions = {
   walletconnect: {
     package: window.WalletConnectProvider?.default || window.WalletConnectProvider,
@@ -28,18 +27,18 @@ const providerOptions = {
 };
 
 const web3Modal = new Web3Modal({
-  cacheProvider: false,
+  cacheProvider: true,     // ⚠️ включаем кэширование провайдера
   providerOptions
 });
 
 export async function connectWallet() {
   try {
     if (window.ethereum) {
-      // Автоматически переключаем на BSC (если нужно)
+      // пробуем переключиться на BSC (при желании)
       try {
         await window.ethereum.request({
           method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0x38" }] // 56 decimal
+          params: [{ chainId: "0x38" }]
         });
       } catch (switchError) {
         if (switchError.code === 4902) {
@@ -65,18 +64,14 @@ export async function connectWallet() {
     signer = await web3Provider.getSigner();
     provider = web3Provider;
 
-    const address = await signer.getAddress();
-    selectedAccount = address;
-
-    // Вставляем адрес в DOM
+    selectedAccount = await signer.getAddress();
     const walletDisplay = document.getElementById("walletAddress");
     if (walletDisplay) walletDisplay.innerText = selectedAccount;
 
-    // Инициализируем глобальные контракты
+    // Инициализируем контракты и выводим баланс
     await initContracts();
     await showIbitiBalance(true);
 
-    // Обработчики на смену аккаунта и отключение
     rawProvider.on("accountsChanged", async (accs) => {
       if (!accs.length) {
         await disconnectWallet();
@@ -136,8 +131,22 @@ export async function disconnectWallet() {
   const el = document.getElementById("ibitiBalance");
   if (el) el.innerText = "";
 
+  // Сбрасываем кэш провайдера (Web3Modal) при отключении
+  await web3Modal.clearCachedProvider();
+
   console.log("🔌 Кошелек отключен");
 }
 
-// Экспортируем selectedAccount, чтобы другие модули могли проверить, подключён ли кошелёк
+// При загрузке страницы – если провайдер был закэширован, пробуем восстановить подключение
+document.addEventListener("DOMContentLoaded", async () => {
+  if (web3Modal.cachedProvider) {
+    try {
+      await connectWallet();
+    } catch (e) {
+      console.warn("Не удалось автоматически восстановить подключение кошелька:", e);
+    }
+  }
+});
+
+// Чтобы другие модули могли проверить, подключён ли кошелёк
 export { selectedAccount };
