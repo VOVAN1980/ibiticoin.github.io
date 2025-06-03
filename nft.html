@@ -377,29 +377,15 @@
       document.getElementById('mintStatus').innerText = '';
     };
 
-    window.buyWithIBITI = async function() {
-      try {
-        document.getElementById('mintStatus').innerText = 'Отправляем транзакцию...';
-        const uri = nftUriPrefix + selectedDiscount + '.json';
-        const tx = await window.saleManager.buyNFTWithIBITI(selectedDiscount, uri);
-        await tx.wait();
-        document.getElementById('mintStatus').innerText = '✅ NFT успешно куплен за IBITI!';
-      } catch (e) {
-        document.getElementById('mintStatus').innerText = 'Ошибка: ' + (e.message || e);
-      }
-    };
+    window.buyWithIBITI = async function () {
+  document.getElementById('mintStatus').innerText =
+    '❌ Продажа NFT временно недоступна.\nСледите за новостями на сайте и в наших соцсетях.';
+};
 
-    window.buyWithUSDT = async function() {
-      try {
-        document.getElementById('mintStatus').innerText = 'Отправляем транзакцию...';
-        const uri = nftUriPrefix + selectedDiscount + '.json';
-        const tx = await window.saleManager.buyNFTWithUSDT(selectedDiscount, uri);
-        await tx.wait();
-        document.getElementById('mintStatus').innerText = '✅ NFT успешно куплен за USDT!';
-      } catch (e) {
-        document.getElementById('mintStatus').innerText = 'Ошибка: ' + (e.message || e);
-      }
-    };
+window.buyWithUSDT = async function () {
+  document.getElementById('mintStatus').innerText =
+    '❌ Продажа NFT временно недоступна.\nСледите за новостями на сайте и в наших соцсетях.';
+};
   </script>
 </body>
 </html>
