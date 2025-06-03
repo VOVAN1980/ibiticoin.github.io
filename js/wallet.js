@@ -192,3 +192,9 @@ export {
   showIbitiBalance,
   selectedAccount
 };
+
+ // Глобальный экспорт для доступа из других скриптов (например, в nft.html)
+window.connectWallet = connectWallet;
+window.disconnectWallet = disconnectWallet;
+window.showIbitiBalance = showIbitiBalance;
+window.selectedAccount = selectedAccount;
