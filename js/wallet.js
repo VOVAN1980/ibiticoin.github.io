@@ -85,6 +85,8 @@ async function connectWallet() {
     provider = web3Provider;
 
     selectedAccount = await signer.getAddress();
+    window.selectedAccount = selectedAccount; // ✅ добавляем эту строку
+
     const walletDisplay = document.getElementById("walletAddress");
     if (walletDisplay) walletDisplay.innerText = selectedAccount;
 
