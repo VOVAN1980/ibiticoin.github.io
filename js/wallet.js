@@ -33,6 +33,9 @@ const providerOptions = {
   walletconnect: {
     package: WalletConnectProviderConstructor,
     options: {
+      // Указываем стандартный Bridge вместо мостов вида p.bridge.walletconnect.org
+      bridge: "https://bridge.walletconnect.org",
+      // Подключаемся сразу к BSC Mainnet через публичный RPC
       rpc: {
         56: "https://bsc-dataseed.binance.org/"
       },
