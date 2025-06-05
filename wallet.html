@@ -3,134 +3,91 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IBITIcoin — Подключение кошелька</title>
+  <title>IBITIcoin — Wallet Connector (iframe)</title>
   <style>
+    /* Стили минимальны – страница, по сути, никогда не видна пользователю. */
     body {
-      background: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
       margin: 0;
-    }
-    h1 {
-      margin-bottom: 20px;
-      font-size: 24px;
-    }
-    button {
-      margin: 5px 0;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      background: #222;
-      color: #ffd600;
-      border: 2px solid #ffd600;
-      border-radius: 4px;
-    }
-    button:hover {
-      background: #333;
-    }
-    #address {
-      margin-top: 15px;
-      font-weight: bold;
+      padding: 0;
+      background: transparent;
+      color: #000;
+      font-family: Arial, sans-serif;
     }
   </style>
 </head>
 <body>
 
-  <h1>Подключение кошелька IBITIcoin</h1>
-  <button id="connectMetaMask">MetaMask</button>
-  <button id="connectWCv2">WalletConnect v2</button>
-  <p id="address">Адрес: <em>не подключён</em></p>
+  <!-- 
+    Здесь нет никаких кнопок или изображений – 
+    этот HTML будет загружен в невидимом iframe, 
+    поэтому всё делается через JS.
+  -->
 
-  <!-- -------------------------------------------------------------------
-       Ниже — единственный <script type="module">. Копируйте «как есть».
-       Он загрузит wagmi, ethers@6 и Web3Modal v2 через CDN (esm.sh).
-       ------------------------------------------------------------------- -->
   <script type="module">
-    import { configureChains, createClient } from 'https://esm.sh/wagmi@1.9.0';
+    // 1) Импортируем библиотеки из CDN (esm.sh):
+    import { createClient, configureChains } from 'https://esm.sh/wagmi@1.9.0';
     import { mainnet, bsc, goerli } from 'https://esm.sh/wagmi@1.9.0/chains';
     import { w3mConnectors, w3mProvider } from 'https://esm.sh/@web3modal/ethereum@2.8.2';
     import { Web3Modal, EthereumClient } from 'https://esm.sh/@walletconnect/web3modal@2.8.2';
     import { ethers } from 'https://esm.sh/ethers@6.6.1';
 
-    // 1) Сюда вставьте ваш PROJECT_ID из walletconnect.com (v2-проект)
-    const projectId = 'ВАШ_PROJECT_ID_ОТ_WALLETCONNECT';
+    // 2) ПОЛЬЗУЙТЕСЬ Своим WC v2 Project ID (проверьте на walletconnect.com → Projects).
+    const WC_PROJECT_ID = 'ВАШ_WALLETCONNECT_V2_PROJECT_ID';
 
-    // 2) Список цепочек (здесь BSC, Ethereum Mainnet, тестовая Goerli — при необходимости удалите Goerli)
+    // 3) Сети: BSC, Ethereum Mainnet, Goerli (Goerli можно убрать, если не требуется).
     const chains = [bsc, mainnet, goerli];
 
-    // 3) Настраиваем провайдер через WalletConnect v2
+    // 4) Настраиваем провайдеры Wagmi через WC v2:
     const { provider } = configureChains(chains, [
-      w3mProvider({ projectId })
+      w3mProvider({ projectId: WC_PROJECT_ID })
     ]);
 
-    // 4) Создаём Wagmi-клиент (без авто-подключения)
+    // 5) Создаём Wagmi-клиент (autoConnect: false – пользователь сам по кнопке решает, подключаться или нет).
     const wagmiClient = createClient({
       autoConnect: false,
-      connectors: w3mConnectors({ chains, projectId }),
+      connectors: w3mConnectors({ chains, projectId: WC_PROJECT_ID }),
       provider
     });
 
-    // 5) Инициализируем Web3Modal v2
+    // 6) Инициализируем Web3Modal v2:
     const ethereumClient = new EthereumClient(wagmiClient, chains);
     const web3Modal = new Web3Modal({
-      projectId,
+      projectId: WC_PROJECT_ID,
       theme: 'light',
       accentColor: 'default',
       ethereumClient
     });
 
-    // 6) Глобальные переменные для провайдера и подписанта
+    // 7) Глобальные переменные внутри iframe:
     let providerGlobal = null;
     let signerGlobal   = null;
     let userAddress    = null;
 
-    // 7) Функция колбэк — вызывается Web3Modal v2 после подключения
-    window.onWalletConnected = (address, provider, signer) => {
-      providerGlobal = provider;
-      signerGlobal   = signer;
-      userAddress    = address;
-      document.getElementById('address').innerText = `Адрес: ${address}`;
-    };
+    // 8) Когда iframe получает сообщение { type: 'connect' }, открываем Web3Modal.
+    window.addEventListener('message', async (event) => {
+      // Проверяем источник (можно сделать event.origin, если хотим ограничиться доменом).
+      // Здесь доверяем, что родитель – наш же сайт.
+      const msg = event.data;
+      if (!msg || typeof msg !== 'object') return;
 
-    // 8) Функция колбэк — отключение WC v2
-    window.onWalletDisconnected = () => {
-      providerGlobal = null;
-      signerGlobal   = null;
-      userAddress    = null;
-      document.getElementById('address').innerText = 'Адрес: не подключён';
-    };
-
-    // 9) Подключиться через WalletConnect v2
-    window.connectWithWalletConnectV2 = async () => {
-      try {
-        await web3Modal.open();
-        const signer = await wagmiClient.getSigner();
-        const address = await signer.getAddress();
-        window.onWalletConnected(address, provider, signer);
-      } catch (e) {
-        console.error('Ошибка подключения WC v2:', e);
+      // Если просят подключиться через MetaMask:
+      if (msg.type === 'connect-metamask') {
+        await connectMetaMask();
       }
-    };
-
-    // 10) Отключиться от WalletConnect v2
-    window.disconnectWalletConnectV2 = async () => {
-      try {
-        await web3Modal.clearState();
-        window.onWalletDisconnected();
-      } catch (e) {
-        console.error('Ошибка отключения WC v2:', e);
+      // Если просят подключиться через WalletConnect v2:
+      else if (msg.type === 'connect-wcv2') {
+        await connectWithWalletConnectV2();
       }
-    };
+      // Если хотят отключить WC v2:
+      else if (msg.type === 'disconnect-wcv2') {
+        await disconnectWalletConnectV2();
+      }
+    });
 
-    // 11) Подключение через MetaMask (ethers v6)
+    // 9) Функция подключения через MetaMask (ethers v6)
     async function connectMetaMask() {
       if (!window.ethereum) {
-        alert('MetaMask не установлен');
+        postMessageToParent({ type: 'error', error: 'MetaMask not found' });
         return;
       }
       try {
@@ -138,45 +95,69 @@
         providerGlobal = new ethers.Web3Provider(window.ethereum);
         signerGlobal   = providerGlobal.getSigner();
         userAddress    = await signerGlobal.getAddress();
-        document.getElementById('address').innerText = `Адрес: ${userAddress}`;
+        postMessageToParent({
+          type: 'connected',
+          address: userAddress,
+          via: 'metamask'
+        });
 
-        // Слушаем смену аккаунта/сети
+        // Слушаем смену аккаунта
         window.ethereum.on('accountsChanged', (accounts) => {
           if (accounts.length === 0) {
-            window.onWalletDisconnected();
+            postMessageToParent({ type: 'disconnected' });
           } else {
             userAddress = accounts[0];
-            document.getElementById('address').innerText = `Адрес: ${userAddress}`;
+            postMessageToParent({
+              type: 'connected',
+              address: userAddress,
+              via: 'metamask'
+            });
           }
         });
+        // Слушаем смену сети (опционально)
         window.ethereum.on('chainChanged', (chainId) => {
-          console.log('Сеть изменилась:', chainId);
+          postMessageToParent({ type: 'networkChanged', chainId });
         });
       } catch (e) {
-        console.error('MetaMask: не удалось подключиться', e);
+        postMessageToParent({ type: 'error', error: e.message || e.toString() });
       }
     }
 
-    // 12) Повесим обработчики на кнопки
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('connectMetaMask').addEventListener('click', async () => {
-        // Сбрасываем WC v2, если он был
-        if (typeof window.disconnectWalletConnectV2 === 'function') {
-          await window.disconnectWalletConnectV2();
-        }
-        await connectMetaMask();
-      });
-      document.getElementById('connectWCv2').addEventListener('click', async () => {
-        // Сбрасываем MetaMask-соединение, если было
-        if (providerGlobal && providerGlobal.provider?.isMetaMask) {
-          window.onWalletDisconnected();
-        }
-        if (typeof window.connectWithWalletConnectV2 === 'function') {
-          await window.connectWithWalletConnectV2();
-        }
-      });
-    });
+    // 10) Функция подключения через WalletConnect v2
+    async function connectWithWalletConnectV2() {
+      try {
+        await web3Modal.open(); // открываем WC v2 окно
+        const signer = await wagmiClient.getSigner();
+        const address = await signer.getAddress();
+        providerGlobal = wagmiClient.provider;
+        signerGlobal   = signer;
+        userAddress    = address;
+        postMessageToParent({
+          type: 'connected',
+          address: userAddress,
+          via: 'wcv2'
+        });
+      } catch (e) {
+        postMessageToParent({ type: 'error', error: e.message || e.toString() });
+      }
+    }
+
+    // 11) Функция отключения от WalletConnect v2
+    async function disconnectWalletConnectV2() {
+      try {
+        await web3Modal.clearState();
+        postMessageToParent({ type: 'disconnected' });
+      } catch (e) {
+        postMessageToParent({ type: 'error', error: e.message || e.toString() });
+      }
+    }
+
+    // 12) Удобная функция для отправки сообщений родителю (shop.html)
+    function postMessageToParent(data) {
+      // Делаем широковещательную отправку – родитель примет и обработает данные
+      window.parent.postMessage(data, '*');
+    }
   </script>
-  <!-- ------------------------------------------------------------------- -->
 </body>
 </html>
+
