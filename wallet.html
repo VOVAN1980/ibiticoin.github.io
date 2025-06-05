@@ -3,53 +3,46 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IBITIcoin — Wallet Connector (iframe)</title>
+  <title>Wallet v2 (скрытый фрейм)</title>
   <style>
-    /* Стили минимальны – страница, по сути, никогда не видна пользователю. */
-    body {
+    /* Страница в iframe всегда скрыта, так что стили можно минимизировать */
+    html, body {
       margin: 0;
       padding: 0;
       background: transparent;
-      color: #000;
+      color: #fff;
       font-family: Arial, sans-serif;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-
-  <!-- 
-    Здесь нет никаких кнопок или изображений – 
-    этот HTML будет загружен в невидимом iframe, 
-    поэтому всё делается через JS.
-  -->
-
+  <!-- Здесь нет кнопок — всё управляется сообщениями от родителя -->
   <script type="module">
-    // 1) Импортируем библиотеки из CDN (esm.sh):
+    // ==== 1) Импорты через CDN (esm.sh) для WalletConnect v2 + ethers 6 ====
     import { createClient, configureChains } from 'https://esm.sh/wagmi@1.9.0';
-    import { mainnet, bsc, goerli } from 'https://esm.sh/wagmi@1.9.0/chains';
+    import { mainnet, bsc } from 'https://esm.sh/wagmi@1.9.0/chains';
     import { w3mConnectors, w3mProvider } from 'https://esm.sh/@web3modal/ethereum@2.8.2';
     import { Web3Modal, EthereumClient } from 'https://esm.sh/@walletconnect/web3modal@2.8.2';
     import { ethers } from 'https://esm.sh/ethers@6.6.1';
 
-    // 2) ПОЛЬЗУЙТЕСЬ Своим WC v2 Project ID (проверьте на walletconnect.com → Projects).
+    // ==== 2) Ваш Project ID из WalletConnect v2 ====
     const WC_PROJECT_ID = 'ВАШ_WALLETCONNECT_V2_PROJECT_ID';
 
-    // 3) Сети: BSC, Ethereum Mainnet, Goerli (Goerli можно убрать, если не требуется).
-    const chains = [bsc, mainnet, goerli];
+    // ==== 3) Конфиг сетей (BSC + Mainnet, без Goerli) ====
+    const chains = [bsc, mainnet];
 
-    // 4) Настраиваем провайдеры Wagmi через WC v2:
+    // ==== 4) Настройка провайдера wagmi через WalletConnect v2 ====
     const { provider } = configureChains(chains, [
       w3mProvider({ projectId: WC_PROJECT_ID })
     ]);
 
-    // 5) Создаём Wagmi-клиент (autoConnect: false – пользователь сам по кнопке решает, подключаться или нет).
     const wagmiClient = createClient({
       autoConnect: false,
       connectors: w3mConnectors({ chains, projectId: WC_PROJECT_ID }),
       provider
     });
 
-    // 6) Инициализируем Web3Modal v2:
     const ethereumClient = new EthereumClient(wagmiClient, chains);
     const web3Modal = new Web3Modal({
       projectId: WC_PROJECT_ID,
@@ -58,106 +51,86 @@
       ethereumClient
     });
 
-    // 7) Глобальные переменные внутри iframe:
+    // ==== 5) Глобальные переменные: провайдер, подписант, адрес ====
     let providerGlobal = null;
     let signerGlobal   = null;
     let userAddress    = null;
 
-    // 8) Когда iframe получает сообщение { type: 'connect' }, открываем Web3Modal.
+    // ==== 6) Отправка сообщения родителю ====
+    function postToParent(data) {
+      window.parent.postMessage(data, '*');
+    }
+
+    // ==== 7) Обработчик сообщений от родителя ====
     window.addEventListener('message', async (event) => {
-      // Проверяем источник (можно сделать event.origin, если хотим ограничиться доменом).
-      // Здесь доверяем, что родитель – наш же сайт.
       const msg = event.data;
       if (!msg || typeof msg !== 'object') return;
 
-      // Если просят подключиться через MetaMask:
-      if (msg.type === 'connect-metamask') {
-        await connectMetaMask();
-      }
-      // Если просят подключиться через WalletConnect v2:
-      else if (msg.type === 'connect-wcv2') {
-        await connectWithWalletConnectV2();
-      }
-      // Если хотят отключить WC v2:
-      else if (msg.type === 'disconnect-wcv2') {
-        await disconnectWalletConnectV2();
+      switch (msg.type) {
+        // Родитель сказал «подключись через WCv2»
+        case 'connect-wcv2':
+          await connectWithWCv2();
+          break;
+
+        // Родитель сказал «разорви соединение»
+        case 'disconnect-v2':
+          await disconnectWCv2();
+          break;
+
+        // (Если нужно) Родитель может прислать команду «купить»:
+        // case 'buy':
+        //   await handleBuy(msg.tokenId, msg.price);
+        //   break;
       }
     });
 
-    // 9) Функция подключения через MetaMask (ethers v6)
-    async function connectMetaMask() {
-      if (!window.ethereum) {
-        postMessageToParent({ type: 'error', error: 'MetaMask not found' });
-        return;
-      }
+    // ==== 8) Функция подключения через WalletConnect v2 ====
+    async function connectWithWCv2() {
       try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        providerGlobal = new ethers.Web3Provider(window.ethereum);
-        signerGlobal   = providerGlobal.getSigner();
-        userAddress    = await signerGlobal.getAddress();
-        postMessageToParent({
-          type: 'connected',
-          address: userAddress,
-          via: 'metamask'
-        });
-
-        // Слушаем смену аккаунта
-        window.ethereum.on('accountsChanged', (accounts) => {
-          if (accounts.length === 0) {
-            postMessageToParent({ type: 'disconnected' });
-          } else {
-            userAddress = accounts[0];
-            postMessageToParent({
-              type: 'connected',
-              address: userAddress,
-              via: 'metamask'
-            });
-          }
-        });
-        // Слушаем смену сети (опционально)
-        window.ethereum.on('chainChanged', (chainId) => {
-          postMessageToParent({ type: 'networkChanged', chainId });
-        });
-      } catch (e) {
-        postMessageToParent({ type: 'error', error: e.message || e.toString() });
-      }
-    }
-
-    // 10) Функция подключения через WalletConnect v2
-    async function connectWithWalletConnectV2() {
-      try {
-        await web3Modal.open(); // открываем WC v2 окно
+        await web3Modal.open(); 
         const signer = await wagmiClient.getSigner();
         const address = await signer.getAddress();
         providerGlobal = wagmiClient.provider;
         signerGlobal   = signer;
         userAddress    = address;
-        postMessageToParent({
-          type: 'connected',
-          address: userAddress,
-          via: 'wcv2'
-        });
+        postToParent({ type: 'connected', address: address });
       } catch (e) {
-        postMessageToParent({ type: 'error', error: e.message || e.toString() });
+        console.error('Ошибка WCv2:', e);
+        postToParent({ type: 'error', error: e.message || e.toString() });
       }
     }
 
-    // 11) Функция отключения от WalletConnect v2
-    async function disconnectWalletConnectV2() {
+    // ==== 9) Функция отключения WalletConnect v2 ====
+    async function disconnectWCv2() {
       try {
         await web3Modal.clearState();
-        postMessageToParent({ type: 'disconnected' });
+        providerGlobal = null;
+        signerGlobal   = null;
+        userAddress    = null;
+        postToParent({ type: 'disconnected' });
       } catch (e) {
-        postMessageToParent({ type: 'error', error: e.message || e.toString() });
+        console.error('Ошибка отключения WCv2:', e);
+        postToParent({ type: 'error', error: e.message || e.toString() });
       }
     }
 
-    // 12) Удобная функция для отправки сообщений родителю (shop.html)
-    function postMessageToParent(data) {
-      // Делаем широковещательную отправку – родитель примет и обработает данные
-      window.parent.postMessage(data, '*');
-    }
+    // Если вам нужно реализовать «купить токен» прямо отсюда, можно добавить:
+    // async function handleBuy(tokenId, priceWei) {
+    //   if (!signerGlobal) {
+    //     postToParent({ type: 'error', error: 'Кошелёк не подключён' });
+    //     return;
+    //   }
+    //   try {
+    //     const contractAddress = '0xВАШ_АДРЕС_КОНТРАКТА';
+    //     const contractAbi = PhasedTokenSaleAbi; // при условии, что вы импортировали ABI
+    //     const contract = new ethers.Contract(contractAddress, contractAbi, signerGlobal);
+    //     const tx = await contract.purchaseCoinToken(tokenId, { value: priceWei });
+    //     const receipt = await tx.wait();
+    //     postToParent({ type: 'bought', txHash: receipt.transactionHash });
+    //   } catch (err) {
+    //     postToParent({ type: 'error', error: err.data?.message || err.message });
+    //   }
+    // }
   </script>
 </body>
 </html>
-
