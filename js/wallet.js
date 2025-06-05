@@ -33,7 +33,10 @@ const providerOptions = {
   walletconnect: {
     package: WalletConnectProviderConstructor,
     options: {
-      infuraId: INFURA_ID
+      rpc: {
+        56: "https://bsc-dataseed.binance.org/"
+      },
+      chainId: 56
     }
   }
 };
