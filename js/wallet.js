@@ -8,8 +8,6 @@ let provider = null;
 let signer = null;
 let selectedAccount = null;
 
-const INFURA_ID = "1faccf0f1fdc4532ad7a1a38a67ee906";
-
 // АДРЕСА КОНТРАКТОВ
 const IBITI_TOKEN_ADDRESS      = "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196";
 const NFTSALEMANAGER_ADDRESS   = "0x5572F3AE84319Fbd6e285a0CB854f92Afd31dd6D";
@@ -21,101 +19,101 @@ import { ibitiTokenAbi }      from "./abis/ibitiTokenAbi.js";
 import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
-import { ethers }             from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
+import { ethers }             from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
 
 // -----------------------------
-// 2) Web3Modal настройка
-// -----------------------------
-const WalletConnectProviderConstructor =
-  window.WalletConnectProvider?.default || window.WalletConnectProvider;
-
-const providerOptions = {
-  walletconnect: {
-    package: WalletConnectProviderConstructor,
-    options: {
-      infuraId: INFURA_ID
-    }
-  }
-};
-
-const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
-  cacheProvider: false,
-  providerOptions
-});
-
-// -----------------------------
-// 3) Подключение кошелька
+// 2) Подключение через инжект-провайдер (MetaMask/Trust Wallet)
 // -----------------------------
 async function connectWallet() {
   try {
+    // 1) Проверяем, что есть injected-провайдер (MetaMask или Trust Wallet)
     if (!window.ethereum) {
-      alert("MetaMask не найден. Установите расширение и попробуйте снова.");
+      alert("Injected-провайдер (MetaMask/TrustWallet) не найден. Откройте сайт в MetaMask или в Trust Wallet и попробуйте снова.");
       return;
     }
 
-    // Переключаем сеть на BSC
-    try {
-      await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0x38" }]
-      });
-    } catch (switchError) {
-      if (switchError.code === 4902) {
-        await window.ethereum.request({
-          method: "wallet_addEthereumChain",
-          params: [{
-            chainId: "0x38",
-            chainName: "Binance Smart Chain",
-            nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
-            rpcUrls: ["https://bsc-dataseed.binance.org/"],
-            blockExplorerUrls: ["https://bscscan.com"]
-          }]
-        });
-      } else {
-        console.error("Ошибка переключения сети:", switchError);
-      }
+    // 2) Берём уже подключённые аккаунты
+    const accounts = await window.ethereum.request({ method: "eth_accounts" });
+    let account;
+    if (accounts.length === 0) {
+      // Если ещё не авторизован — запросим разрешение
+      const requested = await window.ethereum.request({ method: "eth_requestAccounts" });
+      account = requested[0];
+    } else {
+      account = accounts[0];
     }
+    selectedAccount = account;
+    window.selectedAccount = selectedAccount;
 
-    console.log("🔌 Открываем Web3Modal...");
-    await web3Modal.clearCachedProvider(); // ❗️ Сброс кэша — модальное окно покажется
-    const rawProvider = await web3Modal.connect();
-
-    const web3Provider = new ethers.BrowserProvider(rawProvider);
-    signer = await web3Provider.getSigner();
-    provider = web3Provider;
-
-    selectedAccount = await signer.getAddress();
-    window.selectedAccount = selectedAccount; // ✅ добавляем эту строку
-
+    // 3) Выводим адрес в UI
     const walletDisplay = document.getElementById("walletAddress");
     if (walletDisplay) walletDisplay.innerText = selectedAccount;
 
-    rawProvider.on("accountsChanged", async (accs) => {
-      if (accs.length === 0) {
+    // 4) Создаём Ethers.js-провайдер поверх window.ethereum
+    const web3Provider = new ethers.BrowserProvider(window.ethereum);
+    signer = await web3Provider.getSigner();
+    provider = web3Provider;
+
+    // 5) Переключаем сеть на BSC (chainId = 0x38), если нужно
+    try {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: "0x38" }] // 0x38 = 56 (BSC)
+      });
+    } catch (switchError) {
+      if (switchError.code === 4902) {
+        // Если сеть не добавлена — предлагаем добавить
+        try {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [{
+              chainId: "0x38",
+              chainName: "Binance Smart Chain",
+              nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+              rpcUrls: ["https://bsc-dataseed.binance.org/"],
+              blockExplorerUrls: ["https://bscscan.com"]
+            }]
+          });
+        } catch (addError) {
+          console.error("Ошибка при добавлении сети BSC:", addError);
+        }
+      } else {
+        console.error("Не удалось переключить сеть:", switchError);
+      }
+    }
+
+    console.log("✅ Инжект-провайдер подключён:", selectedAccount);
+
+    // 6) Инициализируем контракты и показываем баланс
+    await initContracts();
+    await showIbitiBalance(true);
+
+    // 7) Слушаем смену аккаунта
+    window.ethereum.on("accountsChanged", async (newAccounts) => {
+      if (!newAccounts.length) {
         disconnectWallet();
         return;
       }
-      selectedAccount = accs[0];
-      if (walletDisplay) walletDisplay.innerText = selectedAccount;
+      selectedAccount = newAccounts[0];
+      window.selectedAccount = selectedAccount;
+      const wEl = document.getElementById("walletAddress");
+      if (wEl) wEl.innerText = selectedAccount;
       await showIbitiBalance(true);
     });
 
-    rawProvider.on("disconnect", () => {
+    // 8) Слушаем отключение
+    window.ethereum.on("disconnect", () => {
       disconnectWallet();
     });
 
-    console.log("✅ Кошелек подключен:", selectedAccount);
-
-    await initContracts();
-    await showIbitiBalance(true);
   } catch (err) {
-    console.error("❌ Ошибка подключения:", err);
-    alert("Ошибка подключения кошелька");
+    console.error("❌ Ошибка подключения через injected-провайдер:", err);
+    alert("Не удалось подключиться к кошельку.");
   }
 }
 
 // -----------------------------
-// 4) Инициализация контрактов
+// 3) Инициализация контрактов
 // -----------------------------
 async function initContracts() {
   window.ibitiToken  = new ethers.Contract(IBITI_TOKEN_ADDRESS,      ibitiTokenAbi,      signer);
@@ -127,7 +125,7 @@ async function initContracts() {
 }
 
 // -----------------------------
-// 5) Показ баланса
+// 4) Показ баланса
 // -----------------------------
 async function showIbitiBalance(highlight = false) {
   if (!window.ibitiToken || !selectedAccount) return;
@@ -149,9 +147,11 @@ async function showIbitiBalance(highlight = false) {
 }
 
 // -----------------------------
-// 6) Отключение
+// 5) Отключение
 // -----------------------------
 async function disconnectWallet() {
+  // У MetaMask/Trust Wallet обычно нет явного метода disconnect(),
+  // но добавляем на всякий случай, если провайдер поддерживает:
   if (provider?.provider?.disconnect) {
     await provider.provider.disconnect();
   }
@@ -169,7 +169,7 @@ async function disconnectWallet() {
 }
 
 // -----------------------------
-// 7) Кнопка подключения
+// 6) Вешаем на кнопку connectWalletBtn
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // -----------------------------
-// 8) Экспорт
+// 7) Экспорт
 // -----------------------------
 export {
   connectWallet,
@@ -195,8 +195,8 @@ export {
   selectedAccount
 };
 
- // Глобальный экспорт для доступа из других скриптов (например, в nft.html)
-window.connectWallet = connectWallet;
-window.disconnectWallet = disconnectWallet;
-window.showIbitiBalance = showIbitiBalance;
-window.selectedAccount = selectedAccount;
+// Глобальный экспорт для доступа из других скриптов
+window.connectWallet     = connectWallet;
+window.disconnectWallet  = disconnectWallet;
+window.showIbitiBalance  = showIbitiBalance;
+window.selectedAccount   = selectedAccount;
