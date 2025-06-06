@@ -29,5 +29,4 @@ export async function buyIBITI(amountFormatted, referrer) {
   return saleContract.buy(amountFormatted, referrer);
 }
 
-initSaleContract();
 console.log("✅ sale.js загружен");
