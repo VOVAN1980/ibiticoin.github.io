@@ -2,20 +2,35 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Подключение кошелька...</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Подключение кошелька</title>
+  <!-- Web3Modal v2 UMD -->
+  <script src="https://unpkg.com/@web3modal/html@2.4.0/dist/index.umd.min.js"></script>
 </head>
 <body>
-  <script type="module">
-    import { connectWalletModal } from './js/wallet-connect-modal.js';
+  <script>
+    // 1) Инициализируем Web3Modal
+    const modal = new Web3ModalHTML({
+      projectId: "95f126f3a088cebcf781d2a1c10711fc", // ваш Project ID
+      themeMode: "dark",
+      walletConnectVersion: 2,           // включаем WC v2
+    });
 
-    (async () => {
-      // Попытка «тихого» подключения
-      await connectWalletModal();
-      // После подключения — переходим обратно
-      const redirect = new URLSearchParams(location.search).get('r') || 'shop.html';
+    // 2) Слушаем событие успешного подключения
+    modal.on("connect", ({ provider }) => {
+      // пробрасываем новый провайдер в глобальный window.ethereum
+      window.ethereum = provider;
+      // можно здесь же вызвать ваш connectWallet() из wallet.js,
+      // чтобы установить signer, selectedAccount и т.д.
+      // но обычно достаточно перезагрузить страницу
+      const redirect = new URLSearchParams(location.search).get("r") || "shop.html";
       location.href = redirect;
-    })();
+    });
+
+    // 3) Показываем модалку сразу
+    window.addEventListener("load", () => {
+      modal.openModal();
+    });
   </script>
 </body>
 </html>
