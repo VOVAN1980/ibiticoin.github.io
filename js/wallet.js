@@ -8,7 +8,7 @@ let provider = null;
 let signer = null;
 let selectedAccount = null;
 
-// Адреса контрактов
+// Адреса ваших контрактов
 const IBITI_TOKEN_ADDRESS      = "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196";
 const NFTSALEMANAGER_ADDRESS   = "0x5572F3AE84319Fbd6e285a0CB854f92Afd31dd6D";
 const NFT_DISCOUNT_ADDRESS     = "0x26C4E3D3E40943D2d569e832A243e329E14ecb02";
@@ -22,9 +22,9 @@ import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 import { ethers }             from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 
 // -----------------------------
-// 2) Прямой WalletConnect V1 (без Web3Modal)
+// 2) Чистый WalletConnectProvider V1
 // -----------------------------
-// В HTML должны быть:
+// Обязательно до этого подключить в HTML:
 // <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
 const WalletConnectProviderConstructor =
   window.WalletConnectProvider?.default || window.WalletConnectProvider;
@@ -34,34 +34,36 @@ const WalletConnectProviderConstructor =
 // -----------------------------
 async function connectWallet() {
   try {
-    // Создаём WalletConnectProvider с явным HTTP-бриджем и BSC RPC
+    // Создаём провайдер WalletConnect V1 с единственным HTTP-бриджем и BSC RPC
     const wcProvider = new WalletConnectProviderConstructor({
       rpc: {
+        // Binance Smart Chain Mainnet
         56: "https://bsc-dataseed.binance.org/"
       },
       chainId: 56,
+      // Обязательно использовать HTTP-бридж, чтобы не цепляться к wss://*.bridge.walletconnect.org
       bridge: "https://bridge.walletconnect.org",
-      qrcode: true
+      qrcode: true // чтобы показывать QR-код
     });
 
     console.log("🔌 Открываем WalletConnectProvider напрямую...");
-    // Запускаем WalletConnect (покажет QR-код)
+    // Вызов enable() откроет QR-код, или, если мобильное устройство, нативное привязку
     await wcProvider.enable();
 
-    // Превращаем его в ethers-провайдер
+    // На базе wcProvider строим ethers-провайдер
     const web3Provider = new ethers.BrowserProvider(wcProvider);
     signer = await web3Provider.getSigner();
     provider = web3Provider;
 
-    // Запоминаем подключённый адрес
+    // Получаем адрес подключённого пользователя
     selectedAccount = await signer.getAddress();
     window.selectedAccount = selectedAccount;
 
-    // Обновляем отображение адреса
+    // Показываем адрес в элементе с id="walletAddress"
     const walletDisplay = document.getElementById("walletAddress");
     if (walletDisplay) walletDisplay.innerText = selectedAccount;
 
-    // Слушаем смену аккаунта
+    // Следим за сменой аккаунта
     wcProvider.on("accountsChanged", async (accs) => {
       if (accs.length === 0) {
         disconnectWallet();
@@ -72,14 +74,14 @@ async function connectWallet() {
       await showIbitiBalance(true);
     });
 
-    // Слушаем отключение
+    // Следим за отключением
     wcProvider.on("disconnect", () => {
       disconnectWallet();
     });
 
     console.log("✅ Кошелек подключен:", selectedAccount);
 
-    // Инициализируем контракты и показываем баланс
+    // После подключения инициализируем контракты и отображаем баланс
     await initContracts();
     await showIbitiBalance(true);
   } catch (err) {
@@ -127,10 +129,10 @@ async function showIbitiBalance(highlight = false) {
 // -----------------------------
 async function disconnectWallet() {
   try {
-    // Если провайдер поддерживает disconnect()
+    // Пытаемся вызвать native-disconnect, если он поддерживается
     provider?.provider?.disconnect();
   } catch {
-    // Игнорируем ошибки отключения
+    // Игнорируем ошибки при отключении
   }
   provider = null;
   signer = null;
