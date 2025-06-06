@@ -8,8 +8,6 @@ let provider = null;
 let signer = null;
 let selectedAccount = null;
 
-const INFURA_ID = "1faccf0f1fdc4532ad7a1a38a67ee906";
-
 // АДРЕСА КОНТРАКТОВ
 const IBITI_TOKEN_ADDRESS      = "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196";
 const NFTSALEMANAGER_ADDRESS   = "0x5572F3AE84319Fbd6e285a0CB854f92Afd31dd6D";
@@ -24,79 +22,46 @@ import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 import { ethers }             from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 
 // -----------------------------
-// 2) Web3Modal настройка (BSC RPC + явный wss-бридж)
+// 2) Подключаем WalletConnectProvider напрямую
 // -----------------------------
+// Предполагается, что в HTML подключён:
+// <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
 const WalletConnectProviderConstructor =
   window.WalletConnectProvider?.default || window.WalletConnectProvider;
 
-const providerOptions = {
-  walletconnect: {
-    package: WalletConnectProviderConstructor,
-    options: {
-      // Явно указываем WebSocket-бридж, чтобы НЕ цепляться к p.bridge… и z.bridge…
-      bridge: "wss://bridge.walletconnect.org",
-      // RPC для Binance Smart Chain (chainId = 56)
-      rpc: {
-        56: "https://bsc-dataseed.binance.org/"
-      },
-      chainId: 56
-    }
-  }
-};
-
-const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
-  cacheProvider: false,
-  providerOptions
-});
-
 // -----------------------------
-// 3) Подключение кошелька
+// 3) Функция подключения кошелька через WalletConnect V1
 // -----------------------------
 async function connectWallet() {
   try {
-    if (!window.ethereum) {
-      alert("MetaMask не найден. Установите расширение и попробуйте снова.");
-      return;
-    }
+    // Создаём экземпляр WalletConnectProvider с указанием BSC-RPC и HTTP-бриджа
+    const wcProvider = new WalletConnectProviderConstructor({
+      rpc: {
+        56: "https://bsc-dataseed.binance.org/"
+      },
+      chainId: 56,
+      bridge: "https://bridge.walletconnect.org"
+    });
 
-    // Переключаем сеть на BSC
-    try {
-      await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0x38" }]
-      });
-    } catch (switchError) {
-      if (switchError.code === 4902) {
-        await window.ethereum.request({
-          method: "wallet_addEthereumChain",
-          params: [{
-            chainId: "0x38",
-            chainName: "Binance Smart Chain",
-            nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
-            rpcUrls: ["https://bsc-dataseed.binance.org/"],
-            blockExplorerUrls: ["https://bscscan.com"]
-          }]
-        });
-      } else {
-        console.error("Ошибка переключения сети:", switchError);
-      }
-    }
+    console.log("🔌 Открываем WalletConnectProvider напрямую...");
+    // Вызов enable() откроет QR-код, или, если устройство – мобильное, запустит нативный WalletConnect
+    await wcProvider.enable();
 
-    console.log("🔌 Открываем Web3Modal...");
-    await web3Modal.clearCachedProvider(); // ❗️ Сброс кэша — модальное окно покажется
-    const rawProvider = await web3Modal.connect();
-
-    const web3Provider = new ethers.BrowserProvider(rawProvider);
+    // Превращаем wcProvider в ethers-провайдер
+    const web3Provider = new ethers.BrowserProvider(wcProvider);
     signer = await web3Provider.getSigner();
     provider = web3Provider;
 
+    // Получаем адрес подключённого аккаунта
     selectedAccount = await signer.getAddress();
-    window.selectedAccount = selectedAccount; // ✅ добавляем эту строку
+    window.selectedAccount = selectedAccount; // Делаем доступным во всём окне
 
+    // Отображаем адрес в элементе с id="walletAddress"
     const walletDisplay = document.getElementById("walletAddress");
     if (walletDisplay) walletDisplay.innerText = selectedAccount;
 
-    rawProvider.on("accountsChanged", async (accs) => {
+    // Слушаем смену аккаунта
+    wcProvider.on("accountsChanged", async (accs) => {
       if (accs.length === 0) {
         disconnectWallet();
         return;
@@ -106,12 +71,14 @@ async function connectWallet() {
       await showIbitiBalance(true);
     });
 
-    rawProvider.on("disconnect", () => {
+    // Слушаем отключение
+    wcProvider.on("disconnect", () => {
       disconnectWallet();
     });
 
     console.log("✅ Кошелек подключен:", selectedAccount);
 
+    // Инициализируем контракты и показываем баланс
     await initContracts();
     await showIbitiBalance(true);
   } catch (err) {
@@ -133,7 +100,7 @@ async function initContracts() {
 }
 
 // -----------------------------
-// 5) Показ баланса
+// 5) Показ баланса IBITI
 // -----------------------------
 async function showIbitiBalance(highlight = false) {
   if (!window.ibitiToken || !selectedAccount) return;
@@ -155,11 +122,16 @@ async function showIbitiBalance(highlight = false) {
 }
 
 // -----------------------------
-// 6) Отключение
+// 6) Отключение кошелька
 // -----------------------------
 async function disconnectWallet() {
-  if (provider?.provider?.disconnect) {
-    await provider.provider.disconnect();
+  try {
+    // Если провайдер поддерживает disconnect(), вызываем его
+    if (provider?.provider?.disconnect) {
+      await provider.provider.disconnect();
+    }
+  } catch {
+    // Игнорируем ошибки при отключении
   }
   provider = null;
   signer = null;
@@ -175,7 +147,7 @@ async function disconnectWallet() {
 }
 
 // -----------------------------
-// 7) Кнопка подключения
+// 7) Навешиваем обработчик на кнопку подключения
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
@@ -190,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // -----------------------------
-// 8) Экспорт
+// 8) Экспорт и глобальные переменные
 // -----------------------------
 export {
   connectWallet,
@@ -201,8 +173,8 @@ export {
   selectedAccount
 };
 
- // Глобальный экспорт для доступа из других скриптов (например, в nft.html)
-window.connectWallet = connectWallet;
+// Дублируем в window для доступа из других скриптов
+window.connectWallet    = connectWallet;
 window.disconnectWallet = disconnectWallet;
 window.showIbitiBalance = showIbitiBalance;
-window.selectedAccount = selectedAccount;
+window.selectedAccount  = selectedAccount;
