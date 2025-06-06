@@ -1,6 +1,7 @@
 // js/sale.js
 
-import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
+// Полагаемся на глобальный ethers (UMD)
+// import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";  // убрали
 import config from "./config.js";
 import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 
@@ -10,13 +11,16 @@ export async function initSaleContract() {
   if (!window.signer || !window.selectedAccount) return;
   if (saleContract) return;
 
+  // Используем глобальный ethers
   saleContract = new ethers.Contract(
     config.mainnet.contracts.PHASED_TOKENSALE_ADDRESS_MAINNET,
     PhasedTokenSaleAbi,
     window.signer
   );
 
-  console.log("✅ sale.js: PhasedTokenSale инициализирован", saleContract.address);
+  if (saleContract.address) {
+    console.log("✅ sale.js: PhasedTokenSale инициализирован", saleContract.address);
+  }
 }
 
 export async function buyIBITI(amountFormatted, referrer) {
