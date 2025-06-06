@@ -1,4 +1,5 @@
 // js/shop.js
+// Модуль для работы с покупками в магазине
 
 import config       from "./config.js";
 import { buyIBITI } from "./sale.js";
@@ -7,15 +8,18 @@ import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
 
 console.log("✅ shop.js загружен");
 
+let currentProduct = null;
+
 /**
- * Показывает уведомление для пользователей, у которых нет встроенного DApp-браузера.
+ * Показывает уведомление для мобильных пользователей,
+ * если сайт открыт не во встроенном браузере кошелька.
  */
-function showDappBrowserNotice() {
+export function showDappBrowserNotice() {
   Swal.fire({
     icon: 'info',
-    title: 'Пожалуйста, откройте в кошельке',
+    title: 'Откройте в кошельке',
     html: `
-      Для покупок на мобильном устройстве откройте этот сайт через встроенный браузер кошелька:<br>
+      Для покупок на мобильном устройстве используйте встроенный браузер кошелька:<br>
       <strong>MetaMask</strong>, <strong>Trust Wallet</strong> или <strong>Coinbase Wallet</strong>.
     `,
     confirmButtonText: 'Понятно',
@@ -23,17 +27,11 @@ function showDappBrowserNotice() {
   });
 }
 
-let currentProduct = null;
-
+/**
+ * Открывает модалку покупки указанного продукта.
+ * Если кошелек не подключён — сначала подключает.
+ */
 window.openPurchaseModal = async function(productName) {
-  // На мобильных без injected-провайдера показываем уведомление
-  const isMobile    = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const hasInjected = Boolean(window.ethereum);
-  if (isMobile && !hasInjected) {
-    showDappBrowserNotice();
-    return;
-  }
-
   currentProduct = productName;
 
   if (!selectedAccount) {
@@ -54,11 +52,15 @@ window.openPurchaseModal = async function(productName) {
   document.getElementById("purchaseModal").style.display = "block";
 };
 
+/** Закрывает окно покупки */
 window.closePurchaseModal = function() {
   document.getElementById("purchaseModal").style.display = "none";
   document.getElementById("nftAmount").value = "";
 };
 
+/**
+ * Выполняет транзакцию покупки.
+ */
 async function handlePurchase(amount, productName) {
   if (!window.ethereum) {
     Swal.fire({
@@ -79,7 +81,7 @@ async function handlePurchase(amount, productName) {
   try {
     const decimals        = 8;
     const amountFormatted = ethers.parseUnits(amount.toString(), decimals);
-    const paymentMethod   = document.getElementById("paymentToken").value;
+    const paymentMethod   = document.getElementById("paymentToken")?.value;
     let tx;
 
     if (productName === "IBITIcoin") {
@@ -122,8 +124,9 @@ async function handlePurchase(amount, productName) {
 
 window.handlePurchase = handlePurchase;
 
+// После загрузки DOM — навешиваем все обработчики
 document.addEventListener("DOMContentLoaded", () => {
-  // Обработчик формы покупки
+  // Форма покупки
   const form = document.getElementById('purchaseForm');
   if (form) {
     form.addEventListener('submit', async event => {
@@ -133,45 +136,62 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!selectedAccount) {
         Swal.fire({
           icon: 'warning',
-          title: 'Кошелёк не подключён',
-          text: 'Сначала подключите кошелёк.'
+          title: 'Кошелек не подключен',
+          text: 'Сначала подключите кошелек.'
         });
         return;
       }
 
-      window.closePurchaseModal();
+      closePurchaseModal();
       await handlePurchase(amount, currentProduct);
     });
   }
 
-  // Активируем кнопку подтверждения при выборе токена
+  // Кнопка подтверждения метода оплаты
   const paymentToken = document.getElementById('paymentToken');
   const confirmBtn   = document.getElementById('confirmBtn');
   if (paymentToken && confirmBtn) {
-    paymentToken.addEventListener('change', function() {
-      confirmBtn.disabled = (this.value === "");
+    paymentToken.addEventListener('change', () => {
+      confirmBtn.disabled = (paymentToken.value === "");
     });
   }
 
-  // Секция обратного отсчёта
+  // Обратный отсчёт до старта продаж
   const countdownEl = document.getElementById("countdownNotice");
-  const saleStart   = new Date("2025-07-01T09:00:00Z");
+  const saleStart = new Date("2025-07-01T09:00:00Z");
+  function updateCountdown() {
+    const now = new Date();
+    const diff = saleStart - now;
+
+    if (diff <= 0) {
+      countdownEl.innerText = "🟢 Продажа активна!";
+      clearInterval(timer);
+      return;
+    }
+
+    const days    = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours   = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    countdownEl.innerText = `⏳ Продажа начнётся через: ${days}д ${hours}ч ${minutes}м ${seconds}с`;
+  }
   if (countdownEl) {
-    const updateCountdown = () => {
-      const now  = new Date();
-      const diff = saleStart - now;
-      if (diff <= 0) {
-        countdownEl.innerText = "🟢 Продажа активна!";
-        clearInterval(timer);
-        return;
-      }
-      const days    = Math.floor(diff / (1000*60*60*24));
-      const hours   = Math.floor((diff / (1000*60*60)) % 24);
-      const minutes = Math.floor((diff / (1000*60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-      countdownEl.innerText = `⏳ Продажа начнётся через: ${days}д ${hours}ч ${minutes}м ${seconds}с`;
-    };
     updateCountdown();
     const timer = setInterval(updateCountdown, 1000);
+  }
+
+  // Кнопка «Подключить кошелек»
+  const connectBtn = document.getElementById("openWalletModal");
+  if (connectBtn) {
+    connectBtn.addEventListener("click", e => {
+      const isMobile    = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const hasInjected = Boolean(window.ethereum);
+      if (isMobile && !hasInjected) {
+        e.preventDefault();
+        showDappBrowserNotice();
+      }
+      // иначе дальше ваш код откроет модалку выбора кошельков
+    });
   }
 });
