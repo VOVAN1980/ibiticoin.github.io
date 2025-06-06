@@ -641,4 +641,18 @@ footer a:hover{text-decoration:underline}
   #walletModal h2 { font-size: 1rem; }
   #walletModal button { font-size: 0.9rem; }
  }
+
+  /* 1) Отключаем горизонтальную прокрутку всей страницы */
+html, body {
+  overflow-x: hidden;
+}
+
+/* 2) Заставляем адрес разбиваться по строкам и не вылазить за пределы */
+.wallet-section #walletAddress {
+  width: 100%;
+  word-break: break-all;      /* разбивает длинное слово (адрес) */
+  overflow-wrap: anywhere;    /* вариант для любых браузеров */
+  text-align: center;         /* по центру */
+  margin: 0 auto;
+ }
 }
