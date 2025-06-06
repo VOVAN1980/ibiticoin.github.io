@@ -1,17 +1,6 @@
 // js/wallet.js
 
-import CoinbaseWalletSDK from "https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk@4.3.3/+esm";
-import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
-
-// ABI:
-import { ibitiTokenAbi }      from "./abis/ibitiTokenAbi.js";
-import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
-import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
-import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
-
-// Функция и переменные из sale.js:
-import { initSaleContract } from "./sale.js";
-
+// Полагаемся на глобальные ethers и CoinbaseWalletSDK (UMD)
 export let selectedAccount = null;
 export let signer = null;
 let provider = null;
@@ -21,14 +10,15 @@ const NFTSALEMANAGER_ADDRESS   = "0x5572F3AE84319Fbd6e285a0CB854f92Afd31dd6D";
 const NFT_DISCOUNT_ADDRESS     = "0x26C4E3D3E40943D2d569e832A243e329E14ecb02";
 const PHASED_TOKENSALE_ADDRESS = "0x3092cFDfF6890F33b3227c3d2740F84772A465c7";
 
+import { initSaleContract } from "./sale.js";
+
 export async function connectWallet() {
   try {
     if (!window.ethereum) {
       alert("Injected-провайдер (MetaMask/Trust Wallet) не найден.");
       return;
     }
-
-    // Получаем список уже одобренных аккаунтов
+    // Получаем или запрашиваем аккаунты
     const accounts = await window.ethereum.request({ method: "eth_accounts" });
     let account;
     if (accounts.length === 0) {
@@ -40,7 +30,7 @@ export async function connectWallet() {
     selectedAccount = account;
     window.selectedAccount = selectedAccount;
 
-    // Обновляем интерфейс
+    // Обновляем UI
     const addrEl = document.getElementById("walletAddress");
     if (addrEl) addrEl.innerText = selectedAccount;
 
@@ -50,7 +40,7 @@ export async function connectWallet() {
     provider = web3Provider;
     window.signer = signer;
 
-    // Пытаемся переключиться на BSC (chainId = 0x38)
+    // Пытаемся переключиться на BSC (chainId=0x38)
     try {
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
@@ -71,14 +61,14 @@ export async function connectWallet() {
       }
     }
 
-    // Инициализируем локальные контракты
+    // Инициализируем контракты
     await initContracts();
     // Инициализируем контракт продажи
     await initSaleContract();
-    // Показываем баланс
+    // Отображаем баланс IBITI
     await showIbitiBalance(true);
 
-    // Слушатель смены аккаунта
+    // Слушаем смену аккаунта
     window.ethereum.on("accountsChanged", async (newAcc) => {
       if (!newAcc.length) {
         disconnectWallet();
@@ -90,8 +80,6 @@ export async function connectWallet() {
       if (addrEl2) addrEl2.innerText = selectedAccount;
       await showIbitiBalance(true);
     });
-
-    // Слушатель отключения
     window.ethereum.on("disconnect", disconnectWallet);
 
   } catch {
@@ -146,6 +134,7 @@ export async function connectViaCoinbase() {
 window.connectViaCoinbase = connectViaCoinbase;
 
 export async function initContracts() {
+  // Используем глобальный ethers и глобальные ABI
   window.ibitiToken  = new ethers.Contract(
     IBITI_TOKEN_ADDRESS,      ibitiTokenAbi,     signer
   );
