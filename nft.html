@@ -4,19 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NFT Галерея IBITIcoin</title>
-  <!-- Общие стили, ваши внешние CSS -->
+
+  <!-- Ваш главный CSS -->
   <link rel="stylesheet" href="css/style.css" />
 
+  <!-- Inline-стили только для NFT-страницы -->
   <style>
-    /* Inline‐правки только для NFT‐страницы */
+    /* ----------------------------------------- */
+    /* 1. Базовые стили страницы (фон, шрифты) */
     body {
       margin: 0;
       padding: 0;
       background: #000;
-      font-family: sans-serif;
+      font-family: 'Orbitron', sans-serif;
       color: #fff;
     }
 
+    /* ----------------------------------------- */
+    /* 2. Угловые кнопки «Главная» / «Магазин» */
     .corner-box {
       position: absolute;
       background: rgba(0, 0, 0, 0.7);
@@ -37,12 +42,14 @@
       text-decoration: underline;
     }
 
+    /* ----------------------------------------- */
+    /* 3. Заголовок и описание */
     header {
       text-align: center;
       padding: 20px;
     }
     header h1 {
-      font-size: 2rem;
+      font-size: 2.5rem;
       color: gold;
       margin: 0;
     }
@@ -54,6 +61,8 @@
       color: #ccc;
     }
 
+    /* ----------------------------------------- */
+    /* 4. Секция подключения кошелька */
     .wallet-section {
       text-align: center;
       margin: 20px auto;
@@ -62,26 +71,30 @@
       background: gold;
       color: #000;
       border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
+      padding: 10px 24px;
+      border-radius: 6px;
       font-weight: bold;
       cursor: pointer;
+      font-size: 1rem;
       transition: background 0.3s;
     }
     .wallet-section button:hover {
       background: #c0a000;
     }
-    #walletAddress {
+    .wallet-section #walletAddress {
       margin-top: 10px;
       font-weight: bold;
       color: gold;
+      word-break: break-all;
     }
 
+    /* ----------------------------------------- */
+    /* 5. Галерея NFT */
     .nft-gallery {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
-      padding: 40px;
+      padding: 40px 20px;
       max-width: 1200px;
       margin: 0 auto;
     }
@@ -92,8 +105,8 @@
       border: 1px solid gold;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-      transition: transform 0.3s;
       background: #111;
+      transition: transform 0.3s;
     }
     .nft-item:hover {
       transform: scale(1.02);
@@ -122,24 +135,84 @@
       transform: translateX(-50%);
       background: gold;
       color: #000;
-      padding: 10px 20px;
+      padding: 8px 18px;
       border-radius: 5px;
       font-weight: bold;
       text-decoration: none;
       cursor: pointer;
       transition: background 0.3s;
+      font-size: 1rem;
     }
     .buy-button:hover {
       background: #c0a000;
     }
 
-    /* Модалка для покупки NFT */
+    /* ----------------------------------------- */
+    /* 6. Модалка выбора кошелька */
+    #walletModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    }
+    #walletModal .modal-content {
+      background: #111;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 320px;
+      color: gold;
+      position: relative;
+      text-align: center;
+    }
+    #walletModal .modal-content h2 {
+      margin-top: 0;
+      font-size: 1.25rem;
+    }
+    #walletModal .close-btn {
+      background: transparent;
+      color: #fff;
+      font-size: 1.2rem;
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      border: none;
+      cursor: pointer;
+    }
+    #walletModal .btn-injected {
+      background: gold;
+      color: #000;
+      margin-bottom: 10px;
+      padding: 10px 0;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    #walletModal .btn-coinbase {
+      background: #0052ff;
+      color: #fff;
+      padding: 10px 0;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    #walletModal .btn-coinbase:hover {
+      background: #003bb5;
+    }
+
+    /* ----------------------------------------- */
+    /* 7. Модалка покупки NFT */
     .modal {
       display: none;
       position: fixed;
-      z-index: 9999;
-      left: 0;
-      top: 0;
+      z-index: 10001;
+      left: 0; top: 0;
       width: 100%;
       height: 100%;
       background: rgba(0,0,0,0.7);
@@ -158,8 +231,7 @@
     }
     .modal-content .close {
       position: absolute;
-      top: 10px;
-      right: 15px;
+      top: 10px; right: 15px;
       font-size: 1.5rem;
       font-weight: bold;
       cursor: pointer;
@@ -182,9 +254,11 @@
       margin-top: 15px;
       min-height: 20px;
       color: #ffecb3;
+      white-space: pre-wrap;
     }
 
-    /* Нижние кнопки навигации */
+    /* ----------------------------------------- */
+    /* 8. Нижние кнопки навигации */
     .nft-footer-buttons {
       display: flex;
       justify-content: center;
@@ -206,6 +280,8 @@
       transform: scale(1.05);
     }
 
+    /* ----------------------------------------- */
+    /* 9. Footer */
     footer {
       text-align: center;
       padding: 20px;
@@ -220,19 +296,25 @@
     footer a:hover {
       text-decoration: underline;
     }
+
+    /* ----------------------------------------- */
+    /* 10. Мобильная адаптация */
+    @media (max-width: 640px) {
+      header h1 { font-size: 1.8rem; }
+      header p  { font-size: 1rem; }
+      .wallet-section button { width: 80%; }
+      .nft-gallery { padding: 20px 10px; gap: 12px; }
+      .nft-item { margin-bottom: 12px; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Угловые кнопки (десктоп) -->
-  <div class="corner-box corner-left">
-    <a href="index.html">Главная</a>
-  </div>
-  <div class="corner-box corner-right">
-    <a href="shop.html">Магазин</a>
-  </div>
+  <!-- === 1. Угловые кнопки (десктоп) === -->
+  <div class="corner-box corner-left"><a href="index.html">Главная</a></div>
+  <div class="corner-box corner-right"><a href="shop.html">Магазин</a></div>
 
-  <!-- Заголовок -->
+  <!-- === 2. Заголовок === -->
   <header>
     <h1>NFT Галерея IBITIcoin</h1>
     <p>
@@ -241,33 +323,93 @@
     </p>
   </header>
 
-  <!-- Секция подключения кошелька -->
+  <!-- === 3. Секция: Подключить кошелек === -->
   <section class="wallet-section">
-    <button id="connectWalletBtn">Подключить кошелек</button>
+    <button id="openWalletModal">Подключить кошелек</button>
     <div id="walletAddress">Disconnected</div>
   </section>
 
-  <!-- Галерея NFT -->
+  <!-- === 4. Галерея NFT === -->
   <section class="nft-gallery">
-    <div class="nft-item" data-discount="1" data-uri="ipfs://…/Creation_1_uri">
+    <!-- Пример первой карточки NFT: указываем data-discount и data-uri для передачи в JS -->
+    <div class="nft-item" data-discount="1" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Creation_1">
       <img src="img/Creation.webp" alt="Creation 1%" />
       <div class="rarity-label">Creation 1%</div>
-      <a href="#" class="buy-button" onclick="openMintModal(1, 'Creation 1%', 'ipfs://…/Creation_1_uri')">Купить</a>
+      <a href="#" class="buy-button" onclick="openMintModal(1, 'Creation 1%', 'ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Creation_1')">Купить</a>
     </div>
-    <div class="nft-item" data-discount="3" data-uri="ipfs://…/Awakening_3_uri">
+
+    <div class="nft-item" data-discount="3" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Awakening_3">
       <img src="img/Awakening_2.webp" alt="Awakening 3%" />
       <div class="rarity-label">Awakening 3%</div>
-      <a href="#" class="buy-button" onclick="openMintModal(3, 'Awakening 3%', 'ipfs://…/Awakening_3_uri')">Купить</a>
+      <a href="#" class="buy-button" onclick="openMintModal(3, 'Awakening 3%', 'ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Awakening_3')">Купить</a>
     </div>
-    <div class="nft-item" data-discount="5" data-uri="ipfs://…/First_Gods_and_Kings_5_uri">
+
+    <div class="nft-item" data-discount="5" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/First_Gods_5">
       <img src="img/First_Gods_and_Kings_3.webp" alt="The First Gods and Kings 5%" />
       <div class="rarity-label">The First Gods and Kings 5%</div>
-      <a href="#" class="buy-button" onclick="openMintModal(5, 'The First Gods and Kings 5%', 'ipfs://…/First_Gods_and_Kings_5_uri')">Купить</a>
+      <a href="#" class="buy-button" onclick="openMintModal(5, 'The First Gods and Kings 5%', 'ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/First_Gods_5')">Купить</a>
     </div>
-    <!-- Добавьте остальные карточки аналогичным образом, передавая discount и uri -->
+
+    <div class="nft-item" data-discount="7" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Enlightenment_7">
+      <img src="img/Enlightenment_4.webp" alt="Enlightenment 7%" />
+      <div class="rarity-label">Enlightenment 7%</div>
+      <a href="#" class="buy-button" onclick="openMintModal(7, 'Enlightenment 7%', 'ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Enlightenment_7')">Купить</a>
+    </div>
+
+    <div class="nft-item" data-discount="10" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Age_of_Darkness_10">
+      <img src="img/The_Age_of_Darkness_and_Faith_5.webp" alt="The Age of Darkness and Faith 10%" />
+      <div class="rarity-label">The Age of Darkness and Faith 10%</div>
+      <a href="#" class="buy-button" onclick="openMintModal(10, 'The Age of Darkness and Faith 10%', 'ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Age_of_Darkness_10')">Купить</a>
+    </div>
+
+    <div class="nft-item" data-discount="15" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Blood_and_Steel_15">
+      <img src="img/Blood_and_Steel_6.webp" alt="Blood and Steel 15%" />
+      <div class="rarity-label">Blood and Steel 15%</div>
+      <a href="#" class="buy-button" onclick="openMintModal(15, 'Blood and Steel 15%', 'ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Blood_and_Steel_15')">Купить</a>
+    </div>
+
+    <div class="nft-item" data-discount="25" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Digital_Cell_25">
+      <img src="img/Digital_Cell_7.webp" alt="Digital Cell 25%" />
+      <div class="rarity-label">Digital Cell 25%</div>
+      <a href="#" class="buy-button" onclick="openMintModal(25, 'Digital Cell 25%', 'ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Digital_Cell_25')">Купить</a>
+    </div>
+
+    <div class="nft-item" data-discount="50" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Last_Frontier_50">
+      <img src="img/The_Last_Frontier_50.webp" alt="The Last Frontier 50%" />
+      <div class="rarity-label">The Last Frontier 50%</div>
+      <a href="#" class="buy-button" onclick="openMintModal(50, 'The Last Frontier 50%', 'ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Last_Frontier_50')">Купить</a>
+    </div>
+
+    <div class="nft-item" data-discount="75" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Quantum_Leap_75">
+      <img src="img/Quantum_Leap_75.webp" alt="Quantum Leap 75%" />
+      <div class="rarity-label">Quantum Leap 75%</div>
+      <a href="#" class="buy-button" onclick="openMintModal(75, 'Quantum Leap 75%', 'ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Quantum_Leap_75')">Купить</a>
+    </div>
+
+    <div class="nft-item" data-discount="100" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/End_or_Rebirth_100">
+      <img src="img/End_or_Rebirth_100.webp" alt="End or Rebirth 100%" />
+      <div class="rarity-label">End or Rebirth 100%</div>
+      <a href="#" class="buy-button" onclick="openMintModal(100, 'End or Rebirth 100%', 'ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/End_or_Rebirth_100')">Купить</a>
+    </div>
+
+    <div class="nft-item" data-discount="100" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Pandora_100FUL">
+      <img src="img/Pandora_100ful.webp" alt="Pandora 100% FUL" />
+      <div class="rarity-label">Pandora 100% FUL</div>
+      <a href="#" class="buy-button" onclick="openMintModal(100, 'Pandora 100% FUL', 'ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Pandora_100FUL')">Купить</a>
+    </div>
   </section>
 
-  <!-- Модальное окно для покупки NFT -->
+  <!-- === 5. Модалка выбора кошелька === -->
+  <div id="walletModal">
+    <div class="modal-content">
+      <button class="close-btn" id="closeWalletModal">✕</button>
+      <h2>Выберите кошелек</h2>
+      <button class="btn-injected" id="btnInjected">MetaMask / Trust Wallet</button>
+      <button class="btn-coinbase" id="btnCoinbase">Coinbase Wallet</button>
+    </div>
+  </div>
+
+  <!-- === 6. Модалка покупки NFT === -->
   <div id="mintModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeMintModal()">&times;</span>
@@ -280,13 +422,13 @@
     </div>
   </div>
 
-  <!-- Нижние кнопки навигации -->
+  <!-- === 7. Нижние кнопки навигации === -->
   <div class="nft-footer-buttons">
     <a href="index.html" class="btn-small">Главная</a>
     <a href="shop.html" class="btn-small">Магазин</a>
   </div>
 
-  <!-- Футер -->
+  <!-- === 8. Footer === -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p>
@@ -302,7 +444,7 @@
     <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
   </footer>
 
-  <!-- UMD-библиотеки (если нужны) -->
+  <!-- === 9. UMD-библиотеки (если нужны) === -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk@4.3.3/dist/CoinbaseWalletSDK.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -311,48 +453,83 @@
     AOS.init({ once: true });
   </script>
 
-  <!-- 1) config  2) sale  3) wallet  4) nft  5) shop  -->
+  <!-- === 10. Наши модули: config, sale, wallet, nft, shop === -->
   <script type="module" src="js/config.js"></script>
   <script type="module" src="js/sale.js"></script>
   <script type="module" src="js/wallet.js"></script>
   <script type="module" src="js/nft.js"></script>
   <script type="module" src="js/shop.js"></script>
 
-  <!-- Привязка: кнопка «Подключить кошелёк» -->
+  <!-- === 11. Логика модалки выбора кошелька === -->
   <script type="module">
-    import { connectWallet } from "./js/wallet.js";
+    import { connectWallet, connectViaCoinbase } from "./js/wallet.js";
 
-    document.getElementById("connectWalletBtn").addEventListener("click", async () => {
-      await connectWallet();
-      // После успешного подключения Ethereum-кошелька адрес автоматически подставится в #walletAddress
-      // Если хотите, можно дополнительно вывести:
-      const addr = window.selectedAccount;
-      if (addr) {
-        document.getElementById("walletAddress").innerText = addr;
+    const openWalletBtn  = document.getElementById("openWalletModal");
+    const closeWalletBtn = document.getElementById("closeWalletModal");
+    const walletModal    = document.getElementById("walletModal");
+    const btnInjected    = document.getElementById("btnInjected");
+    const btnCoinbase    = document.getElementById("btnCoinbase");
+
+    // Открыть модалку выбора кошелька
+    openWalletBtn.addEventListener("click", () => {
+      walletModal.style.display = "flex";
+    });
+
+    // Закрыть по крестику
+    closeWalletBtn.addEventListener("click", () => {
+      walletModal.style.display = "none";
+    });
+
+    // Клик вне окна закрывает модалку
+    walletModal.addEventListener("click", (e) => {
+      if (e.target === walletModal) walletModal.style.display = "none";
+    });
+
+    // Нажали MetaMask / Trust
+    btnInjected.addEventListener("click", async () => {
+      walletModal.style.display = "none";
+      try {
+        await connectWallet();
+        const addr = window.selectedAccount;
+        if (addr) document.getElementById("walletAddress").innerText = addr;
+      } catch (e) {
+        // Если не смогли подключиться, в connectWallet() уже сработает alert
+      }
+    });
+
+    // Нажали Coinbase Wallet
+    btnCoinbase.addEventListener("click", async () => {
+      walletModal.style.display = "none";
+      try {
+        await connectViaCoinbase();
+        const addr = window.selectedAccount;
+        if (addr) document.getElementById("walletAddress").innerText = addr;
+      } catch (e) {
+        // Если не удалось через Coinbase, connectViaCoinbase() выдаст alert
       }
     });
   </script>
 
-  <!-- Глобальные функции для модалки NFT -->
+  <!-- === 12. Логика открытия/закрытия модалки покупки NFT и запрос цен === -->
   <script type="module">
     import { initNFTModule, handleNFTPurchase } from "./js/nft.js";
 
     window.openMintModal = async function(discount, title, uri) {
-      // 1) Проверяем, подключён ли кошелёк
+      // Проверяем: кошелёк нужно подключить заранее (через модалку выбора кошелька)
       if (!window.selectedAccount) {
         Swal.fire({
           icon: 'warning',
           title: 'Кошелёк не подключён',
-          text: 'Сначала нажмите «Подключить кошелек» вверху.',
+          text: 'Сначала нажмите «Подключить кошелек» вверху и выберите провайдер.',
         });
         return;
       }
 
-      // 2) Инициализируем NFT-модуль (контракт), если раньше не инициализировали
+      // Инициализируем NFT-контракт, если ещё не инициализировали
       const ok = await initNFTModule();
       if (!ok) return;
 
-      // 3) Запрашиваем цены от saleManager
+      // Запрашиваем цены из saleManager (он уже инициализирован в wallet.js)
       document.getElementById("discountPercent").innerText = discount;
       try {
         const ibitiPrice = await window.saleManager.getCurrentIBITIPrice(discount);
@@ -367,13 +544,13 @@
         document.getElementById("priceUSDT").innerText = "—";
       }
 
-      // 4) Открываем модалку
+      // Подставляем заголовок и открываем модалку
       document.getElementById("nftTitle").innerText = title;
       document.getElementById("mintStatus").innerText = "";
       document.getElementById("mintModal").style.display = "block";
 
-      // Передадим uri карточки NFT в переменную, чтобы кнопки «Купить» знали, что за uri использовать
-      window._currentNFTuri = uri;
+      // Сохраняем текущие параметры, чтобы потом в buyWithIBITI() были доступны
+      window._currentNFTuri      = uri;
       window._currentNFTdiscount = discount;
     };
 
@@ -385,14 +562,15 @@
     };
 
     window.buyWithIBITI = async function() {
-      // Режим «заглушка»:
+      // Пока заглушка:
       document.getElementById("mintStatus").innerText =
-        "❌ Продажа NFT временно недоступна. Следите за новостями.";
+        "❌ Продажа NFT временно недоступна.\nСледите за новостями на сайте и в наших соцсетях.";
 
-      // Если нужно включить реальную покупку, закомментируйте строку выше и раскомментируйте эту:
+      // ---- Когда будете готовы запускать реальную покупку, раскомментируйте: ----
       // await handleNFTPurchase(window._currentNFTdiscount, window._currentNFTuri);
     };
 
+    // Можно сделать одинаковое поведение для USDT (или добавить собственную функцию)
     window.buyWithUSDT = window.buyWithIBITI;
   </script>
 </body>
