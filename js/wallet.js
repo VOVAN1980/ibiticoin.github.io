@@ -24,7 +24,7 @@ import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 import { ethers }             from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 
 // -----------------------------
-// 2) Web3Modal настройка
+// 2) Web3Modal настройка (BSC RPC + явный wss-бридж)
 // -----------------------------
 const WalletConnectProviderConstructor =
   window.WalletConnectProvider?.default || window.WalletConnectProvider;
@@ -33,9 +33,9 @@ const providerOptions = {
   walletconnect: {
     package: WalletConnectProviderConstructor,
     options: {
-      // Указываем стандартный Bridge вместо мостов вида p.bridge.walletconnect.org
-      bridge: "https://bridge.walletconnect.org",
-      // Подключаемся сразу к BSC Mainnet через публичный RPC
+      // Явно указываем WebSocket-бридж, чтобы НЕ цепляться к p.bridge… и z.bridge…
+      bridge: "wss://bridge.walletconnect.org",
+      // RPC для Binance Smart Chain (chainId = 56)
       rpc: {
         56: "https://bsc-dataseed.binance.org/"
       },
