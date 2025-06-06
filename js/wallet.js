@@ -4,9 +4,9 @@ import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 
+export let selectedAccount = null;
 let provider = null;
 let signer = null;
-let selectedAccount = null;
 
 const IBITI_TOKEN_ADDRESS      = "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196";
 const NFTSALEMANAGER_ADDRESS   = "0x5572F3AE84319Fbd6e285a0CB854f92Afd31dd6D";
@@ -16,7 +16,7 @@ const PHASED_TOKENSALE_ADDRESS = "0x3092cFDfF6890F33b3227c3d2740F84772A465c7";
 export async function connectWallet() {
   try {
     if (!window.ethereum) {
-      alert("Injected-провайдер (MetaMask/Trust Wallet) не найден.");
+      alert("Injected-провайдер не найден.");
       return;
     }
     const accounts = await window.ethereum.request({ method: "eth_accounts" });
@@ -29,9 +29,7 @@ export async function connectWallet() {
     }
     selectedAccount = account;
     window.selectedAccount = selectedAccount;
-
-    const addrEl = document.getElementById("walletAddress");
-    if (addrEl) addrEl.innerText = selectedAccount;
+    document.getElementById("walletAddress")?.innerText = selectedAccount;
 
     const web3Provider = new ethers.BrowserProvider(window.ethereum);
     signer = await web3Provider.getSigner();
@@ -42,8 +40,8 @@ export async function connectWallet() {
         method: "wallet_switchEthereumChain",
         params: [{ chainId: "0x38" }]
       });
-    } catch (switchError) {
-      if (switchError.code === 4902) {
+    } catch (e) {
+      if (e.code === 4902) {
         await window.ethereum.request({
           method: "wallet_addEthereumChain",
           params: [{
@@ -57,7 +55,6 @@ export async function connectWallet() {
       }
     }
 
-    console.log("✅ Подключено через injected-провайдер:", selectedAccount);
     await initContracts();
     await showIbitiBalance(true);
 
@@ -68,15 +65,11 @@ export async function connectWallet() {
       }
       selectedAccount = newAccounts[0];
       window.selectedAccount = selectedAccount;
-      const wEl = document.getElementById("walletAddress");
-      if (wEl) wEl.innerText = selectedAccount;
+      document.getElementById("walletAddress")?.innerText = selectedAccount;
       await showIbitiBalance(true);
     });
-    window.ethereum.on("disconnect", () => {
-      disconnectWallet();
-    });
-  } catch (err) {
-    console.error("Ошибка connectWallet():", err);
+    window.ethereum.on("disconnect", disconnectWallet);
+  } catch {
     alert("Не удалось подключиться к кошельку.");
   }
 }
@@ -84,25 +77,18 @@ window.connectWallet = connectWallet;
 
 export async function connectViaCoinbase() {
   try {
-    const walletLink = new CoinbaseWalletSDK({
-      appName: "IBITIcoin DApp",
-      darkMode: false
-    });
+    const walletLink = new CoinbaseWalletSDK({ appName: "IBITIcoin DApp", darkMode: false });
     const coinbaseProvider = walletLink.makeWeb3Provider("https://bsc-dataseed.binance.org/", 56);
-
     const accounts = await coinbaseProvider.request({ method: "eth_requestAccounts" });
     const account = accounts[0];
     selectedAccount = account;
     window.selectedAccount = selectedAccount;
-
-    const addrEl = document.getElementById("walletAddress");
-    if (addrEl) addrEl.innerText = selectedAccount;
+    document.getElementById("walletAddress")?.innerText = selectedAccount;
 
     const web3Provider = new ethers.BrowserProvider(coinbaseProvider);
     signer = await web3Provider.getSigner();
     provider = web3Provider;
 
-    console.log("✅ Подключено через Coinbase Wallet:", selectedAccount);
     await initContracts();
     await showIbitiBalance(true);
 
@@ -113,15 +99,11 @@ export async function connectViaCoinbase() {
       }
       selectedAccount = newAccounts[0];
       window.selectedAccount = selectedAccount;
-      const wEl = document.getElementById("walletAddress");
-      if (wEl) wEl.innerText = selectedAccount;
+      document.getElementById("walletAddress")?.innerText = selectedAccount;
       await showIbitiBalance(true);
     });
-    coinbaseProvider.on("disconnect", () => {
-      disconnectWallet();
-    });
-  } catch (err) {
-    console.error("Ошибка connectViaCoinbase():", err);
+    coinbaseProvider.on("disconnect", disconnectWallet);
+  } catch {
     alert("Не удалось подключиться через Coinbase Wallet.");
   }
 }
@@ -143,14 +125,12 @@ export async function showIbitiBalance(highlight = false) {
     if (el) {
       el.innerText = `Ваш баланс IBITI: ${formatted}`;
       if (highlight) {
-        el.style.transition = "background 0.3s ease";
+        el.style.transition = "background 0.3s";
         el.style.background = "rgba(255, 215, 0, 0.2)";
         setTimeout(() => (el.style.background = "transparent"), 500);
       }
     }
-  } catch (err) {
-    console.error("Ошибка showIbitiBalance():", err);
-  }
+  } catch {}
 }
 
 export async function disconnectWallet() {
@@ -160,9 +140,6 @@ export async function disconnectWallet() {
   provider = null;
   signer = null;
   selectedAccount = null;
-  const wEl = document.getElementById("walletAddress");
-  if (wEl) wEl.innerText = "Disconnected";
-  const bEl = document.getElementById("ibitiBalance");
-  if (bEl) bEl.innerText = "";
-  console.log("🔌 Кошелек отключен");
+  document.getElementById("walletAddress")?.innerText = "Disconnected";
+  document.getElementById("ibitiBalance")?.innerText = "";
 }
