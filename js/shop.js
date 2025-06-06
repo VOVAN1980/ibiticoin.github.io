@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
         Swal.fire({
           icon: 'warning',
           title: 'Кошелек не подключен',
-          text: 'Сначала подключите кошелек.',
+          text: 'Сначала подключите кошелек.'
         });
         return;
       }
@@ -118,8 +118,6 @@ document.addEventListener("DOMContentLoaded", () => {
       closePurchaseModal();
       await handlePurchase(amount, currentProduct);
     });
-  } else {
-    console.error("Форма покупки не найдена");
   }
 
   const paymentToken = document.getElementById('paymentToken');
@@ -128,11 +126,8 @@ document.addEventListener("DOMContentLoaded", () => {
     paymentToken.addEventListener('change', function () {
       confirmBtn.disabled = (this.value === "");
     });
-  } else {
-    console.error("Элементы paymentToken или confirmBtn не найдены");
   }
 
-  // ⏳ Обратный отсчёт
   const countdownEl = document.getElementById("countdownNotice");
   const saleStart = new Date("2025-07-01T09:00:00Z");
   function updateCountdown() {
