@@ -236,6 +236,7 @@
 
   <!-- Секция подключения кошелька -->
   <section class="wallet-section">
+    <!-- Старая кнопка остаётся, но на неё мы вешаем другой обработчик -->
     <button id="connectWalletBtn">Подключить кошелек</button>
     <div id="walletAddress"></div>
     <div id="ibitiBalance" style="color: gold; font-weight: bold; margin-top: 10px;"></div>
@@ -248,6 +249,7 @@
       <img src="img/IBITIcoin.webp" alt="IBITIcoin">
       <h3>Название товара 1 (IBITIcoin)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
+      <!-- При клике открываем модалку покупки IBITIcoin -->
       <button onclick="openPurchaseModal('IBITIcoin')">Купить</button>
     </div>
     <!-- Товар NFT -->
@@ -255,6 +257,7 @@
       <img src="img/NFT.webp" alt="NFT">
       <h3>Название товара 2 (NFT)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
+      <!-- При клике открываем ту же модалку или другую логику -->
       <button onclick="openPurchaseModal('NFT')">Купить</button>
     </div>
   </section>
@@ -287,8 +290,10 @@
     <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
   </footer>
 
-  <!-- WalletConnectProvider V1 -->
+  <!-- Внешние библиотеки -->
+  <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
   <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <!-- AOS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
@@ -296,22 +301,68 @@
     AOS.init({ once: true });
   </script>
 
-  <!-- Ваши модули -->
+  <!-- Ваши модули (оставляем без изменений) -->
   <script type="module" src="js/config.js"></script>
   <script type="module" src="js/sale.js"></script>
   <script type="module" src="js/wallet.js"></script>
   <script type="module" src="js/shop.js"></script>
 
+  <!-- Скрытый iframe с новой страницей wallet-v2.html -->
+  <iframe id="walletIframe" src="wallet-v2.html" style="display: none; width: 0; height: 0; border: none;"></iframe>
+
+  <!-- Скрипт «мост» между shop.html и wallet-v2.html -->
   <script>
-    // Функция открытия модалки покупки
+    // Получаем доступ к contentWindow скрытого iframe
+    const walletIframeWindow = document.getElementById('walletIframe').contentWindow;
+
+    // Обработчик нажатия на «Подключить кошелек»
+    document.getElementById('connectWalletBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      // Отправляем во фрейм команду «connect-wcv2». 
+      // Внутри wallet-v2.html эта команда запустит WalletConnect v2.
+      walletIframeWindow.postMessage({ type: 'connect-wcv2' }, '*');
+    });
+
+    // Слушаем сообщения от wallet-v2.html
+    window.addEventListener('message', (event) => {
+      const msg = event.data;
+      if (!msg || typeof msg !== 'object') return;
+
+      switch (msg.type) {
+        // Когда WC v2 успешно подключился, нам приходит { type: 'connected', address: '0x...' }
+        case 'connected':
+          document.getElementById('walletAddress').innerText = msg.address;
+          console.log('Кошелек подключён (v2):', msg.address);
+          // Здесь можно включить кнопки «Купить» и т. д.
+          break;
+
+        // Когда WC v2 отключился, приходит { type: 'disconnected' }
+        case 'disconnected':
+          document.getElementById('walletAddress').innerText = 'Disconnected';
+          console.log('Кошелек отключён (v2)');
+          break;
+
+        // Если в wallet-v2.html произошла ошибка, приходит { type: 'error', error: '...' }
+        case 'error':
+          alert('Ошибка (v2):\n' + msg.error);
+          console.error('Ошибка из wallet-v2.html:', msg.error);
+          break;
+
+        // Если в wallet-v2.html реализована покупка и присылает { type: 'bought', txHash: '0x...' }
+        case 'bought':
+          alert('Покупка прошла успешно! TxHash: ' + msg.txHash);
+          break;
+      }
+    });
+
+    // Пример функции покупки, которая шлёт команду во фрейм
     function openPurchaseModal(itemType) {
-      // Здесь по сути остаётся ваша старая логика:
+      // Здесь вы открываете свою модалку, а при нажатии «Подтвердить покупку»
+      // вызываете, например, buyItem(tokenId, priceWei)
+      // Ниже — пример отправки сообщения «купить» во фрейм:
+      // walletIframeWindow.postMessage({ type: 'buy', tokenId: 1, price: '10000000000000000' }, '*');
+      // Но если у вас покупка на отдельной странице (nft.html), можно оставить старую логику.
       console.log('Открыть модалку покупки для', itemType);
-      document.getElementById('purchaseTitle').innerText = `Покупка ${itemType}`;
-      document.getElementById('purchaseModal').style.display = 'block';
-    }
-    function closePurchaseModal() {
-      document.getElementById('purchaseModal').style.display = 'none';
     }
   </script>
 </body>
