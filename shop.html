@@ -274,13 +274,13 @@
       <img src="img/IBITIcoin.webp" alt="IBITIcoin">
       <h3>Название товара 1 (IBITIcoin)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-      <button onclick="openPurchaseModal('IBITIcoin')">Купить</button>
+      <button class="buy-button" onclick="openPurchaseModal('IBITIcoin')">Купить</button>
     </div>
     <div class="shop-item">
       <img src="img/NFT.webp" alt="NFT">
       <h3>Название товара 2 (NFT)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-      <button onclick="openPurchaseModal('NFT')">Купить</button>
+      <button class="buy-button" onclick="openPurchaseModal('NFT')">Купить</button>
     </div>
   </section>
 
@@ -294,7 +294,6 @@
         <label for="paymentToken">Способ оплаты:</label>
         <select id="paymentToken" required>
           <option value="">-- Выберите --</option>
-          <option value="IBITI">IBITI</option>
           <option value="USDT">USDT</option>
         </select>
         <br><br>
