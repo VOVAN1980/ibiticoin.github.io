@@ -22,46 +22,60 @@ import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 import { ethers }             from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 
 // -----------------------------
-// 2) Подключаем WalletConnectProvider напрямую
+// 2) Web3Modal V1 настройка
 // -----------------------------
-// Предполагается, что в HTML подключён:
+// В HTML обязательно подключить до wallet.js:
+// <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
 // <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
 const WalletConnectProviderConstructor =
   window.WalletConnectProvider?.default || window.WalletConnectProvider;
 
-// -----------------------------
-// 3) Функция подключения кошелька через WalletConnect V1
-// -----------------------------
-async function connectWallet() {
-  try {
-    // Создаём экземпляр WalletConnectProvider с указанием BSC-RPC и HTTP-бриджа
-    const wcProvider = new WalletConnectProviderConstructor({
+const providerOptions = {
+  walletconnect: {
+    package: WalletConnectProviderConstructor,
+    options: {
+      // Принудительно задаём HTTP-бридж, чтобы избежать wss://p.bridge… и подобных
+      bridge: "https://bridge.walletconnect.org",
+      // RPC для Binance Smart Chain (chainId = 56)
       rpc: {
         56: "https://bsc-dataseed.binance.org/"
       },
       chainId: 56,
-      bridge: "https://bridge.walletconnect.org"
-    });
+      // Отключаем injected провайдеры, чтобы не метался по разным мостам
+      disableInjectedProvider: true
+    }
+  }
+};
 
-    console.log("🔌 Открываем WalletConnectProvider напрямую...");
-    // Вызов enable() откроет QR-код, или, если устройство – мобильное, запустит нативный WalletConnect
-    await wcProvider.enable();
+const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
+  cacheProvider: false,
+  providerOptions
+});
 
-    // Превращаем wcProvider в ethers-провайдер
-    const web3Provider = new ethers.BrowserProvider(wcProvider);
+// -----------------------------
+// 3) Подключение кошелька через Web3Modal V1 + WalletConnect V1
+// -----------------------------
+async function connectWallet() {
+  try {
+    console.log("🔌 Открываем Web3Modal...");
+    await web3Modal.clearCachedProvider(); // Сброс кэша, чтобы всегда показывалось окно
+    const rawProvider = await web3Modal.connect(); // Запускаем выбор провайдера
+
+    // Создаём Ethers.js провайдер на основе выбранного rawProvider
+    const web3Provider = new ethers.BrowserProvider(rawProvider);
     signer = await web3Provider.getSigner();
     provider = web3Provider;
 
     // Получаем адрес подключённого аккаунта
     selectedAccount = await signer.getAddress();
-    window.selectedAccount = selectedAccount; // Делаем доступным во всём окне
+    window.selectedAccount = selectedAccount;
 
     // Отображаем адрес в элементе с id="walletAddress"
     const walletDisplay = document.getElementById("walletAddress");
     if (walletDisplay) walletDisplay.innerText = selectedAccount;
 
     // Слушаем смену аккаунта
-    wcProvider.on("accountsChanged", async (accs) => {
+    rawProvider.on("accountsChanged", async (accs) => {
       if (accs.length === 0) {
         disconnectWallet();
         return;
@@ -72,13 +86,13 @@ async function connectWallet() {
     });
 
     // Слушаем отключение
-    wcProvider.on("disconnect", () => {
+    rawProvider.on("disconnect", () => {
       disconnectWallet();
     });
 
     console.log("✅ Кошелек подключен:", selectedAccount);
 
-    // Инициализируем контракты и показываем баланс
+    // Инициализируем контракты и отображаем баланс
     await initContracts();
     await showIbitiBalance(true);
   } catch (err) {
@@ -126,12 +140,13 @@ async function showIbitiBalance(highlight = false) {
 // -----------------------------
 async function disconnectWallet() {
   try {
-    // Если провайдер поддерживает disconnect(), вызываем его
-    if (provider?.provider?.disconnect) {
-      await provider.provider.disconnect();
+    // Если rawProvider поддерживает disconnect()
+    const cachedProvider = web3Modal.cachedProvider;
+    if (cachedProvider) {
+      await web3Modal.clearCachedProvider();
     }
   } catch {
-    // Игнорируем ошибки при отключении
+    // Игнорируем ошибки отключения
   }
   provider = null;
   signer = null;
