@@ -1,11 +1,16 @@
 // js/wallet.js
 
+import CoinbaseWalletSDK from "https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk@4.3.3/+esm";
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
+
+// ABI:
 import { ibitiTokenAbi }      from "./abis/ibitiTokenAbi.js";
 import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
-import { initSaleContract }   from "./sale.js";
+
+// Функция и переменные из sale.js:
+import { initSaleContract } from "./sale.js";
 
 export let selectedAccount = null;
 export let signer = null;
@@ -19,11 +24,11 @@ const PHASED_TOKENSALE_ADDRESS = "0x3092cFDfF6890F33b3227c3d2740F84772A465c7";
 export async function connectWallet() {
   try {
     if (!window.ethereum) {
-      alert("Injected-провайдер (MetaMask/Trust) не найден.");
+      alert("Injected-провайдер (MetaMask/Trust Wallet) не найден.");
       return;
     }
 
-    // Запрашиваем или получаем уже одобренный аккаунт
+    // Получаем список уже одобренных аккаунтов
     const accounts = await window.ethereum.request({ method: "eth_accounts" });
     let account;
     if (accounts.length === 0) {
@@ -35,21 +40,21 @@ export async function connectWallet() {
     selectedAccount = account;
     window.selectedAccount = selectedAccount;
 
-    // Обновляем UI
+    // Обновляем интерфейс
     const addrEl = document.getElementById("walletAddress");
     if (addrEl) addrEl.innerText = selectedAccount;
 
-    // Настраиваем ethers-провайдер и signer
+    // Инициализируем ethers-провайдер и signer
     const web3Provider = new ethers.BrowserProvider(window.ethereum);
     signer = await web3Provider.getSigner();
     provider = web3Provider;
     window.signer = signer;
 
-    // Пытаемся переключиться на BSC, если нужно
+    // Пытаемся переключиться на BSC (chainId = 0x38)
     try {
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0x38" }]
+        params: [{ chainId: "0x38" }],
       });
     } catch (e) {
       if (e.code === 4902) {
@@ -60,18 +65,20 @@ export async function connectWallet() {
             chainName: "Binance Smart Chain",
             nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
             rpcUrls: ["https://bsc-dataseed.binance.org/"],
-            blockExplorerUrls: ["https://bscscan.com"]
-          }]
+            blockExplorerUrls: ["https://bscscan.com"],
+          }],
         });
       }
     }
 
-    // Инициализируем локальные контракты, saleContract и баланс
+    // Инициализируем локальные контракты
     await initContracts();
+    // Инициализируем контракт продажи
     await initSaleContract();
+    // Показываем баланс
     await showIbitiBalance(true);
 
-    // Слушаем смену аккаунта
+    // Слушатель смены аккаунта
     window.ethereum.on("accountsChanged", async (newAcc) => {
       if (!newAcc.length) {
         disconnectWallet();
@@ -83,6 +90,8 @@ export async function connectWallet() {
       if (addrEl2) addrEl2.innerText = selectedAccount;
       await showIbitiBalance(true);
     });
+
+    // Слушатель отключения
     window.ethereum.on("disconnect", disconnectWallet);
 
   } catch {
@@ -95,7 +104,7 @@ export async function connectViaCoinbase() {
   try {
     const walletLink = new CoinbaseWalletSDK({
       appName: "IBITIcoin DApp",
-      darkMode: false
+      darkMode: false,
     });
     const coinbaseProvider = walletLink.makeWeb3Provider(
       "https://bsc-dataseed.binance.org/", 56
@@ -138,16 +147,16 @@ window.connectViaCoinbase = connectViaCoinbase;
 
 export async function initContracts() {
   window.ibitiToken  = new ethers.Contract(
-    IBITI_TOKEN_ADDRESS, ibitiTokenAbi, signer
+    IBITI_TOKEN_ADDRESS,      ibitiTokenAbi,     signer
   );
   window.saleManager = new ethers.Contract(
-    NFTSALEMANAGER_ADDRESS, nftSaleManagerAbi, signer
+    NFTSALEMANAGER_ADDRESS,   nftSaleManagerAbi, signer
   );
   window.nftDiscount = new ethers.Contract(
-    NFT_DISCOUNT_ADDRESS, nftDiscountAbi, signer
+    NFT_DISCOUNT_ADDRESS,     nftDiscountAbi,    signer
   );
   window.phasedSale  = new ethers.Contract(
-    PHASED_TOKENSALE_ADDRESS, PhasedTokenSaleAbi, signer
+    PHASED_TOKENSALE_ADDRESS, PhasedTokenSaleAbi,signer
   );
 }
 
