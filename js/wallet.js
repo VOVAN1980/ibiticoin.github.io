@@ -5,6 +5,7 @@ import { ibitiTokenAbi }      from "./abis/ibitiTokenAbi.js";
 import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
+import { initSaleContract, showIbitiBalance } from "./sale.js"; // Добавлено
 
 export let selectedAccount = null;
 export let signer = null;
@@ -60,7 +61,11 @@ export async function connectWallet() {
       }
     }
 
+    // Инициализируем контракты IBITI, SaleManager, Discount и PhasedTokenSale
     await initContracts();
+    // Инициализируем контракт продажи (PhasedTokenSale) после того, как signer установлен
+    await initSaleContract(); 
+    // Показываем баланс IBITI
     await showIbitiBalance(true);
 
     window.ethereum.on("accountsChanged", async (newAcc) => {
@@ -104,6 +109,7 @@ export async function connectViaCoinbase() {
     window.signer = signer;
 
     await initContracts();
+    await initSaleContract(); 
     await showIbitiBalance(true);
 
     coinbaseProvider.on("accountsChanged", async (newAcc) => {
