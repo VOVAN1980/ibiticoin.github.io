@@ -1,64 +1,64 @@
 // js/nft.js
+
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 import config from "./config.js";
 import { ibitiNftAbi } from "./abis/ibitiNftAbi.js";
-import { connectWallet, signer, showIbitiBalance, selectedAccount } from "./wallet.js";
+import { connectWallet, signer, selectedAccount, showIbitiBalance } from "./wallet.js";
 
-// Выбираем конфигурацию (mainnet или testnet)
-const netConfig = config.testnet ? config.testnet : config.mainnet;
-const IBITI_NFT_ADDRESS = netConfig.contracts.IBITI_NFT_ADDRESS;
+const netConfig = config.mainnet; // Если есть testnet, используйте config.testnet
+const IBITI_NFT_ADDRESS = netConfig.contracts.IBITINFT_ADDRESS_MAINNET; // или: contracts.IBITI_NFT_ADDRESS
 
 let nftContract = null;
 
 /**
- * Инициализирует подключение кошелька и NFT-контракт.
- * Вызываем вручную при клике на NFT-карточку.
+ * Инициирует подключение кошелька и создание nftContract.
+ * Возвращает true, если всё удачно, иначе false.
  */
 export async function initNFTModule() {
   if (!window.ethereum) {
-    alert("MetaMask не установлен. Установите расширение для работы с NFT.");
+    alert("MetaMask не установлен. Установите расширение, чтобы работать с NFT.");
     console.warn("MetaMask не обнаружен. NFT-модуль не активен.");
     return false;
   }
 
-  // Подключаем кошелек (Web3Modal появится только здесь)
+  // 1) Подключаем кошелёк (если ещё не подключён)
   await connectWallet();
-  if (!signer) return false;
+  if (!signer) {
+    console.warn("NFT: signer не получен, выходим.");
+    return false;
+  }
 
-  // Инициализируем контракт NFT
-  nftContract = new ethers.Contract(IBITI_NFT_ADDRESS, ibitiNftAbi, signer);
-  window.nftContract = nftContract;
+  // 2) Инициализируем контракт NFT (если ещё не создан)
+  if (!nftContract) {
+    nftContract = new ethers.Contract(IBITI_NFT_ADDRESS, ibitiNftAbi, signer);
+    window.nftContract = nftContract;
+    console.log("nft.js: ✓ NFT-контракт инициализирован по адресу", IBITI_NFT_ADDRESS);
+  }
 
-  // Проверяем баланс NFT у пользователя (опционально)
-  await getNFTBalance();
+  // 3) (опционально) Проверяем баланс NFT у пользователя
+  try {
+    const balance = await nftContract.balanceOf(selectedAccount);
+    console.log(`nft.js: NFT-баланс (${selectedAccount}) =`, balance.toString());
+  } catch (e) {
+    console.warn("nft.js: не удалось получить баланс NFT:", e);
+  }
+
   return true;
 }
 
 /**
- * Получает баланс NFT у текущего пользователя и логирует в консоль.
+ * / НЕ вызываем автоматически при загрузке страницы. 
+ * A) Сперва мы вызываем initNFTModule(), 
+ * B) Получаем цены от saleManager,
+ * C) Отображаем модалку и сами методы buyWithIBITI / buyWithUSDT.
  */
-export async function getNFTBalance() {
-  try {
-    if (!nftContract || !selectedAccount) return;
-    const balance = await nftContract.balanceOf(selectedAccount);
-    console.log(`NFT-баланс (${selectedAccount}): ${balance.toString()}`);
-    // По желанию можно обновить DOM-элемент, например:
-    // document.getElementById("nftBalance").innerText = balance.toString();
-  } catch (error) {
-    console.error("Ошибка получения баланса NFT:", error);
-  }
-}
 
-/**
- * Вызывается при подтверждении покупки NFT (после клика на “Купить NFT” внутри галереи).
- * discount и uri должны приходить из атрибутов карточки NFT.
- */
 export async function handleNFTPurchase(discount, uri) {
   if (!window.ethereum) {
     Swal.fire({
       icon: 'warning',
       title: 'MetaMask не найден',
-      text: 'Установите MetaMask для выполнения покупки.',
+      text: 'Установите MetaMask для покупки NFT.',
     });
     return;
   }
@@ -72,8 +72,11 @@ export async function handleNFTPurchase(discount, uri) {
 
   try {
     const saleManager = window.saleManager;
-    if (!saleManager) throw new Error("Контракт saleManager не инициализирован");
+    if (!saleManager) {
+      throw new Error("Контракт saleManager не инициализирован");
+    }
 
+    // Пример метода покупки (вызывайте функцию контракта saleManager.buyNFTWithIBITI)
     const tx = await saleManager.buyNFTWithIBITI(discount, uri);
     await tx.wait();
 
@@ -86,7 +89,11 @@ export async function handleNFTPurchase(discount, uri) {
     });
 
     // Обновляем баланс NFT и токенов
-    await getNFTBalance();
+    try {
+      const balance = await nftContract.balanceOf(selectedAccount);
+      console.log(`Новый NFT-баланс:`, balance.toString());
+    } catch {}
+
     await showIbitiBalance(true);
   } catch (error) {
     Swal.fire({
@@ -97,6 +104,3 @@ export async function handleNFTPurchase(discount, uri) {
     });
   }
 }
-
-// Больше НЕ вызываем initNFTModule автоматически.
-// document.addEventListener("DOMContentLoaded", initNFTModule);
