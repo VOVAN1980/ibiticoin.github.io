@@ -7,7 +7,6 @@ import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 export let saleContract = null;
 
 async function initSaleContract() {
-  // используем глобальные window.selectedAccount и window.signer
   if (!window.signer || !window.selectedAccount) return;
   if (saleContract) return;
 
