@@ -1,43 +1,12 @@
 <!DOCTYPE html>
-<html lang="ру">
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Магазин IBITIcoin</title>
-  
-  <!-- Import Map для bare module specifiers (если нужны будут другие модули) -->
-  <script type="importmap">
-  {
-    "imports": {
-      "abitype": "https://cdn.skypack.dev/abitype@1.3.0"
-    }
-  }
-  </script>
-  
-  <!-- Основные метатеги SEO -->
-  <meta name="description" content="IBITIcoin – инновационная криптовалюта для быстрой, безопасной и доступной работе в цифровой экономике.">
-  <meta name="keywords" content="IBITIcoin, криптовалюта, инвестиции, блокчейн, DeFi">
-  <meta name="author" content="IBITIcoin Team">
-
-  <!-- Open Graph -->
-  <meta property="og:title" content="IBITIcoin – Будущее цифровых финансов">
-  <meta property="og:description" content="Узнайте, как IBITIcoin делает криптовалюту доступной и безопасной для всех.">
-  <meta property="og:image" content="img/og-image.png">
-  <meta property="og:url" content="shop.html">
-  <meta property="og:type" content="website">
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="IBITIcoin – Будущее цифровых финансов">
-  <meta name="twitter:description" content="Узнайте, как IBITIcoin делает криптовалюту доступной и безопасной для всех.">
-  <meta name="twitter:image" content="img/og-image.png">
-  
-  <!-- Подключаем общий CSS и AOS -->
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
-
   <style>
-    /* --- Шапка --- */
     .hero-header {
       padding: 15px 20px;
       text-align: center;
@@ -51,8 +20,6 @@
       font-size: 1.5em;
       color: #fff;
     }
-    
-    /* Счетчик (если нужен) */
     #countdownNotice {
       text-align: center;
       font-weight: bold;
@@ -60,8 +27,6 @@
       font-size: 1.2em;
       margin-bottom: 10px;
     }
-    
-    /* --- Секция подключения кошелька --- */
     .wallet-section {
       text-align: center;
       margin: 20px auto;
@@ -90,8 +55,6 @@
       font-weight: bold;
       margin-top: 10px;
     }
-
-    /* --- Секция товаров (shop-items) --- */
     .shop-items {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -139,14 +102,12 @@
     .shop-item button:hover {
       background: #c0a000;
     }
-
-    /* --- Модальное окно для выбора кошелька --- */
     #walletModal {
       display: none;
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0,0,0,0.5);
       justify-content: center;
       align-items: center;
       z-index: 1000;
@@ -194,8 +155,6 @@
     #walletModal .btn-coinbase:hover {
       background: #003bb5;
     }
-
-    /* --- Модальное окно для покупки товара (оставляем как было) --- */
     .modal {
       display: none;
       position: fixed;
@@ -226,9 +185,6 @@
       font-size: 1.5em;
       font-weight: bold;
       cursor: pointer;
-    }
-    .modal-content-custom form {
-      margin-top: 30px;
     }
     .modal-content-custom label {
       display: block;
@@ -274,8 +230,6 @@
     .modal-content-custom button.cancel:hover {
       background: #c0a000;
     }
-
-    /* --- Футер --- */
     footer {
       padding: 20px;
       background: rgba(0, 0, 0, 0.8);
@@ -300,38 +254,28 @@
 
   <div id="countdownNotice"></div>
 
-  <!-- Секция подключения кошелька -->
   <section class="wallet-section">
-    <!-- Кнопка теперь открывает модалку выбора кошелька -->
     <button id="openWalletModal">Подключить кошелек</button>
     <div id="walletAddress"></div>
     <div id="ibitiBalance"></div>
   </section>
 
-  <!-- Модалка выбора кошелька -->
   <div id="walletModal">
     <div class="modal-content">
       <button class="close-btn" id="closeWalletModal">✕</button>
       <h2>Выберите кошелек</h2>
-      <button class="btn-injected" id="btnInjected">
-        MetaMask / Trust Wallet
-      </button>
-      <button class="btn-coinbase" id="btnCoinbase">
-        Coinbase Wallet
-      </button>
+      <button class="btn-injected" id="btnInjected">MetaMask / Trust Wallet</button>
+      <button class="btn-coinbase" id="btnCoinbase">Coinbase Wallet</button>
     </div>
   </div>
 
-  <!-- Секция товаров магазина -->
   <section class="shop-items">
-    <!-- Товар IBITIcoin (монета) -->
     <div class="shop-item">
       <img src="img/IBITIcoin.webp" alt="IBITIcoin">
       <h3>Название товара 1 (IBITIcoin)</h3>
       <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
       <button onclick="openPurchaseModal('IBITIcoin')">Купить</button>
     </div>
-    <!-- Товар NFT -->
     <div class="shop-item">
       <img src="img/NFT.webp" alt="NFT">
       <h3>Название товара 2 (NFT)</h3>
@@ -340,7 +284,6 @@
     </div>
   </section>
 
-  <!-- Модальное окно для покупки (оставляем прежнее) -->
   <div id="purchaseModal" class="modal">
     <div class="modal-content-custom">
       <span class="close" onclick="closePurchaseModal()">&times;</span>
@@ -348,14 +291,12 @@
       <form id="purchaseForm">
         <label for="nftAmount">Введите количество:</label>
         <input type="number" id="nftAmount" name="nftAmount" min="1" required>
-
         <label for="paymentToken">Способ оплаты:</label>
         <select id="paymentToken" required>
           <option value="">-- Выберите --</option>
           <option value="IBITI">IBITI</option>
           <option value="USDT">USDT</option>
         </select>
-
         <br><br>
         <button type="submit" id="confirmBtn" disabled>Подтвердить покупку</button>
         <button type="button" class="cancel" onclick="closePurchaseModal()">Отмена</button>
@@ -365,34 +306,22 @@
 
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
-    <p><a class="btn-small" href="index.html">Вернуться на главную</a></p>
+    <p><a href="index.html">Вернуться на главную</a></p>
   </footer>
 
-  <!-- Удалили web3modal и walletconnect v1 -->
-  <!-- <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script> -->
-  <!-- <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script> -->
-
-  <!-- Оставляем только нужные библиотеки -->
-  <!-- 1) ethers.js v6 (UMD) -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
-  <!-- 2) Coinbase Wallet SDK (WalletLink v4.3.3) -->
   <script src="https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk@4.3.3/dist/CoinbaseWalletSDK.min.js"></script>
-  <!-- 3) SweetAlert2 (если нужен в shop.js) -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-  <!-- AOS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
     AOS.init({ once: true });
   </script>
 
-  <!-- Наши модули: config.js, sale.js, wallet.js, shop.js -->
   <script type="module" src="js/config.js"></script>
   <script type="module" src="js/sale.js"></script>
   <script type="module" src="js/wallet.js"></script>
   <script type="module" src="js/shop.js"></script>
 
-  <!-- Скрипт для открытия/закрытия модалки и вызова функций из wallet.js -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const openModalBtn  = document.getElementById("openWalletModal");
@@ -401,31 +330,23 @@
       const btnInjected   = document.getElementById("btnInjected");
       const btnCoinbase   = document.getElementById("btnCoinbase");
 
-      // Открыть модалку
       openModalBtn.addEventListener("click", () => {
         walletModal.style.display = "flex";
       });
-      // Закрыть модалку
       closeModalBtn.addEventListener("click", () => {
         walletModal.style.display = "none";
       });
-      // Закрыть, если кликнули по фону
       walletModal.addEventListener("click", (e) => {
-        if (e.target === walletModal) {
-          walletModal.style.display = "none";
-        }
+        if (e.target === walletModal) walletModal.style.display = "none";
       });
 
-      // При выборе MetaMask/Trust Wallet
       btnInjected.addEventListener("click", () => {
         walletModal.style.display = "none";
-        window.connectWallet();           // функция из js/wallet.js
+        window.connectWallet();
       });
-
-      // При выборе Coinbase Wallet
       btnCoinbase.addEventListener("click", () => {
         walletModal.style.display = "none";
-        window.connectViaCoinbase();      // функция из js/wallet.js
+        window.connectViaCoinbase();
       });
     });
   </script>
