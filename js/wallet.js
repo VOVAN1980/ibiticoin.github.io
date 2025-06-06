@@ -1,3 +1,5 @@
+// js/wallet.js
+
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
 import { ibitiTokenAbi }      from "./abis/ibitiTokenAbi.js";
 import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
@@ -5,8 +7,8 @@ import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 
 export let selectedAccount = null;
+export let signer = null;
 let provider = null;
-let signer = null;
 
 const IBITI_TOKEN_ADDRESS      = "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196";
 const NFTSALEMANAGER_ADDRESS   = "0x5572F3AE84319Fbd6e285a0CB854f92Afd31dd6D";
@@ -16,24 +18,27 @@ const PHASED_TOKENSALE_ADDRESS = "0x3092cFDfF6890F33b3227c3d2740F84772A465c7";
 export async function connectWallet() {
   try {
     if (!window.ethereum) {
-      alert("Injected-провайдер не найден.");
+      alert("Injected-провайдер (MetaMask/Trust Wallet) не найден.");
       return;
     }
     const accounts = await window.ethereum.request({ method: "eth_accounts" });
     let account;
     if (accounts.length === 0) {
-      const requested = await window.ethereum.request({ method: "eth_requestAccounts" });
-      account = requested[0];
+      const req = await window.ethereum.request({ method: "eth_requestAccounts" });
+      account = req[0];
     } else {
       account = accounts[0];
     }
     selectedAccount = account;
     window.selectedAccount = selectedAccount;
-    document.getElementById("walletAddress")?.innerText = selectedAccount;
+
+    const addrEl = document.getElementById("walletAddress");
+    if (addrEl) addrEl.innerText = selectedAccount;
 
     const web3Provider = new ethers.BrowserProvider(window.ethereum);
     signer = await web3Provider.getSigner();
     provider = web3Provider;
+    window.signer = signer;
 
     try {
       await window.ethereum.request({
@@ -58,16 +63,18 @@ export async function connectWallet() {
     await initContracts();
     await showIbitiBalance(true);
 
-    window.ethereum.on("accountsChanged", async (newAccounts) => {
-      if (!newAccounts.length) {
+    window.ethereum.on("accountsChanged", async (newAcc) => {
+      if (!newAcc.length) {
         disconnectWallet();
         return;
       }
-      selectedAccount = newAccounts[0];
+      selectedAccount = newAcc[0];
       window.selectedAccount = selectedAccount;
-      document.getElementById("walletAddress")?.innerText = selectedAccount;
+      const addrEl2 = document.getElementById("walletAddress");
+      if (addrEl2) addrEl2.innerText = selectedAccount;
       await showIbitiBalance(true);
     });
+
     window.ethereum.on("disconnect", disconnectWallet);
   } catch {
     alert("Не удалось подключиться к кошельку.");
@@ -77,31 +84,41 @@ window.connectWallet = connectWallet;
 
 export async function connectViaCoinbase() {
   try {
-    const walletLink = new CoinbaseWalletSDK({ appName: "IBITIcoin DApp", darkMode: false });
-    const coinbaseProvider = walletLink.makeWeb3Provider("https://bsc-dataseed.binance.org/", 56);
+    const walletLink = new CoinbaseWalletSDK({
+      appName: "IBITIcoin DApp",
+      darkMode: false
+    });
+    const coinbaseProvider = walletLink.makeWeb3Provider(
+      "https://bsc-dataseed.binance.org/", 56
+    );
     const accounts = await coinbaseProvider.request({ method: "eth_requestAccounts" });
     const account = accounts[0];
     selectedAccount = account;
     window.selectedAccount = selectedAccount;
-    document.getElementById("walletAddress")?.innerText = selectedAccount;
+
+    const addrEl = document.getElementById("walletAddress");
+    if (addrEl) addrEl.innerText = selectedAccount;
 
     const web3Provider = new ethers.BrowserProvider(coinbaseProvider);
     signer = await web3Provider.getSigner();
     provider = web3Provider;
+    window.signer = signer;
 
     await initContracts();
     await showIbitiBalance(true);
 
-    coinbaseProvider.on("accountsChanged", async (newAccounts) => {
-      if (!newAccounts.length) {
+    coinbaseProvider.on("accountsChanged", async (newAcc) => {
+      if (!newAcc.length) {
         disconnectWallet();
         return;
       }
-      selectedAccount = newAccounts[0];
+      selectedAccount = newAcc[0];
       window.selectedAccount = selectedAccount;
-      document.getElementById("walletAddress")?.innerText = selectedAccount;
+      const addrEl2 = document.getElementById("walletAddress");
+      if (addrEl2) addrEl2.innerText = selectedAccount;
       await showIbitiBalance(true);
     });
+
     coinbaseProvider.on("disconnect", disconnectWallet);
   } catch {
     alert("Не удалось подключиться через Coinbase Wallet.");
@@ -110,10 +127,18 @@ export async function connectViaCoinbase() {
 window.connectViaCoinbase = connectViaCoinbase;
 
 export async function initContracts() {
-  window.ibitiToken  = new ethers.Contract(IBITI_TOKEN_ADDRESS,      ibitiTokenAbi,      signer);
-  window.saleManager = new ethers.Contract(NFTSALEMANAGER_ADDRESS,   nftSaleManagerAbi,  signer);
-  window.nftDiscount = new ethers.Contract(NFT_DISCOUNT_ADDRESS,     nftDiscountAbi,     signer);
-  window.phasedSale  = new ethers.Contract(PHASED_TOKENSALE_ADDRESS, PhasedTokenSaleAbi, signer);
+  window.ibitiToken  = new ethers.Contract(
+    IBITI_TOKEN_ADDRESS, ibitiTokenAbi, signer
+  );
+  window.saleManager = new ethers.Contract(
+    NFTSALEMANAGER_ADDRESS, nftSaleManagerAbi, signer
+  );
+  window.nftDiscount = new ethers.Contract(
+    NFT_DISCOUNT_ADDRESS, nftDiscountAbi, signer
+  );
+  window.phasedSale  = new ethers.Contract(
+    PHASED_TOKENSALE_ADDRESS, PhasedTokenSaleAbi, signer
+  );
 }
 
 export async function showIbitiBalance(highlight = false) {
@@ -126,7 +151,7 @@ export async function showIbitiBalance(highlight = false) {
       el.innerText = `Ваш баланс IBITI: ${formatted}`;
       if (highlight) {
         el.style.transition = "background 0.3s";
-        el.style.background = "rgba(255, 215, 0, 0.2)";
+        el.style.background = "rgba(255,215,0,0.2)";
         setTimeout(() => (el.style.background = "transparent"), 500);
       }
     }
@@ -140,6 +165,8 @@ export async function disconnectWallet() {
   provider = null;
   signer = null;
   selectedAccount = null;
-  document.getElementById("walletAddress")?.innerText = "Disconnected";
-  document.getElementById("ibitiBalance")?.innerText = "";
+  const addrEl = document.getElementById("walletAddress");
+  if (addrEl) addrEl.innerText = "Disconnected";
+  const balEl = document.getElementById("ibitiBalance");
+  if (balEl) balEl.innerText = "";
 }
