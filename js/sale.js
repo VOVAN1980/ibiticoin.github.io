@@ -6,7 +6,7 @@ import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 
 export let saleContract = null;
 
-async function initSaleContract() {
+export async function initSaleContract() {
   if (!window.signer || !window.selectedAccount) return;
   if (saleContract) return;
 
