@@ -8,7 +8,9 @@ let provider = null;
 let signer = null;
 let selectedAccount = null;
 
-// Адреса ваших контрактов
+const INFURA_ID = "1faccf0f1fdc4532ad7a1a38a67ee906";
+
+// АДРЕСА КОНТРАКТОВ
 const IBITI_TOKEN_ADDRESS      = "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196";
 const NFTSALEMANAGER_ADDRESS   = "0x5572F3AE84319Fbd6e285a0CB854f92Afd31dd6D";
 const NFT_DISCOUNT_ADDRESS     = "0x26C4E3D3E40943D2d569e832A243e329E14ecb02";
@@ -22,45 +24,73 @@ import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 import { ethers }             from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 
 // -----------------------------
-// 2) Чистый WalletConnectProvider V1
+// 2) Web3Modal настройка
 // -----------------------------
-// В HTML должен быть:
-// <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
 const WalletConnectProviderConstructor =
   window.WalletConnectProvider?.default || window.WalletConnectProvider;
 
+const providerOptions = {
+  walletconnect: {
+    package: WalletConnectProviderConstructor,
+    options: {
+      infuraId: INFURA_ID
+    }
+  }
+};
+
+const web3Modal = new (window.Web3Modal?.default || window.Web3Modal)({
+  cacheProvider: false,
+  providerOptions
+});
+
 // -----------------------------
-// 3) Функция подключения кошелька
+// 3) Подключение кошелька
 // -----------------------------
 async function connectWallet() {
   try {
-    // ИЗМЕНЕНИЕ: явно указываем HTTP-бридж, чтобы НЕ было попыток wss://*.bridge.walletconnect.org
-    const wcProvider = new WalletConnectProviderConstructor({
-      rpc: {
-        56: "https://bsc-dataseed.binance.org/"
-      },
-      chainId: 56,
-      bridge: "https://bridge.walletconnect.org",  // <— обязательно HTTPS, а не WSS
-      qrcode: true
-    });
+    if (!window.ethereum) {
+      alert("MetaMask не найден. Установите расширение и попробуйте снова.");
+      return;
+    }
 
-    console.log("🔌 Открываем WalletConnectProvider напрямую...");
-    await wcProvider.enable();
+    // Переключаем сеть на BSC
+    try {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: "0x38" }]
+      });
+    } catch (switchError) {
+      if (switchError.code === 4902) {
+        await window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [{
+            chainId: "0x38",
+            chainName: "Binance Smart Chain",
+            nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+            rpcUrls: ["https://bsc-dataseed.binance.org/"],
+            blockExplorerUrls: ["https://bscscan.com"]
+          }]
+        });
+      } else {
+        console.error("Ошибка переключения сети:", switchError);
+      }
+    }
 
-    // Превращаем его в ethers-провайдер
-    const web3Provider = new ethers.BrowserProvider(wcProvider);
+    console.log("🔌 Открываем Web3Modal...");
+    await web3Modal.clearCachedProvider(); // ❗️ Сброс кэша — модальное окно покажется
+    const rawProvider = await web3Modal.connect();
+
+    const web3Provider = new ethers.BrowserProvider(rawProvider);
     signer = await web3Provider.getSigner();
     provider = web3Provider;
 
     selectedAccount = await signer.getAddress();
-    window.selectedAccount = selectedAccount;
+    window.selectedAccount = selectedAccount; // ✅ добавляем эту строку
 
-    // Отображаем адрес
     const walletDisplay = document.getElementById("walletAddress");
     if (walletDisplay) walletDisplay.innerText = selectedAccount;
 
-    // Слушаем смену аккаунта
-    wcProvider.on("accountsChanged", async (accs) => {
+    rawProvider.on("accountsChanged", async (accs) => {
       if (accs.length === 0) {
         disconnectWallet();
         return;
@@ -70,8 +100,7 @@ async function connectWallet() {
       await showIbitiBalance(true);
     });
 
-    // Слушаем отключение
-    wcProvider.on("disconnect", () => {
+    rawProvider.on("disconnect", () => {
       disconnectWallet();
     });
 
@@ -98,7 +127,7 @@ async function initContracts() {
 }
 
 // -----------------------------
-// 5) Показ баланса IBITI
+// 5) Показ баланса
 // -----------------------------
 async function showIbitiBalance(highlight = false) {
   if (!window.ibitiToken || !selectedAccount) return;
@@ -120,13 +149,11 @@ async function showIbitiBalance(highlight = false) {
 }
 
 // -----------------------------
-// 6) Отключение кошелька
+// 6) Отключение
 // -----------------------------
 async function disconnectWallet() {
-  try {
-    provider?.provider?.disconnect();
-  } catch {
-    // Игнорируем ошибки
+  if (provider?.provider?.disconnect) {
+    await provider.provider.disconnect();
   }
   provider = null;
   signer = null;
@@ -142,7 +169,7 @@ async function disconnectWallet() {
 }
 
 // -----------------------------
-// 7) Вешаем обработчик на кнопку
+// 7) Кнопка подключения
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
@@ -152,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
       connectWallet();
     });
   } else {
-    console.warn("Кнопка с id='connectWalletBtn' не найдена.");
+    console.warn("Кнопка с id='connectWalletBtn' не найдена в DOM.");
   }
 });
 
@@ -168,7 +195,8 @@ export {
   selectedAccount
 };
 
-window.connectWallet    = connectWallet;
+ // Глобальный экспорт для доступа из других скриптов (например, в nft.html)
+window.connectWallet = connectWallet;
 window.disconnectWallet = disconnectWallet;
 window.showIbitiBalance = showIbitiBalance;
-window.selectedAccount  = selectedAccount;
+window.selectedAccount = selectedAccount;
