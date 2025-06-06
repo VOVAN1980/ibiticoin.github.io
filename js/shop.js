@@ -1,10 +1,9 @@
 // js/shop.js
 
-import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
+// Полагаемся на глобальный ethers и глобальный Swal
 import config       from "./config.js";
 import { buyIBITI } from "./sale.js";
 import { connectWallet, selectedAccount, showIbitiBalance } from "./wallet.js";
-import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
 
 console.log("✅ shop.js загружен");
 
@@ -85,7 +84,7 @@ async function handlePurchase(amount, productName) {
     console.error("Ошибка при покупке:", error);
     let rawReason = error?.revert?.args?.[0] || error?.shortMessage || error?.message || "Неизвестная ошибка";
     let reason = rawReason === "not started"
-      ? "📅 Продажа начнётся: 1 июля в 9:00 UTC"
+      ? "📅 Продажа начнётся: 1 июля в 09:00 UTC"
       : rawReason;
 
     Swal.fire({
@@ -128,6 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Обратный отсчёт
   const countdownEl = document.getElementById("countdownNotice");
   const saleStart = new Date("2025-07-01T09:00:00Z");
   function updateCountdown() {
