@@ -24,7 +24,7 @@ import { ethers }             from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+
 // -----------------------------
 // 2) Чистый WalletConnectProvider V1
 // -----------------------------
-// Обязательно до этого подключить в HTML:
+// В HTML должен быть:
 // <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
 const WalletConnectProviderConstructor =
   window.WalletConnectProvider?.default || window.WalletConnectProvider;
@@ -34,36 +34,32 @@ const WalletConnectProviderConstructor =
 // -----------------------------
 async function connectWallet() {
   try {
-    // Создаём провайдер WalletConnect V1 с единственным HTTP-бриджем и BSC RPC
+    // ИЗМЕНЕНИЕ: явно указываем HTTP-бридж, чтобы НЕ было попыток wss://*.bridge.walletconnect.org
     const wcProvider = new WalletConnectProviderConstructor({
       rpc: {
-        // Binance Smart Chain Mainnet
         56: "https://bsc-dataseed.binance.org/"
       },
       chainId: 56,
-      // Обязательно использовать HTTP-бридж, чтобы не цепляться к wss://*.bridge.walletconnect.org
-      bridge: "https://bridge.walletconnect.org",
-      qrcode: true // чтобы показывать QR-код
+      bridge: "https://bridge.walletconnect.org",  // <— обязательно HTTPS, а не WSS
+      qrcode: true
     });
 
     console.log("🔌 Открываем WalletConnectProvider напрямую...");
-    // Вызов enable() откроет QR-код, или, если мобильное устройство, нативное привязку
     await wcProvider.enable();
 
-    // На базе wcProvider строим ethers-провайдер
+    // Превращаем его в ethers-провайдер
     const web3Provider = new ethers.BrowserProvider(wcProvider);
     signer = await web3Provider.getSigner();
     provider = web3Provider;
 
-    // Получаем адрес подключённого пользователя
     selectedAccount = await signer.getAddress();
     window.selectedAccount = selectedAccount;
 
-    // Показываем адрес в элементе с id="walletAddress"
+    // Отображаем адрес
     const walletDisplay = document.getElementById("walletAddress");
     if (walletDisplay) walletDisplay.innerText = selectedAccount;
 
-    // Следим за сменой аккаунта
+    // Слушаем смену аккаунта
     wcProvider.on("accountsChanged", async (accs) => {
       if (accs.length === 0) {
         disconnectWallet();
@@ -74,14 +70,13 @@ async function connectWallet() {
       await showIbitiBalance(true);
     });
 
-    // Следим за отключением
+    // Слушаем отключение
     wcProvider.on("disconnect", () => {
       disconnectWallet();
     });
 
     console.log("✅ Кошелек подключен:", selectedAccount);
 
-    // После подключения инициализируем контракты и отображаем баланс
     await initContracts();
     await showIbitiBalance(true);
   } catch (err) {
@@ -129,10 +124,9 @@ async function showIbitiBalance(highlight = false) {
 // -----------------------------
 async function disconnectWallet() {
   try {
-    // Пытаемся вызвать native-disconnect, если он поддерживается
     provider?.provider?.disconnect();
   } catch {
-    // Игнорируем ошибки при отключении
+    // Игнорируем ошибки
   }
   provider = null;
   signer = null;
@@ -148,7 +142,7 @@ async function disconnectWallet() {
 }
 
 // -----------------------------
-// 7) Навешиваем обработчик на кнопку подключения
+// 7) Вешаем обработчик на кнопку
 // -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const connectBtn = document.getElementById("connectWalletBtn");
@@ -158,12 +152,12 @@ document.addEventListener("DOMContentLoaded", () => {
       connectWallet();
     });
   } else {
-    console.warn("Кнопка с id='connectWalletBtn' не найдена в DOM.");
+    console.warn("Кнопка с id='connectWalletBtn' не найдена.");
   }
 });
 
 // -----------------------------
-// 8) Экспорт и глобальные переменные
+// 8) Экспорт
 // -----------------------------
 export {
   connectWallet,
@@ -174,7 +168,6 @@ export {
   selectedAccount
 };
 
-// Дублируем в window для доступа из других скриптов
 window.connectWallet    = connectWallet;
 window.disconnectWallet = disconnectWallet;
 window.showIbitiBalance = showIbitiBalance;
