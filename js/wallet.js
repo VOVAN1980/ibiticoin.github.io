@@ -5,7 +5,7 @@ import { ibitiTokenAbi }      from "./abis/ibitiTokenAbi.js";
 import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
-import { initSaleContract }   from "./sale.js"; // теперь экспортируется
+import { initSaleContract }   from "./sale.js";
 
 export let selectedAccount = null;
 export let signer = null;
@@ -22,6 +22,8 @@ export async function connectWallet() {
       alert("Injected-провайдер (MetaMask/Trust) не найден.");
       return;
     }
+
+    // Запрашиваем или получаем уже одобренный аккаунт
     const accounts = await window.ethereum.request({ method: "eth_accounts" });
     let account;
     if (accounts.length === 0) {
@@ -33,14 +35,17 @@ export async function connectWallet() {
     selectedAccount = account;
     window.selectedAccount = selectedAccount;
 
+    // Обновляем UI
     const addrEl = document.getElementById("walletAddress");
     if (addrEl) addrEl.innerText = selectedAccount;
 
+    // Настраиваем ethers-провайдер и signer
     const web3Provider = new ethers.BrowserProvider(window.ethereum);
     signer = await web3Provider.getSigner();
     provider = web3Provider;
     window.signer = signer;
 
+    // Пытаемся переключиться на BSC, если нужно
     try {
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
@@ -61,11 +66,12 @@ export async function connectWallet() {
       }
     }
 
-    // Инициализируем контракты IBITI, SaleManager, Discount и PhasedTokenSale
+    // Инициализируем локальные контракты, saleContract и баланс
     await initContracts();
-    await initSaleContract(); 
+    await initSaleContract();
     await showIbitiBalance(true);
 
+    // Слушаем смену аккаунта
     window.ethereum.on("accountsChanged", async (newAcc) => {
       if (!newAcc.length) {
         disconnectWallet();
@@ -78,6 +84,7 @@ export async function connectWallet() {
       await showIbitiBalance(true);
     });
     window.ethereum.on("disconnect", disconnectWallet);
+
   } catch {
     alert("Не удалось подключиться к кошельку.");
   }
@@ -107,7 +114,7 @@ export async function connectViaCoinbase() {
     window.signer = signer;
 
     await initContracts();
-    await initSaleContract(); 
+    await initSaleContract();
     await showIbitiBalance(true);
 
     coinbaseProvider.on("accountsChanged", async (newAcc) => {
@@ -122,6 +129,7 @@ export async function connectViaCoinbase() {
       await showIbitiBalance(true);
     });
     coinbaseProvider.on("disconnect", disconnectWallet);
+
   } catch {
     alert("Не удалось подключиться через Coinbase Wallet.");
   }
