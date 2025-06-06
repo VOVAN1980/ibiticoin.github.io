@@ -18,7 +18,7 @@ const PHASED_TOKENSALE_ADDRESS = "0x3092cFDfF6890F33b3227c3d2740F84772A465c7";
 export async function connectWallet() {
   try {
     if (!window.ethereum) {
-      alert("Injected-провайдер (MetaMask/Trust Wallet) не найден.");
+      alert("Injected-провайдер (MetaMask/Trust) не найден.");
       return;
     }
     const accounts = await window.ethereum.request({ method: "eth_accounts" });
@@ -74,7 +74,6 @@ export async function connectWallet() {
       if (addrEl2) addrEl2.innerText = selectedAccount;
       await showIbitiBalance(true);
     });
-
     window.ethereum.on("disconnect", disconnectWallet);
   } catch {
     alert("Не удалось подключиться к кошельку.");
@@ -118,7 +117,6 @@ export async function connectViaCoinbase() {
       if (addrEl2) addrEl2.innerText = selectedAccount;
       await showIbitiBalance(true);
     });
-
     coinbaseProvider.on("disconnect", disconnectWallet);
   } catch {
     alert("Не удалось подключиться через Coinbase Wallet.");
