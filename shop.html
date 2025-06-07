@@ -351,6 +351,17 @@
     style="padding: 10px 24px; font-weight: bold;">
     📋 Скопировать мою ссылку
   </button>
+
+  <!-- Счётчик рефералов -->
+  <div id="referralStats" style="
+    margin-top: 20px;
+    color: gold;
+    font-weight: bold;
+    display: none;
+  ">
+    👥 Приведено друзей: <span id="refCount">0</span><br>
+    💰 Получено бонусов: <span id="refReward">0</span> IBITI
+  </div>
 </div>
 
 <!-- Всплывающее уведомление -->
@@ -394,37 +405,18 @@
 <script type="module" src="js/shop.js"></script>
 
 <!-- Вспомогательная логика -->
-<script>
+<script type="module">
+  import { saleContract } from './js/sale.js';
+
   document.addEventListener("DOMContentLoaded", () => {
-    const openModalBtn  = document.getElementById("openWalletModal");
-    const closeModalBtn = document.getElementById("closeWalletModal");
-    const walletModal   = document.getElementById("walletModal");
-    const btnInjected   = document.getElementById("btnInjected");
-    const btnCoinbase   = document.getElementById("btnCoinbase");
+    const linkInput  = document.getElementById("myReferralLink");
+    const copyBtn    = document.getElementById("copyMyReferralLink");
+    const toast      = document.getElementById("toast");
+    const rewardEl   = document.getElementById("refReward");
+    const countEl    = document.getElementById("refCount");
+    const statsBlock = document.getElementById("referralStats");
 
-    openModalBtn.addEventListener("click", () => {
-      walletModal.style.display = "flex";
-    });
-    closeModalBtn.addEventListener("click", () => {
-      walletModal.style.display = "none";
-    });
-    walletModal.addEventListener("click", (e) => {
-      if (e.target === walletModal) walletModal.style.display = "none";
-    });
-    btnInjected.addEventListener("click", () => {
-      walletModal.style.display = "none";
-      window.connectWallet();
-    });
-    btnCoinbase.addEventListener("click", () => {
-      walletModal.style.display = "none";
-      window.connectViaCoinbase();
-    });
-
-    const linkInput = document.getElementById("myReferralLink");
-    const copyBtn   = document.getElementById("copyMyReferralLink");
-    const toast     = document.getElementById("toast");
-
-    // 🔒 По умолчанию — заблокировать кнопку
+    // 🔒 По умолчанию — блокировка
     copyBtn.addEventListener("click", () => {
       Swal.fire({
         icon: "info",
@@ -433,11 +425,12 @@
       });
     });
 
-    // ✅ Эта логика активируется только после успешной покупки (в shop.js)
-    window.enableReferralAfterPurchase = function(account) {
+    // ✅ Активация после покупки
+    window.enableReferralAfterPurchase = async function(account) {
       const refLink = `${window.location.origin}${window.location.pathname}?ref=${account}`;
       if (linkInput) linkInput.value = refLink;
 
+      // Активация копирования
       copyBtn.onclick = () => {
         navigator.clipboard.writeText(refLink).then(() => {
           toast.style.opacity = "1";
@@ -446,6 +439,19 @@
           }, 2500);
         });
       };
+
+      // Загрузка статистики с контракта
+      try {
+        const rawReward = await saleContract.referralRewards(account);
+        const reward = Number(ethers.formatUnits(rawReward, 8));
+        const count = Math.floor(reward); // если 1 IBITI = 1 друг
+
+        if (rewardEl)  rewardEl.innerText = reward.toFixed(2);
+        if (countEl)   countEl.innerText = count;
+        if (statsBlock) statsBlock.style.display = "block";
+      } catch (err) {
+        console.warn("Ошибка загрузки реф. статистики:", err);
+      }
     };
   });
 </script>
