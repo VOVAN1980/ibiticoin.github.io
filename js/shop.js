@@ -113,19 +113,25 @@ async function handlePurchase(amount, productName) {
       showConfirmButton: false
     });
 
-    // После успеха — если это первая покупка от 10 IBI и выше, показываем реферальную ссылку
-    if (Number(amount) >= 10) {
-      const yourAddr = selectedAccount;
-      const refLink  = `${window.location.origin}${window.location.pathname}?ref=${yourAddr}`;
-      Swal.fire({
-        icon:    "info",
-        title:   "Реферальная ссылка",
-        html:    `Поделитесь и зарабатывайте бонусы:<br>
-                  <a href="${refLink}" target="_blank">${refLink}</a>`,
-        confirmButtonText: "Скопировать",
-        preConfirm: () => navigator.clipboard.writeText(refLink)
-      });
-    }
+    // Покупка ≥ 10 — активируем реферальную ссылку
+if (Number(amount) >= 10) {
+  const yourAddr = selectedAccount;
+  const refLink  = `${window.location.origin}${window.location.pathname}?ref=${yourAddr}`;
+
+  // Отображаем модалку с ссылкой
+  Swal.fire({
+    icon:    "info",
+    title:   "Ваша реферальная ссылка",
+    html:    `<a href="${refLink}" target="_blank">${refLink}</a><br>Скопируйте и поделитесь.`,
+    confirmButtonText: "Скопировать",
+    preConfirm: () => navigator.clipboard.writeText(refLink)
+  });
+
+  // Активируем поле и кнопку
+  if (typeof window.enableReferralAfterPurchase === "function") {
+    window.enableReferralAfterPurchase(yourAddr);
+  }
+}
 
   } catch (error) {
     console.error("Ошибка при покупке:", error);
