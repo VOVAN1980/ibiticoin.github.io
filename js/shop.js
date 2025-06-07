@@ -5,8 +5,29 @@ import config               from "./config.js";
 import { buyIBITI }         from "./sale.js";
 import { connectWallet, selectedAccount, showIbitiBalance } from "./wallet.js";
 import Swal                  from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
+import { saleContract } from "./sale.js";
 
 console.log("✅ shop.js загружен");
+
+async function loadReferralStats(account) {
+  const rewardEl    = document.getElementById("refReward");
+  const refCountEl  = document.getElementById("refCount");
+  const statsBlock  = document.getElementById("referralStats");
+
+  if (!saleContract || !account || !rewardEl || !refCountEl || !statsBlock) return;
+
+  try {
+    const raw = await saleContract.referralRewards(account);
+    const reward = Number(ethers.formatUnits(raw, 8));
+    const count = Math.floor(reward); // если 1 IBITI = 1 друг
+
+    rewardEl.innerText = reward.toFixed(2);
+    refCountEl.innerText = count;
+    statsBlock.style.display = "block";
+  } catch (err) {
+    console.warn("❌ Ошибка загрузки статистики рефералов:", err);
+  }
+}
 
 let currentProduct = null;
 
@@ -131,6 +152,9 @@ if (Number(amount) >= 10) {
   if (typeof window.enableReferralAfterPurchase === "function") {
     window.enableReferralAfterPurchase(yourAddr);
   }
+
+   await loadReferralStats(yourAddr); // 👈 вот эта строка
+   localStorage.setItem("referralOwner", yourAddr);
 }
 
   } catch (error) {
