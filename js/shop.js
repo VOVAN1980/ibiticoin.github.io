@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 2) Включаем кнопку «Подтвердить» только при выборе токена
+  // 2) Кнопка «Подтвердить» только при выборе токена
   const paymentToken = document.getElementById("paymentToken");
   const confirmBtn   = document.getElementById("confirmBtn");
   if (paymentToken && confirmBtn) {
@@ -221,16 +221,21 @@ document.addEventListener("DOMContentLoaded", () => {
         clearInterval(timer);
         return;
       }
-      const days    = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours   = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const mins    = Math.floor((diff / (1000 * 60)) % 60);
-      const secs    = Math.floor((diff / 1000) % 60);
+      const days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const mins  = Math.floor((diff / (1000 * 60)) % 60);
+      const secs  = Math.floor((diff / 1000) % 60);
       countdownEl.innerText = `⏳ Продажа начнётся через: ${days}д ${hours}ч ${mins}м ${secs}с`;
     }, 1000);
   }
 
-      // 4) Кнопка «Подключить кошелёк» — мобильный fallback
-  const connectBtn = document.getElementById("openWalletModal");
+  // 4) Кнопка «Подключить кошелёк»
+  const connectBtn     = document.getElementById("openWalletModal");
+  const walletModal    = document.getElementById("walletModal");
+  const closeModalBtn  = document.getElementById("closeWalletModal");
+  const btnInjected    = document.getElementById("btnInjected");
+  const btnCoinbase    = document.getElementById("btnCoinbase");
+
   if (connectBtn) {
     connectBtn.addEventListener("click", e => {
       const isMobile    = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -238,11 +243,36 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isMobile && !hasInjected) {
         e.preventDefault();
         showDappBrowserNotice();
+        return;
       }
+      if (walletModal) walletModal.style.display = "flex";
     });
   }
 
-  // 5) Автовосстановление ссылки и статистики, если уже покупал
+  if (closeModalBtn && walletModal) {
+    closeModalBtn.addEventListener("click", () => {
+      walletModal.style.display = "none";
+    });
+    walletModal.addEventListener("click", (e) => {
+      if (e.target === walletModal) walletModal.style.display = "none";
+    });
+  }
+
+  if (btnInjected) {
+    btnInjected.addEventListener("click", () => {
+      walletModal.style.display = "none";
+      window.connectWallet?.();
+    });
+  }
+
+  if (btnCoinbase) {
+    btnCoinbase.addEventListener("click", () => {
+      walletModal.style.display = "none";
+      window.connectViaCoinbase?.();
+    });
+  }
+
+  // 5) Автовосстановление ссылки и статистики
   const storedReferral = localStorage.getItem("referralOwner");
   if (storedReferral && typeof window.enableReferralAfterPurchase === "function") {
     window.enableReferralAfterPurchase(storedReferral);
