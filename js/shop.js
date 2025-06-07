@@ -229,7 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1000);
   }
 
-  // 4) Кнопка «Подключить кошелёк» — мобильный fallback
+    // 4) Кнопка «Подключить кошелёк» — мобильный fallback
   const connectBtn = document.getElementById("openWalletModal");
   if (connectBtn) {
     connectBtn.addEventListener("click", e => {
@@ -239,7 +239,14 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         showDappBrowserNotice();
       }
-      // иначе открывается обычная модалка выбора кошельков
     });
   }
+
+  // 5) Автовосстановление реферальной ссылки и статистики
+  const storedReferral = localStorage.getItem("referralOwner");
+  if (storedReferral && typeof window.enableReferralAfterPurchase === "function") {
+    window.enableReferralAfterPurchase(storedReferral);
+    loadReferralStats(storedReferral);
+  }
 });
+
