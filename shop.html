@@ -326,8 +326,9 @@
   <p style="margin: 8px 0;">🔸 Делитесь ею — и за каждого друга, который купит токены, вы получите ещё <strong>+1 IBITI</strong>.</p>
   <p style="margin-top: 16px;">📌 Всё работает автоматически — никаких регистраций и подтверждений не нужно.</p>
 </section>
- 
-  <div style="margin: 32px auto 64px; text-align: center;">
+
+<!-- Блок с отображением и копированием реферальной ссылки -->
+<div style="margin: 32px auto 64px; text-align: center;">
   <input
     type="text"
     id="myReferralLink"
@@ -352,53 +353,107 @@
   </button>
 </div>
 
-  <footer>
-    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
-    <p><a href="index.html">Вернуться на главную</a></p>
-  </footer>
+<!-- Всплывающее уведомление -->
+<div id="toast" style="
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #111;
+  color: gold;
+  border: 1px solid gold;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(255,215,0,0.3);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition: opacity 0.3s ease;
+">
+  ✅ Скопировано в буфер
+</div>
 
-  <!-- Подключаем UMD-библиотеки перед модульными скриптами -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk@4.3.3/dist/CoinbaseWalletSDK.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-  <script>
-    AOS.init({ once: true });
-  </script>
+<footer>
+  <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
+  <p><a href="index.html">Вернуться на главную</a></p>
+</footer>
 
-  <!-- Модули приложения -->
-  <script type="module" src="js/config.js"></script>
-  <script type="module" src="js/sale.js"></script>
-  <script type="module" src="js/wallet.js"></script>
-  <script type="module" src="js/shop.js"></script>
+<!-- Подключаем UMD-библиотеки перед модульными скриптами -->
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk@4.3.3/dist/CoinbaseWalletSDK.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+  AOS.init({ once: true });
+</script>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const openModalBtn  = document.getElementById("openWalletModal");
-      const closeModalBtn = document.getElementById("closeWalletModal");
-      const walletModal   = document.getElementById("walletModal");
-      const btnInjected   = document.getElementById("btnInjected");
-      const btnCoinbase   = document.getElementById("btnCoinbase");
+<!-- Модули приложения -->
+<script type="module" src="js/config.js"></script>
+<script type="module" src="js/sale.js"></script>
+<script type="module" src="js/wallet.js"></script>
+<script type="module" src="js/shop.js"></script>
 
-      openModalBtn.addEventListener("click", () => {
-        walletModal.style.display = "flex";
-      });
-      closeModalBtn.addEventListener("click", () => {
-        walletModal.style.display = "none";
-      });
-      walletModal.addEventListener("click", (e) => {
-        if (e.target === walletModal) walletModal.style.display = "none";
-      });
+<!-- Вспомогательный JS -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const openModalBtn  = document.getElementById("openWalletModal");
+    const closeModalBtn = document.getElementById("closeWalletModal");
+    const walletModal   = document.getElementById("walletModal");
+    const btnInjected   = document.getElementById("btnInjected");
+    const btnCoinbase   = document.getElementById("btnCoinbase");
 
-      btnInjected.addEventListener("click", () => {
-        walletModal.style.display = "none";
-        window.connectWallet();
-      });
-      btnCoinbase.addEventListener("click", () => {
-        walletModal.style.display = "none";
-        window.connectViaCoinbase();
-      });
+    openModalBtn.addEventListener("click", () => {
+      walletModal.style.display = "flex";
     });
-  </script>
+    closeModalBtn.addEventListener("click", () => {
+      walletModal.style.display = "none";
+    });
+    walletModal.addEventListener("click", (e) => {
+      if (e.target === walletModal) walletModal.style.display = "none";
+    });
+
+    btnInjected.addEventListener("click", () => {
+      walletModal.style.display = "none";
+      window.connectWallet();
+    });
+    btnCoinbase.addEventListener("click", () => {
+      walletModal.style.display = "none";
+      window.connectViaCoinbase();
+    });
+
+    // Реферальная ссылка
+    const linkInput = document.getElementById("myReferralLink");
+    const copyBtn   = document.getElementById("copyMyReferralLink");
+    const toast     = document.getElementById("toast");
+
+    if (linkInput && copyBtn && toast) {
+      if (window.selectedAccount) {
+        const link = `${window.location.origin}${window.location.pathname}?ref=${window.selectedAccount}`;
+        linkInput.value = link;
+      }
+
+      copyBtn.addEventListener("click", () => {
+        if (!window.selectedAccount) {
+          Swal.fire({
+            icon: "warning",
+            title: "Кошелёк не подключён",
+            text: "Сначала подключите кошелёк"
+          });
+          return;
+        }
+
+        const link = `${window.location.origin}${window.location.pathname}?ref=${window.selectedAccount}`;
+        linkInput.value = link;
+
+        navigator.clipboard.writeText(link).then(() => {
+          toast.style.opacity = "1";
+          setTimeout(() => {
+            toast.style.opacity = "0";
+          }, 2500);
+        });
+      });
+    }
+  });
+</script>
 </body>
 </html>
