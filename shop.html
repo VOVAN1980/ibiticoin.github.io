@@ -333,7 +333,7 @@
     type="text"
     id="myReferralLink"
     readonly
-    placeholder="Ваша реферальная ссылка появится после подключения и покупки IBI"
+    placeholder="Ссылка появится после первой покупки от 10 IBITI"
     style="
       width: 100%;
       max-width: 500px;
@@ -378,7 +378,7 @@
   <p><a href="index.html">Вернуться на главную</a></p>
 </footer>
 
-<!-- Подключаем UMD-библиотеки перед модульными скриптами -->
+<!-- Подключаем библиотеки -->
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk@4.3.3/dist/CoinbaseWalletSDK.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -387,13 +387,13 @@
   AOS.init({ once: true });
 </script>
 
-<!-- Модули приложения -->
+<!-- Модули -->
 <script type="module" src="js/config.js"></script>
 <script type="module" src="js/sale.js"></script>
 <script type="module" src="js/wallet.js"></script>
 <script type="module" src="js/shop.js"></script>
 
-<!-- Вспомогательный JS -->
+<!-- Вспомогательная логика -->
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const openModalBtn  = document.getElementById("openWalletModal");
@@ -411,7 +411,6 @@
     walletModal.addEventListener("click", (e) => {
       if (e.target === walletModal) walletModal.style.display = "none";
     });
-
     btnInjected.addEventListener("click", () => {
       walletModal.style.display = "none";
       window.connectWallet();
@@ -421,38 +420,33 @@
       window.connectViaCoinbase();
     });
 
-    // Реферальная ссылка
     const linkInput = document.getElementById("myReferralLink");
     const copyBtn   = document.getElementById("copyMyReferralLink");
     const toast     = document.getElementById("toast");
 
-    if (linkInput && copyBtn && toast) {
-      if (window.selectedAccount) {
-        const link = `${window.location.origin}${window.location.pathname}?ref=${window.selectedAccount}`;
-        linkInput.value = link;
-      }
+    // 🔒 По умолчанию — заблокировать кнопку
+    copyBtn.addEventListener("click", () => {
+      Swal.fire({
+        icon: "info",
+        title: "Недоступно",
+        text: "Сначала купите от 10 IBITI, чтобы получить реферальную ссылку."
+      });
+    });
 
-      copyBtn.addEventListener("click", () => {
-        if (!window.selectedAccount) {
-          Swal.fire({
-            icon: "warning",
-            title: "Кошелёк не подключён",
-            text: "Сначала подключите кошелёк"
-          });
-          return;
-        }
+    // ✅ Эта логика активируется только после успешной покупки (в shop.js)
+    window.enableReferralAfterPurchase = function(account) {
+      const refLink = `${window.location.origin}${window.location.pathname}?ref=${account}`;
+      if (linkInput) linkInput.value = refLink;
 
-        const link = `${window.location.origin}${window.location.pathname}?ref=${window.selectedAccount}`;
-        linkInput.value = link;
-
-        navigator.clipboard.writeText(link).then(() => {
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(refLink).then(() => {
           toast.style.opacity = "1";
           setTimeout(() => {
             toast.style.opacity = "0";
           }, 2500);
         });
-      });
-    }
+      };
+    };
   });
 </script>
 </body>
