@@ -12,7 +12,7 @@ console.log("✅ wallet.js загружен");
 
 export let selectedAccount = null;
 export let signer = null;
-let provider = null;
+export let provider = null;
 
 const IBITI_TOKEN_ADDRESS      = "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196";
 const NFTSALEMANAGER_ADDRESS   = "0x5572F3AE84319Fbd6e285a0CB854f92Afd31dd6D";
