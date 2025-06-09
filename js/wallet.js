@@ -238,5 +238,10 @@ export async function disconnectWallet() {
   if (addrEl) addrEl.innerText = "Disconnected";
 
   const balEl = document.getElementById("ibitiBalance");
-  if (balEl) balEl.innerText = "";
+    if (balEl) balEl.innerText = "";
+}
+
+// ⬇️ ДОБАВЬ ЭТО В САМЫЙ КОНЕЦ
+if (typeof window.loadSaleStats === "function") {
+  window.loadSaleStats();
 }
