@@ -469,6 +469,7 @@
 </script>
 
 <!-- Модули -->
+<script src="https://cdn.jsdelivr.net/npm/countup.js@2.6.2/dist/countUp.umd.js"></script>
 <script type="module" src="js/config.js"></script>
 <script type="module" src="js/sale.js"></script>
 <script type="module" src="js/wallet.js"></script>
@@ -477,6 +478,41 @@
 <!-- Вспомогательная логика -->
 <script type="module">
   import { saleContract } from './js/sale.js';
+
+ import { CountUp } from 'https://cdn.jsdelivr.net/npm/countup.js@2.6.2/dist/countUp.umd.js';
+
+async function loadSaleStats() {
+  try {
+    const decimals = 8;
+
+    const cap     = await saleContract.saleCap();
+    const sold    = await saleContract.totalSold();
+    const reserve = await saleContract.rewardReserve();
+    const paid    = await saleContract.totalReferralPaid();
+
+    const left     = cap - sold;
+    const refLeft  = reserve - paid;
+
+    const animate = (id, value) => {
+      const count = new CountUp(id, Number(value) / 10 ** decimals, {
+        duration: 1.5,
+        separator: ' ',
+        decimalPlaces: 2
+      });
+      if (!count.error) count.start();
+      else console.error(count.error);
+    };
+
+    animate("cap", cap);
+    animate("sold", sold);
+    animate("left", left);
+    animate("refReserve", reserve);
+    animate("refLeft", refLeft);
+
+  } catch (err) {
+    console.warn("Не удалось загрузить статистику токенсейла:", err);
+  }
+}
 
   document.addEventListener("DOMContentLoaded", () => {
     const linkInput   = document.getElementById("myReferralLink");
