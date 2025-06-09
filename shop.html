@@ -479,9 +479,7 @@
 <script type="module">
   import { saleContract } from './js/sale.js';
 
- import { CountUp } from 'https://cdn.jsdelivr.net/npm/countup.js@2.6.2/dist/countUp.umd.js';
-
-async function loadSaleStats() {
+ async function loadSaleStats() {
   try {
     const decimals = 8;
 
@@ -494,7 +492,7 @@ async function loadSaleStats() {
     const refLeft  = reserve - paid;
 
     const animate = (id, value) => {
-      const count = new CountUp(id, Number(value) / 10 ** decimals, {
+      const count = new window.CountUp(id, Number(value) / 10 ** decimals, {
         duration: 1.5,
         separator: ' ',
         decimalPlaces: 2
