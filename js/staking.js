@@ -150,12 +150,26 @@ document.addEventListener("DOMContentLoaded", () => {
   initRewardChart();
 
   document.getElementById("stakeForm")?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const amt = document.getElementById("stakeAmount").value;
-    const duration = parseInt(document.getElementById("stakeDuration").value);
-    if (!amt || isNaN(amt) || isNaN(duration)) return;
-    await stake(amt, duration);
+  e.preventDefault();
+
+  Swal.fire({
+    icon: "info",
+    title: "⏳ Стейкинг скоро начнётся",
+    html: `Функция будет доступна после запуска проекта.<br><br>
+           Следите за новостями на сайте и в наших соцсетях.`,
+    confirmButtonText: "Хорошо"
   });
+
+  return;
+
+  // Ниже — код для запуска в будущем
+  /*
+  const amt = document.getElementById("stakeAmount").value;
+  const duration = parseInt(document.getElementById("stakeDuration").value);
+  if (!amt || isNaN(amt) || isNaN(duration)) return;
+  await stake(amt, duration);
+  */
+});
 
   document.getElementById("unstakeBtn")?.addEventListener("click", unstake);
 
