@@ -278,7 +278,12 @@
   <!-- Скрипты стейкинга и кошелька -->
   <script type="module" src="js/staking.js"></script>
   <script type="module" src="js/wallet.js"></script>
-  <script src="js/rewardChart.js"></script>
+<script>
+  if (window.afterWalletConnected) {
+    window.afterWalletConnected();
+  }
+</script>
+<script src="js/rewardChart.js"></script>
 
   <!-- Модалка выбора кошелька -->
 <div id="walletModal" style="
