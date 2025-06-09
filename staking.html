@@ -280,6 +280,102 @@
   <script type="module" src="js/wallet.js"></script>
   <script src="js/rewardChart.js"></script>
 
+  <!-- Модалка выбора кошелька -->
+<div id="walletModal" style="
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+">
+  <div class="modal-content" style="
+    background: #111;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 320px;
+    text-align: center;
+    color: gold;
+    position: relative;
+  ">
+    <button class="close-btn" id="closeWalletModal" style="
+      background: transparent;
+      color: #fff;
+      font-size: 1.1rem;
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      border: none;
+      cursor: pointer;
+    ">✕</button>
+    <h2>Выберите кошелёк</h2>
+    <button id="btnInjected" style="
+      background: gold;
+      color: #000;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    ">MetaMask / Trust Wallet</button>
+    <button id="btnCoinbase" style="
+      background: #0052ff;
+      color: #fff;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    ">Coinbase Wallet</button>
+  </div>
+</div>
+
+<script>
+  const walletModal = document.getElementById("walletModal");
+  const openWalletBtn = document.getElementById("connectWalletBtn");
+  const closeWalletBtn = document.getElementById("closeWalletModal");
+
+  openWalletBtn?.addEventListener("click", e => {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const hasInjected = Boolean(window.ethereum);
+    if (isMobile && !hasInjected) {
+      e.preventDefault();
+      Swal.fire({
+        icon: "info",
+        title: "Откройте в кошельке",
+        html: "Для подключения используйте встроенный браузер MetaMask / Trust Wallet.",
+        confirmButtonText: "Ок",
+        allowOutsideClick: false
+      });
+      return;
+    }
+    walletModal.style.display = "flex";
+  });
+
+  closeWalletBtn?.addEventListener("click", () => {
+    walletModal.style.display = "none";
+  });
+
+  walletModal?.addEventListener("click", (e) => {
+    if (e.target === walletModal) walletModal.style.display = "none";
+  });
+
+  document.getElementById("btnInjected")?.addEventListener("click", () => {
+    walletModal.style.display = "none";
+    window.connectWallet?.();
+  });
+
+  document.getElementById("btnCoinbase")?.addEventListener("click", () => {
+    walletModal.style.display = "none";
+    window.connectViaCoinbase?.();
+  });
+</script>
+
   <!-- Футер -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
