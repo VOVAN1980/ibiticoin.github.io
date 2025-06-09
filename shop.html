@@ -479,38 +479,50 @@
 <script type="module">
   import { saleContract } from './js/sale.js';
 
- async function loadSaleStats() {
-  try {
-    const decimals = 8;
+  async function loadSaleStats() {
+    try {
+      const decimals = 8;
 
-    const cap     = await saleContract.saleCap();
-    const sold    = await saleContract.totalSold();
-    const reserve = await saleContract.rewardReserve();
-    const paid    = await saleContract.totalReferralPaid();
+      // Ждём, пока saleContract загрузится
+      for (let i = 0; i < 15; i++) {
+        if (window.saleContract?.saleCap) break;
+        await new Promise(r => setTimeout(r, 200));
+      }
 
-    const left     = cap - sold;
-    const refLeft  = reserve - paid;
+      const contract = window.saleContract;
+      if (!contract) {
+        console.warn("❌ saleContract не найден");
+        return;
+      }
 
-    const animate = (id, value) => {
-      const count = new window.CountUp(id, Number(value) / 10 ** decimals, {
-        duration: 1.5,
-        separator: ' ',
-        decimalPlaces: 2
-      });
-      if (!count.error) count.start();
-      else console.error(count.error);
-    };
+      const cap     = await contract.saleCap();
+      const sold    = await contract.totalSold();
+      const reserve = await contract.rewardReserve();
+      const paid    = await contract.totalReferralPaid();
 
-    animate("cap", cap);
-    animate("sold", sold);
-    animate("left", left);
-    animate("refReserve", reserve);
-    animate("refLeft", refLeft);
+      const left     = cap - sold;
+      const refLeft  = reserve - paid;
 
-  } catch (err) {
-    console.warn("Не удалось загрузить статистику токенсейла:", err);
+      const animate = (id, value) => {
+        const count = new window.CountUp(id, Number(value) / 10 ** decimals, {
+          duration: 1.5,
+          separator: ' ',
+          decimalPlaces: 2
+        });
+        count?.start?.();
+      };
+
+      animate("cap", cap);
+      animate("sold", sold);
+      animate("left", left);
+      animate("refReserve", reserve);
+      animate("refLeft", refLeft);
+    } catch (err) {
+      console.warn("❌ Ошибка в loadSaleStats:", err);
+    }
   }
-}
+
+  window.loadSaleStats = loadSaleStats;
 
   document.addEventListener("DOMContentLoaded", () => {
     const linkInput   = document.getElementById("myReferralLink");
@@ -525,7 +537,7 @@
     const pageUrl     = encodeURIComponent(window.location.href);
     const pageTitle   = encodeURIComponent(document.title);
 
-    // 🔒 По умолчанию — блокировка
+    // 🔒 Блокировка копирования до покупки
     copyBtn.addEventListener("click", () => {
       Swal.fire({
         icon: "info",
@@ -549,7 +561,7 @@
         });
       };
 
-      // Шаринг по соцсетям
+      // Шаринг
       document.getElementById('share-facebook').href  = `https://www.facebook.com/sharer/sharer.php?u=${refLink}`;
       document.getElementById('share-twitter').href   = `https://twitter.com/intent/tweet?url=${refLink}&text=${pageTitle}`;
       document.getElementById('share-vk').href        = `https://vk.com/share.php?url=${refLink}&title=${pageTitle}`;
@@ -558,7 +570,6 @@
       document.getElementById('share-linkedin').href  = `https://www.linkedin.com/sharing/share-offsite/?url=${refLink}`;
       document.getElementById('share-weibo').href     = `http://service.weibo.com/share/share.php?url=${refLink}&title=${pageTitle}`;
 
-      // Показ модалки
       if (openBtn && shareModal) {
         openBtn.onclick = () => shareModal.style.display = 'flex';
         closeBtn.onclick = () => shareModal.style.display = 'none';
@@ -567,7 +578,7 @@
         });
       }
 
-      // Статистика
+      // Статистика по рефке
       try {
         const rawReward = await saleContract.referralRewards(account);
         const reward = Number(ethers.formatUnits(rawReward, 8));
