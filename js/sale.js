@@ -1,7 +1,7 @@
 // js/sale.js
 
 // Полагаемся на глобальный ethers (UMD)
-// import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";  // убрали
+import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";  // убрали
 import config from "./config.js";
 import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 
