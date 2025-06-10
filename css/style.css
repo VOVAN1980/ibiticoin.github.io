@@ -655,22 +655,4 @@ html, body {
   text-align: center;         /* по центру */
   margin: 0 auto;
  }
- 
-/* Контейнер для прогресс-бара */
-.progress-container {
-  width: 100%;
-  height: 8px;
-  background: #333;        /* фон «пустой» полосы */
-  border-radius: 4px;
-  overflow: hidden;
-  margin: 16px 0;          /* отступы сверху и снизу */
-}
-
-/* «Заполненная» часть прогресс-бара */
-.progress-bar {
-  width: 0;                /* начальная ширина — 0% */
-  height: 100%;
-  background: gold;        /* цвет заполнения */
-  transition: width 0.5s ease;
- }
 }
