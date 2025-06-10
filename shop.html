@@ -478,117 +478,95 @@
 <!-- Вспомогательная логика -->
 <script type="module">
   import { saleContract } from './js/sale.js';
+  import { ethers }       from 'https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm';
+  import Swal              from 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
 
+  // 📊 Загружает и анимирует статистику токенсейла
   async function loadSaleStats() {
     try {
+      const [cap, sold, reserve, paid] = await Promise.all([
+        saleContract.saleCap(),
+        saleContract.totalSold(),
+        saleContract.rewardReserve(),
+        saleContract.totalReferralPaid()
+      ]);
       const decimals = 8;
-
-      // Ждём, пока saleContract загрузится
-      for (let i = 0; i < 15; i++) {
-        if (window.saleContract?.saleCap) break;
-        await new Promise(r => setTimeout(r, 200));
-      }
-
-      const contract = window.saleContract;
-      if (!contract) {
-        console.warn("❌ saleContract не найден");
-        return;
-      }
-
-      const cap     = await contract.saleCap();
-      const sold    = await contract.totalSold();
-      const reserve = await contract.rewardReserve();
-      const paid    = await contract.totalReferralPaid();
-
-      const left     = cap - sold;
-      const refLeft  = reserve - paid;
-
       const animate = (id, value) => {
-        const count = new window.CountUp(id, Number(value) / 10 ** decimals, {
-          duration: 1.5,
+        new CountUp(id, Number(value) / 10**decimals, {
+          duration: 1.2,
           separator: ' ',
           decimalPlaces: 2
-        });
-        count?.start?.();
+        }).start();
       };
-
-      animate("cap", cap);
-      animate("sold", sold);
-      animate("left", left);
-      animate("refReserve", reserve);
-      animate("refLeft", refLeft);
-    } catch (err) {
-      console.warn("❌ Ошибка в loadSaleStats:", err);
+      animate('cap', cap);
+      animate('sold', sold);
+      animate('left', cap - sold);
+      animate('refReserve', reserve);
+      animate('refLeft', reserve - paid);
+    } catch (e) {
+      console.error('Не удалось загрузить статистику токенсейла:', e);
     }
   }
-
   window.loadSaleStats = loadSaleStats;
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const linkInput   = document.getElementById("myReferralLink");
-    const copyBtn     = document.getElementById("copyMyReferralLink");
-    const toast       = document.getElementById("toast");
-    const rewardEl    = document.getElementById("refReward");
-    const countEl     = document.getElementById("refCount");
-    const statsBlock  = document.getElementById("referralStats");
-    const shareModal  = document.getElementById("shareModal");
-    const openBtn     = document.getElementById("openShareModal");
-    const closeBtn    = document.getElementById("closeShareModal");
-    const pageUrl     = encodeURIComponent(window.location.href);
-    const pageTitle   = encodeURIComponent(document.title);
+  document.addEventListener('DOMContentLoaded', () => {
+    // ——— Реферальная логика ———
+    const linkInput  = document.getElementById('myReferralLink');
+    const copyBtn    = document.getElementById('copyMyReferralLink');
+    const toast      = document.getElementById('toast');
+    const rewardEl   = document.getElementById('refReward');
+    const countEl    = document.getElementById('refCount');
+    const statsBlock = document.getElementById('referralStats');
+    const shareModal = document.getElementById('shareModal');
+    const openBtn    = document.getElementById('openShareModal');
+    const closeBtn   = document.getElementById('closeShareModal');
+    const pageTitle  = encodeURIComponent(document.title);
 
-    // 🔒 Блокировка копирования до покупки
-    copyBtn.addEventListener("click", () => {
+    copyBtn.addEventListener('click', () => {
       Swal.fire({
-        icon: "info",
-        title: "Недоступно",
-        text: "Сначала купите от 10 IBITI, чтобы получить реферальную ссылку."
+        icon: 'info',
+        title: 'Недоступно',
+        text: 'Сначала купите от 10 IBITI, чтобы получить реферальную ссылку.'
       });
     });
 
-    // ✅ Активация после покупки
-    window.enableReferralAfterPurchase = async function(account) {
-      const refLink = `${window.location.origin}${window.location.pathname}?ref=${account}`;
-      if (linkInput) linkInput.value = refLink;
-
-      // Копирование
+    window.enableReferralAfterPurchase = async account => {
+      const link = `${location.origin}/shop.html?ref=${account}`;
+      linkInput.value = link;
       copyBtn.onclick = () => {
-        navigator.clipboard.writeText(refLink).then(() => {
-          toast.style.opacity = "1";
-          setTimeout(() => {
-            toast.style.opacity = "0";
-          }, 2500);
+        navigator.clipboard.writeText(link).then(() => {
+          toast.style.opacity = '1';
+          setTimeout(() => toast.style.opacity = '0', 2500);
         });
       };
+      // соцсети
+      document.getElementById('share-facebook').href  = `https://www.facebook.com/sharer/sharer.php?u=${link}`;
+      document.getElementById('share-twitter').href   = `https://twitter.com/intent/tweet?url=${link}&text=${pageTitle}`;
+      document.getElementById('share-vk').href        = `https://vk.com/share.php?url=${link}&title=${pageTitle}`;
+      document.getElementById('share-telegram').href  = `https://telegram.me/share/url?url=${link}&text=${pageTitle}`;
+      document.getElementById('share-ok').href        = `https://connect.ok.ru/offer?url=${link}`;
+      document.getElementById('share-linkedin').href  = `https://www.linkedin.com/sharing/share-offsite/?url=${link}`;
+      document.getElementById('share-weibo').href     = `http://service.weibo.com/share/share.php?url=${link}&title=${pageTitle}`;
+      if (openBtn)  openBtn.onclick  = () => shareModal.style.display = 'flex';
+      if (closeBtn) closeBtn.onclick = () => shareModal.style.display = 'none';
+      window.addEventListener('click', e => {
+        if (e.target === shareModal) shareModal.style.display = 'none';
+      });
 
-      // Шаринг
-      document.getElementById('share-facebook').href  = `https://www.facebook.com/sharer/sharer.php?u=${refLink}`;
-      document.getElementById('share-twitter').href   = `https://twitter.com/intent/tweet?url=${refLink}&text=${pageTitle}`;
-      document.getElementById('share-vk').href        = `https://vk.com/share.php?url=${refLink}&title=${pageTitle}`;
-      document.getElementById('share-telegram').href  = `https://telegram.me/share/url?url=${refLink}&text=${pageTitle}`;
-      document.getElementById('share-ok').href        = `https://connect.ok.ru/offer?url=${refLink}`;
-      document.getElementById('share-linkedin').href  = `https://www.linkedin.com/sharing/share-offsite/?url=${refLink}`;
-      document.getElementById('share-weibo').href     = `http://service.weibo.com/share/share.php?url=${refLink}&title=${pageTitle}`;
-
-      if (openBtn && shareModal) {
-        openBtn.onclick = () => shareModal.style.display = 'flex';
-        closeBtn.onclick = () => shareModal.style.display = 'none';
-        window.addEventListener('click', e => {
-          if (e.target === shareModal) shareModal.style.display = 'none';
-        });
-      }
-
-      // Статистика по рефке
+      // статистика по рефералам
       try {
-        const rawReward = await saleContract.referralRewards(account);
-        const reward = Number(ethers.formatUnits(rawReward, 8));
-        const count  = Math.floor(reward);
-        if (rewardEl) rewardEl.innerText = reward.toFixed(2);
-        if (countEl) countEl.innerText = count;
-        if (statsBlock) statsBlock.style.display = "block";
-      } catch (err) {
-        console.warn("Ошибка загрузки реф. статистики:", err);
+        const raw = await saleContract.referralRewards(account);
+        const reward = Number(ethers.formatUnits(raw, 8));
+        rewardEl.innerText = reward.toFixed(2);
+        countEl.innerText  = Math.floor(reward);
+        statsBlock.style.display = 'block';
+      } catch (e) {
+        console.warn('Ошибка загрузки реф. статистики:', e);
       }
     };
+    // ——— Конец реферальной логики ———
+
+    // Запускаем статистику токенсейла сразу после загрузки страницы
+    loadSaleStats();
   });
 </script>
