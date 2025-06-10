@@ -29,17 +29,20 @@ async function loadSaleStats() {
   const leftEl       = document.getElementById("left");
   const refReserveEl = document.getElementById("refReserve");
   const refLeftEl    = document.getElementById("refLeft");
+  const salePoolEl   = document.getElementById("salePool");
+  const bonusPoolEl  = document.getElementById("bonusPool");
 
+  // Авторизованный или публичный контракт фаз
   let saleContract = getSaleContract() || readSaleContract;
   if (!saleContract) return;
 
   try {
-    // 1) Читаем точный баланс IBITI на контракте PhasedTokenSale
+    // 1) Общий баланс IBITI на контракте
     const saleAddress = config.mainnet.contracts.PHASED_TOKENSALE_ADDRESS_MAINNET;
     const depositBN   = await ibitiTokenRead.balanceOf(saleAddress);
     const cap         = Number(ethers.formatUnits(depositBN, 8));
 
-    // 2) Суммируем, сколько уже продано по фазам
+    // 2) Сколько уже продано по фазам
     const PHASE_COUNT = 3;
     let soldBN = 0n;
     for (let i = 0; i < PHASE_COUNT; i++) {
@@ -48,35 +51,31 @@ async function loadSaleStats() {
     }
     const sold = Number(ethers.formatUnits(soldBN, 8));
 
-    // 3) Остаток
+    // 3) Остаток продаж
     const left = cap - sold;
 
     // 4) Резерв рефералов
     const rewardBN = await saleContract.rewardTokens();
     const ref      = Number(ethers.formatUnits(rewardBN, 8));
 
-  // 5) Вставляем в DOM
-capEl.innerText        = cap.toLocaleString('ru-RU', {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2
-});
-soldEl.innerText       = sold.toLocaleString('ru-RU', {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2
-});
-leftEl.innerText       = left.toLocaleString('ru-RU', {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2
-});
-refReserveEl.innerText = ref.toLocaleString('ru-RU', {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2
-});
-refLeftEl.innerText    = ref.toLocaleString('ru-RU', {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2
-});
+    // 5) Пулы
+    const salePool  = cap - ref;
+    const bonusPool = salePool - left;
 
+    // Функция форматирования
+    const fmt = x => x.toLocaleString('ru-RU', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    // 6) Вставляем в DOM
+    capEl.innerText        = fmt(cap);
+    soldEl.innerText       = fmt(sold);
+    leftEl.innerText       = fmt(left);
+    refReserveEl.innerText = fmt(ref);
+    refLeftEl.innerText    = fmt(ref);
+    salePoolEl.innerText   = fmt(salePool);
+    bonusPoolEl.innerText  = fmt(bonusPool);
   } catch (err) {
     console.warn("Ошибка загрузки статистики токенсейла:", err);
   }
