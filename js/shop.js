@@ -5,8 +5,12 @@ import config                                    from "./config.js";
 import { buyIBITI }                              from "./sale.js";
 import { connectWallet, selectedAccount, showIbitiBalance } from "./wallet.js";
 import Swal                                      from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
-import { getSaleContract }                       from "./sale.js";
+import { getSaleContract } from "./sale.js";
+// …
 
+/**
+ * Подгружает статистику продаж из контракта.
+ */
 async function loadSaleStats() {
   const capEl        = document.getElementById("cap");
   const soldEl       = document.getElementById("sold");
@@ -18,26 +22,24 @@ async function loadSaleStats() {
   if (!saleContract) return;
 
   try {
-    // 1) Суммируем cap и sold по 3 фазам
     const PHASE_COUNT = 3;
-    let capBN  = ethers.Zero;
+    // Используем BigInt и +, а не .add()
+    let capBN  = ethers.Zero;  // это 0n
     let soldBN = ethers.Zero;
+
     for (let i = 0; i < PHASE_COUNT; i++) {
       const p = await saleContract.phases(i);
-      capBN  = capBN.add(p.cap);
-      soldBN = soldBN.add(p.sold);
+      capBN  = capBN + p.cap;    // BigInt + BigInt
+      soldBN = soldBN + p.sold;
     }
 
-    // 2) Преобразуем в числа
-    const cap  = Number(ethers.formatUnits(capBN, 8));
-    const sold = Number(ethers.formatUnits(soldBN, 8));
-    const left = cap - sold;
+    const cap    = Number(ethers.formatUnits(capBN, 8));
+    const sold   = Number(ethers.formatUnits(soldBN, 8));
+    const left   = cap - sold;
 
-    // 3) Берём резерв рефералов
     const reserveBN = await saleContract.rewardTokens();
     const reserve   = Number(ethers.formatUnits(reserveBN, 8));
 
-    // 4) Вставляем в DOM
     capEl.innerText        = cap.toFixed(2);
     soldEl.innerText       = sold.toFixed(2);
     leftEl.innerText       = left.toFixed(2);
