@@ -24,25 +24,26 @@ async function loadSaleStats() {
   const refReserveEl = document.getElementById("refReserve");
   const refLeftEl    = document.getElementById("refLeft");
 
-  // 2) Берём сначала авторизованный, иначе — публичный
-  let saleContract = getSaleContract();
-  if (!saleContract) saleContract = readSaleContract;
+  // Выбираем авторизованный или публичный контракт
+  let saleContract = getSaleContract() || readSaleContract;
   if (!saleContract) return;
 
   try {
     const PHASE_COUNT = 3;
-    let capBN  = ethers.Zero;
-    let soldBN = ethers.Zero;
+    // Инициализируем через чистый BigInt
+    let capBN  = 0n;
+    let soldBN = 0n;
 
     for (let i = 0; i < PHASE_COUNT; i++) {
       const p = await saleContract.phases(i);
-      capBN  = capBN + p.cap;
-      soldBN = soldBN + p.sold;
+      // p.cap и p.sold — BigNumber, преобразуем в строку, потом в BigInt
+      capBN  += BigInt(p.cap.toString());
+      soldBN += BigInt(p.sold.toString());
     }
 
-    const cap    = Number(ethers.formatUnits(capBN, 8));
-    const sold   = Number(ethers.formatUnits(soldBN, 8));
-    const left   = cap - sold;
+    const cap  = Number(ethers.formatUnits(capBN, 8));
+    const sold = Number(ethers.formatUnits(soldBN, 8));
+    const left = cap - sold;
 
     const reserveBN = await saleContract.rewardTokens();
     const reserve   = Number(ethers.formatUnits(reserveBN, 8));
