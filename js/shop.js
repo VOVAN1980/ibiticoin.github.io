@@ -58,6 +58,8 @@ async function loadSaleStats() {
   }
 }
 
+setInterval(loadSaleStats, 30_000); // обновлять статистику каждые 30 секунд
+
 console.log("✅ shop.js загружен");
 
 async function loadReferralStats(account) {
