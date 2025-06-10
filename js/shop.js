@@ -1,15 +1,21 @@
 // js/shop.js
-// Модуль для работы с покупками в магазине
-
 import config                                    from "./config.js";
 import { buyIBITI }                              from "./sale.js";
 import { connectWallet, selectedAccount, showIbitiBalance } from "./wallet.js";
 import Swal                                      from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
-import { getSaleContract } from "./sale.js";
-// …
+import { getSaleContract }                       from "./sale.js";
+import { PhasedTokenSaleAbi }                    from "./abis/PhasedTokenSaleAbi.js";
+   
+// 1) Создаём JsonRpcProvider и читающий контракт
+const rpcProvider = new ethers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
+const readSaleContract = new ethers.Contract(
+  config.mainnet.contracts.PHASED_TOKENSALE_ADDRESS_MAINNET,
+  PhasedTokenSaleAbi,
+  rpcProvider
+);
 
 /**
- * Подгружает статистику продаж из контракта.
+ * Подгружает статистику продаж из контракта (через signer или, если нет, через public RPC).
  */
 async function loadSaleStats() {
   const capEl        = document.getElementById("cap");
@@ -18,18 +24,19 @@ async function loadSaleStats() {
   const refReserveEl = document.getElementById("refReserve");
   const refLeftEl    = document.getElementById("refLeft");
 
-  const saleContract = getSaleContract();
+  // 2) Берём сначала авторизованный, иначе — публичный
+  let saleContract = getSaleContract();
+  if (!saleContract) saleContract = readSaleContract;
   if (!saleContract) return;
 
   try {
     const PHASE_COUNT = 3;
-    // Используем BigInt и +, а не .add()
-    let capBN  = ethers.Zero;  // это 0n
+    let capBN  = ethers.Zero;
     let soldBN = ethers.Zero;
 
     for (let i = 0; i < PHASE_COUNT; i++) {
       const p = await saleContract.phases(i);
-      capBN  = capBN + p.cap;    // BigInt + BigInt
+      capBN  = capBN + p.cap;
       soldBN = soldBN + p.sold;
     }
 
