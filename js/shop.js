@@ -34,33 +34,34 @@ const ibitiTokenRead   = new ethers.Contract(
  */
 async function loadSaleStats() {
   // 1) Элементы DOM
-  const capEl        = document.getElementById("cap");
-  const refReserveEl = document.getElementById("refReserve");
-  const salePoolEl   = document.getElementById("salePool");
-  const soldEl       = document.getElementById("sold");
-  const leftEl       = document.getElementById("left");
-  const bonusPoolEl  = document.getElementById("bonusPool");
-  const progressEl   = document.getElementById("salesProgress");
-  const percentEl    = document.getElementById("soldPercent");
-  const lastUpdEl    = document.getElementById("lastUpdated");
+  const capEl         = document.getElementById("cap");
+  const refReserveEl  = document.getElementById("refReserve");
+  const salePoolEl    = document.getElementById("salePool");
+  const soldEl        = document.getElementById("sold");
+  const leftEl        = document.getElementById("left");
+  const bonusPoolEl   = document.getElementById("bonusPool");
+  const progressEl    = document.getElementById("salesProgress");
+  const percentEl     = document.getElementById("soldPercent");
+  const lastUpdEl     = document.getElementById("lastUpdated");
 
-  // 2) Выбираем контракт (signer или public)
+  // 2) Контракт
   let saleContract = getSaleContract() || readSaleContract;
   if (!saleContract) return;
 
   try {
-    // 3) Общий баланс на контракте
+    // 3) Общий баланс
     const saleAddr  = config.mainnet.contracts.PHASED_TOKENSALE_ADDRESS_MAINNET;
     const depositBN = await ibitiTokenRead.balanceOf(saleAddr);
     const cap       = Number(ethers.formatUnits(depositBN, 8));
 
-    // 4) Сколько уже продано (через фазы)
+    // 4) Продано по фазам
     const PHASE_COUNT = 3;
     let soldBN = 0n;
     for (let i = 0; i < PHASE_COUNT; i++) {
       const p = await saleContract.phases(i);
-      soldBN += BigInt(p.sold.toString());
+      soldBN  += BigInt(p.sold.toString());
     }
+    //const sold = Number(ethers.formatUnits(soldBN, 8)); // оригинал
 
     // 5) Резерв рефералов
     const refBN      = await saleContract.rewardTokens();
@@ -69,37 +70,36 @@ async function loadSaleStats() {
     // 6) Фиксированный пул бонусов
     const bonusReserve = 500_000;
 
-    // 7) Основной пул и остаток продаж
+    // 7) Основной пул продаж
     const salePool = cap - refReserve - bonusReserve;
-    const left     = salePool - sold;
 
-    // 👉 Для теста: 50% от пула продаж
-   const salePoolTemp = cap - refReserve - bonusReserve; // если нужно, перенесите выше
-   const sold = salePoolTemp * 0.5;
+    // ── Здесь переопределяем sold для теста на 50% от salePool
+    const sold = salePool * 0.5;
 
-    // 8) Расчёт процента
+    // 8) Остаток продаж
+    const left = salePool - sold;
+
+    // 9) Процент продано
     const percent    = salePool > 0 ? (sold / salePool) * 100 : 0;
     const pctClamped = Math.min(Math.max(percent, 0), 100);
 
-    // 9) Форматирование
+    // 10) Форматирование
     const fmt = x => x.toLocaleString("ru-RU", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     });
 
-    // 10) Вставляем числа
-    capEl.innerText        = fmt(cap);
-    refReserveEl.innerText = fmt(refReserve);
-    salePoolEl.innerText   = fmt(salePool);
-    soldEl.innerText       = fmt(sold);
-    leftEl.innerText       = fmt(left);
-    bonusPoolEl.innerText  = fmt(bonusReserve);
+    // 11) Вставляем в DOM
+    capEl.innerText         = fmt(cap);
+    refReserveEl.innerText  = fmt(refReserve);
+    salePoolEl.innerText    = fmt(salePool);
+    soldEl.innerText        = fmt(sold);
+    leftEl.innerText        = fmt(left);
+    bonusPoolEl.innerText   = fmt(bonusReserve);
 
-    // 11) Обновляем прогресс-бар
+    // 12) Обновляем прогресс и время
     if (progressEl)  progressEl.style.width   = `${pctClamped}%`;
     if (percentEl)   percentEl.innerText      = `${pctClamped.toFixed(2)}%`;
-
-    // 12) Обновляем метку времени
     if (lastUpdEl)   lastUpdEl.innerText      = `Обновлено: ${new Date().toLocaleTimeString("ru-RU")}`;
   } catch (e) {
     console.warn("Ошибка загрузки статистики токенсейла:", e);
