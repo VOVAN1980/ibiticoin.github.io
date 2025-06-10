@@ -303,7 +303,8 @@
     </div>
   </div>
 
-    <section id="referralInfo"
+<!-- Статистика токенсейла -->
+<section id="saleStats"
   data-aos="fade-up"
   style="
     margin: 40px auto;
@@ -320,11 +321,14 @@
   onmouseover="this.style.transform='scale(1.015)'; this.style.boxShadow='0 0 25px rgba(255, 215, 0, 0.3)'"
   onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 20px rgba(255, 215, 0, 0.1)'"
 >
-  <h3 style="color: gold; font-size: 1.8em; margin-bottom: 16px;">🎁 Реферальная программа</h3>
-  <p style="margin: 8px 0;">🔸 Купите <strong>от 10 IBITI</strong> — и получите <strong>1 IBITI бонусом</strong> сразу.</p>
-  <p style="margin: 8px 0;">🔸 После покупки вы получите персональную ссылку для приглашений.</p>
-  <p style="margin: 8px 0;">🔸 Делитесь ею — и за каждого друга, который купит токены, вы получите ещё <strong>+1 IBITI</strong>.</p>
-  <p style="margin-top: 16px;">📌 Всё работает автоматически — никаких регистраций и подтверждений не нужно.</p>
+  <h3 style="color: gold; font-size: 1.8em; margin-bottom: 16px;">📊 Статистика токенсейла</h3>
+  <ul style="list-style: none; padding-left: 0; color: gold; font-size: 1.1em;">
+    <li>🔹 Всего на продажу: <strong><span id="cap">—</span></strong> IBI</li>
+    <li>🔹 Продано: <strong><span id="sold">—</span></strong> IBI</li>
+    <li>🔹 Осталось: <strong><span id="left">—</span></strong> IBI</li>
+    <li>🔹 Резерв рефералов: <strong><span id="refReserve">—</span></strong> IBI</li>
+    <li>🔹 Осталось бонусов: <strong><span id="refLeft">—</span></strong> IBI</li>
+  </ul>
 </section>
 
 <!-- Блок с отображением и копированием реферальной ссылки -->
