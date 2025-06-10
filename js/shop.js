@@ -5,7 +5,7 @@ import config               from "./config.js";
 import { buyIBITI }         from "./sale.js";
 import { connectWallet, selectedAccount, showIbitiBalance } from "./wallet.js";
 import Swal                  from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
-import { saleContract } from "./sale.js";
+import { getSaleContract } from "./sale.js";
 
 console.log("✅ shop.js загружен");
 
