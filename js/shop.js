@@ -85,6 +85,9 @@ async function loadSaleStats() {
     leftEl.innerText       = fmt(left);
     bonusPoolEl.innerText  = fmt(bonusReserve);
 
+   document.getElementById("lastUpdated").innerText =
+  `Обновлено: ${new Date().toLocaleTimeString("ru-RU")}`;
+
   } catch (err) {
     console.warn("Ошибка загрузки статистики токенсейла:", err);
   }
@@ -93,6 +96,10 @@ async function loadSaleStats() {
 // обновляем сразу и затем каждые 30 секунд
 loadSaleStats();
 setInterval(loadSaleStats, 30_000);
+
+document.getElementById("refreshStats").addEventListener("click", () => {
+  loadSaleStats();
+});
 
 console.log("✅ shop.js загружен");
 
