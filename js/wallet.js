@@ -240,8 +240,3 @@ export async function disconnectWallet() {
   const balEl = document.getElementById("ibitiBalance");
     if (balEl) balEl.innerText = "";
 }
-
-// ⬇️ ДОБАВЬ ЭТО В САМЫЙ КОНЕЦ
-if (typeof window.loadSaleStats === "function") {
-  window.loadSaleStats();
-}
