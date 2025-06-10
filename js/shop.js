@@ -33,33 +33,33 @@ const ibitiTokenRead   = new ethers.Contract(
  * – bonusPool (фикс. пул бонусов)
  */
 async function loadSaleStats() {
-  // 1) Находим элементы в DOM
-  const capEl         = document.getElementById("cap");
-  const refReserveEl  = document.getElementById("refReserve");
-  const salePoolEl    = document.getElementById("salePool");
-  const soldEl        = document.getElementById("sold");
-  const leftEl        = document.getElementById("left");
-  const bonusPoolEl   = document.getElementById("bonusPool");
-  const progressEl    = document.getElementById("salesProgress");
-  const percentEl     = document.getElementById("soldPercent");
-  const lastUpdatedEl = document.getElementById("lastUpdated");
+  // 1) Элементы DOM
+  const capEl        = document.getElementById("cap");
+  const refReserveEl = document.getElementById("refReserve");
+  const salePoolEl   = document.getElementById("salePool");
+  const soldEl       = document.getElementById("sold");
+  const leftEl       = document.getElementById("left");
+  const bonusPoolEl  = document.getElementById("bonusPool");
+  const progressEl   = document.getElementById("salesProgress");
+  const percentEl    = document.getElementById("soldPercent");
+  const lastUpdEl    = document.getElementById("lastUpdated");
 
-  // 2) Берём авторизованный или публичный контракт
+  // 2) Выбираем контракт (signer или public)
   let saleContract = getSaleContract() || readSaleContract;
   if (!saleContract) return;
 
   try {
-    // 3) Общий баланс IBITI на контракте
-    const saleAddress = config.mainnet.contracts.PHASED_TOKENSALE_ADDRESS_MAINNET;
-    const depositBN   = await ibitiTokenRead.balanceOf(saleAddress);
-    const cap         = Number(ethers.formatUnits(depositBN, 8));
+    // 3) Общий баланс на контракте
+    const saleAddr  = config.mainnet.contracts.PHASED_TOKENSALE_ADDRESS_MAINNET;
+    const depositBN = await ibitiTokenRead.balanceOf(saleAddr);
+    const cap       = Number(ethers.formatUnits(depositBN, 8));
 
-    // 4) Сколько уже продано через фазы
+    // 4) Сколько уже продано (через фазы)
     const PHASE_COUNT = 3;
     let soldBN = 0n;
     for (let i = 0; i < PHASE_COUNT; i++) {
-      const p      = await saleContract.phases(i);
-      soldBN      += BigInt(p.sold.toString());
+      const p = await saleContract.phases(i);
+      soldBN += BigInt(p.sold.toString());
     }
     const sold = Number(ethers.formatUnits(soldBN, 8));
 
@@ -70,37 +70,36 @@ async function loadSaleStats() {
     // 6) Фиксированный пул бонусов
     const bonusReserve = 500_000;
 
-    // 7) Основной пул продаж и остаток
+    // 7) Основной пул и остаток продаж
     const salePool = cap - refReserve - bonusReserve;
     const left     = salePool - sold;
 
-    // 8) Расчёт прогресса
-    const percent   = salePool > 0 ? (sold / salePool) * 100 : 0;
+    // 8) Расчёт процента
+    const percent    = salePool > 0 ? (sold / salePool) * 100 : 0;
     const pctClamped = Math.min(Math.max(percent, 0), 100);
 
-    // 9) Форматирование для пользователя
+    // 9) Форматирование
     const fmt = x => x.toLocaleString("ru-RU", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     });
 
-    // 10) Вставляем в DOM
-    capEl.innerText         = fmt(cap);
-    refReserveEl.innerText  = fmt(refReserve);
-    salePoolEl.innerText    = fmt(salePool);
-    soldEl.innerText        = fmt(sold);
-    leftEl.innerText        = fmt(left);
-    bonusPoolEl.innerText   = fmt(bonusReserve);
+    // 10) Вставляем числа
+    capEl.innerText        = fmt(cap);
+    refReserveEl.innerText = fmt(refReserve);
+    salePoolEl.innerText   = fmt(salePool);
+    soldEl.innerText       = fmt(sold);
+    leftEl.innerText       = fmt(left);
+    bonusPoolEl.innerText  = fmt(bonusReserve);
 
-    // 11) Обновляем прогресс-бар и метку процента
-    if (progressEl)    progressEl.style.width     = `${pctClamped}%`;
-    if (percentEl)     percentEl.innerText        = `${pctClamped.toFixed(2)}%`;
+    // 11) Обновляем прогресс-бар
+    if (progressEl)  progressEl.style.width   = `${pctClamped}%`;
+    if (percentEl)   percentEl.innerText      = `${pctClamped.toFixed(2)}%`;
 
     // 12) Обновляем метку времени
-    if (lastUpdatedEl) lastUpdatedEl.innerText    = `Обновлено: ${new Date().toLocaleTimeString("ru-RU")}`;
-
-  } catch (err) {
-    console.warn("Ошибка загрузки статистики токенсейла:", err);
+    if (lastUpdEl)   lastUpdEl.innerText      = `Обновлено: ${new Date().toLocaleTimeString("ru-RU")}`;
+  } catch (e) {
+    console.warn("Ошибка загрузки статистики токенсейла:", e);
   }
 }
 
