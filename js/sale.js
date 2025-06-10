@@ -48,4 +48,7 @@ export async function buyIBITI(amount, referrer = NULL_ADDRESS) {
     console.error("✖ Ошибка в buyIBITI:", error);
     throw error;
   }
+
+  export function getSaleContract() {
+  return window.phasedSale;
 }
