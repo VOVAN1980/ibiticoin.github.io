@@ -240,20 +240,19 @@ async function handlePurchase(amount, productName) {
 window.handlePurchase = handlePurchase;
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 0) При загрузке — подтягиваем статистику
+  // 1) сразу при загрузке
   loadSaleStats();
 
-/ Обновляем сразу и затем каждые 30 секунд
-async function initStats() {
-  await loadSaleStats();
+  // 2) потом каждые 30 секунд
   setInterval(loadSaleStats, 30_000);
 
-  // Навешиваем кнопку обновления
+  // 3) привязываем кнопку «Обновить»
   const btn = document.getElementById("refreshStats");
-  if (btn) btn.addEventListener("click", loadSaleStats);
-}
+  if (btn) {
+    btn.addEventListener("click", loadSaleStats);
+  }
 
-// Ждём загрузки DOM, только после этого запускаем initStats
+// ждём загрузки DOM, только после этого стартуем initStats
 document.addEventListener("DOMContentLoaded", () => {
   initStats();
 });
