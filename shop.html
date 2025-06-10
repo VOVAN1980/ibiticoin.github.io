@@ -474,9 +474,9 @@
 <script type="module" src="js/wallet.js"></script>
 <script type="module" src="js/shop.js"></script>
 
-<!-- Вспомогательная логика -->
 <script type="module">
-  import { saleContract } from './js/sale.js';
+  import { getSaleContract } from './js/sale.js';
+  import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
 
   document.addEventListener("DOMContentLoaded", () => {
     const linkInput   = document.getElementById("myReferralLink");
@@ -488,10 +488,9 @@
     const shareModal  = document.getElementById("shareModal");
     const openBtn     = document.getElementById("openShareModal");
     const closeBtn    = document.getElementById("closeShareModal");
-    const pageUrl     = encodeURIComponent(window.location.href);
     const pageTitle   = encodeURIComponent(document.title);
 
-    // 🔒 По умолчанию — блокировка
+    // 🔒 По умолчанию — блокировка копирования
     copyBtn.addEventListener("click", () => {
       Swal.fire({
         icon: "info",
@@ -503,44 +502,42 @@
     // ✅ Активация после покупки
     window.enableReferralAfterPurchase = async function(account) {
       const refLink = `${window.location.origin}${window.location.pathname}?ref=${account}`;
-      if (linkInput) linkInput.value = refLink;
+      linkInput.value = refLink;
 
-      // Копирование
+      // Копирование в буфер
       copyBtn.onclick = () => {
         navigator.clipboard.writeText(refLink).then(() => {
           toast.style.opacity = "1";
-          setTimeout(() => {
-            toast.style.opacity = "0";
-          }, 2500);
+          setTimeout(() => toast.style.opacity = "0", 2500);
         });
       };
 
-      // Шаринг по соцсетям
-      document.getElementById('share-facebook').href  = `https://www.facebook.com/sharer/sharer.php?u=${refLink}`;
-      document.getElementById('share-twitter').href   = `https://twitter.com/intent/tweet?url=${refLink}&text=${pageTitle}`;
-      document.getElementById('share-vk').href        = `https://vk.com/share.php?url=${refLink}&title=${pageTitle}`;
-      document.getElementById('share-telegram').href  = `https://telegram.me/share/url?url=${refLink}&text=${pageTitle}`;
-      document.getElementById('share-ok').href        = `https://connect.ok.ru/offer?url=${refLink}`;
-      document.getElementById('share-linkedin').href  = `https://www.linkedin.com/sharing/share-offsite/?url=${refLink}`;
-      document.getElementById('share-weibo').href     = `http://service.weibo.com/share/share.php?url=${refLink}&title=${pageTitle}`;
+      // Подставляем урлы для шаринга
+      document.getElementById('share-facebook').href   = `https://www.facebook.com/sharer/sharer.php?u=${refLink}`;
+      document.getElementById('share-twitter').href    = `https://twitter.com/intent/tweet?url=${refLink}&text=${pageTitle}`;
+      document.getElementById('share-vk').href         = `https://vk.com/share.php?url=${refLink}&title=${pageTitle}`;
+      document.getElementById('share-telegram').href   = `https://telegram.me/share/url?url=${refLink}&text=${pageTitle}`;
+      document.getElementById('share-ok').href         = `https://connect.ok.ru/offer?url=${refLink}`;
+      document.getElementById('share-linkedin').href   = `https://www.linkedin.com/sharing/share-offsite/?url=${refLink}`;
+      document.getElementById('share-weibo').href      = `http://service.weibo.com/share/share.php?url=${refLink}&title=${pageTitle}`;
 
-      // Показ модалки
-      if (openBtn && shareModal) {
-        openBtn.onclick = () => shareModal.style.display = 'flex';
-        closeBtn.onclick = () => shareModal.style.display = 'none';
-        window.addEventListener('click', e => {
-          if (e.target === shareModal) shareModal.style.display = 'none';
-        });
-      }
+      // Открытие/закрытие модалки шаринга
+      openBtn.onclick = () => shareModal.style.display = 'flex';
+      closeBtn.onclick = () => shareModal.style.display = 'none';
+      window.addEventListener('click', e => {
+        if (e.target === shareModal) shareModal.style.display = 'none';
+      });
 
-      // Статистика
+      // Загружаем статистику из контракта
       try {
-        const rawReward = await saleContract.referralRewards(account);
-        const reward = Number(ethers.formatUnits(rawReward, 8));
-        const count  = Math.floor(reward);
-        if (rewardEl) rewardEl.innerText = reward.toFixed(2);
-        if (countEl) countEl.innerText = count;
-        if (statsBlock) statsBlock.style.display = "block";
+        const saleContract = getSaleContract();
+        const rawReward    = await saleContract.referralRewards(account);
+        const reward       = Number(ethers.formatUnits(rawReward, 8));
+        const count        = Math.floor(reward);
+
+        rewardEl.innerText  = reward.toFixed(2);
+        countEl.innerText   = count;
+        statsBlock.style.display = "block";
       } catch (err) {
         console.warn("Ошибка загрузки реф. статистики:", err);
       }
