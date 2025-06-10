@@ -137,7 +137,7 @@ async function handlePurchase(amount, productName) {
     }
 
   } catch (error) {
-    console.error("Ошибка при покупке:", error);
+    console.warn("Ошибка при покупке:", error);
     const rawReason = error?.revert?.args?.[0] || error?.shortMessage || error?.message || "Неизвестная ошибка";
     const reason = rawReason === "not started"
                  ? "📅 Продажа начнётся: 1 июля в 09:00 UTC (12:00 Киев)"
