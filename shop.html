@@ -477,38 +477,38 @@
 
 <!-- Вспомогательная логика -->
 <script type="module">
-  import { saleContract } from './js/sale.js';
-  import { ethers }       from 'https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm';
-  import Swal              from 'https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm';
+  import { ethers } from 'https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm';
+  import Swal        from 'https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm';
 
-  // 📊 Функция анимированной статистики
+  // 📊 Загружает и анимирует статистику токенсейла, используя window.phasedSale
   async function loadSaleStats() {
+    const contract = window.phasedSale;
+    if (!contract || !contract.saleCap) {
+      console.warn('❌ phasedSale не готов, статистика не загружена');
+      return;
+    }
     try {
       const [cap, sold, reserve, paid] = await Promise.all([
-        saleContract.saleCap(),
-        saleContract.totalSold(),
-        saleContract.rewardReserve(),
-        saleContract.totalReferralPaid()
+        contract.saleCap(),
+        contract.totalSold(),
+        contract.rewardReserve(),
+        contract.totalReferralPaid()
       ]);
       const D = 8;
       const animate = (id, v) =>
-        new CountUp(id, Number(v) / 10 ** D, { duration: 1.2, separator: ' ', decimalPlaces: 2 }).start();
-
+        new CountUp(id, Number(v) / 10**D, { duration:1.2, separator:' ', decimalPlaces:2 }).start();
       animate('cap', cap);
       animate('sold', sold);
       animate('left', cap - sold);
       animate('refReserve', reserve);
       animate('refLeft', reserve - paid);
     } catch (e) {
-      console.error('Не удалось загрузить статистику токенсейла:', e);
+      console.error('Ошибка статистики токенсейла:', e);
     }
   }
 
-  // ✨ Объявляем глобально
-  window.loadSaleStats = loadSaleStats;
-
   document.addEventListener('DOMContentLoaded', () => {
-    // —————— Реферальная логика без изменений ——————
+    // ——— Реферальная логика ———
     const linkInput  = document.getElementById('myReferralLink');
     const copyBtn    = document.getElementById('copyMyReferralLink');
     const toast      = document.getElementById('toast');
@@ -531,12 +531,13 @@
     window.enableReferralAfterPurchase = async account => {
       const link = `${location.origin}/shop.html?ref=${account}`;
       linkInput.value = link;
-      copyBtn.onclick = () =>
+      copyBtn.onclick = () => {
         navigator.clipboard.writeText(link).then(() => {
           toast.style.opacity = '1';
-          setTimeout(() => toast.style.opacity = '0', 2500);
+          setTimeout(() => (toast.style.opacity = '0'), 2500);
         });
-      // соцсети
+      };
+      // Ссылки для шаринга
       document.getElementById('share-facebook').href  = `https://www.facebook.com/sharer/sharer.php?u=${link}`;
       document.getElementById('share-twitter').href   = `https://twitter.com/intent/tweet?url=${link}&text=${pageTitle}`;
       document.getElementById('share-vk').href        = `https://vk.com/share.php?url=${link}&title=${pageTitle}`;
@@ -544,14 +545,14 @@
       document.getElementById('share-ok').href        = `https://connect.ok.ru/offer?url=${link}`;
       document.getElementById('share-linkedin').href  = `https://www.linkedin.com/sharing/share-offsite/?url=${link}`;
       document.getElementById('share-weibo').href     = `http://service.weibo.com/share/share.php?url=${link}&title=${pageTitle}`;
-      if (openBtn)  openBtn.onclick  = () => shareModal.style.display = 'flex';
-      if (closeBtn) closeBtn.onclick = () => shareModal.style.display = 'none';
+      if (openBtn)  openBtn.onclick  = () => (shareModal.style.display = 'flex');
+      if (closeBtn) closeBtn.onclick = () => (shareModal.style.display = 'none');
       window.addEventListener('click', e => {
         if (e.target === shareModal) shareModal.style.display = 'none';
       });
-      // реф. статистика
+      // Статистика по рефералам
       try {
-        const raw = await saleContract.referralRewards(account);
+        const raw = await window.phasedSale.referralRewards(account);
         const rew = Number(ethers.formatUnits(raw, 8));
         rewardEl.innerText = rew.toFixed(2);
         countEl.innerText  = Math.floor(rew);
@@ -560,19 +561,9 @@
         console.warn('Ошибка загрузки реф. статистики:', e);
       }
     };
-    // —————— Конец реферальной логики ——————
+    // ——— Конец реферальной логики ———
 
-    // 🔄 Ждём готовности saleContract и сразу запускаем статистику
-    (async function waitAndRun() {
-      for (let i = 0; i < 20; i++) {
-        if (saleContract?.saleCap) {
-          loadSaleStats();
-          return;
-        }
-        await new Promise(r => setTimeout(r, 200));
-      }
-      console.warn('saleContract не инициализировался вовремя — статистика не показана');
-    })();
+    // Запускаем статистику токенсейла после инициализации
+    loadSaleStats();
   });
 </script>
-
