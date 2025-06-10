@@ -30,16 +30,16 @@ async function loadSaleStats() {
   const refReserveEl = document.getElementById("refReserve");
   const refLeftEl    = document.getElementById("refLeft");
 
-  // авторизованный или публичный контракт фаз
   let saleContract = getSaleContract() || readSaleContract;
   if (!saleContract) return;
 
   try {
-    // 1) Прочитать реальный депозит IBITI
-    const depositBN = await ibitiTokenRead.balanceOf(readSaleContract.address);
-    const cap       = Number(ethers.formatUnits(depositBN, 8));
+    // 1) Читаем точный баланс IBITI на контракте PhasedTokenSale
+    const saleAddress = config.mainnet.contracts.PHASED_TOKENSALE_ADDRESS_MAINNET;
+    const depositBN   = await ibitiTokenRead.balanceOf(saleAddress);
+    const cap         = Number(ethers.formatUnits(depositBN, 8));
 
-    // 2) Суммировать, сколько уже продано
+    // 2) Суммируем, сколько уже продано по фазам
     const PHASE_COUNT = 3;
     let soldBN = 0n;
     for (let i = 0; i < PHASE_COUNT; i++) {
@@ -55,7 +55,7 @@ async function loadSaleStats() {
     const rewardBN = await saleContract.rewardTokens();
     const ref      = Number(ethers.formatUnits(rewardBN, 8));
 
-    // 5) В DOM
+    // 5) Вставляем в DOM
     capEl.innerText        = cap.toFixed(2);
     soldEl.innerText       = sold.toFixed(2);
     leftEl.innerText       = left.toFixed(2);
