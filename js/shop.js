@@ -61,10 +61,7 @@ async function loadSaleStats() {
       const p = await saleContract.phases(i);
       soldBN += BigInt(p.sold.toString());
     }
-    // 👉 Для теста: временно подменяем реальное sold на 50% от пула
-   // const sold = Number(ethers.formatUnits(soldBN, 8));
-   const testSold = (cap - refReserve - bonusReserve) * 0.5; // 50% продано
-   const sold = testSold;
+    const sold = Number(ethers.formatUnits(soldBN, 8));
 
     // 5) Резерв рефералов
     const refBN      = await saleContract.rewardTokens();
