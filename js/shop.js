@@ -279,10 +279,3 @@ document.addEventListener("DOMContentLoaded", () => {
     loadReferralStats(storedReferral);
   }
 });
-
-
-
-✅ sale.js загружен
-wallet.js:11 ✅ wallet.js загружен
-shop.js:8 Uncaught SyntaxError: The requested module './sale.js' does not provide an export named 'saleContract' (at shop.js:8:10)
-shop.html:483 Uncaught SyntaxError: The requested module './js/sale.js' does not provide an export named 'saleContract' (at shop.html:483:12)
