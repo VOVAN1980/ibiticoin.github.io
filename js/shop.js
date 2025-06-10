@@ -55,12 +55,28 @@ async function loadSaleStats() {
     const rewardBN = await saleContract.rewardTokens();
     const ref      = Number(ethers.formatUnits(rewardBN, 8));
 
-    // 5) Вставляем в DOM
-    capEl.innerText        = cap.toFixed(2);
-    soldEl.innerText       = sold.toFixed(2);
-    leftEl.innerText       = left.toFixed(2);
-    refReserveEl.innerText = ref.toFixed(2);
-    refLeftEl.innerText    = ref.toFixed(2);
+  // 5) Вставляем в DOM
+capEl.innerText        = cap.toLocaleString('ru-RU', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
+soldEl.innerText       = sold.toLocaleString('ru-RU', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
+leftEl.innerText       = left.toLocaleString('ru-RU', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
+refReserveEl.innerText = ref.toLocaleString('ru-RU', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
+refLeftEl.innerText    = ref.toLocaleString('ru-RU', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
+
   } catch (err) {
     console.warn("Ошибка загрузки статистики токенсейла:", err);
   }
