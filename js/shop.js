@@ -5,12 +5,18 @@ import { connectWallet, selectedAccount, showIbitiBalance } from "./wallet.js";
 import Swal                                      from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
 import { getSaleContract }                       from "./sale.js";
 import { PhasedTokenSaleAbi }                    from "./abis/PhasedTokenSaleAbi.js";
-   
-// 1) Создаём JsonRpcProvider и читающий контракт
-const rpcProvider = new ethers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
+import { ibitiTokenAbi }                         from "./abis/ibitiTokenAbi.js";
+
+// Публичный RPC и контракт для чтения данных по IBITI
+const rpcProvider      = new ethers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
 const readSaleContract = new ethers.Contract(
   config.mainnet.contracts.PHASED_TOKENSALE_ADDRESS_MAINNET,
   PhasedTokenSaleAbi,
+  rpcProvider
+);
+const ibitiTokenRead   = new ethers.Contract(
+  config.mainnet.contracts.IBITI_TOKEN_ADDRESS_MAINNET,
+  ibitiTokenAbi,
   rpcProvider
 );
 
@@ -24,35 +30,37 @@ async function loadSaleStats() {
   const refReserveEl = document.getElementById("refReserve");
   const refLeftEl    = document.getElementById("refLeft");
 
-  // Выбираем авторизованный или публичный контракт
+  // авторизованный или публичный контракт фаз
   let saleContract = getSaleContract() || readSaleContract;
   if (!saleContract) return;
 
   try {
-    const PHASE_COUNT = 3;
-    // Инициализируем через чистый BigInt
-    let capBN  = 0n;
-    let soldBN = 0n;
+    // 1) Прочитать реальный депозит IBITI
+    const depositBN = await ibitiTokenRead.balanceOf(readSaleContract.address);
+    const cap       = Number(ethers.formatUnits(depositBN, 8));
 
+    // 2) Суммировать, сколько уже продано
+    const PHASE_COUNT = 3;
+    let soldBN = 0n;
     for (let i = 0; i < PHASE_COUNT; i++) {
       const p = await saleContract.phases(i);
-      // p.cap и p.sold — BigNumber, преобразуем в строку, потом в BigInt
-      capBN  += BigInt(p.cap.toString());
       soldBN += BigInt(p.sold.toString());
     }
-
-    const cap  = Number(ethers.formatUnits(capBN, 8));
     const sold = Number(ethers.formatUnits(soldBN, 8));
+
+    // 3) Остаток
     const left = cap - sold;
 
-    const reserveBN = await saleContract.rewardTokens();
-    const reserve   = Number(ethers.formatUnits(reserveBN, 8));
+    // 4) Резерв рефералов
+    const rewardBN = await saleContract.rewardTokens();
+    const ref      = Number(ethers.formatUnits(rewardBN, 8));
 
+    // 5) В DOM
     capEl.innerText        = cap.toFixed(2);
     soldEl.innerText       = sold.toFixed(2);
     leftEl.innerText       = left.toFixed(2);
-    refReserveEl.innerText = reserve.toFixed(2);
-    refLeftEl.innerText    = reserve.toFixed(2);
+    refReserveEl.innerText = ref.toFixed(2);
+    refLeftEl.innerText    = ref.toFixed(2);
   } catch (err) {
     console.warn("Ошибка загрузки статистики токенсейла:", err);
   }
