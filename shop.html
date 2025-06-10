@@ -481,7 +481,7 @@
   import { ethers }       from 'https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm';
   import Swal              from 'https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm';
 
-  // 📊 Загружает и анимирует статистику токенсейла
+  // 📊 Функция анимированной статистики
   async function loadSaleStats() {
     try {
       const [cap, sold, reserve, paid] = await Promise.all([
@@ -490,14 +490,10 @@
         saleContract.rewardReserve(),
         saleContract.totalReferralPaid()
       ]);
-      const decimals = 8;
-      const animate = (id, value) => {
-        new CountUp(id, Number(value) / 10**decimals, {
-          duration: 1.2,
-          separator: ' ',
-          decimalPlaces: 2
-        }).start();
-      };
+      const D = 8;
+      const animate = (id, v) =>
+        new CountUp(id, Number(v) / 10 ** D, { duration: 1.2, separator: ' ', decimalPlaces: 2 }).start();
+
       animate('cap', cap);
       animate('sold', sold);
       animate('left', cap - sold);
@@ -507,10 +503,12 @@
       console.error('Не удалось загрузить статистику токенсейла:', e);
     }
   }
+
+  // ✨ Объявляем глобально
   window.loadSaleStats = loadSaleStats;
 
   document.addEventListener('DOMContentLoaded', () => {
-    // ——— Реферальная логика ———
+    // —————— Реферальная логика без изменений ——————
     const linkInput  = document.getElementById('myReferralLink');
     const copyBtn    = document.getElementById('copyMyReferralLink');
     const toast      = document.getElementById('toast');
@@ -522,23 +520,22 @@
     const closeBtn   = document.getElementById('closeShareModal');
     const pageTitle  = encodeURIComponent(document.title);
 
-    copyBtn.addEventListener('click', () => {
+    copyBtn.addEventListener('click', () =>
       Swal.fire({
         icon: 'info',
         title: 'Недоступно',
         text: 'Сначала купите от 10 IBITI, чтобы получить реферальную ссылку.'
-      });
-    });
+      })
+    );
 
     window.enableReferralAfterPurchase = async account => {
       const link = `${location.origin}/shop.html?ref=${account}`;
       linkInput.value = link;
-      copyBtn.onclick = () => {
+      copyBtn.onclick = () =>
         navigator.clipboard.writeText(link).then(() => {
           toast.style.opacity = '1';
           setTimeout(() => toast.style.opacity = '0', 2500);
         });
-      };
       // соцсети
       document.getElementById('share-facebook').href  = `https://www.facebook.com/sharer/sharer.php?u=${link}`;
       document.getElementById('share-twitter').href   = `https://twitter.com/intent/tweet?url=${link}&text=${pageTitle}`;
@@ -552,17 +549,30 @@
       window.addEventListener('click', e => {
         if (e.target === shareModal) shareModal.style.display = 'none';
       });
-
-      // статистика по рефералам
+      // реф. статистика
       try {
         const raw = await saleContract.referralRewards(account);
-        const reward = Number(ethers.formatUnits(raw, 8));
-        rewardEl.innerText = reward.toFixed(2);
-        countEl.innerText  = Math.floor(reward);
+        const rew = Number(ethers.formatUnits(raw, 8));
+        rewardEl.innerText = rew.toFixed(2);
+        countEl.innerText  = Math.floor(rew);
         statsBlock.style.display = 'block';
       } catch (e) {
         console.warn('Ошибка загрузки реф. статистики:', e);
       }
     };
+    // —————— Конец реферальной логики ——————
+
+    // 🔄 Ждём готовности saleContract и сразу запускаем статистику
+    (async function waitAndRun() {
+      for (let i = 0; i < 20; i++) {
+        if (saleContract?.saleCap) {
+          loadSaleStats();
+          return;
+        }
+        await new Promise(r => setTimeout(r, 200));
+      }
+      console.warn('saleContract не инициализировался вовремя — статистика не показана');
+    })();
   });
 </script>
+
