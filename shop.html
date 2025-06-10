@@ -370,6 +370,34 @@
   </div>
 </div>
 
+<!-- Статистика токенсейла -->
+<section id="saleStats"
+  data-aos="fade-up"
+  style="
+    margin: 40px auto;
+    max-width: 800px;
+    padding: 24px;
+    background: #111;
+    color: #fff;
+    border: 1px solid gold;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  "
+  onmouseover="this.style.transform='scale(1.015)'; this.style.boxShadow='0 0 25px rgba(255, 215, 0, 0.3)'"
+  onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 20px rgba(255, 215, 0, 0.1)'"
+>
+  <h3 style="color: gold; font-size: 1.8em; margin-bottom: 16px;">📊 Статистика токенсейла</h3>
+  <ul style="list-style: none; padding-left: 0; color: gold; font-size: 1.1em;">
+    <li>🔹 Всего на продажу: <strong><span id="cap">—</span></strong> IBI</li>
+    <li>🔹 Продано: <strong><span id="sold">—</span></strong> IBI</li>
+    <li>🔹 Осталось: <strong><span id="left">—</span></strong> IBI</li>
+    <li>🔹 Резерв рефералов: <strong><span id="refReserve">—</span></strong> IBI</li>
+    <li>🔹 Осталось бонусов: <strong><span id="refLeft">—</span></strong> IBI</li>
+  </ul>
+</section>
+
 <!-- Модальное окно соцсетей -->
 <div id="shareModal" class="modal" style="
   display: none;
@@ -448,11 +476,9 @@
 
 <!-- Вспомогательная логика -->
 <script type="module">
-  import { getSaleContract } from './js/sale.js';
+  import { saleContract } from './js/sale.js';
 
   document.addEventListener("DOMContentLoaded", () => {
-    const saleContract = getSaleContract();
-
     const linkInput   = document.getElementById("myReferralLink");
     const copyBtn     = document.getElementById("copyMyReferralLink");
     const toast       = document.getElementById("toast");
@@ -465,7 +491,7 @@
     const pageUrl     = encodeURIComponent(window.location.href);
     const pageTitle   = encodeURIComponent(document.title);
 
-    // 🔒 По умолчанию — блокировка кнопки копирования
+    // 🔒 По умолчанию — блокировка
     copyBtn.addEventListener("click", () => {
       Swal.fire({
         icon: "info",
@@ -479,7 +505,7 @@
       const refLink = `${window.location.origin}${window.location.pathname}?ref=${account}`;
       if (linkInput) linkInput.value = refLink;
 
-      // Кнопка копирования
+      // Копирование
       copyBtn.onclick = () => {
         navigator.clipboard.writeText(refLink).then(() => {
           toast.style.opacity = "1";
@@ -489,7 +515,7 @@
         });
       };
 
-      // Ссылки на соцсети
+      // Шаринг по соцсетям
       document.getElementById('share-facebook').href  = `https://www.facebook.com/sharer/sharer.php?u=${refLink}`;
       document.getElementById('share-twitter').href   = `https://twitter.com/intent/tweet?url=${refLink}&text=${pageTitle}`;
       document.getElementById('share-vk').href        = `https://vk.com/share.php?url=${refLink}&title=${pageTitle}`;
@@ -498,7 +524,7 @@
       document.getElementById('share-linkedin').href  = `https://www.linkedin.com/sharing/share-offsite/?url=${refLink}`;
       document.getElementById('share-weibo').href     = `http://service.weibo.com/share/share.php?url=${refLink}&title=${pageTitle}`;
 
-      // Открытие/закрытие модалки
+      // Показ модалки
       if (openBtn && shareModal) {
         openBtn.onclick = () => shareModal.style.display = 'flex';
         closeBtn.onclick = () => shareModal.style.display = 'none';
@@ -507,7 +533,7 @@
         });
       }
 
-      // Статистика рефералов
+      // Статистика
       try {
         const rawReward = await saleContract.referralRewards(account);
         const reward = Number(ethers.formatUnits(rawReward, 8));
