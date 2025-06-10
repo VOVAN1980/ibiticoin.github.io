@@ -655,4 +655,19 @@ html, body {
   text-align: center;         /* по центру */
   margin: 0 auto;
  }
+
+.progress-container {
+  width: 100%;
+  background: #333;
+  border-radius: 4px;
+  overflow: hidden;
+  height: 8px;
+}
+
+.progress-bar {
+  width: 0%;           /* будет устанавливаться через JS */
+  height: 100%;
+  background: gold;
+  transition: width 0.5s ease;
+ }
 }
