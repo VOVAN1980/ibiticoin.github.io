@@ -93,12 +93,19 @@ async function loadSaleStats() {
   }
 }
 
-// обновляем сразу и затем каждые 30 секунд
-loadSaleStats();
-setInterval(loadSaleStats, 30_000);
+/ Обновляем сразу и затем каждые 30 секунд
+async function initStats() {
+  await loadSaleStats();
+  setInterval(loadSaleStats, 30_000);
 
-document.getElementById("refreshStats").addEventListener("click", () => {
-  loadSaleStats();
+  // Навешиваем кнопку обновления
+  const btn = document.getElementById("refreshStats");
+  if (btn) btn.addEventListener("click", loadSaleStats);
+}
+
+// Ждём загрузки DOM, только после этого запускаем initStats
+document.addEventListener("DOMContentLoaded", () => {
+  initStats();
 });
 
 console.log("✅ shop.js загружен");
