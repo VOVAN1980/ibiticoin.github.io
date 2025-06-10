@@ -196,9 +196,11 @@ async function handlePurchase(amount, productName) {
 }
 window.handlePurchase = handlePurchase;
 
-// Навешиваем всё после загрузки DOM
 document.addEventListener("DOMContentLoaded", () => {
-  // Форма покупки
+  // 0) При загрузке — подтягиваем статистику
+  loadSaleStats();
+
+  // 1) Навешиваем форму покупки и обновляем статистику по её сабмиту
   const form = document.getElementById("purchaseForm");
   if (form) {
     form.addEventListener("submit", async e => {
@@ -213,8 +215,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       closePurchaseModal();
       await handlePurchase(amount, currentProduct);
+
+      // 2) После успешной транзакции — снова подтягиваем статистику
       loadSaleStats();
-   });
+    });
   }
 
   // Подтвердить кнопку при выборе токена
