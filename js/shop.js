@@ -8,8 +8,7 @@ import Swal                                      from "https://cdn.jsdelivr.net/
 import { getSaleContract }                       from "./sale.js";
 
 /**
- * Подтягивает и отображает статистику токенсейла:
- * cap, sold, left, referralReserve, referralLeft.
+ * Подтягивает и отображает статистику токенсейла
  */
 async function loadSaleStats() {
   const capEl        = document.getElementById("cap");
@@ -22,24 +21,36 @@ async function loadSaleStats() {
   if (!saleContract) return;
 
   try {
-    // Замените названия методов на реальные из вашего ABI
-    const capRaw        = await saleContract.cap();
-    const soldRaw       = await saleContract.totalSold();
-    const refReserveRaw = await saleContract.referralReserve();
-    const refLeftRaw    = await saleContract.referralLeft();
+    // 1) Считаем суммарный cap и продано через фазы
+    const PHASE_COUNT = 3;                  // у вас их три
+    let capBN  = ethers.BigNumber.from(0);
+    let soldBN = ethers.BigNumber.from(0);
 
-    // Форматируем BN → число с 8 десятичными
-    const cap        = Number(ethers.formatUnits(capRaw, 8));
-    const sold       = Number(ethers.formatUnits(soldRaw, 8));
-    const left       = cap - sold;
-    const refReserve = Number(ethers.formatUnits(refReserveRaw, 8));
-    const refLeft    = Number(ethers.formatUnits(refLeftRaw, 8));
+    for (let i = 0; i < PHASE_COUNT; i++) {
+      // phases(i) возвращает struct Phase { start, end, priceCents, cap, sold, whitelistOnly }
+      const phase = await saleContract.phases(i);
+      capBN  = capBN.add(phase.cap);
+      soldBN = soldBN.add(phase.sold);
+    }
 
+    // 2) Остаток в фазах
+    const cap  = Number(ethers.formatUnits(capBN, 8));
+    const sold = Number(ethers.formatUnits(soldBN, 8));
+    const left = cap - sold;
+
+    // 3) Резерв и остаток бонусов для рефералов
+    const reserveBN = await saleContract.rewardTokens();
+    const reserve   = Number(ethers.formatUnits(reserveBN, 8));
+    // В вашем контракте нет отдельного initialReserve, так что и резерв, и остаток совпадают
+    const leftover  = reserve;
+
+    // 4) Вставляем в DOM
     capEl.innerText        = cap.toFixed(2);
     soldEl.innerText       = sold.toFixed(2);
     leftEl.innerText       = left.toFixed(2);
-    refReserveEl.innerText = refReserve.toFixed(2);
-    refLeftEl.innerText    = refLeft.toFixed(2);
+    refReserveEl.innerText = reserve.toFixed(2);
+    refLeftEl.innerText    = leftover.toFixed(2);
+
   } catch (err) {
     console.warn("Ошибка загрузки статистики токенсейла:", err);
   }
