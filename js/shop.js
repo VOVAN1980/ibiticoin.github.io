@@ -77,6 +77,9 @@ async function loadSaleStats() {
     const salePool = cap - refReserve - bonusReserve;
     const left     = salePool - sold;
 
+    // ─── Тестовый override sold ─────
+const sold = salePool * 0.5;      // 50 % заполнения
+
     // 8) Расчёт процента
     const percent    = salePool > 0 ? (sold / salePool) * 100 : 0;
     const pctClamped = Math.min(Math.max(percent, 0), 100);
