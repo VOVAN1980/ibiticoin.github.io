@@ -207,24 +207,22 @@ document.addEventListener("DOMContentLoaded", () => {
   // 0) При загрузке — подтягиваем статистику
   loadSaleStats();
 
-  // 1) Навешиваем форму покупки и обновляем статистику по её сабмиту
-  document.addEventListener("DOMContentLoaded", () => {
-  loadSaleStats();
-
+  // 1) Навешиваем форму покупки
   const form = document.getElementById("purchaseForm");
   if (form) {
     form.addEventListener("submit", async e => {
       e.preventDefault();
-      // …ваша логика покупки…
-      await handlePurchase(amount, currentProduct);
-      loadSaleStats();
-    });
-  }
+      const amount = document.getElementById("nftAmount").value;
+      if (!selectedAccount) {
+        return Swal.fire({
+          icon:  "warning",
+          title: "Кошелек не подключен",
+          text:  "Сначала подключите кошелек."
+        });
+      }
       closePurchaseModal();
       await handlePurchase(amount, currentProduct);
-
-      // 2) После успешной транзакции — снова подтягиваем статистику
-      loadSaleStats();
+      loadSaleStats(); // 2) Обновление статистики после покупки
     });
   }
 
@@ -281,8 +279,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (e.target === walletModal) walletModal.style.display = "none";
     });
   }
-  if (btnInj)    btnInj.addEventListener("click", () => { walletModal.style.display = "none"; window.connectWallet(); });
-  if (btnCb)     btnCb.addEventListener("click",  () => { walletModal.style.display = "none"; window.connectViaCoinbase(); });
+  if (btnInj) btnInj.addEventListener("click", () => {
+    walletModal.style.display = "none";
+    window.connectWallet?.();
+  });
+  if (btnCb) btnCb.addEventListener("click", () => {
+    walletModal.style.display = "none";
+    window.connectViaCoinbase?.();
+  });
 
   // Восстанавливаем реферальку
   const stored = localStorage.getItem("referralOwner");
@@ -291,4 +295,3 @@ document.addEventListener("DOMContentLoaded", () => {
     loadReferralStats(stored);
   }
 });
-
