@@ -448,9 +448,11 @@
 
 <!-- Вспомогательная логика -->
 <script type="module">
-  import { saleContract } from './js/sale.js';
+  import { getSaleContract } from './js/sale.js';
 
   document.addEventListener("DOMContentLoaded", () => {
+    const saleContract = getSaleContract();
+
     const linkInput   = document.getElementById("myReferralLink");
     const copyBtn     = document.getElementById("copyMyReferralLink");
     const toast       = document.getElementById("toast");
@@ -463,7 +465,7 @@
     const pageUrl     = encodeURIComponent(window.location.href);
     const pageTitle   = encodeURIComponent(document.title);
 
-    // 🔒 По умолчанию — блокировка
+    // 🔒 По умолчанию — блокировка кнопки копирования
     copyBtn.addEventListener("click", () => {
       Swal.fire({
         icon: "info",
@@ -477,7 +479,7 @@
       const refLink = `${window.location.origin}${window.location.pathname}?ref=${account}`;
       if (linkInput) linkInput.value = refLink;
 
-      // Копирование
+      // Кнопка копирования
       copyBtn.onclick = () => {
         navigator.clipboard.writeText(refLink).then(() => {
           toast.style.opacity = "1";
@@ -487,7 +489,7 @@
         });
       };
 
-      // Шаринг по соцсетям
+      // Ссылки на соцсети
       document.getElementById('share-facebook').href  = `https://www.facebook.com/sharer/sharer.php?u=${refLink}`;
       document.getElementById('share-twitter').href   = `https://twitter.com/intent/tweet?url=${refLink}&text=${pageTitle}`;
       document.getElementById('share-vk').href        = `https://vk.com/share.php?url=${refLink}&title=${pageTitle}`;
@@ -496,7 +498,7 @@
       document.getElementById('share-linkedin').href  = `https://www.linkedin.com/sharing/share-offsite/?url=${refLink}`;
       document.getElementById('share-weibo').href     = `http://service.weibo.com/share/share.php?url=${refLink}&title=${pageTitle}`;
 
-      // Показ модалки
+      // Открытие/закрытие модалки
       if (openBtn && shareModal) {
         openBtn.onclick = () => shareModal.style.display = 'flex';
         closeBtn.onclick = () => shareModal.style.display = 'none';
@@ -505,7 +507,7 @@
         });
       }
 
-      // Статистика
+      // Статистика рефералов
       try {
         const rawReward = await saleContract.referralRewards(account);
         const reward = Number(ethers.formatUnits(rawReward, 8));
