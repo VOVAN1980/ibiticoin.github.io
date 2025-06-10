@@ -7,6 +7,44 @@ import { connectWallet, selectedAccount, showIbitiBalance } from "./wallet.js";
 import Swal                                      from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
 import { getSaleContract }                       from "./sale.js";
 
+/**
+ * Подтягивает и отображает статистику токенсейла:
+ * cap, sold, left, referralReserve, referralLeft.
+ */
+async function loadSaleStats() {
+  const capEl        = document.getElementById("cap");
+  const soldEl       = document.getElementById("sold");
+  const leftEl       = document.getElementById("left");
+  const refReserveEl = document.getElementById("refReserve");
+  const refLeftEl    = document.getElementById("refLeft");
+
+  const saleContract = getSaleContract();
+  if (!saleContract) return;
+
+  try {
+    // Замените названия методов на реальные из вашего ABI
+    const capRaw        = await saleContract.cap();
+    const soldRaw       = await saleContract.totalSold();
+    const refReserveRaw = await saleContract.referralReserve();
+    const refLeftRaw    = await saleContract.referralLeft();
+
+    // Форматируем BN → число с 8 десятичными
+    const cap        = Number(ethers.formatUnits(capRaw, 8));
+    const sold       = Number(ethers.formatUnits(soldRaw, 8));
+    const left       = cap - sold;
+    const refReserve = Number(ethers.formatUnits(refReserveRaw, 8));
+    const refLeft    = Number(ethers.formatUnits(refLeftRaw, 8));
+
+    capEl.innerText        = cap.toFixed(2);
+    soldEl.innerText       = sold.toFixed(2);
+    leftEl.innerText       = left.toFixed(2);
+    refReserveEl.innerText = refReserve.toFixed(2);
+    refLeftEl.innerText    = refLeft.toFixed(2);
+  } catch (err) {
+    console.warn("Ошибка загрузки статистики токенсейла:", err);
+  }
+}
+
 console.log("✅ shop.js загружен");
 
 async function loadReferralStats(account) {
@@ -170,7 +208,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       closePurchaseModal();
       await handlePurchase(amount, currentProduct);
-    });
+      loadSaleStats();
+   });
   }
 
   // Подтвердить кнопку при выборе токена
