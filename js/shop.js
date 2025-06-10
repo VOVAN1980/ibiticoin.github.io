@@ -7,9 +7,6 @@ import { connectWallet, selectedAccount, showIbitiBalance } from "./wallet.js";
 import Swal                                      from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
 import { getSaleContract }                       from "./sale.js";
 
-/**
- * Подтягивает и отображает статистику токенсейла
- */
 async function loadSaleStats() {
   const capEl        = document.getElementById("cap");
   const soldEl       = document.getElementById("sold");
@@ -21,36 +18,31 @@ async function loadSaleStats() {
   if (!saleContract) return;
 
   try {
-    // 1) Считаем суммарный cap и продано через фазы
-    const PHASE_COUNT = 3;                  // у вас их три
-    let capBN  = ethers.BigNumber.from(0);
-    let soldBN = ethers.BigNumber.from(0);
-
+    // 1) Суммируем cap и sold по 3 фазам
+    const PHASE_COUNT = 3;
+    let capBN  = ethers.Zero;
+    let soldBN = ethers.Zero;
     for (let i = 0; i < PHASE_COUNT; i++) {
-      // phases(i) возвращает struct Phase { start, end, priceCents, cap, sold, whitelistOnly }
-      const phase = await saleContract.phases(i);
-      capBN  = capBN.add(phase.cap);
-      soldBN = soldBN.add(phase.sold);
+      const p = await saleContract.phases(i);
+      capBN  = capBN.add(p.cap);
+      soldBN = soldBN.add(p.sold);
     }
 
-    // 2) Остаток в фазах
+    // 2) Преобразуем в числа
     const cap  = Number(ethers.formatUnits(capBN, 8));
     const sold = Number(ethers.formatUnits(soldBN, 8));
     const left = cap - sold;
 
-    // 3) Резерв и остаток бонусов для рефералов
+    // 3) Берём резерв рефералов
     const reserveBN = await saleContract.rewardTokens();
     const reserve   = Number(ethers.formatUnits(reserveBN, 8));
-    // В вашем контракте нет отдельного initialReserve, так что и резерв, и остаток совпадают
-    const leftover  = reserve;
 
     // 4) Вставляем в DOM
     capEl.innerText        = cap.toFixed(2);
     soldEl.innerText       = sold.toFixed(2);
     leftEl.innerText       = left.toFixed(2);
     refReserveEl.innerText = reserve.toFixed(2);
-    refLeftEl.innerText    = leftover.toFixed(2);
-
+    refLeftEl.innerText    = reserve.toFixed(2);
   } catch (err) {
     console.warn("Ошибка загрузки статистики токенсейла:", err);
   }
