@@ -23,59 +23,75 @@ const ibitiTokenRead   = new ethers.Contract(
 /**
  * Подгружает статистику продаж из контракта (через signer или, если нет, через public RPC).
  */
+/**
+ * Загружает и отображает:
+ * – cap       (баланс на контракте)
+ * – refReserve (резерв рефералов)
+ * – salePool  (основной пул продаж)
+ * – sold      (уже продано)
+ * – left      (сколько осталось продаж)
+ * – bonusPool (фикс. пул бонусов)
+ */
 async function loadSaleStats() {
-  const capEl         = document.getElementById("cap");
-  const soldEl        = document.getElementById("sold");
-  const leftEl        = document.getElementById("left");
-  const refReserveEl  = document.getElementById("refReserve");
-  const salePoolEl    = document.getElementById("salePool");
-  const bonusPoolEl   = document.getElementById("bonusPool");
-  const bonusReserve  = 500_000;   // фиксированные бонусы
+  // 1) Находим элементы в DOM
+  const capEl        = document.getElementById("cap");
+  const refReserveEl = document.getElementById("refReserve");
+  const salePoolEl   = document.getElementById("salePool");
+  const soldEl       = document.getElementById("sold");
+  const leftEl       = document.getElementById("left");
+  const bonusPoolEl  = document.getElementById("bonusPool");
 
+  // 2) Берём авторизованный или публичный контракт
   let saleContract = getSaleContract() || readSaleContract;
   if (!saleContract) return;
 
   try {
-    // 1) Общий баланс на контракте
+    // 3) Общий баланс IBITI на контракте
     const saleAddress = config.mainnet.contracts.PHASED_TOKENSALE_ADDRESS_MAINNET;
     const depositBN   = await ibitiTokenRead.balanceOf(saleAddress);
     const cap         = Number(ethers.formatUnits(depositBN, 8));
 
-    // 2) Суммируем, сколько продано
+    // 4) Сколько уже продано через фазы
+    const PHASE_COUNT = 3;
     let soldBN = 0n;
-    for (let i = 0; i < 3; i++) {
-      const p = await saleContract.phases(i);
-      soldBN += BigInt(p.sold.toString());
+    for (let i = 0; i < PHASE_COUNT; i++) {
+      const p      = await saleContract.phases(i);
+      soldBN      += BigInt(p.sold.toString());
     }
     const sold = Number(ethers.formatUnits(soldBN, 8));
 
-    // 3) Резерв рефералов
-    const refBN     = await saleContract.rewardTokens();
-    const refReserve= Number(ethers.formatUnits(refBN, 8));
+    // 5) Резерв рефералов
+    const refBN      = await saleContract.rewardTokens();
+    const refReserve = Number(ethers.formatUnits(refBN, 8));
 
-    // 4) Основной пул и остаток
+    // 6) Фиксированный пул бонусов
+    const bonusReserve = 500_000;
+
+    // 7) Основной пул продаж и остаток
     const salePool = cap - refReserve - bonusReserve;
     const left     = salePool - sold;
 
-    // 5) Форматирование
-    const fmt = x => x.toLocaleString('ru-RU', {
+    // 8) Форматирование для пользователя
+    const fmt = x => x.toLocaleString("ru-RU", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     });
 
-    // 6) Вставляем в DOM
+    // 9) Вставляем в DOM
     capEl.innerText        = fmt(cap);
     refReserveEl.innerText = fmt(refReserve);
     salePoolEl.innerText   = fmt(salePool);
     soldEl.innerText       = fmt(sold);
     leftEl.innerText       = fmt(left);
     bonusPoolEl.innerText  = fmt(bonusReserve);
+
   } catch (err) {
     console.warn("Ошибка загрузки статистики токенсейла:", err);
   }
 }
 
-// Обновляем раз в 30 секунд
+// обновляем сразу и затем каждые 30 секунд
+loadSaleStats();
 setInterval(loadSaleStats, 30_000);
 
 console.log("✅ shop.js загружен");
