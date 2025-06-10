@@ -46,7 +46,6 @@ export async function buyIBITI(amount, referrer = NULL_ADDRESS) {
     console.log("✓ Транзакция buy отправлена:", tx.hash);
     return tx;
   } catch (error) {
-    console.error("✖ Ошибка в buyIBITI:", error);
     throw error;
   }
 }
