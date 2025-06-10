@@ -34,12 +34,15 @@ const ibitiTokenRead   = new ethers.Contract(
  */
 async function loadSaleStats() {
   // 1) Находим элементы в DOM
-  const capEl        = document.getElementById("cap");
-  const refReserveEl = document.getElementById("refReserve");
-  const salePoolEl   = document.getElementById("salePool");
-  const soldEl       = document.getElementById("sold");
-  const leftEl       = document.getElementById("left");
-  const bonusPoolEl  = document.getElementById("bonusPool");
+  const capEl         = document.getElementById("cap");
+  const refReserveEl  = document.getElementById("refReserve");
+  const salePoolEl    = document.getElementById("salePool");
+  const soldEl        = document.getElementById("sold");
+  const leftEl        = document.getElementById("left");
+  const bonusPoolEl   = document.getElementById("bonusPool");
+  const progressEl    = document.getElementById("salesProgress");
+  const percentEl     = document.getElementById("soldPercent");
+  const lastUpdatedEl = document.getElementById("lastUpdated");
 
   // 2) Берём авторизованный или публичный контракт
   let saleContract = getSaleContract() || readSaleContract;
@@ -71,22 +74,30 @@ async function loadSaleStats() {
     const salePool = cap - refReserve - bonusReserve;
     const left     = salePool - sold;
 
-    // 8) Форматирование для пользователя
+    // 8) Расчёт прогресса
+    const percent   = salePool > 0 ? (sold / salePool) * 100 : 0;
+    const pctClamped = Math.min(Math.max(percent, 0), 100);
+
+    // 9) Форматирование для пользователя
     const fmt = x => x.toLocaleString("ru-RU", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     });
 
-    // 9) Вставляем в DOM
-    capEl.innerText        = fmt(cap);
-    refReserveEl.innerText = fmt(refReserve);
-    salePoolEl.innerText   = fmt(salePool);
-    soldEl.innerText       = fmt(sold);
-    leftEl.innerText       = fmt(left);
-    bonusPoolEl.innerText  = fmt(bonusReserve);
+    // 10) Вставляем в DOM
+    capEl.innerText         = fmt(cap);
+    refReserveEl.innerText  = fmt(refReserve);
+    salePoolEl.innerText    = fmt(salePool);
+    soldEl.innerText        = fmt(sold);
+    leftEl.innerText        = fmt(left);
+    bonusPoolEl.innerText   = fmt(bonusReserve);
 
-   document.getElementById("lastUpdated").innerText =
-  `Обновлено: ${new Date().toLocaleTimeString("ru-RU")}`;
+    // 11) Обновляем прогресс-бар и метку процента
+    if (progressEl)    progressEl.style.width     = `${pctClamped}%`;
+    if (percentEl)     percentEl.innerText        = `${pctClamped.toFixed(2)}%`;
+
+    // 12) Обновляем метку времени
+    if (lastUpdatedEl) lastUpdatedEl.innerText    = `Обновлено: ${new Date().toLocaleTimeString("ru-RU")}`;
 
   } catch (err) {
     console.warn("Ошибка загрузки статистики токенсейла:", err);
