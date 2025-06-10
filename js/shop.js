@@ -201,18 +201,18 @@ document.addEventListener("DOMContentLoaded", () => {
   loadSaleStats();
 
   // 1) Навешиваем форму покупки и обновляем статистику по её сабмиту
+  document.addEventListener("DOMContentLoaded", () => {
+  loadSaleStats();
+
   const form = document.getElementById("purchaseForm");
   if (form) {
     form.addEventListener("submit", async e => {
       e.preventDefault();
-      const amount = document.getElementById("nftAmount").value;
-      if (!selectedAccount) {
-        return Swal.fire({
-          icon:  "warning",
-          title: "Кошелек не подключен",
-          text:  "Сначала подключите кошелек."
-        });
-      }
+      // …ваша логика покупки…
+      await handlePurchase(amount, currentProduct);
+      loadSaleStats();
+    });
+  }
       closePurchaseModal();
       await handlePurchase(amount, currentProduct);
 
