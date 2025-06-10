@@ -93,21 +93,6 @@ async function loadSaleStats() {
   }
 }
 
-/ Обновляем сразу и затем каждые 30 секунд
-async function initStats() {
-  await loadSaleStats();
-  setInterval(loadSaleStats, 30_000);
-
-  // Навешиваем кнопку обновления
-  const btn = document.getElementById("refreshStats");
-  if (btn) btn.addEventListener("click", loadSaleStats);
-}
-
-// Ждём загрузки DOM, только после этого запускаем initStats
-document.addEventListener("DOMContentLoaded", () => {
-  initStats();
-});
-
 console.log("✅ shop.js загружен");
 
 async function loadReferralStats(account) {
@@ -257,6 +242,21 @@ window.handlePurchase = handlePurchase;
 document.addEventListener("DOMContentLoaded", () => {
   // 0) При загрузке — подтягиваем статистику
   loadSaleStats();
+
+/ Обновляем сразу и затем каждые 30 секунд
+async function initStats() {
+  await loadSaleStats();
+  setInterval(loadSaleStats, 30_000);
+
+  // Навешиваем кнопку обновления
+  const btn = document.getElementById("refreshStats");
+  if (btn) btn.addEventListener("click", loadSaleStats);
+}
+
+// Ждём загрузки DOM, только после этого запускаем initStats
+document.addEventListener("DOMContentLoaded", () => {
+  initStats();
+});
 
   // 1) Навешиваем форму покупки
   const form = document.getElementById("purchaseForm");
