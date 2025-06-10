@@ -61,7 +61,6 @@ async function loadSaleStats() {
       const p = await saleContract.phases(i);
       soldBN += BigInt(p.sold.toString());
     }
-    const sold = Number(ethers.formatUnits(soldBN, 8));
 
     // 5) Резерв рефералов
     const refBN      = await saleContract.rewardTokens();
@@ -74,8 +73,9 @@ async function loadSaleStats() {
     const salePool = cap - refReserve - bonusReserve;
     const left     = salePool - sold;
 
-    // ─── Тестовый override sold ─────
-const sold = salePool * 0.5;      // 50 % заполнения
+    // 👉 Для теста: 50% от пула продаж
+   const salePoolTemp = cap - refReserve - bonusReserve; // если нужно, перенесите выше
+   const sold = salePoolTemp * 0.5;
 
     // 8) Расчёт процента
     const percent    = salePool > 0 ? (sold / salePool) * 100 : 0;
