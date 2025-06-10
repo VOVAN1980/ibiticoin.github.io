@@ -17,9 +17,8 @@ export async function initSaleContract() {
     console.warn("🚨 signer не готов, пропускаем initSaleContract()");
     return;
   }
-  if (window.phasedSale) {
-    return; // Уже инициализировано
-  }
+  if (window.phasedSale) return;
+
   try {
     const address = config.mainnet.contracts.PHASED_TOKENSALE_ADDRESS_MAINNET;
     window.phasedSale = new ethers.Contract(address, PhasedTokenSaleAbi, window.signer);
@@ -30,16 +29,18 @@ export async function initSaleContract() {
 }
 
 /**
- * Выполняет покупку токенов IBITI через контракт phasedSale
- * @param {BigNumberish} amount - количество токенов в минимальных единицах
- * @param {string} referrer - адрес реферера (по умолчанию NULL_ADDRESS)
+ * Выполняет покупку токенов IBITI через контракт phasedSale.
+ * @param {BigNumberish} amount — количество токенов
+ * @param {string} referrer — адрес пригласившего
  * @returns {Promise<ethers.TransactionResponse>}
  */
 export async function buyIBITI(amount, referrer = NULL_ADDRESS) {
   await initSaleContract();
+
   if (!window.phasedSale) {
     throw new Error("window.phasedSale не инициализирован");
   }
+
   try {
     const tx = await window.phasedSale.buy(amount, referrer);
     console.log("✓ Транзакция buy отправлена:", tx.hash);
@@ -48,7 +49,12 @@ export async function buyIBITI(amount, referrer = NULL_ADDRESS) {
     console.error("✖ Ошибка в buyIBITI:", error);
     throw error;
   }
+}
 
-  export function getSaleContract() {
-  return window.phasedSale;
+/**
+ * Возвращает экземпляр контракта, если он уже инициализирован.
+ * @returns {Contract|null}
+ */
+export function getSaleContract() {
+  return window.phasedSale || null;
 }
