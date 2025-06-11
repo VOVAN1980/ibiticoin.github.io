@@ -185,11 +185,9 @@ window.connectViaCoinbase = connectViaCoinbase;
 export async function initContracts() {
   console.log("► initContracts() → создаём контрактные объекты");
   try {
-    window.ibitiToken = new ethers.Contract(
-  IBITI_TOKEN_ADDRESS,
-  ibitiTokenAbi, // Всегда используем кастомный ABI, потому что контракт нестандартный
-  signer
-);
+    window.ibitiToken  = new ethers.Contract(
+      IBITI_TOKEN_ADDRESS, ibitiTokenAbi, signer
+    );
     window.saleManager = new ethers.Contract(
       NFTSALEMANAGER_ADDRESS, nftSaleManagerAbi, signer
     );
