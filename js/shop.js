@@ -127,11 +127,12 @@ async function loadReferralStats(account) {
 let currentProduct = null;
 
 async function loadReferralData() {
+  console.log("→ loadReferralData", selectedAccount, localStorage.getItem(`referralUnlocked_${selectedAccount}`));
   if (!selectedAccount) return;
   const key = `referralUnlocked_${selectedAccount}`;
   if (!localStorage.getItem(key)) return;
   await loadReferralStats(selectedAccount);
-}  // ← вот эта скобка обязательна!
+}
 
 // Отображаем уведомление для мобильных, если не во встроенном браузере кошелька
 export function showDappBrowserNotice() {
