@@ -1,4 +1,5 @@
 // js/shop.js
+import { ethers }                                from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
 import config                                    from "./config.js";
 import { buyIBITI }                              from "./sale.js";
 import { connectWallet, selectedAccount, showIbitiBalance } from "./wallet.js";
