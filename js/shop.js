@@ -127,6 +127,21 @@ async function loadReferralStats(account) {
 
 let currentProduct = null;
 
+async function loadReferralData() {
+  const yourAddr = selectedAccount || localStorage.getItem("referralOwner");
+  if (!yourAddr) return;
+
+  const link = `${window.location.origin}${window.location.pathname}?ref=${yourAddr}`;
+  const refInput = document.getElementById("referralLinkText");
+  if (refInput) refInput.value = link;
+
+  if (typeof window.enableReferralAfterPurchase === "function") {
+    window.enableReferralAfterPurchase(yourAddr);
+  }
+
+  await loadReferralStats(yourAddr);
+}
+
 // Отображаем уведомление для мобильных, если не во встроенном браузере кошелька
 export function showDappBrowserNotice() {
   Swal.fire({
@@ -347,9 +362,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Восстанавливаем реферальку
-  const stored = localStorage.getItem("referralOwner");
-  if (stored && typeof window.enableReferralAfterPurchase === "function") {
-    window.enableReferralAfterPurchase(stored);
-    loadReferralStats(stored);
-  }
-});
+const stored = localStorage.getItem("referralOwner");
+if (stored) {
+  void loadReferralData(); // или просто loadReferralData() без await
+}
