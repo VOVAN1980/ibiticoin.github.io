@@ -185,8 +185,6 @@ window.closePurchaseModal = function() {
   document.getElementById("nftAmount").value            = "";
 };
 
-ты вексь блок переписал?
-
 // Обработка покупки
 async function handlePurchase(amount, productName) {
   if (!window.ethereum) {
