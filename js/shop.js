@@ -8,13 +8,6 @@ import { getSaleContract }                       from "./sale.js";
 import { PhasedTokenSaleAbi }                    from "./abis/PhasedTokenSaleAbi.js";
 import { ibitiTokenAbi }                         from "./abis/ibitiTokenAbi.js";
 
-document.addEventListener("DOMContentLoaded", () => {
-  const params = new URLSearchParams(window.location.search);
-  const maybeRef = params.get("ref");
-  if (maybeRef && ethers.isAddress(maybeRef)) {
-    localStorage.setItem("referrer", maybeRef);
-  }
-
 // Публичный RPC и контракт для чтения данных по IBITI
 const rpcProvider = new ethers.JsonRpcProvider(config.active.rpcUrl);
 
