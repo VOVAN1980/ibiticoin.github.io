@@ -38,4 +38,5 @@ const config = {
   }
 };
 
+config.active = config.localhost; // ← поменяешь на mainnet при деплое
 export default config;
