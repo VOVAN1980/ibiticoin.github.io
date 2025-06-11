@@ -50,7 +50,7 @@ async function loadSaleStats() {
 
   try {
     // 1) Общий баланс
-    const saleAddr  = config.mainnet.contracts.PHASED_TOKENSALE_ADDRESS_MAINNET;
+    const saleAddr  = config.active.contracts.PHASED_TOKENSALE;
     const depositBN = await ibitiTokenRead.balanceOf(saleAddr);
     const cap       = Number(ethers.formatUnits(depositBN, 8));
 
