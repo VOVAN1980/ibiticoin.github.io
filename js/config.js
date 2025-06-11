@@ -1,5 +1,3 @@
-// js/config.js
-
 const config = {
   mainnet: {
     networkName: "BSC Mainnet",
@@ -24,6 +22,18 @@ const config = {
       PHASED_TOKENSALE_REWARD_AMOUNT_MAINNET: 100000000,
       BUYBACK_MANAGER_ADDRESS_MAINNET:       "0xAfDFE70d3531582789D6Ba5Bd56fDCFd43a4AC5E",
       PANCAKESWAP_FACTORY_ADDRESS_MAINNET:   "0xbcfccbde45ce874adcb698cc183debcf17952812"
+    }
+  },
+
+  localhost: {
+    networkName: "Localhost (Hardhat)",
+    rpcUrl: "http://127.0.0.1:8545",
+    chainId: 31337,
+    explorerUrl: "",
+    contracts: {
+      IBITI_TOKEN:      "0xb1843E5544d480CcB700c0E32436A0621F97aa01",
+      USDT_TOKEN:       "0x0f4f747D4329eB51dAC7360B64CD69FD74f9decE",
+      PHASED_TOKENSALE: "0x0299354d5e54bB9f817d2d26d7DC3B816d8f6925"
     }
   }
 };
