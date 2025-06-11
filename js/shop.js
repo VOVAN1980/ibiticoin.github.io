@@ -129,24 +129,10 @@ let currentProduct = null;
 
 async function loadReferralData() {
   if (!selectedAccount) return;
-
-  // проверяем, купил ли этот адрес ≥10 IBI
-  const unlocked = localStorage.getItem(`referralUnlocked_${selectedAccount}`);
-  if (!unlocked) return;
-
-  // формируем и подставляем ссылку
-  const refLink = `${window.location.origin}${window.location.pathname}?ref=${selectedAccount}`;
-  const linkInput = document.getElementById("myReferralLink");
-  if (linkInput) linkInput.value = refLink;
-
-  // визуальная активация кнопоккопирования и шаринга
-  if (typeof window.enableReferralAfterPurchase === "function") {
-    window.enableReferralAfterPurchase(selectedAccount);
-  }
-
-  // подгружаем статистику
+  const key = `referralUnlocked_${selectedAccount}`;
+  // показываем статистику только после первой покупки ≥10 IBI
+  if (!localStorage.getItem(key)) return;
   await loadReferralStats(selectedAccount);
-}
 
 // Отображаем уведомление для мобильных, если не во встроенном браузере кошелька
 export function showDappBrowserNotice() {
