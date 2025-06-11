@@ -128,17 +128,19 @@ async function loadReferralStats(account) {
 let currentProduct = null;
 
 async function loadReferralData() {
-  const yourAddr = selectedAccount || localStorage.getItem("referralOwner");
-  if (!yourAddr) return;
+  const owner = localStorage.getItem("referralOwner");
+  // показываем только если selectedAccount == owner
+  if (!selectedAccount || selectedAccount !== owner) return;
 
-  const link = `${window.location.origin}${window.location.pathname}?ref=${yourAddr}`;
-   const refInput = document.getElementById("myReferralLink");
+  // дальше идёт обычная логика
+  const yourAddr = owner;
+  const link     = `${window.location.origin}${window.location.pathname}?ref=${yourAddr}`;
+  const refInput = document.getElementById("myReferralLink");
   if (refInput) refInput.value = link;
 
   if (typeof window.enableReferralAfterPurchase === "function") {
     window.enableReferralAfterPurchase(yourAddr);
   }
-
   await loadReferralStats(yourAddr);
 }
 
