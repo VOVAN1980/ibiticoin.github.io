@@ -10,12 +10,12 @@ import { ibitiTokenAbi }                         from "./abis/ibitiTokenAbi.js";
 // Публичный RPC и контракт для чтения данных по IBITI
 const rpcProvider      = new ethers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
 const readSaleContract = new ethers.Contract(
-  config.mainnet.contracts.PHASED_TOKENSALE_ADDRESS_MAINNET,
+  config.active.contracts.PHASED_TOKENSALE
   PhasedTokenSaleAbi,
   rpcProvider
 );
 const ibitiTokenRead   = new ethers.Contract(
-  config.mainnet.contracts.IBITI_TOKEN_ADDRESS_MAINNET,
+  config.active.contracts.IBITI_TOKEN
   ibitiTokenAbi,
   rpcProvider
 );
