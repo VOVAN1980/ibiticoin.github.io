@@ -130,9 +130,12 @@ let currentProduct = null;
 async function loadReferralData() {
   if (!selectedAccount) return;
   const key = `referralUnlocked_${selectedAccount}`;
-  // показываем статистику только после первой покупки ≥10 IBI
   if (!localStorage.getItem(key)) return;
   await loadReferralStats(selectedAccount);
+}
+
+// Отображаем уведомление для мобильных…
+export function showDappBrowserNotice() {
 
 // Отображаем уведомление для мобильных, если не во встроенном браузере кошелька
 export function showDappBrowserNotice() {
