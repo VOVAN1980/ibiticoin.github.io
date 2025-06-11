@@ -219,8 +219,17 @@ async function handlePurchase(amount, productName) {
       throw new Error("Покупка данного продукта не поддерживается.");
     }
 
-    await tx.wait();
+        await tx.wait();
     await showIbitiBalance(true);
+
+    // — если купили ≥10 IBI, сохраняем флаг и подгружаем цифры рефералов —
+    if (Number(amount) >= 10) {
+      const key = `referralUnlocked_${selectedAccount}`;
+      localStorage.setItem(key, "1");
+      await loadReferralStats(selectedAccount);
+    }
+
+    Swal.fire({ … });
 
     Swal.fire({
       icon:               "success",
