@@ -188,7 +188,7 @@ export async function initContracts() {
   try {
     window.ibitiToken = new ethers.Contract(
   IBITI_TOKEN_ADDRESS,
-  config.active.networkName === "Localhost" ? erc20Abi : ibitiTokenAbi,
+  erc20Abi,
   signer
 );
     window.saleManager = new ethers.Contract(
