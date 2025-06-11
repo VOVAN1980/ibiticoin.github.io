@@ -7,6 +7,7 @@ import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 import { initSaleContract }   from "./sale.js";
+import config                 from "./config.js";
 
 console.log("✅ wallet.js загружен");
 
@@ -14,10 +15,10 @@ export let selectedAccount = null;
 export let signer = null;
 export let provider = null;
 
-const IBITI_TOKEN_ADDRESS      = "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196";
-const NFTSALEMANAGER_ADDRESS   = "0x5572F3AE84319Fbd6e285a0CB854f92Afd31dd6D";
-const NFT_DISCOUNT_ADDRESS     = "0x26C4E3D3E40943D2d569e832A243e329E14ecb02";
-const PHASED_TOKENSALE_ADDRESS = "0x3092cFDfF6890F33b3227c3d2740F84772A465c7";
+const IBITI_TOKEN_ADDRESS      = config.active.contracts.IBITI_TOKEN;
+const NFTSALEMANAGER_ADDRESS   = config.active.contracts.NFTSALEMANAGER_ADDRESS_MAINNET ?? "0x0";
+const NFT_DISCOUNT_ADDRESS     = config.active.contracts.NFTDISCOUNT_ADDRESS_MAINNET   ?? "0x0";
+const PHASED_TOKENSALE_ADDRESS = config.active.contracts.PHASED_TOKENSALE;
 
 export async function connectWallet() {
   console.log("► connectWallet() вызван");
