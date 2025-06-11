@@ -26,14 +26,19 @@ const config = {
   },
 
   localhost: {
-  networkName: "Localhost",
-  chainId: 31337,
-  rpcUrl: "http://127.0.0.1:8545",
-  contracts: {
-    IBITI_TOKEN:      "0x654927Bfd2719ad80118a0A7A7781E60392C11d8",
-    USDT_TOKEN:       "0x96143b53Bd8097E11902AC7F26c02C3C1dEFc3a5",
-    PHASED_TOKENSALE: "0x04fB6B67036f97B3C1d3D2AE6991b5df07A5f860"
+    networkName: "Localhost",
+    chainId: 31337,
+    rpcUrl: "http://127.0.0.1:8545",
+    contracts: {
+      IBITI_TOKEN:      "0x654927Bfd2719ad80118a0A7A7781E60392C11d8",
+      USDT_TOKEN:       "0x96143b53Bd8097E11902AC7F26c02C3C1dEFc3a5",
+      PHASED_TOKENSALE: "0x04fB6B67036f97B3C1d3D2AE6991b5df07A5f860"
+    }
   }
-},
+};
+
+// 🔧 УСТАНАВЛИВАЕМ АКТИВНУЮ СЕТЬ
 config.active = config.localhost;
+
 export default config;
+
