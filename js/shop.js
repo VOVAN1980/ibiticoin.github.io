@@ -127,36 +127,25 @@ async function loadReferralStats(account) {
 
 let currentProduct = null;
 
-/**
- * Подгружает и отображает реферальную ссылку и статистику
- * только для того аккаунта, который действительно её разблокировал.
- */
 async function loadReferralData() {
-  // Получаем адрес «хозяина» реферальной ссылки
-  const owner = localStorage.getItem("referralOwner");
-  // Если нет сохранённого владельца или он не совпадает с текущим аккаунтом — выходим
-  if (!owner || !selectedAccount || selectedAccount.toLowerCase() !== owner.toLowerCase()) {
-    return;
-  }
+  if (!selectedAccount) return;
 
-  // Формируем и подставляем ссылку
-  const refLink = `${window.location.origin}${window.location.pathname}?ref=${owner}`;
+  // проверяем, купил ли этот адрес ≥10 IBI
+  const unlocked = localStorage.getItem(`referralUnlocked_${selectedAccount}`);
+  if (!unlocked) return;
+
+  // формируем и подставляем ссылку
+  const refLink = `${window.location.origin}${window.location.pathname}?ref=${selectedAccount}`;
   const linkInput = document.getElementById("myReferralLink");
-  if (linkInput) {
-    linkInput.value = refLink;
-  }
+  if (linkInput) linkInput.value = refLink;
 
-  // Визуально активируем все элементы реферальки
+  // визуальная активация кнопоккопирования и шаринга
   if (typeof window.enableReferralAfterPurchase === "function") {
-    window.enableReferralAfterPurchase(owner);
+    window.enableReferralAfterPurchase(selectedAccount);
   }
 
-  // Подгружаем статистику из контракта
-  try {
-    await loadReferralStats(owner);
-  } catch (err) {
-    console.warn("Ошибка при подгрузке реферальной статистики:", err);
-  }
+  // подгружаем статистику
+  await loadReferralStats(selectedAccount);
 }
 
 // Отображаем уведомление для мобильных, если не во встроенном браузере кошелька
@@ -289,10 +278,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // 2) потом каждые 30 секунд
   setInterval(loadSaleStats, 30_000);
 
-  // 3) привязываем кнопку «Обновить»
-  const btn = document.getElementById("refreshStats");
-  if (btn) {
-    btn.addEventListener("click", loadSaleStats);
+  // 3) кнопка «Обновить»
+  const refreshBtn = document.getElementById("refreshStats");
+  if (refreshBtn) {
+    refreshBtn.addEventListener("click", loadSaleStats);
   }
 
   // 1) Навешиваем форму покупки
@@ -367,15 +356,15 @@ document.addEventListener("DOMContentLoaded", () => {
       if (e.target === walletModal) walletModal.style.display = "none";
     });
   }
- if (btnInj) btnInj.addEventListener("click", async () => {
+ btnInj.addEventListener("click", async () => {
   walletModal.style.display = "none";
   await window.connectWallet?.();
-  void loadReferralData();
+  loadReferralData();
 });
-  if (btnCb) btnCb.addEventListener("click", async () => {
+btnCb.addEventListener("click", async () => {
   walletModal.style.display = "none";
   await window.connectViaCoinbase?.();
-  void loadReferralData();
+  loadReferralData();
 });
 
   // Восстанавливаем реферальку
