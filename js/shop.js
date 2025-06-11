@@ -104,28 +104,28 @@ async function loadSaleStats() {
 console.log("✅ shop.js загружен");
 
 async function loadReferralStats(account) {
-  const rewardEl   = document.getElementById("refReward");
-  const refCountEl = document.getElementById("refCount");
+  const rewardEl   = document.getElementById("refReward");   // сюда пойдёт объёмный бонус
+  const refCountEl = document.getElementById("refCount");    // сюда — число друзей
   const statsBlock = document.getElementById("referralStats");
+
   const saleContract = getSaleContract();
   if (!saleContract || !account || !rewardEl || !refCountEl || !statsBlock) return;
 
   try {
-    // DEBUG: проверьте, что метод volumeBonus вообще есть
-    console.log("→ contract methods:", Object.keys(saleContract.functions));
-
+    // 1) считаем число приведённых друзей
     const rawRef = await saleContract.referralRewards(account);
-    const rawVol = await saleContract.volumeBonus(account);
-    console.log("→ rawReferrals:", rawRef.toString());
-    console.log("→ rawVolumeBonus:", rawVol.toString());
-
-    // 1) друзья
     const friendsCount = Math.floor(Number(ethers.formatUnits(rawRef, 8)));
     refCountEl.innerText = friendsCount;
 
-    // 2) объёмный бонус
-    const volBonus = Number(ethers.formatUnits(rawVol, 8)).toFixed(2);
-    rewardEl.innerText = volBonus;
+    // 2) считаем объёмный бонус
+    if (typeof saleContract.volumeBonus !== "function") {
+      console.warn("Метод volumeBonus не найден в контракте ABI");
+      rewardEl.innerText = "0.00";
+    } else {
+      const rawVol = await saleContract.volumeBonus(account);
+      const volBonus = Number(ethers.formatUnits(rawVol, 8)).toFixed(2);
+      rewardEl.innerText = volBonus;
+    }
 
     statsBlock.style.display = "block";
   } catch (err) {
