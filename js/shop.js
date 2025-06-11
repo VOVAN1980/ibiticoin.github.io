@@ -196,10 +196,10 @@ async function handlePurchase(amount, productName) {
   }
 
   Swal.fire({
-    title:             "Ожидание подтверждения...",
-    html:              "Подтвердите транзакцию в кошельке",
+    title:   "Ожидание подтверждения...",
+    html:    "Подтвердите транзакцию в кошельке",
     allowOutsideClick: false,
-    didOpen:           () => Swal.showLoading()
+    didOpen: () => Swal.showLoading()
   });
 
   try {
@@ -235,6 +235,7 @@ async function handlePurchase(amount, productName) {
       const yourAddr = selectedAccount;
       const refLink  = `${window.location.origin}${window.location.pathname}?ref=${yourAddr}`;
 
+      // Показываем пользователю его ссылку
       await Swal.fire({
         icon:    "info",
         title:   "Ваша реферальная ссылка",
@@ -243,17 +244,27 @@ async function handlePurchase(amount, productName) {
         preConfirm: () => navigator.clipboard.writeText(refLink)
       });
 
+      // Визуально активируем элементы реферальки
       if (typeof window.enableReferralAfterPurchase === "function") {
         window.enableReferralAfterPurchase(yourAddr);
       }
 
+      // Обновляем статистику рефералов
       await loadReferralStats(yourAddr);
-      localStorage.setItem("referralOwner", yourAddr);
+
+      // ─── Сохраняем флаг покупки для этого аккаунта ───
+      localStorage.setItem(`referralUnlocked_${yourAddr}`, "1");
+
+      // ─── И сразу же подгружаем панель реферальки ───
+      await loadReferralData();
     }
 
   } catch (error) {
     console.warn("Ошибка при покупке:", error);
-    const rawReason = error?.revert?.args?.[0] || error?.shortMessage || error?.message || "Неизвестная ошибка";
+    const rawReason = error?.revert?.args?.[0]
+                   || error?.shortMessage
+                   || error?.message
+                   || "Неизвестная ошибка";
     const reason = rawReason === "not started"
                  ? "📅 Продажа начнётся: 1 июля в 09:00 UTC (12:00 Киев)"
                  : rawReason;
