@@ -20,7 +20,7 @@ export async function initSaleContract() {
   if (window.phasedSale) return;
 
   try {
-    const address = config.mainnet.contracts.PHASED_TOKENSALE_ADDRESS_MAINNET;
+    const address = config.active.contracts.PHASED_TOKENSALE;
     window.phasedSale = new ethers.Contract(address, PhasedTokenSaleAbi, window.signer);
     console.log("✓ window.phasedSale инициализирован:", address);
   } catch (error) {
