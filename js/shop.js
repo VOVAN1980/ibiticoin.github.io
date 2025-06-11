@@ -8,14 +8,13 @@ import { PhasedTokenSaleAbi }                    from "./abis/PhasedTokenSaleAbi
 import { ibitiTokenAbi }                         from "./abis/ibitiTokenAbi.js";
 
 // Публичный RPC и контракт для чтения данных по IBITI
-const rpcProvider = new ethers.JsonRpcProvider(config.active.rpcUrl);
 const readSaleContract = new ethers.Contract(
-  config.active.contracts.PHASED_TOKENSALE
+  config.active.contracts.PHASED_TOKENSALE,
   PhasedTokenSaleAbi,
   rpcProvider
 );
-const ibitiTokenRead   = new ethers.Contract(
-  config.active.contracts.IBITI_TOKEN
+const ibitiTokenRead = new ethers.Contract(
+  config.active.contracts.IBITI_TOKEN,
   ibitiTokenAbi,
   rpcProvider
 );
