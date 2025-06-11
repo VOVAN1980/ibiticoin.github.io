@@ -380,8 +380,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Восстанавливаем реферальку
 const stored = localStorage.getItem("referralOwner");
-if (stored) {
-  void loadReferralData(); // или просто loadReferralData() без await
+if (stored && selectedAccount && selectedAccount !== stored) {
+  localStorage.removeItem("referralOwner");
 }
 
 });
