@@ -268,6 +268,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // 1) сразу при загрузке
   loadSaleStats();
 
+  // 1.1) и сразу проверяем: может ли пользователь видеть свою реф-ссылку
+  void loadReferralData();
+
   // 2) потом каждые 30 секунд
   setInterval(loadSaleStats, 30_000);
 
