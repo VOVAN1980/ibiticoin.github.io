@@ -366,3 +366,5 @@ const stored = localStorage.getItem("referralOwner");
 if (stored) {
   void loadReferralData(); // или просто loadReferralData() без await
 }
+
+});
