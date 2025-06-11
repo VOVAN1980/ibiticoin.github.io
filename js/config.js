@@ -26,17 +26,14 @@ const config = {
   },
 
   localhost: {
-    networkName: "Localhost (Hardhat)",
-    rpcUrl: "http://127.0.0.1:8545",
-    chainId: 31337,
-    explorerUrl: "",
-    contracts: {
-      IBITI_TOKEN:      "0xb1843E5544d480CcB700c0E32436A0621F97aa01",
-      USDT_TOKEN:       "0x0f4f747D4329eB51dAC7360B64CD69FD74f9decE",
-      PHASED_TOKENSALE: "0x0299354d5e54bB9f817d2d26d7DC3B816d8f6925"
-    }
+  networkName: "Localhost",
+  chainId: 31337,
+  rpcUrl: "http://127.0.0.1:8545",
+  contracts: {
+    IBITI_TOKEN:      "0x654927Bfd2719ad80118a0A7A7781E60392C11d8",
+    USDT_TOKEN:       "0x96143b53Bd8097E11902AC7F26c02C3C1dEFc3a5",
+    PHASED_TOKENSALE: "0x04fB6B67036f97B3C1d3D2AE6991b5df07A5f860"
   }
-};
-
-config.active = config.localhost; // ← поменяешь на mainnet при деплое
+},
+config.active = config.localhost;
 export default config;
