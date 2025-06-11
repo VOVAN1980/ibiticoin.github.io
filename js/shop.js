@@ -104,31 +104,33 @@ async function loadSaleStats() {
 console.log("✅ shop.js загружен");
 
 async function loadReferralStats(account) {
-  const rewardEl   = document.getElementById("refReward");   // сумма бонусов за все покупки
-  const refCountEl = document.getElementById("refCount");    // число привлечённых друзей
+  const rewardEl   = document.getElementById("refReward");   // сюда пойдёт сумма бонусов
+  const refCountEl = document.getElementById("refCount");    // сюда — число друзей
   const statsBlock = document.getElementById("referralStats");
   const saleContract = getSaleContract();
   if (!saleContract || !account || !rewardEl || !refCountEl || !statsBlock) return;
 
   try {
-    // 1) Число друзей по рефералке
+    // — 1) Число приглашённых друзей —
     const rawRef = await saleContract.referralRewards(account);
-    const friendsCount = Math.floor(Number(ethers.formatUnits(rawRef, 8)));
-    refCountEl.innerText = friendsCount;
+    refCountEl.innerText = Math.floor(Number(ethers.formatUnits(rawRef, 8)));
 
-    // 2) Суммируем бонусы по purchase-событиям
-    //    Bought(address buyer, uint256 phaseId, uint256 ibitiAmount, uint256 paidUSDT, address referrer, uint256 bonusIBITI)
-    const filter = saleContract.filters.Bought(account, null, null, null, null, null);
+    // — 2) Сумма бонусов из событий Bought —
+    // Фильтруем все Bought-ивенты, где buyer = account
+    const filter = saleContract.filters.Bought(account);
     const events = await saleContract.queryFilter(filter);
     let bonusSum = 0n;
     for (const ev of events) {
-      // bonusIBITI — шестой параметр в событии
+      // bonusIBITI — это шестой аргумент в событии
       bonusSum += BigInt(ev.args.bonusIBITI.toString());
     }
     const bonus = Number(ethers.formatUnits(bonusSum, 8)).toFixed(2);
     rewardEl.innerText = bonus;
 
-    statsBlock.style.display = "block";
+    // Показываем блок, если есть хотя бы одна покупка
+    if (events.length > 0) {
+      statsBlock.style.display = "block";
+    }
   } catch (err) {
     console.warn("❌ Ошибка загрузки статистики рефералов/бонусов:", err);
   }
