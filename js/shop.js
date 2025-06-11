@@ -280,6 +280,12 @@ async function handlePurchase(amount, productName) {
 window.handlePurchase = handlePurchase;
 
 document.addEventListener("DOMContentLoaded", () => {
+// — парсим ?ref=0x… и сохраняем его —
+  const params   = new URLSearchParams(window.location.search);
+  const maybeRef = params.get("ref");
+  if (maybeRef && ethers.isAddress(maybeRef)) {
+    localStorage.setItem("referrer", maybeRef);
+  }
   // 1) сразу при загрузке
   loadSaleStats();
 
