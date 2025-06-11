@@ -276,7 +276,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 // ждём загрузки DOM, только после этого стартуем initStats
-document.addEventListener("DOMContentLoaded", () => {
   initStats();
 });
 
