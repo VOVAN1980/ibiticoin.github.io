@@ -127,21 +127,36 @@ async function loadReferralStats(account) {
 
 let currentProduct = null;
 
+/**
+ * Подгружает и отображает реферальную ссылку и статистику
+ * только для того аккаунта, который действительно её разблокировал.
+ */
 async function loadReferralData() {
+  // Получаем адрес «хозяина» реферальной ссылки
   const owner = localStorage.getItem("referralOwner");
-  // показываем только если selectedAccount == owner
-  if (!selectedAccount || selectedAccount !== owner) return;
-
-  // дальше идёт обычная логика
-  const yourAddr = owner;
-  const link     = `${window.location.origin}${window.location.pathname}?ref=${yourAddr}`;
-  const refInput = document.getElementById("myReferralLink");
-  if (refInput) refInput.value = link;
-
-  if (typeof window.enableReferralAfterPurchase === "function") {
-    window.enableReferralAfterPurchase(yourAddr);
+  // Если нет сохранённого владельца или он не совпадает с текущим аккаунтом — выходим
+  if (!owner || !selectedAccount || selectedAccount.toLowerCase() !== owner.toLowerCase()) {
+    return;
   }
-  await loadReferralStats(yourAddr);
+
+  // Формируем и подставляем ссылку
+  const refLink = `${window.location.origin}${window.location.pathname}?ref=${owner}`;
+  const linkInput = document.getElementById("myReferralLink");
+  if (linkInput) {
+    linkInput.value = refLink;
+  }
+
+  // Визуально активируем все элементы реферальки
+  if (typeof window.enableReferralAfterPurchase === "function") {
+    window.enableReferralAfterPurchase(owner);
+  }
+
+  // Подгружаем статистику из контракта
+  try {
+    await loadReferralStats(owner);
+  } catch (err) {
+    console.warn("Ошибка при подгрузке реферальной статистики:", err);
+  }
 }
 
 // Отображаем уведомление для мобильных, если не во встроенном браузере кошелька
