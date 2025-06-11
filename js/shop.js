@@ -187,11 +187,12 @@ async function handlePurchase(amount, productName) {
     });
   }
 
+  // Показываем спиннер ожидания в модалке
   Swal.fire({
-    title:   "Ожидание подтверждения...",
-    html:    "Подтвердите транзакцию в кошельке",
+    title:             "Ожидание подтверждения...",
+    html:              "Подтвердите транзакцию в кошельке",
     allowOutsideClick: false,
-    didOpen: () => Swal.showLoading()
+    didOpen:           () => Swal.showLoading()
   });
 
   try {
@@ -200,8 +201,10 @@ async function handlePurchase(amount, productName) {
     const paymentMethod   = document.getElementById("paymentToken")?.value;
     let tx;
 
+    // Выбор метода оплаты
     if (productName === "IBITIcoin") {
       if (paymentMethod === "USDT") {
+        // referrer берём из localStorage только для on-chain передачи
         const referrer = localStorage.getItem("referrer") || ethers.ZeroAddress;
         tx = await buyIBITI(amountFormatted, referrer);
       } else {
@@ -211,44 +214,39 @@ async function handlePurchase(amount, productName) {
       throw new Error("Покупка данного продукта не поддерживается.");
     }
 
+    // Ждём майнинга и обновляем баланс
     await tx.wait();
     await showIbitiBalance(true);
 
+    // Успешная покупка
     Swal.fire({
       icon:               "success",
       title:              "Покупка успешна!",
-      text:               "Вы только что приобрели IBITI!",
+      text:               `Вы приобрели ${amount} IBITI!`,
       timer:              3000,
       showConfirmButton:  false
     });
 
-    // Если купили ≥10, активируем реферальку
-    if (Number(amount) >= 10) {
-      const yourAddr = selectedAccount;
-      const refLink  = `${window.location.origin}${window.location.pathname}?ref=${yourAddr}`;
+    // 1) Обновляем общую статистику
+    await loadSaleStats();
 
-      // Показываем пользователю его ссылку
+    // 2) Подгружаем реферальную секцию on-chain (покажет только если куплено ≥10)
+    await loadReferralData();
+
+    // 3) Если это первая покупка ≥10 IBITI, дополнительно показываем модалку со ссылкой
+    //    (проверяем on-chain, а не localStorage)
+    const saleContract = getSaleContract() || readSaleContract;
+    const rawBought = await saleContract.balances(selectedAccount);
+    const bought    = Number(ethers.formatUnits(rawBought, 8));
+    if (bought >= 10) {
+      const link = `${window.location.origin}${window.location.pathname}?ref=${selectedAccount}`;
       await Swal.fire({
-        icon:    "info",
-        title:   "Ваша реферальная ссылка",
-        html:    `<a href="${refLink}" target="_blank">${refLink}</a><br>Скопируйте и поделитесь.`,
-        confirmButtonText: "Скопировать",
-        preConfirm: () => navigator.clipboard.writeText(refLink)
+        icon:               "info",
+        title:              "Ваша реферальная ссылка",
+        html:               `<a href="${link}" target="_blank">${link}</a>`,
+        confirmButtonText:  "Скопировать",
+        preConfirm:         () => navigator.clipboard.writeText(link)
       });
-
-      // Визуально активируем элементы реферальки
-      if (typeof window.enableReferralAfterPurchase === "function") {
-        window.enableReferralAfterPurchase(yourAddr);
-      }
-
-      // Обновляем статистику рефералов
-      await loadReferralStats(yourAddr);
-
-      // ─── Сохраняем флаг покупки для этого аккаунта ───
-      localStorage.setItem(`referralUnlocked_${yourAddr}`, "1");
-
-      // ─── И сразу же подгружаем панель реферальки ───
-      await loadReferralData();
     }
 
   } catch (error) {
@@ -269,6 +267,7 @@ async function handlePurchase(amount, productName) {
     });
   }
 }
+
 window.handlePurchase = handlePurchase;
 
 document.addEventListener("DOMContentLoaded", () => {
