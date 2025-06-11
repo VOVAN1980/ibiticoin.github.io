@@ -104,21 +104,26 @@ async function loadSaleStats() {
 console.log("✅ shop.js загружен");
 
 async function loadReferralStats(account) {
-  const rewardEl   = document.getElementById("refReward");   // здесь — объёмный бонус
-  const refCountEl = document.getElementById("refCount");    // здесь — число друзей
+  const rewardEl   = document.getElementById("refReward");
+  const refCountEl = document.getElementById("refCount");
   const statsBlock = document.getElementById("referralStats");
-
   const saleContract = getSaleContract();
   if (!saleContract || !account || !rewardEl || !refCountEl || !statsBlock) return;
 
   try {
-    // 1) Считаем число приведённых друзей (1 IBI = 1 друг)
+    // DEBUG: проверьте, что метод volumeBonus вообще есть
+    console.log("→ contract methods:", Object.keys(saleContract.functions));
+
     const rawRef = await saleContract.referralRewards(account);
+    const rawVol = await saleContract.volumeBonus(account);
+    console.log("→ rawReferrals:", rawRef.toString());
+    console.log("→ rawVolumeBonus:", rawVol.toString());
+
+    // 1) друзья
     const friendsCount = Math.floor(Number(ethers.formatUnits(rawRef, 8)));
     refCountEl.innerText = friendsCount;
 
-    // 2) Считаем объёмный бонус (10% от всех покупок)
-    const rawVol = await saleContract.volumeBonus(account);
+    // 2) объёмный бонус
     const volBonus = Number(ethers.formatUnits(rawVol, 8)).toFixed(2);
     rewardEl.innerText = volBonus;
 
