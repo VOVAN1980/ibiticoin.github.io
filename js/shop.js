@@ -108,7 +108,6 @@ async function loadReferralStats(account) {
   const refCountEl = document.getElementById("refCount");
   const statsBlock = document.getElementById("referralStats");
 
-  // Получаем актуальный экземпляр контракта
   const saleContract = getSaleContract();
   if (!saleContract || !account || !rewardEl || !refCountEl || !statsBlock) return;
 
@@ -132,10 +131,7 @@ async function loadReferralData() {
   const key = `referralUnlocked_${selectedAccount}`;
   if (!localStorage.getItem(key)) return;
   await loadReferralStats(selectedAccount);
-}
-
-// Отображаем уведомление для мобильных…
-export function showDappBrowserNotice() {
+}  // ← вот эта скобка обязательна!
 
 // Отображаем уведомление для мобильных, если не во встроенном браузере кошелька
 export function showDappBrowserNotice() {
