@@ -132,7 +132,7 @@ async function loadReferralData() {
   if (!yourAddr) return;
 
   const link = `${window.location.origin}${window.location.pathname}?ref=${yourAddr}`;
-  const refInput = document.getElementById("referralLinkText");
+   const refInput = document.getElementById("myReferralLink");
   if (refInput) refInput.value = link;
 
   if (typeof window.enableReferralAfterPurchase === "function") {
