@@ -3,7 +3,6 @@
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
 // ABI-файлы (если они у вас лежат в папке ./abis)
 import { ibitiTokenAbi }      from "./abis/ibitiTokenAbi.js";
-import { erc20Abi }           from "./abis/erc20Abi.js";
 import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
 import { nftDiscountAbi }     from "./abis/nftDiscountAbi.js";
 import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
