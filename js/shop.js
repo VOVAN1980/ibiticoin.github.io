@@ -352,14 +352,16 @@ document.addEventListener("DOMContentLoaded", () => {
       if (e.target === walletModal) walletModal.style.display = "none";
     });
   }
-  if (btnInj) btnInj.addEventListener("click", () => {
-    walletModal.style.display = "none";
-    window.connectWallet?.();
-  });
-  if (btnCb) btnCb.addEventListener("click", () => {
-    walletModal.style.display = "none";
-    window.connectViaCoinbase?.();
-  });
+ if (btnInj) btnInj.addEventListener("click", async () => {
+  walletModal.style.display = "none";
+  await window.connectWallet?.();
+  void loadReferralData();
+});
+  if (btnCb) btnCb.addEventListener("click", async () => {
+  walletModal.style.display = "none";
+  await window.connectViaCoinbase?.();
+  void loadReferralData();
+});
 
   // Восстанавливаем реферальку
 const stored = localStorage.getItem("referralOwner");
