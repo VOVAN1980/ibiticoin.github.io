@@ -1,5 +1,4 @@
 // js/wallet.js
-
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
 // ABI-файлы (если они у вас лежат в папке ./abis)
 import { ibitiTokenAbi }      from "./abis/ibitiTokenAbi.js";
@@ -55,31 +54,30 @@ export async function connectWallet() {
     window.signer = signer;
     console.log("✓ ethers провайдер и signer готовы");
 
-    // Переключаем цепочку на BSC (если нужно)
-    try {
-      await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0x38" }],
-      });
-      console.log("✓ Цепочка переключена на BSC Mainnet");
-    } catch (switchError) {
-      // Если в MetaMask нет BSC, добавляем её
-      if (switchError.code === 4902) {
-        await window.ethereum.request({
-          method: "wallet_addEthereumChain",
-          params: [
-            {
-              chainId: "0x38",
-              chainName: "Binance Smart Chain",
-              nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
-              rpcUrls: ["https://bsc-dataseed.binance.org/"],
-              blockExplorerUrls: ["https://bscscan.com"],
-            },
-          ],
-        });
-        console.log("✓ Цепочка BSC добавлена в MetaMask");
-      }
-    }
+    // --- Отключаем автопереключение сети, пока тестируем локально ---
+// try {
+//   await window.ethereum.request({
+//     method: "wallet_switchEthereumChain",
+//     params: [{ chainId: "0x38" }],   // BSC Mainnet
+//   });
+//   console.log("✓ Сеть переключена на BSC Mainnet");
+// } catch (switchError) {
+//   if (switchError.code === 4902) {
+//     await window.ethereum.request({
+//       method: "wallet_addEthereumChain",
+//       params: [
+//         {
+//           chainId: "0x38",
+//           chainName: "Binance Smart Chain",
+//           nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+//           rpcUrls: ["https://bsc-dataseed.binance.org/"],
+//           blockExplorerUrls: ["https://bscscan.com"],
+//         },
+//       ],
+//     });
+//     console.log("✓ Сеть BSC добавлена в MetaMask");
+//   }
+// }
 
     // Теперь инициализируем контракты (IBITI, SaleManager, NFT-discount и PhasedSale)
     await initContracts();
