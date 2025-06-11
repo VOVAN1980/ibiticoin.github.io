@@ -211,14 +211,12 @@ async function handlePurchase(amount, productName) {
         await tx.wait();
     await showIbitiBalance(true);
 
-    // — если купили ≥10 IBI, сохраняем флаг и подгружаем цифры рефералов —
+    // если купили ≥10 IBI — сохраняем флаг и обновляем счётчики
     if (Number(amount) >= 10) {
       const key = `referralUnlocked_${selectedAccount}`;
       localStorage.setItem(key, "1");
       await loadReferralStats(selectedAccount);
     }
-
-    Swal.fire({ … });
 
     Swal.fire({
       icon:               "success",
