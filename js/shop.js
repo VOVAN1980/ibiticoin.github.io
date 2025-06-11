@@ -275,11 +275,6 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", loadSaleStats);
   }
 
-// ждём загрузки DOM, только после этого стартуем initStats
-document.addEventListener("DOMContentLoaded", () => {
-  initStats();
-});
-
   // 1) Навешиваем форму покупки
   const form = document.getElementById("purchaseForm");
   if (form) {
