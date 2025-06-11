@@ -188,7 +188,7 @@ export async function initContracts() {
   try {
     window.ibitiToken = new ethers.Contract(
   IBITI_TOKEN_ADDRESS,
-  erc20Abi,
+  config.active.chainId === 31337 ? erc20Abi : ibitiTokenAbi,
   signer
 );
     window.saleManager = new ethers.Contract(
