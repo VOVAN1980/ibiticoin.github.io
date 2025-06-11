@@ -104,23 +104,27 @@ async function loadSaleStats() {
 console.log("✅ shop.js загружен");
 
 async function loadReferralStats(account) {
-  const rewardEl   = document.getElementById("refReward");
-  const refCountEl = document.getElementById("refCount");
+  const rewardEl   = document.getElementById("refReward");   // здесь — объёмный бонус
+  const refCountEl = document.getElementById("refCount");    // здесь — число друзей
   const statsBlock = document.getElementById("referralStats");
 
   const saleContract = getSaleContract();
   if (!saleContract || !account || !rewardEl || !refCountEl || !statsBlock) return;
 
   try {
-    const raw    = await saleContract.referralRewards(account);
-    const reward = Number(ethers.formatUnits(raw, 8));
-    const count  = Math.floor(reward); // 1 IBITI = 1 друг
+    // 1) Считаем число приведённых друзей (1 IBI = 1 друг)
+    const rawRef = await saleContract.referralRewards(account);
+    const friendsCount = Math.floor(Number(ethers.formatUnits(rawRef, 8)));
+    refCountEl.innerText = friendsCount;
 
-    rewardEl.innerText   = reward.toFixed(2);
-    refCountEl.innerText = count;
+    // 2) Считаем объёмный бонус (10% от всех покупок)
+    const rawVol = await saleContract.volumeBonus(account);
+    const volBonus = Number(ethers.formatUnits(rawVol, 8)).toFixed(2);
+    rewardEl.innerText = volBonus;
+
     statsBlock.style.display = "block";
   } catch (err) {
-    console.warn("❌ Ошибка загрузки статистики рефералов:", err);
+    console.warn("❌ Ошибка загрузки статистики рефералов/бонусов:", err);
   }
 }
 
