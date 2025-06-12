@@ -219,13 +219,8 @@ async function handlePurchase(amount, productName) {
     const usdtBalance = await usdt.balanceOf(selectedAccount);
 
     if (usdtBalance < amountFormatted) {
-      Swal.fire({
-        icon: "error",
-        title: "Недостаточно USDT",
-        html: `На вашем балансе ${ethers.formatUnits(usdtBalance, 18)} USDT,<br>а требуется ${ethers.formatUnits(amountFormatted, 18)} USDT.`
-      });
-      return;
-    }
+  throw new Error(`Недостаточно USDT: на балансе ${ethers.formatUnits(usdtBalance, 18)} USDT, требуется ${ethers.formatUnits(amountFormatted, 18)} USDT`);
+}
 
     const referrer = localStorage.getItem("referrer") || ethers.ZeroAddress;
     tx = await buyIBITI(amountFormatted, referrer);
