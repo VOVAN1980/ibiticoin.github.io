@@ -108,34 +108,27 @@ async function loadReferralStats(account) {
   const refCountEl = document.getElementById("refCount");
   const statsBlock = document.getElementById("referralStats");
   if (!rewardEl || !refCountEl || !statsBlock) return;
+
   const saleContract = getSaleContract();
   if (!saleContract) return;
 
   try {
-    // 1) Количество приглашённых друзей
+    // 1) друзей
     const rawRef = await saleContract.referralRewards(account);
     refCountEl.innerText = Math.floor(Number(ethers.formatUnits(rawRef, 8)));
 
-    // 2) Сумма только **бонусных** событий
+    // 2) суммируем бонусы из Bought-событий
     const filter = readSaleContract.filters.Bought(account);
-    const allEvents = await readSaleContract.queryFilter(filter);
-
-    // Оставляем только с bonusIBITI > 0
-    const bonusEvents = allEvents.filter(ev => {
-      const b = BigInt(ev.args.bonusIBITI.toString());
-      return b > 0n;
-    });
-
+    const events = await readSaleContract.queryFilter(filter);
     let bonusSum = 0n;
-    for (const ev of bonusEvents) {
+    for (const ev of events) {
       bonusSum += BigInt(ev.args.bonusIBITI.toString());
     }
-
     const bonus = Number(ethers.formatUnits(bonusSum, 8)).toFixed(2);
     rewardEl.innerText = bonus;
 
-    // Показываем блок, если есть хотя бы один бонус
-    statsBlock.style.display = bonusEvents.length > 0 ? "block" : "none";
+    // Всегда показываем блок
+    statsBlock.style.display = "block";
   } catch (err) {
     console.warn("❌ Ошибка загрузки статистики рефералов/бонусов:", err);
   }
