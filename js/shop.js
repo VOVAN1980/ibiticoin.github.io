@@ -214,15 +214,25 @@ async function handlePurchase(amount, productName) {
     let tx;
 
     if (productName === "IBITIcoin") {
-      if (paymentMethod === "USDT") {
-        const referrer = localStorage.getItem("referrer") || ethers.ZeroAddress;
-        tx = await buyIBITI(amountFormatted, referrer);
-      } else {
-        throw new Error("Оплата через BNB временно отключена.");
-      }
-    } else {
-      throw new Error("Покупка данного продукта не поддерживается.");
+  if (paymentMethod === "USDT") {
+    const usdt = new ethers.Contract(config.active.contracts.USDT_TOKEN, ibitiTokenAbi, signer);
+    const usdtBalance = await usdt.balanceOf(selectedAccount);
+
+    if (usdtBalance < amountFormatted) {
+      Swal.fire({
+        icon: "error",
+        title: "Недостаточно USDT",
+        html: `На вашем балансе ${ethers.formatUnits(usdtBalance, 18)} USDT,<br>а требуется ${ethers.formatUnits(amountFormatted, 18)} USDT.`
+      });
+      return;
     }
+
+    const referrer = localStorage.getItem("referrer") || ethers.ZeroAddress;
+    tx = await buyIBITI(amountFormatted, referrer);
+  } else {
+    throw new Error("Оплата через BNB временно отключена.");
+  }
+}
 
         await tx.wait();
     await showIbitiBalance(true);
