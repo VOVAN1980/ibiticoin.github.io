@@ -34,6 +34,18 @@ const ibitiTokenRead = new ethers.Contract(
  * – left      (сколько осталось продаж)
  * – bonusPool (фикс. пул бонусов)
  */
+// вверху файла уже есть:
+// const rpcProvider   = new ethers.JsonRpcProvider(config.active.rpcUrl);
+// const readSaleContract = new ethers.Contract(
+//   config.active.contracts.PHASED_TOKENSALE,
+//   PhasedTokenSaleAbi,
+//   rpcProvider
+// );
+// const ibitiTokenRead = new ethers.Contract(
+//   config.active.contracts.IBITI_TOKEN,
+//   ibitiTokenAbi,
+//   rpcProvider
+// );
 async function loadSaleStats() {
   const capEl        = document.getElementById("cap");
   const refReserveEl = document.getElementById("refReserve");
@@ -45,17 +57,17 @@ async function loadSaleStats() {
   const percentEl    = document.getElementById("soldPercent");
   const lastUpdEl    = document.getElementById("lastUpdated");
 
-  // Читаем исключительно через публичный провайдер
+  // Принудительно только публичный контракт для чтения:
   const readContract = readSaleContract;
   if (!readContract) return;
 
   try {
-    // 1) Баланс контракта
+    // 1) Общий баланс по токенам на контракте
     const saleAddr  = config.active.contracts.PHASED_TOKENSALE;
     const depositBN = await ibitiTokenRead.balanceOf(saleAddr);
     const cap       = Number(ethers.formatUnits(depositBN, 8));
 
-    // 2) Суммарно продано по всем фазам
+    // 2) Сколько уже продано (сумма sold по всем фазам)
     const PHASE_COUNT = 3;
     let soldBN = 0n;
     for (let i = 0; i < PHASE_COUNT; i++) {
@@ -64,11 +76,11 @@ async function loadSaleStats() {
     }
     const sold = Number(ethers.formatUnits(soldBN, 8));
 
-    // 3) Зарезервировано под рефералов (фикс.)
+    // 3) Резерв под рефералов (fixed при деплое)
     const refBN      = await readContract.rewardTokens();
     const refReserve = Number(ethers.formatUnits(refBN, 8));
 
-    // 4) Оставшийся пул бонусов (динамический)
+    // 4) Динамический пул бонусов (меняется при каждом распределении)
     let bonusReserve;
     try {
       const bonusBN     = await readContract.rewardReserve();
@@ -77,21 +89,21 @@ async function loadSaleStats() {
       bonusReserve      = 500_000; // fallback
     }
 
-    // 5) Основной пул = cap – резерв рефералов – пул бонусов
+    // 5) Основной пул и остаток
     const salePool = cap - refReserve - bonusReserve;
     const left     = salePool - sold;
 
-    // 6) % продано
+    // 6) Процент продано
     const percent    = salePool > 0 ? (sold / salePool) * 100 : 0;
     const pctClamped = Math.min(Math.max(percent, 0), 100);
 
-    // 7) Форматтер для вывода
+    // 7) Форматируем числа под «русский» локаль
     const fmt = x => x.toLocaleString("ru-RU", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     });
 
-    // 8) Рисуем в DOM
+    // 8) Вставляем всё в DOM
     capEl.innerText        = fmt(cap);
     refReserveEl.innerText = fmt(refReserve);
     salePoolEl.innerText   = fmt(salePool);
@@ -99,7 +111,7 @@ async function loadSaleStats() {
     leftEl.innerText       = fmt(left);
     bonusPoolEl.innerText  = fmt(bonusReserve);
 
-    // 9) Прогресс-бар
+    // 9) Обновляем прогресс-бар и метки
     progressEl.style.width   = `${pctClamped}%`;
     percentEl.innerText      = `${pctClamped.toFixed(2)}%`;
     lastUpdEl.innerText      = `Обновлено: ${new Date().toLocaleTimeString("ru-RU")}`;
