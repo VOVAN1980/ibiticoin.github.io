@@ -49,12 +49,12 @@ async function loadSaleStats() {
   if (!saleContract) return;
 
   try {
-    // 1) Общий баланс токенов на контракте
+    // 1) Баланс токенов на контракте
     const saleAddr  = config.active.contracts.PHASED_TOKENSALE;
     const depositBN = await ibitiTokenRead.balanceOf(saleAddr);
     const cap       = Number(ethers.formatUnits(depositBN, 8));
 
-    // 2) Сколько уже продано (складываем phases[i].sold)
+    // 2) Сколько продано
     const PHASE_COUNT = 3;
     let soldBN = 0n;
     for (let i = 0; i < PHASE_COUNT; i++) {
@@ -63,22 +63,28 @@ async function loadSaleStats() {
     }
     const sold = Number(ethers.formatUnits(soldBN, 8));
 
-    // 3) Резерв рефералов (те токены, что блокируются для каждого приглашённого)
+    // 3) Резерв под рефов (rewardTokens)
     const refBN      = await saleContract.rewardTokens();
     const refReserve = Number(ethers.formatUnits(refBN, 8));
 
-    // 4) Первоначальный пул бонусов (тот самый _rewardAmount из конструктора)
+    // 4) Первоначальный пул бонусов (rewardAmount)
     const initBN       = await saleContract.rewardAmount();
     const initialBonus = Number(ethers.formatUnits(initBN, 8));
 
-    // 5) Сколько уже выдано бонусов по рефералке
-    const paidBN       = await saleContract.totalReferralPaid();
-    const paidTotal    = Number(ethers.formatUnits(paidBN, 8));
+    // 5) Сколько уже выплачено по рефералам (totalReferralPaid)
+    let paidTotal = 0;
+    try {
+      const paidBN = await saleContract.totalReferralPaid();
+      paidTotal    = Number(ethers.formatUnits(paidBN, 8));
+    } catch {
+      // если упало — считаем, что пока ничего не выдано
+      paidTotal = 0;
+    }
 
     // 6) Оставшийся пул бонусов
     const bonusReserve = initialBonus - paidTotal;
 
-    // 7) Основной пул (cap − refReserve − initialBonus) и остаток
+    // 7) Основной пул и остаток
     const salePool = cap - refReserve - initialBonus;
     const left     = salePool - sold;
 
@@ -92,7 +98,7 @@ async function loadSaleStats() {
       maximumFractionDigits: 2
     });
 
-    // 10) Вставляем в DOM
+    // 10) Пишем в DOM
     capEl.innerText        = fmt(cap);
     refReserveEl.innerText = fmt(refReserve);
     salePoolEl.innerText   = fmt(salePool);
@@ -100,7 +106,7 @@ async function loadSaleStats() {
     leftEl.innerText       = fmt(left);
     bonusPoolEl.innerText  = fmt(bonusReserve);
 
-    // 11) Прогресс-бар + время
+    // 11) Прогресс-бар и таймштамп
     progressEl.style.width = `${pctClamped}%`;
     percentEl.innerText    = `${pctClamped.toFixed(2)}%`;
     lastUpdEl.innerText    = `Обновлено: ${new Date().toLocaleTimeString("ru-RU")}`;
