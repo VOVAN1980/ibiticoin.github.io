@@ -219,7 +219,7 @@ async function handlePurchase(amount, productName) {
     const usdtBalance = await usdt.balanceOf(selectedAccount);
 
     if (usdtBalance < amountFormatted) {
-  throw new Error(`Недостаточно USDT: на балансе ${ethers.formatUnits(usdtBalance, 18)} USDT, требуется ${ethers.formatUnits(amountFormatted, 18)} USDT`);
+  throw new Error(`Недостаточно USDT: у вас ${(+ethers.formatUnits(usdtBalance, 18)).toFixed(4)} USDT, требуется ${(+ethers.formatUnits(amountFormatted, 18)).toFixed(4)} USDT`);
 }
 
     const referrer = localStorage.getItem("referrer") || ethers.ZeroAddress;
@@ -276,15 +276,20 @@ async function handlePurchase(amount, productName) {
       await loadReferralData();
     }
 
-  } catch (error) {
-    console.warn("Ошибка при покупке:", error);
-    const rawReason = error?.revert?.args?.[0]
-                   || error?.shortMessage
-                   || error?.message
-                   || "Неизвестная ошибка";
-    const reason = rawReason === "not started"
-                 ? "📅 Продажа начнётся: 1 июля в 09:00 UTC (12:00 Киев)"
-                 : rawReason;
+  let rawReason = error?.revert?.args?.[0]
+             || error?.shortMessage
+             || error?.message
+             || "Неизвестная ошибка";
+
+// Убираем "Error: ..." из текста
+if (rawReason.startsWith("Error:")) {
+  rawReason = rawReason.replace(/^Error:\s*/, "");
+}
+
+// Кастомные красивые замены
+const reason = rawReason === "not started"
+  ? "📅 Продажа начнётся: 1 июля в 09:00 UTC"
+  : rawReason;
 
     Swal.fire({
       icon:             "error",
