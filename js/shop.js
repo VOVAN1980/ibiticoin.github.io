@@ -104,34 +104,38 @@ async function loadSaleStats() {
 console.log("✅ shop.js загружен");
 
 async function loadReferralStats(account) {
-  const rewardEl   = document.getElementById("refReward");   // сюда пойдёт сумма бонусов
-  const refCountEl = document.getElementById("refCount");    // сюда — число друзей
+  const rewardEl   = document.getElementById("refReward");
+  const refCountEl = document.getElementById("refCount");
   const statsBlock = document.getElementById("referralStats");
+  if (!rewardEl || !refCountEl || !statsBlock) return;
   const saleContract = getSaleContract();
-  if (!saleContract || !account || !rewardEl || !refCountEl || !statsBlock) return;
+  if (!saleContract) return;
 
   try {
-    // — 1) Число приглашённых друзей —
+    // 1) Количество приглашённых друзей
     const rawRef = await saleContract.referralRewards(account);
     refCountEl.innerText = Math.floor(Number(ethers.formatUnits(rawRef, 8)));
 
-    // — 2) Сумма бонусов из событий Bought —
-    // Фильтруем все Bought-ивенты, где buyer = account
+    // 2) Сумма только **бонусных** событий
     const filter = readSaleContract.filters.Bought(account);
-    const events = await readSaleContract.queryFilter(filter);
-    console.log("→ Bought events:", events);
+    const allEvents = await readSaleContract.queryFilter(filter);
+
+    // Оставляем только с bonusIBITI > 0
+    const bonusEvents = allEvents.filter(ev => {
+      const b = BigInt(ev.args.bonusIBITI.toString());
+      return b > 0n;
+    });
+
     let bonusSum = 0n;
-    for (const ev of events) {
-      // bonusIBITI — это шестой аргумент в событии
+    for (const ev of bonusEvents) {
       bonusSum += BigInt(ev.args.bonusIBITI.toString());
     }
+
     const bonus = Number(ethers.formatUnits(bonusSum, 8)).toFixed(2);
     rewardEl.innerText = bonus;
 
-    // Показываем блок, если есть хотя бы одна покупка
-    if (events.length > 0) {
-      statsBlock.style.display = "block";
-    }
+    // Показываем блок, если есть хотя бы один бонус
+    statsBlock.style.display = bonusEvents.length > 0 ? "block" : "none";
   } catch (err) {
     console.warn("❌ Ошибка загрузки статистики рефералов/бонусов:", err);
   }
