@@ -45,8 +45,9 @@ async function loadSaleStats() {
   const percentEl    = document.getElementById("soldPercent");
   const lastUpdEl    = document.getElementById("lastUpdated");
 
-  const saleContract = getSaleContract() || readSaleContract;
-  if (!saleContract) return;
+  // для чтения статистики используем публичный провайдер
+  const readContract = readSaleContract;
+  if (!readContract) return;
 
   try {
     // 1) Общий баланс на контракте
@@ -58,26 +59,26 @@ async function loadSaleStats() {
     const PHASE_COUNT = 3;
     let soldBN = 0n;
     for (let i = 0; i < PHASE_COUNT; i++) {
-      const phase = await saleContract.phases(i);
+      const phase = await readContract.phases(i);
       soldBN     += BigInt(phase.sold.toString());
     }
     const sold = Number(ethers.formatUnits(soldBN, 8));
 
-    // 3) Резерв рефералов (не трогаем)
-    const refBN      = await saleContract.rewardTokens();
+    // 3) Резерв рефералов (он фиксируется один раз при развёртывании)
+    const refBN      = await readContract.rewardTokens();
     const refReserve = Number(ethers.formatUnits(refBN, 8));
 
-    // 4) Остаток пула бонусов (динамический)
+    // 4) Динамический пул бонусов (rewardReserve() — остаётся у контракта)
     let bonusReserve;
     try {
-      const bonusBN     = await saleContract.rewardReserve();
+      const bonusBN     = await readContract.rewardReserve();
       bonusReserve      = Number(ethers.formatUnits(bonusBN, 8));
     } catch {
-      // fallback — если метода нет или вызов упал
+      // если что-то упало — fallback к 500000
       bonusReserve      = 500_000;
     }
 
-    // 5) Основной пул и остаток продаж
+    // 5) Основной пул и остаток
     const salePool = cap - refReserve - bonusReserve;
     const left     = salePool - sold;
 
@@ -91,7 +92,7 @@ async function loadSaleStats() {
       maximumFractionDigits: 2
     });
 
-    // 8) Вставка в DOM
+    // 8) Вставляем в DOM
     capEl.innerText        = fmt(cap);
     refReserveEl.innerText = fmt(refReserve);
     salePoolEl.innerText   = fmt(salePool);
@@ -100,9 +101,9 @@ async function loadSaleStats() {
     bonusPoolEl.innerText  = fmt(bonusReserve);
 
     // 9) Прогресс-бар и метки
-    progressEl.style.width   = `${pctClamped}%`;
-    percentEl.innerText      = `${pctClamped.toFixed(2)}%`;
-    lastUpdEl.innerText      = `Обновлено: ${new Date().toLocaleTimeString("ru-RU")}`;
+    progressEl.style.width  = `${pctClamped}%`;
+    percentEl.innerText     = `${pctClamped.toFixed(2)}%`;
+    lastUpdEl.innerText     = `Обновлено: ${new Date().toLocaleTimeString("ru-RU")}`;
   } catch (e) {
     console.warn("Ошибка загрузки статистики токенсейла:", e);
   }
