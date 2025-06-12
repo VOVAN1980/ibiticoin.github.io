@@ -49,30 +49,29 @@ async function loadSaleStats() {
   if (!saleContract) return;
 
   try {
-    // 1) Общий баланс токенов на контракте
+    // 1) Общий баланс на контракте
     const saleAddr  = config.active.contracts.PHASED_TOKENSALE;
     const depositBN = await ibitiTokenRead.balanceOf(saleAddr);
     const cap       = Number(ethers.formatUnits(depositBN, 8));
 
-    // 2) Сумма продано по всем фазам
+    // 2) Сколько продано по всем фазам
     const PHASE_COUNT = 3;
     let soldBN = 0n;
     for (let i = 0; i < PHASE_COUNT; i++) {
-      const phase = await saleContract.phases(i);
-      soldBN += BigInt(phase.sold.toString());
+      const { sold } = await saleContract.phases(i);
+      soldBN += BigInt(sold.toString());
     }
     const sold = Number(ethers.formatUnits(soldBN, 8));
 
-    // 3) Резерв под рефералы
+    // 3) Резерв рефералов
     const refBN      = await saleContract.rewardTokens();
     const refReserve = Number(ethers.formatUnits(refBN, 8));
 
-    // 4) Динамический пул бонусов
-    //    – initialBonusPool должен совпадать с тем, что вы задали в контракте (500_000)
-    //    – totalReferralPaid() возвращает, сколько уже выдано
+    // 4) Первоначальный пул бонусов и сколько уже выплачено
+    const initBN       = await saleContract.rewardReserve();
     const paidBN       = await saleContract.totalReferralPaid();
+    const initialBonus = Number(ethers.formatUnits(initBN, 8));
     const paidTotal    = Number(ethers.formatUnits(paidBN, 8));
-    const initialBonus = 500_000;
     const bonusReserve = initialBonus - paidTotal;
 
     // 5) Основной пул и остаток
@@ -83,13 +82,13 @@ async function loadSaleStats() {
     const percent    = salePool > 0 ? (sold / salePool) * 100 : 0;
     const pctClamped = Math.min(Math.max(percent, 0), 100);
 
-    // 7) Форматтер для вывода
+    // 7) Форматирование
     const fmt = x => x.toLocaleString("ru-RU", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     });
 
-    // 8) Вставляем значения в DOM
+    // 8) Обновляем DOM
     capEl.innerText        = fmt(cap);
     refReserveEl.innerText = fmt(refReserve);
     salePoolEl.innerText   = fmt(salePool);
@@ -97,7 +96,7 @@ async function loadSaleStats() {
     leftEl.innerText       = fmt(left);
     bonusPoolEl.innerText  = fmt(bonusReserve);
 
-    // 9) Обновляем прогресс-бар и подписи
+    // 9) Прогресс-бар и время
     progressEl.style.width = `${pctClamped}%`;
     percentEl.innerText    = `${pctClamped.toFixed(2)}%`;
     lastUpdEl.innerText    = `Обновлено: ${new Date().toLocaleTimeString("ru-RU")}`;
