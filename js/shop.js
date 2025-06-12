@@ -117,8 +117,9 @@ async function loadReferralStats(account) {
 
     // — 2) Сумма бонусов из событий Bought —
     // Фильтруем все Bought-ивенты, где buyer = account
-    const filter = saleContract.filters.Bought(account);
-    const events = await saleContract.queryFilter(filter);
+    const filter = readSaleContract.filters.Bought(account);
+    const events = await readSaleContract.queryFilter(filter);
+    console.log("→ Bought events:", events);
     let bonusSum = 0n;
     for (const ev of events) {
       // bonusIBITI — это шестой аргумент в событии
