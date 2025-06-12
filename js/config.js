@@ -1,15 +1,13 @@
-// js/config.js
 const config = {
   mainnet: {
     networkName: "BSC Mainnet",
-    rpcUrl: "https://bsc-dataseed.binance.org/",
+    rpcUrl: "https://rpc.ankr.com/bsc/4dc6f6e684cd1df11bb6f81c742b0597781ed9aee0365faf48669a2bc06d3058",
     chainId: 56,
     explorerUrl: "https://bscscan.com",
     contracts: {
       USDT_TOKEN:          "0x55d398326f99059fF775485246999027B3197955",
       IBITI_TOKEN:         "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196",
       PANCAKESWAP_ROUTER:  "0x10ED43C718714eb63d5aA57B78B54704E256024E",
-      PANCAKESWAP_FACTORY: "0xbcfccbde45ce874adcb698cc183debcf17952812",
       NFTDISCOUNT:         "0x911f7153AA7554b3f936f2ad05318B8368c14668",
       PRICE_ORACLE:        "0x09e28925487841f0400687FD9DC9cf1d14B85aF3",
       TEAM_VESTING:        "0xA8E6a8707EBB386C839881f99391C8af2db3DB5e",
@@ -18,24 +16,26 @@ const config = {
       IBITINFT:            "0xE14bfBB10180eda4bDC574f02700e0E2BC0A4667",
       NFTSALEMANAGER:      "0x804Fe412bF8B1e21475e6F6c368b0400250bBDdd",
       PHASED_TOKENSALE:    "0x94b9a9b1FEC563cF16cA42a14c81C42284eD6Ca1",
-      PHASED_REWARD:       100000000,
-      BUYBACK_MANAGER:     "0xAfDFE70d3531582789D6Ba5Bd56fDCFd43a4AC5E"
+      BUYBACK_MANAGER:     "0xAfDFE70d3531582789D6Ba5Bd56fDCFd43a4AC5E",
+      PHASED_REWARD:       100000000
     }
   },
+
   localhost: {
     networkName: "Localhost",
     chainId: 31337,
     rpcUrl: "http://127.0.0.1:8545",
     contracts: {
-      USDT_TOKEN:          "0x8FBeEB903a8D1e8dADDAD45b78b5AE97F3F84969",
-      IBITI_TOKEN:         "0x63A5065339a3Fa8A3f848fC3f573cE7fE9df7507",
+      USDT_TOKEN:          "0xDe49559FA3f082BbEF4C3311f0A7Aa745BD30A9f",
+      IBITI_TOKEN:         "0xB6969FA6ecBC9186dF0e36F9eCBdda7Cd6207794",
       NFTDISCOUNT:         "0x1D85000cF34077D007582294DABa45781080BbbC",
-      PHASED_TOKENSALE:    "0x078Bbf1023b4cf5aA36BDA121aFDcd53251bEd72"
+      PHASED_TOKENSALE:    "0x1aE34a234371de98796C10245d6D4FeE0f86D73d"
     }
   }
 };
 
-// Устанавливаем активную сеть (меняйте на mainnet при продакшене)
-config.active = config.localhost;
+// Активная сеть — переключи на mainnet
+config.active = config.mainnet;
 
 export default config;
+
