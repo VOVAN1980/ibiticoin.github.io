@@ -34,8 +34,6 @@ const ibitiTokenRead = new ethers.Contract(
  * – left      (сколько осталось продаж)
  * – bonusPool (фикс. пул бонусов)
  */
-переписуй весь блок
-
 async function loadSaleStats() {
   const capEl        = document.getElementById("cap");
   const refReserveEl = document.getElementById("refReserve");
