@@ -13,7 +13,12 @@ export const PhasedTokenSaleAbi = [
       },
       {
         internalType: "uint256",
-        name: "_rewardAmount",
+        name: "_refReserve",
+        type: "uint256"
+      },
+      {
+        internalType: "uint256",
+        name: "_volReserve",
         type: "uint256"
       }
     ],
@@ -99,6 +104,19 @@ export const PhasedTokenSaleAbi = [
       }
     ],
     name: "JackpotAirdropConfigured",
+    type: "event"
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "to",
+        type: "address"
+      }
+    ],
+    name: "JackpotAirdropped",
     type: "event"
   },
   {
@@ -629,6 +647,19 @@ export const PhasedTokenSaleAbi = [
     type: "function"
   },
   {
+    inputs: [],
+    name: "refReserve",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -778,6 +809,19 @@ export const PhasedTokenSaleAbi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256"
+      }
+    ],
+    name: "topUpVolumeReserve",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "newOwner",
         type: "address"
@@ -817,6 +861,19 @@ export const PhasedTokenSaleAbi = [
   {
     inputs: [],
     name: "usdtMultiplier",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [],
+    name: "volReserve",
     outputs: [
       {
         internalType: "uint256",
@@ -883,7 +940,7 @@ export const PhasedTokenSaleAbi = [
     stateMutability: "nonpayable",
     type: "function"
   },
-    {
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -895,33 +952,5 @@ export const PhasedTokenSaleAbi = [
     outputs: [],
     stateMutability: "nonpayable",
     type: "function"
-  },
-  {
-    inputs: [],
-    name: "saleCap",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "totalSold",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "rewardReserve",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [],
-    name: "totalReferralPaid",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function"
   }
-];  // ← Закрываем массив ABI
+]
