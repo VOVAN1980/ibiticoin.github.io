@@ -49,12 +49,12 @@ async function loadSaleStats() {
   if (!saleContract) return;
 
   try {
-    // 1) Общий баланс
+    // 1) Общий баланс токенов на контракте
     const saleAddr  = config.active.contracts.PHASED_TOKENSALE;
     const depositBN = await ibitiTokenRead.balanceOf(saleAddr);
     const cap       = Number(ethers.formatUnits(depositBN, 8));
 
-    // 2) Сколько продано
+    // 2) Сумма продано по всем фазам
     const PHASE_COUNT = 3;
     let soldBN = 0n;
     for (let i = 0; i < PHASE_COUNT; i++) {
@@ -63,36 +63,33 @@ async function loadSaleStats() {
     }
     const sold = Number(ethers.formatUnits(soldBN, 8));
 
-    // 3) Резерв рефералов
+    // 3) Резерв под рефералы
     const refBN      = await saleContract.rewardTokens();
     const refReserve = Number(ethers.formatUnits(refBN, 8));
 
-    // 4) Пул бонусов — попытка из контракта, иначе хардкод
-    let bonusReserve;
-    try {
-      const paidBN       = await saleContract.totalReferralPaid();
-      const paidTotal    = Number(ethers.formatUnits(paidBN, 8));
-      const initialBonus = 500_000;
-      bonusReserve       = initialBonus - paidTotal;
-    } catch {
-      // если что-то пошло не так — возвращаем старый фикс
-      bonusReserve = 500_000;
-    }
+    // 4) Динамический пул бонусов
+    //    – initialBonusPool должен совпадать с тем, что вы задали в контракте (500_000)
+    //    – totalReferralPaid() возвращает, сколько уже выдано
+    const paidBN       = await saleContract.totalReferralPaid();
+    const paidTotal    = Number(ethers.formatUnits(paidBN, 8));
+    const initialBonus = 500_000;
+    const bonusReserve = initialBonus - paidTotal;
 
     // 5) Основной пул и остаток
-    const salePool = cap - refReserve - bonusReserve;
+    const salePool = cap - refReserve - initialBonus;
     const left     = salePool - sold;
 
     // 6) Процент продано
     const percent    = salePool > 0 ? (sold / salePool) * 100 : 0;
     const pctClamped = Math.min(Math.max(percent, 0), 100);
 
-    // 7) Форматирование
+    // 7) Форматтер для вывода
     const fmt = x => x.toLocaleString("ru-RU", {
-      minimumFractionDigits: 2, maximumFractionDigits: 2
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
     });
 
-    // 8) Вставляем в DOM
+    // 8) Вставляем значения в DOM
     capEl.innerText        = fmt(cap);
     refReserveEl.innerText = fmt(refReserve);
     salePoolEl.innerText   = fmt(salePool);
@@ -100,10 +97,10 @@ async function loadSaleStats() {
     leftEl.innerText       = fmt(left);
     bonusPoolEl.innerText  = fmt(bonusReserve);
 
-    // 9) Прогресс
-    progressEl.style.width   = `${pctClamped}%`;
-    percentEl.innerText      = `${pctClamped.toFixed(2)}%`;
-    lastUpdEl.innerText      = `Обновлено: ${new Date().toLocaleTimeString("ru-RU")}`;
+    // 9) Обновляем прогресс-бар и подписи
+    progressEl.style.width = `${pctClamped}%`;
+    percentEl.innerText    = `${pctClamped.toFixed(2)}%`;
+    lastUpdEl.innerText    = `Обновлено: ${new Date().toLocaleTimeString("ru-RU")}`;
   } catch (e) {
     console.warn("Ошибка загрузки статистики токенсейла:", e);
   }
