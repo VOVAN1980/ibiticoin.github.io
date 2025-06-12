@@ -35,19 +35,17 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
 
   <!-- i18next, jQuery и плагины для локализации -->
-  <!-- Сначала библиотеки -->
+  <!--
 <script src="https://unpkg.com/i18next@21.10.1/i18next.min.js"></script>
 <script src="https://unpkg.com/i18next-http-backend@1.4.1/i18nextHttpBackend.min.js"></script>
 <script src="https://unpkg.com/i18next-browser-languagedetector@6.1.3/i18nextBrowserLanguageDetector.min.js"></script>
 <script src="https://unpkg.com/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://unpkg.com/jquery-i18next@1.2.1/jquery-i18next.min.js"></script>
-
-<!-- Далее сразу инициализация -->
 <script>
   i18next
     .use(i18nextHttpBackend)
     .use(i18nextBrowserLanguageDetector)
-    .init({ /*…*/ }, function(err, t) {
+    .init({}, function(err, t) {
       jqueryI18next.init(i18next, $, { useOptionsAttr: true });
       $('body').localize();
     });
