@@ -25,25 +25,22 @@ const config = {
     }
   },
 
-  // js/config.js
+ // js/config.js
 const config = {
   localhost: {
     networkName: "Localhost",
     chainId: 31337,
     rpcUrl: "http://127.0.0.1:8545",
     contracts: {
-      // моки токенов из deploy-only.js
       IBITI_TOKEN:      "0xB6969FA6ecBC9186dF0e36F9eCBdda7Cd6207794",
       USDT_TOKEN:       "0xDe49559FA3f082BbEF4C3311f0A7Aa745BD30A9f",
-      // ваши локальные деплои из deploy-local.js
       NFTDISCOUNT:      "0x1D85000cF34077D007582294DABa45781080BbbC",
       PHASED_TOKENSALE: "0x1aE34a234371de98796C10245d6D4FeE0f86D73d"
     }
   },
   // …другие сети…
-};
+};   // ← здесь необходима точка с запятой!
 
-// активная сеть
 config.active = config.localhost;
 
 export default config;
