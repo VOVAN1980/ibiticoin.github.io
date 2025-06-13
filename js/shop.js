@@ -58,17 +58,14 @@ async function loadSaleStats() {
     const sold = Number(ethers.formatUnits(soldBN, 8));
 
     /* 3) резервы */
-    const refReserve = Number(
-      ethers.formatUnits(await saleContract.rewardTokens(), 8)
-    );
-
-    let bonusReserve = 500_000; // дефолт, если метода нет
-    if (typeof saleContract.rewardReserve === "function") {
-      try {
-        const bonusBN = await saleContract.rewardReserve();
-        bonusReserve  = Number(ethers.formatUnits(bonusBN, 8));
-      } catch {/* игнорируем, останется дефолт */}
-    }
+    // ── пул 10-процентного бонуса ─────────────────────────────
+let bonusReserve = 0;                               // без «500 000» по-умолчанию
+try {
+  const bonusBN = await saleContract.volReserve();  // читаем volReserve
+  bonusReserve  = Number(ethers.formatUnits(bonusBN, 8));
+} catch (e) {
+  console.warn("Не удалось получить volReserve:", e);
+}
 
     /* 4) пул, остаток, процент */
     const salePool   = cap - refReserve - bonusReserve;
