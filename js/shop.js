@@ -173,7 +173,7 @@ async function handlePurchase(amount, product) {
     return Swal.fire({
       icon:  "info",
       title: "📅 Предпродажа не началась",
-      text:  "Старт 1 июля в 09:00 UTC.",12.00 по Киеву
+      text:  "Старт 1 июля в 09:00 UTC (12:00 по Киеву)";
       confirmButtonText: "Ок"
     });
   }
