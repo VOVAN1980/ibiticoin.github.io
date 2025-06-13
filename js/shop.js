@@ -226,29 +226,30 @@ async function handlePurchase(amount, product) {
 
     /* ≥10 IBITI → активируем рефералку */
     if (+amount >= 10) {
-      localStorage.setItem(`referralUnlocked_${selectedAccount}`, "1");
-      await loadReferralStats(selectedAccount);
+  localStorage.setItem(`referralUnlocked_${selectedAccount}`, "1");
+  await loadReferralStats(selectedAccount);
 
-      const link = `${location.origin}${location.pathname}?ref=${selectedAccount}`;
-      await Swal.fire({
-        icon: "info",
-        title: "Ваша реферальная ссылка",
-        html:  `<a href="${link}" target="_blank">${link}</a><br>Скопируйте и поделитесь.`,
-        confirmButtonText: "Скопировать",
-        preConfirm: () => navigator.clipboard.writeText(link)
-      });
+  const link = `${location.origin}${location.pathname}?ref=${selectedAccount}`;
+  await Swal.fire({
+    icon: "info",
+    title: "Ваша реферальная ссылка",
+    html:  `<a href="${link}" target="_blank">${link}</a><br>Скопируйте и поделитесь.`,
+    confirmButtonText: "Скопировать",
+    preConfirm: () => navigator.clipboard.writeText(link)
+  });
 
-     setTimeout(() => loadReferralStats(selectedAccount), 2000);
+  window.enableReferralAfterPurchase?.(selectedAccount);
+}
 
-      window.enableReferralAfterPurchase?.(selectedAccount);
-    }
+// Вынеси обновление бонусов после окна "Покупка успешна!" сюда!
+await Swal.fire({
+  icon: "success",
+  title: "Покупка успешна!",
+  timer: 3000,
+  showConfirmButton: false
+});
 
-    Swal.fire({
-      icon: "success",
-      title: "Покупка успешна!",
-      timer: 3000,
-      showConfirmButton: false
-    });
+setTimeout(() => loadReferralStats(selectedAccount), 1500);
 
   /* ---------- ТВОЙ желаемый catch-блок ---------- */
   } catch (error) {
