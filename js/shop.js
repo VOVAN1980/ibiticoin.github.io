@@ -300,6 +300,7 @@ async function handlePurchase(amount, productName) {
     confirmButtonText:"Ок"
   });
 }
+
 window.handlePurchase = handlePurchase;
 
 document.addEventListener("DOMContentLoaded", () => {
