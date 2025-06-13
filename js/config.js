@@ -1,4 +1,5 @@
 // Унифицированный конфиг без суффиксов _MAINNET / _LOCAL / _ADDRESS
+// config.js — конфиг сетей и адресов
 const config = {
   mainnet: {
     networkName: "BSC Mainnet",
@@ -9,7 +10,6 @@ const config = {
       USDT_TOKEN: "0x55d398326f99059fF775485246999027B3197955",
       IBITI_TOKEN: "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196",
       PANCAKESWAP_ROUTER: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
-
       FEE_MANAGER: "0x34770ba3625437742e18C6827DFC893c42Eec956",
       USER_STATUS_MANAGER: "0xa1542720cC6952ec1E528411cCdC58FE60fa7996",
       BRIDGE_MANAGER: "0x813d2d93a3EfDFe8B09513b09B7CbdE06B239113",
@@ -22,7 +22,6 @@ const config = {
       NFTSALEMANAGER: "0x804Fe412bF8B1e21475e6F6c368b0400250bBDdd",
       PHASED_TOKENSALE: "0x94b9a9b1FEC563cF16cA42a14c81C42284eD6Ca1",
       BUYBACK_MANAGER: "0xAfDFE70d3531582789D6Ba5Bd56fDCFd43a4AC5E",
-
       PHASED_REWARD_AMOUNT: 100000000
     }
   },
@@ -34,14 +33,14 @@ const config = {
     explorerUrl: "",
     contracts: {
       USDT_TOKEN: "0xB6969FA6ecBC9186dF0e36F9eCBdda7Cd6207794",
-      IBITI_TOKEN: "0xDe49559FA3f082BbEF4C3311f0A7Aa745BD30A9f", // ← добавили
+      IBITI_TOKEN: "0xDe49559FA3f082BbEF4C3311f0A7Aa745BD30A9f",
       NFTDISCOUNT: "0x4723A7d9dE6402606634FE2CaFbEC5e240Ea47fe",
-      PHASED_TOKENSALE: "0xeed8260f27BdbBD8e79761541C63a1D82A33518c",
+      PHASED_TOKENSALE: "0xeed8260f27BdbBD8e79761541C63a1D82A33518c"
     }
   }
 };
 
-// Активная сеть (временно жёстко задана)
-config.active = config.localhost; 
+// Активная сеть:
+config.active = config.localhost;
 
 export default config;
