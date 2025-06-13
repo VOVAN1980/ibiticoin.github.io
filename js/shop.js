@@ -27,7 +27,10 @@ const ibitiTokenRead = new ethers.Contract(
 
 /* ---------- 2. Загрузка статистики продажи ---------- */
 async function loadSaleStats() {
-  const capEl        = document.getElementById("cap");
+  // если на странице нет #cap, значит это не shop-страница → тихо выходим
+  const capEl = document.getElementById("cap");
+  if (!capEl) return;
+
   const refReserveEl = document.getElementById("refReserve");
   const salePoolEl   = document.getElementById("salePool");
   const soldEl       = document.getElementById("sold");
@@ -273,7 +276,10 @@ document.addEventListener("DOMContentLoaded", () => {
   loadSaleStats();
   loadReferralData();
 
-  setInterval(loadSaleStats, 30_000);
+  // таймер нужен только на страницах, где есть #cap
+  if (document.getElementById("cap")) {
+    setInterval(loadSaleStats, 30_000);
+  }
   document.getElementById("refreshStats")?.addEventListener("click", loadSaleStats);
 
   /* 7.3 форма покупки */
