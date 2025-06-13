@@ -238,8 +238,7 @@ async function handlePurchase(amount, product) {
         preConfirm: () => navigator.clipboard.writeText(link)
       });
 
-      // <<< ВСТАВЬ ВОТ СЮДА! >>>
-  await loadReferralStats(selectedAccount);
+     setTimeout(() => loadReferralStats(selectedAccount), 1200);
 
       window.enableReferralAfterPurchase?.(selectedAccount);
     }
