@@ -276,30 +276,68 @@ async function handlePurchase(amount, productName) {
       await loadReferralData();
     }
 
+      await tx.wait();
+    await showIbitiBalance(true);
+
+    if (Number(amount) >= 10) {
+      const key = `referralUnlocked_${selectedAccount}`;
+      localStorage.setItem(key, "1");
+      await loadReferralStats(selectedAccount);
+    }
+
+    Swal.fire({
+      icon: "success",
+      title: "Покупка успешна!",
+      text: "Вы только что приобрели IBITI!",
+      timer: 3000,
+      showConfirmButton: false
+    });
+
+    if (Number(amount) >= 10) {
+      const yourAddr = selectedAccount;
+      const refLink = `${window.location.origin}${window.location.pathname}?ref=${yourAddr}`;
+
+      await Swal.fire({
+        icon: "info",
+        title: "Ваша реферальная ссылка",
+        html: `<a href="${refLink}" target="_blank">${refLink}</a><br>Скопируйте и поделитесь.`,
+        confirmButtonText: "Скопировать",
+        preConfirm: () => navigator.clipboard.writeText(refLink)
+      });
+
+      if (typeof window.enableReferralAfterPurchase === "function") {
+        window.enableReferralAfterPurchase(yourAddr);
+      }
+
+      await loadReferralStats(yourAddr);
+      localStorage.setItem(`referralUnlocked_${yourAddr}`, "1");
+      await loadReferralData();
+    }
+
   } catch (error) {
-  console.warn("Ошибка при покупке:", error);
+    console.warn("Ошибка при покупке:", error);
 
-  let rawReason = error?.revert?.args?.[0]
-               || error?.shortMessage
-               || error?.message
-               || "Неизвестная ошибка";
+    let rawReason = error?.revert?.args?.[0]
+                 || error?.shortMessage
+                 || error?.message
+                 || "Неизвестная ошибка";
 
-  // Убираем "Error:" если есть
-  if (typeof rawReason === "string" && rawReason.startsWith("Error:")) {
-    rawReason = rawReason.replace(/^Error:\s*/, "");
-  }
+    if (typeof rawReason === "string" && rawReason.startsWith("Error:")) {
+      rawReason = rawReason.replace(/^Error:\s*/, "");
+    }
 
-  const reason = rawReason === "not started"
-    ? "📅 Продажа начнётся: 1 июля в 09:00 UTC"
-    : rawReason;
+    const reason = rawReason === "not started"
+      ? "📅 Продажа начнётся: 1 июля в 09:00 UTC"
+      : rawReason;
 
-  Swal.fire({
-    icon:             "error",
-    title:            "Ошибка",
-    text:             reason,
-    confirmButtonText:"Ок"
-  });
-}
+    Swal.fire({
+      icon: "error",
+      title: "Ошибка",
+      text: reason,
+      confirmButtonText: "Ок"
+    });
+  } // ← ЗАКРЫВАЕМ catch
+} // ← И ЗАКРЫВАЕМ handlePurchase
 
 window.handlePurchase = handlePurchase;
 
