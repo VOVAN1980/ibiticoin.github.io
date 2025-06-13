@@ -211,6 +211,7 @@ async function handlePurchase(amount, productName) {
     const decimals = 8;
     const amountFormatted = ethers.parseUnits(amount.toString(), decimals);
     const paymentMethod = document.getElementById("paymentToken")?.value;
+    let tx;
 
     if (productName === "IBITIcoin") {
       if (paymentMethod === "USDT") {
@@ -222,13 +223,13 @@ async function handlePurchase(amount, productName) {
         }
 
         const referrer = localStorage.getItem("referrer") || ethers.ZeroAddress;
-        const tx = await buyIBITI(amountFormatted, referrer);
-        await tx.wait();
+        tx = await buyIBITI(amountFormatted, referrer);
       } else {
         throw new Error("Оплата через BNB временно отключена.");
       }
     }
 
+    await tx.wait();
     await showIbitiBalance(true);
 
     if (Number(amount) >= 10) {
