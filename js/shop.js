@@ -218,9 +218,30 @@ async function handlePurchase(amount, productName) {
     const usdt = new ethers.Contract(config.active.contracts.USDT_TOKEN, ibitiTokenAbi, signer);
     const usdtBalance = await usdt.balanceOf(selectedAccount);
 
-    if (usdtBalance < amountFormatted) {
-  throw new Error(`Недостаточно USDT: у вас ${(+ethers.formatUnits(usdtBalance, 18)).toFixed(4)} USDT, требуется ${(+ethers.formatUnits(amountFormatted, 18)).toFixed(4)} USDT`);
-}
+    } catch (error) {
+    console.warn("Ошибка при покупке:", error);
+
+    let rawReason = error?.revert?.args?.[0]
+                 || error?.shortMessage
+                 || error?.message
+                 || "Неизвестная ошибка";
+
+    if (typeof rawReason === "string" && rawReason.startsWith("Error:")) {
+      rawReason = rawReason.replace(/^Error:\s*/, "");
+    }
+
+    const reason = rawReason === "not started"
+      ? "📅 Продажа начнётся: 1 июля в 09:00 UTC"
+      : rawReason;
+
+    Swal.fire({
+      icon: "error",
+      title: "Ошибка",
+      text: reason,
+      confirmButtonText: "Ок"
+    });
+  } // ← ЗАКРЫВАЕМ catch
+} // ← И ЗАКРЫВАЕМ handlePurchase
 
     const referrer = localStorage.getItem("referrer") || ethers.ZeroAddress;
     tx = await buyIBITI(amountFormatted, referrer);
@@ -313,31 +334,6 @@ async function handlePurchase(amount, productName) {
       localStorage.setItem(`referralUnlocked_${yourAddr}`, "1");
       await loadReferralData();
     }
-
-  } catch (error) {
-    console.warn("Ошибка при покупке:", error);
-
-    let rawReason = error?.revert?.args?.[0]
-                 || error?.shortMessage
-                 || error?.message
-                 || "Неизвестная ошибка";
-
-    if (typeof rawReason === "string" && rawReason.startsWith("Error:")) {
-      rawReason = rawReason.replace(/^Error:\s*/, "");
-    }
-
-    const reason = rawReason === "not started"
-      ? "📅 Продажа начнётся: 1 июля в 09:00 UTC"
-      : rawReason;
-
-    Swal.fire({
-      icon: "error",
-      title: "Ошибка",
-      text: reason,
-      confirmButtonText: "Ок"
-    });
-  } // ← ЗАКРЫВАЕМ catch
-} // ← И ЗАКРЫВАЕМ handlePurchase
 
 window.handlePurchase = handlePurchase;
 
