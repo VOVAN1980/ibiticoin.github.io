@@ -163,6 +163,9 @@ window.closePurchaseModal = () => {
   document.getElementById("nftAmount").value = "";
 };
 
+/* ---------- Константы старта ---------- */
+const SALE_START_TS   = Date.parse("2025-07-01T09:00:00Z");        // 09:00 UTC
+const SALE_START_TEXT = "Старт 1 июля в 09:00 UTC (12:00 Киев)";
 /* ---------- 6. Покупка ---------- */
 async function handlePurchase(amount, product) {
   /* 0) Продажа ещё не началась — сообщаем и выходим */
