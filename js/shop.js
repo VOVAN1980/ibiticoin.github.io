@@ -160,16 +160,38 @@ window.closePurchaseModal = () => {
   document.getElementById("nftAmount").value = "";
 };
 
+/* ---------- 0. Константа старта предпродажи ---------- */
+const SALE_START_TS = Date.parse("2025-07-01T09:00:00Z"); // 1 июля 09:00 UTC
+
 /* ---------- 6. Покупка ---------- */
 async function handlePurchase(amount, product) {
-  if (!window.ethereum) {
-    return Swal.fire({ icon: "warning", title: "MetaMask не найден", text: "Установите MetaMask." });
+  /* 6.0 Продажа ещё не началась? — выходим сразу */
+  if (Date.now() < SALE_START_TS) {
+    return Swal.fire({
+      icon:  "info",
+      title: "📅 Предпродажа не началась",
+      text:  "Старт 1 июля в 09:00 UTC.",
+      confirmButtonText: "Ок"
+    });
   }
 
-  Swal.fire({ title: "Ожидание подтверждения…", didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+  /* 6.1 MetaMask */
+  if (!window.ethereum) {
+    return Swal.fire({
+      icon: "warning",
+      title: "MetaMask не найден",
+      text:  "Установите MetaMask для выполнения покупки."
+    });
+  }
+
+  /* 6.2 Лоадер */
+  Swal.fire({
+    title: "Ожидание подтверждения…",
+    didOpen: () => Swal.showLoading(),
+    allowOutsideClick: false
+  });
 
   try {
-    /* 6.1 проверка/формат суммы */
     const amountUnits  = ethers.parseUnits(amount.toString(), 8);
     const paymentToken = document.getElementById("paymentToken")?.value;
 
@@ -177,20 +199,20 @@ async function handlePurchase(amount, product) {
       throw new Error("Оплата через BNB временно отключена.");
     }
 
-    /* 6.2 баланс USDT */
-    const usdt = new ethers.Contract(config.active.contracts.USDT_TOKEN, ibitiTokenAbi, signer);
-    const bal  = await usdt.balanceOf(selectedAccount);
-    if (bal < amountUnits) throw new Error("Недостаточно USDT.");
+    /* баланс USDT — проверяем только после даты старта */
+    const usdt    = new ethers.Contract(config.active.contracts.USDT_TOKEN, ibitiTokenAbi, signer);
+    const balance = await usdt.balanceOf(selectedAccount);
+    if (balance < amountUnits) throw new Error("Недостаточно USDT.");
 
-    /* 6.3 совершаем транзакцию */
-    const ref   = localStorage.getItem("referrer") || ethers.ZeroAddress;
-    const tx    = await buyIBITI(amountUnits, ref);
+    /* Транзакция */
+    const ref = localStorage.getItem("referrer") || ethers.ZeroAddress;
+    const tx  = await buyIBITI(amountUnits, ref);
     await tx.wait();
 
     await showIbitiBalance(true);
 
-    /* 6.4 после покупки ≥10 IBITI — активируем рефералку */
-    if (Number(amount) >= 10) {
+    /* ≥10 IBITI → активируем рефералку */
+    if (+amount >= 10) {
       localStorage.setItem(`referralUnlocked_${selectedAccount}`, "1");
       await loadReferralStats(selectedAccount);
 
@@ -198,7 +220,7 @@ async function handlePurchase(amount, product) {
       await Swal.fire({
         icon: "info",
         title: "Ваша реферальная ссылка",
-        html: `<a href="${link}" target="_blank">${link}</a><br>Скопируйте и поделитесь.`,
+        html:  `<a href="${link}" target="_blank">${link}</a><br>Скопируйте и поделитесь.`,
         confirmButtonText: "Скопировать",
         preConfirm: () => navigator.clipboard.writeText(link)
       });
@@ -206,13 +228,36 @@ async function handlePurchase(amount, product) {
       window.enableReferralAfterPurchase?.(selectedAccount);
     }
 
-    Swal.fire({ icon: "success", title: "Покупка успешна!", timer: 3000, showConfirmButton: false });
-  } catch (err) {
-    const raw = err?.message?.replace(/^Error:\s*/, "") || "Неизвестная ошибка";
-    const reason = raw === "not started" ? "📅 Продажа начнётся: 1 июля в 09:00 UTC" : raw;
+    Swal.fire({
+      icon: "success",
+      title: "Покупка успешна!",
+      timer: 3000,
+      showConfirmButton: false
+    });
 
-    Swal.fire({ icon: "error", title: "Ошибка", text: reason, confirmButtonText: "Ок" });
-    console.warn("handlePurchase:", err);
+  /* ---------- ТВОЙ желаемый catch-блок ---------- */
+  } catch (error) {
+    console.warn("Ошибка при покупке:", error);
+
+    let rawReason = error?.revert?.args?.[0]
+      || error?.shortMessage
+      || error?.message
+      || "Неизвестная ошибка";
+
+    if (typeof rawReason === "string" && rawReason.startsWith("Error:")) {
+      rawReason = rawReason.replace(/^Error:\s*/, "");
+    }
+
+    const reason = rawReason === "not started"
+      ? "📅 Продажа начнётся: 1 июля в 09:00 UTC"
+      : rawReason;
+
+    Swal.fire({
+      icon: "error",
+      title: "Ошибка",
+      text:  reason,
+      confirmButtonText: "Ок"
+    });
   }
 }
 
