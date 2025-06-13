@@ -167,16 +167,33 @@ window.closePurchaseModal = () => {
 const SALE_START_TS = Date.parse("2025-07-01T09:00:00Z"); // 1 июля 09:00 UTC
 
 /* ---------- 6. Покупка ---------- */
+const SALE_START_TS   = Date.parse("2025-07-01T09:00:00Z");            // 09:00 UTC
+const SALE_START_TEXT = "1 июля — 09:00 UTC / 12:00 Киев";             // для заголовков
+
 async function handlePurchase(amount, product) {
-  /* 6.0 Продажа ещё не началась? — выходим сразу */
+  /* 0) Проверяем, началась ли продажа */
   if (Date.now() < SALE_START_TS) {
+    // считаем, сколько осталось
+    const diff = SALE_START_TS - Date.now();
+    const d = Math.floor(diff / 864e5);
+    const h = Math.floor((diff / 36e5) % 24);
+    const m = Math.floor((diff / 6e4) % 60);
+    const s = Math.floor((diff / 1e3)  % 60);
+
+    const msg =
+      `Старт ${SALE_START_TEXT}.\n` +
+      `До начала осталось: ${d}д ${h}ч ${m}м ${s}с`;
+
     return Swal.fire({
       icon:  "info",
       title: "📅 Предпродажа не началась",
-      text:  "Старт 1 июля в 09:00 UTC (12:00 по Киеву)";
+      text:  msg,
       confirmButtonText: "Ок"
     });
   }
+
+  /* … дальше идёт прежняя логика покупки … */
+}
 
   /* 6.1 MetaMask */
   if (!window.ethereum) {
