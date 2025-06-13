@@ -42,6 +42,6 @@ const config = {
 };
 
 // Активная сеть (временно жёстко задана)
-config.active = config.mainnet;
+config.active = config.localhost; 
 
 export default config;
