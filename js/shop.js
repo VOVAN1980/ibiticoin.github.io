@@ -94,24 +94,31 @@ lastUpdEl.textContent  = `Обновлено: ${new Date().toLocaleTimeString("r
   }
 }
 
-/* ---------- 3. Реферальная статистика ---------- */
 async function loadReferralStats(account) {
-  const rewardEl   = document.getElementById("refReward");
-  const refCountEl = document.getElementById("refCount");
+  const refCountEl = document.getElementById("refCount");   // друзья
+  const bonusEl    = document.getElementById("refReward");  // объём-бонусы
   const block      = document.getElementById("referralStats");
-  if (!rewardEl || !refCountEl || !block) return;
+  if (!refCountEl || !bonusEl || !block) return;
 
   const sale = getSaleContract();
   if (!sale) return;
 
   try {
-    const rawRef = await sale.referralRewards(account);
-    refCountEl.textContent = Math.floor(Number(ethers.formatUnits(rawRef, 8)));
+    /* 1) сколько друзей (1 IBI = 1 друг) */
+    const refTokBN = await sale.referralRewards(account);
+    const friends  = Number(ethers.formatUnits(refTokBN, 8));
+    refCountEl.textContent = friends.toString();
 
-    const filter  = readSaleContract.filters.Bought(account);
-    const events  = await readSaleContract.queryFilter(filter);
-    const bonusBN = events.reduce((a, ev) => a + BigInt(ev.args.bonusIBITI), 0n);
-    rewardEl.textContent = Number(ethers.formatUnits(bonusBN, 8)).toFixed(2);
+    /* 2) суммируем объём-бонусы из Bought(account) */
+    const evts = await readSaleContract.queryFilter(
+      readSaleContract.filters.Bought(account)
+    );
+    const volBN = evts.reduce(
+      (sum, ev) => sum + BigInt(ev.args.bonusIBITI),
+      0n
+    );
+    bonusEl.textContent =
+      Number(ethers.formatUnits(volBN, 8)).toFixed(2);
 
     block.style.display = "block";
   } catch (e) {
@@ -122,8 +129,7 @@ async function loadReferralStats(account) {
 /* проверяем, может ли текущий акк видеть панель-рефералку */
 async function loadReferralData() {
   if (!selectedAccount) return;
-  const flag = localStorage.getItem(`referralUnlocked_${selectedAccount}`);
-  if (flag) await loadReferralStats(selectedAccount);
+  await loadReferralStats(selectedAccount);
 }
 
 /* ---------- 4. UI-утилиты ---------- */
