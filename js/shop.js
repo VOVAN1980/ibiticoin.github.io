@@ -238,7 +238,7 @@ async function handlePurchase(amount, product) {
         preConfirm: () => navigator.clipboard.writeText(link)
       });
 
-     setTimeout(() => loadReferralStats(selectedAccount), 1200);
+     setTimeout(() => loadReferralStats(selectedAccount), 2000);
 
       window.enableReferralAfterPurchase?.(selectedAccount);
     }
