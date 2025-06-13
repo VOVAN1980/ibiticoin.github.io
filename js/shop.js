@@ -276,28 +276,29 @@ async function handlePurchase(amount, productName) {
       await loadReferralData();
     }
 
+  } catch (error) {
+  console.warn("Ошибка при покупке:", error);
+
   let rawReason = error?.revert?.args?.[0]
-             || error?.shortMessage
-             || error?.message
-             || "Неизвестная ошибка";
+               || error?.shortMessage
+               || error?.message
+               || "Неизвестная ошибка";
 
-// Убираем "Error: ..." из текста
-if (rawReason.startsWith("Error:")) {
-  rawReason = rawReason.replace(/^Error:\s*/, "");
-}
-
-// Кастомные красивые замены
-const reason = rawReason === "not started"
-  ? "📅 Продажа начнётся: 1 июля в 09:00 UTC"
-  : rawReason;
-
-    Swal.fire({
-      icon:             "error",
-      title:            "Ошибка",
-      text:             reason,
-      confirmButtonText:"Ок"
-    });
+  // Убираем "Error:" если есть
+  if (typeof rawReason === "string" && rawReason.startsWith("Error:")) {
+    rawReason = rawReason.replace(/^Error:\s*/, "");
   }
+
+  const reason = rawReason === "not started"
+    ? "📅 Продажа начнётся: 1 июля в 09:00 UTC"
+    : rawReason;
+
+  Swal.fire({
+    icon:             "error",
+    title:            "Ошибка",
+    text:             reason,
+    confirmButtonText:"Ок"
+  });
 }
 window.handlePurchase = handlePurchase;
 
