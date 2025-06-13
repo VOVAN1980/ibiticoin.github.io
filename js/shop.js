@@ -164,16 +164,19 @@ window.closePurchaseModal = () => {
 };
 
 /* ---------- Константы старта ---------- */
-const SALE_START_TS   = Date.parse("2025-07-01T09:00:00Z");        // 09:00 UTC
+const SALE_START_TS   = Date.parse("2025-07-01T09:00:00Z"); // 09:00 UTC
 const SALE_START_TEXT = "Старт 1 июля в 09:00 UTC (12:00 Киев)";
+
+const IS_LOCAL = config.active.networkName === "Localhost";
+
 /* ---------- 6. Покупка ---------- */
 async function handlePurchase(amount, product) {
-  /* 0) Продажа ещё не началась — сообщаем и выходим */
-  if (Date.now() < SALE_START_TS) {
+  /* 0) Продажа ещё не началась — сообщаем и выходим (только вне локалки) */
+  if (!IS_LOCAL && Date.now() < SALE_START_TS) {
     return Swal.fire({
       icon:  "info",
       title: "📅 Продажа не началась",
-      text:  "Старт 1 июля в 09:00 UTC (12:00 Киев)",
+      text:  SALE_START_TEXT,
       confirmButtonText: "Ок"
     });
   }
