@@ -512,46 +512,38 @@
 
     // ✅ Активация после покупки
     window.enableReferralAfterPurchase = async function(account) {
-      const refLink = `${window.location.origin}${window.location.pathname}?ref=${account}`;
-      linkInput.value = refLink;
+  const refLink = `${window.location.origin}${window.location.pathname}?ref=${account}`;
+  linkInput.value = refLink;
 
-      // Копирование в буфер
-      copyBtn.onclick = () => {
-        navigator.clipboard.writeText(refLink).then(() => {
-          toast.style.opacity = "1";
-          setTimeout(() => toast.style.opacity = "0", 2500);
-        });
-      };
+  // Копирование в буфер
+  copyBtn.onclick = () => {
+    navigator.clipboard.writeText(refLink).then(() => {
+      toast.style.opacity = "1";
+      setTimeout(() => toast.style.opacity = "0", 2500);
+    });
+  };
 
-      // Подставляем урлы для шаринга
-      document.getElementById('share-facebook').href   = `https://www.facebook.com/sharer/sharer.php?u=${refLink}`;
-      document.getElementById('share-twitter').href    = `https://twitter.com/intent/tweet?url=${refLink}&text=${pageTitle}`;
-      document.getElementById('share-vk').href         = `https://vk.com/share.php?url=${refLink}&title=${pageTitle}`;
-      document.getElementById('share-telegram').href   = `https://telegram.me/share/url?url=${refLink}&text=${pageTitle}`;
-      document.getElementById('share-ok').href         = `https://connect.ok.ru/offer?url=${refLink}`;
-      document.getElementById('share-linkedin').href   = `https://www.linkedin.com/sharing/share-offsite/?url=${refLink}`;
-      document.getElementById('share-weibo').href      = `http://service.weibo.com/share/share.php?url=${refLink}&title=${pageTitle}`;
+  // Подставляем урлы для шаринга
+  document.getElementById('share-facebook').href   = `https://www.facebook.com/sharer/sharer.php?u=${refLink}`;
+  document.getElementById('share-twitter').href    = `https://twitter.com/intent/tweet?url=${refLink}&text=${pageTitle}`;
+  document.getElementById('share-vk').href         = `https://vk.com/share.php?url=${refLink}&title=${pageTitle}`;
+  document.getElementById('share-telegram').href   = `https://telegram.me/share/url?url=${refLink}&text=${pageTitle}`;
+  document.getElementById('share-ok').href         = `https://connect.ok.ru/offer?url=${refLink}`;
+  document.getElementById('share-linkedin').href   = `https://www.linkedin.com/sharing/share-offsite/?url=${refLink}`;
+  document.getElementById('share-weibo').href      = `http://service.weibo.com/share/share.php?url=${refLink}&title=${pageTitle}`;
 
-      // Открытие/закрытие модалки шаринга
-      openBtn.onclick = () => shareModal.style.display = 'flex';
-      closeBtn.onclick = () => shareModal.style.display = 'none';
-      window.addEventListener('click', e => {
-        if (e.target === shareModal) shareModal.style.display = 'none';
-      });
-
-      // Загружаем статистику из контракта
-      try {
-        const saleContract = getSaleContract();
-        const rawReward    = await saleContract.referralRewards(account);
-        const reward       = Number(ethers.formatUnits(rawReward, 8));
-        const count        = Math.floor(reward);
-
-        rewardEl.innerText  = reward.toFixed(2);
-        countEl.innerText   = count;
-        statsBlock.style.display = "block";
-      } catch (err) {
-        console.warn("Ошибка загрузки реф. статистики:", err);
-      }
-    };
+  // Открытие/закрытие модалки шаринга
+  openBtn.onclick = () => shareModal.style.display = 'flex';
+  closeBtn.onclick = () => shareModal.style.display = 'none';
+  window.addEventListener('click', e => {
+    if (e.target === shareModal) shareModal.style.display = 'none';
   });
-</script>
+
+  // Убираем лишнюю перезапись stats!
+  // Загружаем актуальную статистику корректно
+  if (typeof loadReferralStats === "function") {
+    await loadReferralStats(account);
+  }
+  statsBlock.style.display = "block";
+};
+
