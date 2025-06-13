@@ -194,37 +194,85 @@ window.closePurchaseModal = function() {
 async function handlePurchase(amount, productName) {
   if (!window.ethereum) {
     return Swal.fire({
-      icon:  "warning",
+      icon: "warning",
       title: "MetaMask не найден",
-      text:  "Установите MetaMask для выполнения покупки."
+      text: "Установите MetaMask для выполнения покупки."
     });
   }
 
   Swal.fire({
-    title:   "Ожидание подтверждения...",
-    html:    "Подтвердите транзакцию в кошельке",
+    title: "Ожидание подтверждения...",
+    html: "Подтвердите транзакцию в кошельке",
     allowOutsideClick: false,
     didOpen: () => Swal.showLoading()
   });
 
   try {
-    const decimals        = 8;
+    const decimals = 8;
     const amountFormatted = ethers.parseUnits(amount.toString(), decimals);
-    const paymentMethod   = document.getElementById("paymentToken")?.value;
-    let tx;
+    const paymentMethod = document.getElementById("paymentToken")?.value;
 
     if (productName === "IBITIcoin") {
-  if (paymentMethod === "USDT") {
-    const usdt = new ethers.Contract(config.active.contracts.USDT_TOKEN, ibitiTokenAbi, signer);
-    const usdtBalance = await usdt.balanceOf(selectedAccount);
+      if (paymentMethod === "USDT") {
+        const usdt = new ethers.Contract(config.active.contracts.USDT_TOKEN, ibitiTokenAbi, signer);
+        const usdtBalance = await usdt.balanceOf(selectedAccount);
 
-    } catch (error) {
+        if (usdtBalance < amountFormatted) {
+          throw new Error(`Недостаточно USDT: у вас ${(+ethers.formatUnits(usdtBalance, 18)).toFixed(4)} USDT, требуется ${(+ethers.formatUnits(amountFormatted, 18)).toFixed(4)} USDT`);
+        }
+
+        const referrer = localStorage.getItem("referrer") || ethers.ZeroAddress;
+        const tx = await buyIBITI(amountFormatted, referrer);
+        await tx.wait();
+      } else {
+        throw new Error("Оплата через BNB временно отключена.");
+      }
+    }
+
+    await showIbitiBalance(true);
+
+    if (Number(amount) >= 10) {
+      const key = `referralUnlocked_${selectedAccount}`;
+      localStorage.setItem(key, "1");
+      await loadReferralStats(selectedAccount);
+    }
+
+    Swal.fire({
+      icon: "success",
+      title: "Покупка успешна!",
+      text: "Вы только что приобрели IBITI!",
+      timer: 3000,
+      showConfirmButton: false
+    });
+
+    if (Number(amount) >= 10) {
+      const yourAddr = selectedAccount;
+      const refLink = `${window.location.origin}${window.location.pathname}?ref=${yourAddr}`;
+
+      await Swal.fire({
+        icon: "info",
+        title: "Ваша реферальная ссылка",
+        html: `<a href="${refLink}" target="_blank">${refLink}</a><br>Скопируйте и поделитесь.`,
+        confirmButtonText: "Скопировать",
+        preConfirm: () => navigator.clipboard.writeText(refLink)
+      });
+
+      if (typeof window.enableReferralAfterPurchase === "function") {
+        window.enableReferralAfterPurchase(yourAddr);
+      }
+
+      await loadReferralStats(yourAddr);
+      localStorage.setItem(`referralUnlocked_${yourAddr}`, "1");
+      await loadReferralData();
+    }
+
+  } catch (error) {
     console.warn("Ошибка при покупке:", error);
 
     let rawReason = error?.revert?.args?.[0]
-                 || error?.shortMessage
-                 || error?.message
-                 || "Неизвестная ошибка";
+      || error?.shortMessage
+      || error?.message
+      || "Неизвестная ошибка";
 
     if (typeof rawReason === "string" && rawReason.startsWith("Error:")) {
       rawReason = rawReason.replace(/^Error:\s*/, "");
@@ -240,8 +288,8 @@ async function handlePurchase(amount, productName) {
       text: reason,
       confirmButtonText: "Ок"
     });
-  } // ← ЗАКРЫВАЕМ catch
-} // ← И ЗАКРЫВАЕМ handlePurchase
+  }
+}
 
     const referrer = localStorage.getItem("referrer") || ethers.ZeroAddress;
     tx = await buyIBITI(amountFormatted, referrer);
