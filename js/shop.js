@@ -89,6 +89,10 @@ bonusPoolEl.textContent  = fmt(bonusReserve);
 progressEl.style.width = `${Math.min(Math.max(pct, 0), 100)}%`;
 percentEl.textContent  = `${pct.toFixed(2)}%`;
 lastUpdEl.textContent  = `Обновлено: ${new Date().toLocaleTimeString("ru-RU")}`;
+} catch (e) {
+    console.warn("Ошибка loadReferralStats:", e);
+  }
+}
 
 /* ---------- 3. Реферальная статистика ---------- */
 async function loadReferralStats(account) {
