@@ -267,7 +267,7 @@ async function handlePurchase(amount, productName) {
       await loadReferralData();
     }
 
-  } catch (error) {
+    } catch (error) {
     console.warn("Ошибка при покупке:", error);
 
     let rawReason = error?.revert?.args?.[0]
