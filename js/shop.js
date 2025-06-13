@@ -57,38 +57,38 @@ async function loadSaleStats() {
     }
     const sold = Number(ethers.formatUnits(soldBN, 8));
 
-    /* 3) резервы */
-    // ── пул 10-процентного бонуса ─────────────────────────────
-let bonusReserve = 0;                               // без «500 000» по-умолчанию
+    /* 3) резервы ────────────────────────────────────────── */
+// реферальный резерв
+const refReserveBN  = await saleContract.rewardTokens();
+const refReserveNum = Number(ethers.formatUnits(refReserveBN, 8));
+
+// пул 10-процентного бонуса
+let bonusReserve = 0;
 try {
-  const bonusBN = await saleContract.volReserve();  // читаем volReserve
+  const bonusBN = await saleContract.volReserve();
   bonusReserve  = Number(ethers.formatUnits(bonusBN, 8));
 } catch (e) {
   console.warn("Не удалось получить volReserve:", e);
 }
 
-    /* 4) пул, остаток, процент */
-    const salePool   = cap - refReserve - bonusReserve;
-    const left       = salePool - sold;
-    const pct        = salePool > 0 ? (sold / salePool) * 100 : 0;
-    const fmt        = n => n.toLocaleString("ru-RU",
-                          { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+/* 4) пул, остаток, процент */
+const salePool = cap - refReserveNum - bonusReserve;
+const left     = salePool - sold;
+const pct      = salePool > 0 ? (sold / salePool) * 100 : 0;
+const fmt      = n => n.toLocaleString("ru-RU",
+                  { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-    /* 5) вывод */
-    capEl.textContent        = fmt(cap);
-    refReserveEl.textContent = fmt(refReserve);
-    salePoolEl.textContent   = fmt(salePool);
-    soldEl.textContent       = fmt(sold);
-    leftEl.textContent       = fmt(left);
-    bonusPoolEl.textContent  = fmt(bonusReserve);
+/* 5) вывод в DOM */
+capEl.textContent        = fmt(cap);
+refReserveEl.textContent = fmt(refReserveNum);
+salePoolEl.textContent   = fmt(salePool);
+soldEl.textContent       = fmt(sold);
+leftEl.textContent       = fmt(left);
+bonusPoolEl.textContent  = fmt(bonusReserve);
 
-    progressEl.style.width = `${Math.min(Math.max(pct, 0), 100)}%`;
-    percentEl.textContent  = `${pct.toFixed(2)}%`;
-    lastUpdEl.textContent  = `Обновлено: ${new Date().toLocaleTimeString("ru-RU")}`;
-  } catch (e) {
-    console.warn("Ошибка loadSaleStats:", e);
-  }
-}
+progressEl.style.width = `${Math.min(Math.max(pct, 0), 100)}%`;
+percentEl.textContent  = `${pct.toFixed(2)}%`;
+lastUpdEl.textContent  = `Обновлено: ${new Date().toLocaleTimeString("ru-RU")}`;
 
 /* ---------- 3. Реферальная статистика ---------- */
 async function loadReferralStats(account) {
