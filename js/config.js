@@ -40,7 +40,7 @@ const config = {
   }
 };
 
-// Активная сеть:
-config.active = config.localhost;
+//Активная сеть:
+config.active = config.mainnet;
 
 export default config;
