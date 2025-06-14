@@ -28,33 +28,35 @@ const config = {
   testnet: {
     networkName: "BSC Testnet",
     chainId: 97,
-    rpcUrl: process.env.BSC_RPC_URL,
+    rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
     explorerUrl: "https://testnet.bscscan.com",
     contracts: {
-      USDT_TOKEN:         process.env.USDT_TOKEN_ADDRESS_TESTNET,
-      PANCAKESWAP_ROUTER: process.env.PANCAKESWAP_ROUTER_ADDRESS,
+      USDT_TOKEN:         "0x035cCC27759f99b393B75140a460F9aA591da149",
+      PANCAKESWAP_ROUTER: "0x9ac64cc6e4415144c455bd8e4837fea55603e5c3",
 
-      FEE_MANAGER:        process.env.FEE_MANAGER_ADDRESS,
-      USER_STATUS_MANAGER:process.env.USER_STATUS_MANAGER_ADDRESS,
-      BRIDGE_MANAGER:     process.env.BRIDGE_MANAGER_ADDRESS,
-      NFT_DISCOUNT:       process.env.NFTDISCOUNT_ADDRESS,
-      PRICE_ORACLE:       process.env.IBITI_PRICE_ORACLE_ADDRESS,
-      TEAM_VESTING:       process.env.TEAM_VESTING_ADDRESS,
-      STAKING_MODULE:     process.env.STAKING_MODULE_ADDRESS,
-      DAO_MODULE:         process.env.DAO_MODULE_ADDRESS,
-      IBITI_TOKEN:        process.env.IBITI_TOKEN_ADDRESS,
-      IBITI_NFT:          process.env.IBITINFT_ADDRESS,
-      NFT_SALE_MANAGER:   process.env.NFTSALEMANAGER_ADDRESS,
-      BUYBACK_MANAGER:    process.env.BUYBACK_MANAGER_ADDRESS,
-      // скриптом добавленные:
-      ERC20MOCK:          process.env.ERC20MOCK_ADDRESS,
-      VW_ORACLE:          process.env.VW_ORACLE_ADDRESS,
-      MOCK_PAIR:          process.env.MOCK_PAIR_ADDRESS,
-      MOCK_ROUTER:        process.env.MOCK_ROUTER_ADDRESS,
-      PHASED_SALE:        process.env.PHASED_TOKENSALE_ADDRESS,
+      FEE_MANAGER:        "0xeF25d90ad6911bF25a56D1A2b154db79C7979143",
+      USER_STATUS_MANAGER:"0x447d29C6a64893ACa05EeBDF1340b891494c4977",
+      BRIDGE_MANAGER:     "0x9F95A8711392329065a290d7ec62F02C4D37441B",
+      NFT_DISCOUNT:       "0x29cE5782d4e7D97f06C0E7b6d5D4f92264f1519a",
+      PRICE_ORACLE:       "0x9A2452F1517dF7e55b132De8F5268B9b56Cb37ae",
+      TEAM_VESTING:       "0x7643cFd770eFeB312357434e3410F9E002736aa8",
+      STAKING_MODULE:     "0xD47Ab8B5D0b30EaC0e0074c3B26bF584A7c4C9B7",
+      DAO_MODULE:         "0xD650b6F1f08474DAA24bdd30514EDD18C4fe789E",
+      IBITI_TOKEN:        "0xf6b163BfD9340DF32b475C514E90bD47f3196C4D",
+      IBITI_NFT:          "0xF7d5Fe8586FFf60b8905dB4b84B7bDafB1199545",
+      NFT_SALE_MANAGER:   "0xA3b5C31314960E0E02FdDD05B4f559478214eB7a",
+      BUYBACK_MANAGER:    "0x0e53C3C303720e1f33508f2527767F70ad34AC17",
+
+      // дополнительные, что вы интегрировали
+      ERC20MOCK:          "0xaD416eF7dFA11E36c34Bf9eD95860162f6DDF41B",
+      VW_ORACLE:          "0x77883927FC558B3Ad3300aef47a985B52A43fACB",
+      MOCK_PAIR:          "0x3a8C6c1e311BD1BEc7D50788e146CaeA6CA0c861",
+      MOCK_ROUTER:        "0xC15724FCEd509bB9bCA03936473901Bc4173FEb0",
+      PHASED_SALE:        "0xd5902e4087CAd37F56FDEfe46300fd0803FBE714",
+
       // параметры PhasedTokenSale
-      REF_RESERVE:        Number(process.env.REF_RESERVE),
-      VOL_RESERVE:        Number(process.env.VOL_RESERVE)
+      PHASED_REF_RESERVE: 100000,
+      PHASED_VOL_RESERVE: 500000
     }
   },
 
@@ -72,9 +74,7 @@ const config = {
   }
 };
 
-// Активная сеть: выбирается здесь
-// для Mainnet: config.active = config.mainnet
-// для Testnet: config.active = config.testnet
+// Активная сеть
 config.active = config.testnet;
 
 export default config;
