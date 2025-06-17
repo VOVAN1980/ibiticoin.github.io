@@ -14,7 +14,7 @@ const config = {
       BRIDGE_MANAGER:       "0x813d2d93a3EfDFe8B09513b09B7CbdE06B239113",
       NFTDISCOUNT:          "0x911f7153AA7554b3f936f2ad05318B8368c14668",
       IBITI_PRICE_ORACLE:   "0x09e28925487841f0400687FD9DC9cf1d14B85aF3",
-      TEAM_VESTING:         "0xA8E6a8707EBB386C839881f99391C8af2db3DB5e",
+      TEAM_VESTING:         "0xA8E6a8707EBB386C839881f99391C8af2db3DB5",
       STAKING_MODULE:       "0xd5D138855C7D8F24CD9eE52B65864bC3929a0aA5",
       DAO_MODULE:           "0xd5D170D80aDb59b189873540cFa25Ca508B336d3",
       IBITI_NFT_ADDRESS:    "0xE14bfBB10180eda4bDC574f02700e0E2BC0A4667",
@@ -22,7 +22,8 @@ const config = {
       PHASED_TOKENSALE:     "0x94b9a9b1FEC563cF16cA42a14c81C42284eD6Ca1",
       BUYBACK_MANAGER:      "0xAfDFE70d3531582789D6Ba5Bd56fDCFd43a4AC5E",
       PHASED_REWARD_AMOUNT: 100000000
-    }
+    },
+    referralDeployBlock:  /* TODO: указать номер блока деплоя PhasedTokenSale на Mainnet */
   },
 
   testnet: {
@@ -52,7 +53,8 @@ const config = {
       PHASED_TOKENSALE:  "0xa3C11F6C7cCbA0EeCBb920a43fbA4939956eb929",
       PHASED_REF_RESERVE:100000,
       PHASED_VOL_RESERVE:500000
-    }
+    },
+    referralDeployBlock: 54811712 // номер блока деплоя PhasedTokenSale на Testnet
   },
 
   localhost: {
