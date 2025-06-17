@@ -109,13 +109,11 @@ async function loadReferralStats(account) {
     const friends  = Number(ethers.formatUnits(refTokBN, 8));
     refCountEl.textContent = friends.toString();
 
+    /* 2) суммируем объём-бонусы из Bought(account) */
     const evts = await readSaleContract.queryFilter(
-    readSaleContract.filters.Bought(account),
-    config.active.referralDeployBlock,
-    'latest'
- );
-
-    const volBN = evts.reduce(
+      readSaleContract.filters.Bought(account)
+    );
+      const volBN = evts.reduce(
       (sum, ev) => sum + BigInt(ev.args.bonusIBITI),
       0n
     );
