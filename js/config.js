@@ -27,7 +27,7 @@ const config = {
   },
 
   testnet: {
-    networkName: "BSC Testnet",
+    networkName: "Localhost", // временно обойти проверку даты старта
     chainId: 97,
     rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
     explorerUrl: "https://testnet.bscscan.com",
