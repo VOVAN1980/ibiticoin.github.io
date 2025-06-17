@@ -115,6 +115,7 @@ const evts = await readSaleContract.queryFilter(
   config.active.referralDeployBlock,  // из config.js
   'latest'
 );
+
     const volBN = evts.reduce(
       (sum, ev) => sum + BigInt(ev.args.bonusIBITI),
       0n
