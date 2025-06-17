@@ -672,4 +672,51 @@ html, body {
   text-align: center;         /* по центру */
   margin: 0 auto;
  }
+
+ /* ---------- 12. LEGAL PAGES (terms.html, privacy.html, comment-policy.html) --------- */
+
+.legal-section {
+  max-width: 880px;
+  margin: 40px auto;
+  padding: 20px 30px;
+  background: #0d0d0d;
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  font-size: 1rem;
+  line-height: 1.7;
+  text-align: left;
+}
+.legal-section h2 {
+  color: var(--gold);
+  font-size: 1.4rem;
+  margin-top: 32px;
+}
+.legal-section p,
+.legal-section li {
+  margin-bottom: 16px;
+  color: #eaeaea;
+}
+.legal-section a {
+  color: var(--gold);
+  text-decoration: underline;
+}
+.legal-section a:hover {
+  color: var(--gold-dark);
+}
+
+.legal-footer {
+  background: #111;
+  text-align: center;
+  padding: 24px 12px;
+  font-size: 0.9rem;
+  color: #aaa;
+  border-top: 1px solid var(--gold);
+}
+.legal-footer a {
+  color: var(--gold);
+  text-decoration: none;
+}
+.legal-footer a:hover {
+  text-decoration: underline;
+}
 }
