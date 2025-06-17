@@ -1,9 +1,8 @@
 // config.js — конфиг только для BSC Testnet
-// config.js — конфиг только для BSC Testnet
 const config = {
   active: {
     // Для тестнета ставим "Localhost", чтобы обходить UI‑проверку старта
-    networkName: "Localhost",
+    networkName: "BSC Testnet",
     chainId: 97,
     rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
     explorerUrl: "https://testnet.bscscan.com",
@@ -31,7 +30,7 @@ const config = {
       PHASED_VOL_RESERVE:  500000
     },
     // от блока деплоя PhasedTokenSale (последнее событие Bought ещё не было) — минимальный диапазон
-    referralDeployBlock: 55142988
+    referralDeployBlock: 54810745
   }
 };
 
