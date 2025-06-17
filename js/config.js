@@ -2,7 +2,7 @@
 const config = {
   active: {
     // Для тестнета ставим "Localhost", чтобы обходить UI‑проверку старта
-    networkName: "BSC Testnet",
+     networkName: "Localhost",
     chainId: 97,
     rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
     explorerUrl: "https://testnet.bscscan.com",
