@@ -645,75 +645,86 @@
 
   // --- Основной поток автодобавления токена (исправленная версия)
   async function addTokenEip747(){
-    // 0) есть ли провайдер?
-    if (!hasEthereum()){
-      openInstallMM();
-      return;
-    }
+  // Пишем в консоль, чтобы видеть, что клик дошёл
+  console.debug('[addTokenEip747] click');
 
-    // 1) переключаем/добавляем сеть BSC (0x38)
-    const bscId = '0x38';
-    try {
-      const current = await window.ethereum.request({ method: 'eth_chainId' });
-      if (current !== bscId) {
-        try {
-          await window.ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: bscId }]
+  // 0) Берём именно MetaMask/Trust, а не Coinbase
+  const eth =
+    (window.ethereum?.providers?.find(p => p.isMetaMask) ||
+     window.ethereum?.providers?.find(p => p.isTrust)    ||
+     window.ethereum);
+
+  if (!eth || typeof eth.request !== 'function') {
+    // Браузер без web3 — показываем вашу модалку установки
+    openInstallMM();
+    return;
+  }
+
+  // 1) Переключаем сеть на BSC (0x38) через выбранный провайдер
+  const bscId = '0x38';
+  try {
+    const current = await eth.request({ method: 'eth_chainId' });
+    if (current !== bscId) {
+      try {
+        await eth.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: bscId }]
+        });
+      } catch (e) {
+        if (e && e.code === 4902) {
+          await eth.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: bscId,
+              chainName: 'BNB Smart Chain',
+              nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+              rpcUrls: ['https://bsc-dataseed.binance.org'],
+              blockExplorerUrls: ['https://bscscan.com']
+            }]
           });
-        } catch (e) {
-          if (e && e.code === 4902) {
-            await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [{
-                chainId: bscId,
-                chainName: 'BNB Smart Chain',
-                nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
-                rpcUrls: ['https://bsc-dataseed.binance.org'],
-                blockExplorerUrls: ['https://bscscan.com']
-              }]
-            });
-          } else {
-            throw e;
-          }
+        } else {
+          throw e;
         }
       }
-    } catch (netErr) {
-      console.error('switch/add chain error:', netErr);
-      alert('Не удалось переключить сеть на BSC. Выберите BNB Smart Chain в кошельке.');
-      return;
     }
+  } catch (netErr) {
+    console.error('switch/add chain error:', netErr);
+    alert('Не удалось переключить сеть на BSC. Выберите BNB Smart Chain в кошельке.');
+    return;
+  }
 
-    // 2) добавляем сам токен
-    try {
-      const added = await window.ethereum.request({
-        method: 'wallet_watchAsset',
-        params: {
-          type: 'ERC20',
-          options: {
-            address: IBITI_TOKEN.address,
-            symbol:  IBITI_TOKEN.symbol,
-            decimals: IBITI_TOKEN.decimals,
-            image:   IBITI_TOKEN.image
-          }
+  // 2) Добавляем токен
+  try {
+    const added = await eth.request({
+      method: 'wallet_watchAsset',
+      params: {
+        type: 'ERC20',
+        options: {
+          address: IBITI_TOKEN.address,
+          symbol:  IBITI_TOKEN.symbol,
+          decimals: IBITI_TOKEN.decimals,
+          image:   IBITI_TOKEN.image
         }
-      });
+      }
+    });
 
-      if (added) {
-        toast('✅ IBITI добавлен в кошелёк');
-        closeAddTokenModal();
-      } else {
-        toast('ℹ️ Добавление отменено');
-      }
-    } catch (err) {
-      if (err && err.code === 4001) {
-        toast('ℹ️ Действие отменено пользователем');
-      } else {
-        console.error('wallet_watchAsset error:', err);
-        alert('Не удалось добавить токен. Убедись, что кошелёк установлен и разблокирован.');
-      }
+    if (added) {
+      toast('✅ IBITI добавлен в кошелёк');
+      closeAddTokenModal();
+    } else {
+      toast('ℹ️ Добавление отменено');
+    }
+  } catch (err) {
+    if (err && err.code === 4001) {
+      toast('ℹ️ Действие отменено пользователем');
+    } else if (err && (err.code === -32601 || String(err.message||'').includes('watchAsset'))) {
+      alert('Этот кошелёк не поддерживает авто-добавление. Откройте сайт в MetaMask/Trust или добавьте вручную.');
+    } else {
+      console.error('wallet_watchAsset error:', err);
+      alert('Не удалось добавить токен. Убедитесь, что кошелёк установлен и разблокирован.');
     }
   }
+}
 
   // --- Кнопки в Coinbase-блоке
   function copyText(sel){
@@ -743,6 +754,7 @@
 
 </body>
 </html>
+
 
 
 
