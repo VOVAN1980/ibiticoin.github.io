@@ -25,6 +25,39 @@ const ibitiTokenRead = new ethers.Contract(
   rpcProvider
 );
 
+// === УСТОЙЧИВЫЙ СБОР ЛОГОВ Bought(account) ПО ЧАНКАМ ===
+async function fetchBoughtLogsSafe(account, startBlock, endBlock) {
+  const logs = [];
+  let from = startBlock;
+  let step = 100_000;        // стартовый размер окна
+  const MIN_STEP = 10_000;   // ниже не опускаем
+
+  while (from <= endBlock) {
+    const to = Math.min(from + step - 1, endBlock);
+    try {
+      const chunk = await readSaleContract.queryFilter(
+        readSaleContract.filters.Bought(account),
+        from,
+        to
+      );
+      if (chunk && chunk.length) logs.push(...chunk);
+
+      // успех: двигаем окно и немного увеличиваем шаг
+      from = to + 1;
+      if (step < 150_000) step = Math.floor(step * 1.25);
+    } catch (e) {
+      const msg = String(e?.message || e);
+      // если RPC ругается на диапазон — уменьшаем шаг и пробуем снова
+      if (/range is too large|block range/i.test(msg) && step > MIN_STEP) {
+        step = Math.max(MIN_STEP, Math.floor(step / 2));
+        continue; // повторяем тот же from с новым шагом
+      }
+      throw e; // другие ошибки наружу
+    }
+  }
+  return logs;
+}
+
 /* ---------- 2. Загрузка статистики продажи ---------- */
 async function loadSaleStats() {
   // если на странице нет #cap, значит это не shop-страница → тихо выходим
@@ -374,6 +407,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 console.log("✅ shop.js загружен");
+
 
 
 
