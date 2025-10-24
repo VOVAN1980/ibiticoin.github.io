@@ -553,6 +553,8 @@
 };
 </script>  <!-- ← закрыли module-скрипт -->
 
+</script>  <!-- ← это закрывает твой script type="module" выше -->
+
 <!-- ===== ADD IBITI TOKEN MODAL ===== -->
 <div id="addTokenModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;align-items:center;justify-content:center;">
   <div style="background:#111;padding:18px 18px 14px;border:1px solid gold;border-radius:10px;max-width:420px;width:92%;color:#ffd700;position:relative;">
@@ -587,7 +589,7 @@
   </div>
 </div>
 
-<!-- ВАЖНО: этот скрипт НЕ module, чтобы функции были в window -->
+<!-- НЕ module: функции должны быть в window -->
 <script>
   const IBITI_TOKEN = {
     address: '0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196',
@@ -596,6 +598,7 @@
     image:   'https://ibiticoin.com/img/IBITI-512.png'
   };
 
+  // --- Модалка выбора кошелька
   function openAddTokenModal(){
     const m = document.getElementById('addTokenModal');
     m.style.display = 'flex';
@@ -605,13 +608,39 @@
     document.getElementById('addTokenModal').style.display='none';
   }
 
+  // --- Модалка "Установите MetaMask"
+  function openInstallMM(){ 
+    const m = document.getElementById('installMM'); 
+    m.style.display='flex'; 
+    m.onclick=(e)=>{ if(e.target===m) closeInstallMM(); }; 
+  }
+  function closeInstallMM(){ 
+    document.getElementById('installMM').style.display='none'; 
+  }
+
+  // --- Тост-уведомление
+  function toast(msg){
+    const el = document.getElementById('toastOK');
+    el.textContent = msg;
+    el.style.opacity = '1';
+    setTimeout(()=> el.style.opacity='0', 2200);
+  }
+
+  // --- Проверка наличия web3-провайдера
+  function hasEthereum(){
+    return !!(window.ethereum && typeof window.ethereum.request === 'function');
+  }
+
+  // --- Основной UX-поток автодобавления
   async function addTokenEip747(){
-    if (!window.ethereum?.request){
-      alert('MetaMask/совместимый кошелёк не найден в браузере.');
+    // нет провайдера — предложим установить MetaMask
+    if (!hasEthereum()){
+      openInstallMM();
       return;
     }
     try {
-      const bscId = '0x38'; // BNB Smart Chain
+      // 1) Переключаем/добавляем сеть BSC при необходимости
+      const bscId = '0x38'; // BSC mainnet
       const current = await window.ethereum.request({ method:'eth_chainId' });
       if (current !== bscId){
         try {
@@ -631,20 +660,34 @@
           } else { throw e; }
         }
       }
-      await window.ethereum.request({
+
+      // 2) Добавляем сам токен
+      const added = await window.ethereum.request({
         method:'wallet_watchAsset',
         params:{ type:'ERC20', options: IBITI_TOKEN }
       });
-      closeAddTokenModal();
+
+      if (added) {
+        toast('✅ IBITI добавлен в кошелёк');
+        closeAddTokenModal();
+      } else {
+        toast('ℹ️ Добавление отменено');
+      }
     } catch(err){
-      console.error(err);
-      alert('Не удалось добавить токен. Убедись, что кошелёк установлен и разблокирован.');
+      // Отказ пользователя в MetaMask — code 4001
+      if (err && err.code === 4001) {
+        toast('ℹ️ Действие отменено пользователем');
+      } else {
+        console.error('Add IBITI error:', err);
+        alert('Не удалось добавить токен. Проверь, что кошелёк установлен и разблокирован.');
+      }
     }
   }
 
+  // --- Кнопки в Coinbase-блоке
   function copyText(sel){
     const text = document.querySelector(sel).textContent.trim();
-    navigator.clipboard.writeText(text).then(()=>alert('Адрес скопирован'));
+    navigator.clipboard.writeText(text).then(()=>toast('✅ Адрес скопирован'));
   }
   function openBscscan(){
     window.open('https://bscscan.com/token/'+IBITI_TOKEN.address,'_blank');
@@ -652,7 +695,7 @@
 </script>
 <!-- ===== /ADD IBITI TOKEN MODAL ===== -->
 
-  <!-- Toast -->
+<!-- Toast -->
 <div id="toastOK" style="position:fixed;right:20px;bottom:24px;background:#0b0f1a;border:1px solid #10b981;color:#d1fae5;padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:4000"></div>
 
 <!-- Install MetaMask modal -->
@@ -668,6 +711,8 @@
 
 </body>
 </html>
+
+
 
 
 
