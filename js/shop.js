@@ -165,7 +165,7 @@ const volBN = evts.reduce((sum, ev) => {
   return sum + BigInt(add);
 }, 0n);
 
-    bonusEl.textContent = Number(ethers.formatUnits(volBN, 8)).toFixed(2);
+bonusEl.textContent = Number(ethers.formatUnits(volBN, 8)).toFixed(2);
     block.style.display = "block";
   } catch (e) {
   console.warn("Ошибка loadReferralStats:", e);
@@ -417,6 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 console.log("✅ shop.js загружен");
+
 
 
 
