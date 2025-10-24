@@ -109,25 +109,40 @@ async function loadReferralStats(account) {
     const friends  = Number(ethers.formatUnits(refTokBN, 8));
     refCountEl.textContent = friends.toString();
 
-    // --- ограничим диапазон блоков, чтобы RPC не ругался "Block range is too large"
+   // --- читаем Bought(account) с блока деплоя, но чанками, чтобы не ловить "Block range is too large"
 const latest    = await rpcProvider.getBlockNumber();
-const LOOKBACK  = 250_000; // запас на случай отсутствия saleDeployBlock
-const FROM_BASE = Number(config.active?.saleDeployBlock ?? 0);
-const from      = Math.max(FROM_BASE, latest - LOOKBACK);
+const DEPLOY    = Number(config.active?.saleDeployBlock ?? 0);
 
-const evts = await readSaleContract.queryFilter(
-  readSaleContract.filters.Bought(account),
-  from,
-  latest
-);
-     const volBN = evts.reduce((sum, ev) => {
+// если знаем блок деплоя — идём от него чанками; иначе — fallback на скользящее окно
+let evts = [];
+if (DEPLOY > 0) {
+  const STEP = 100_000; // размер чанка; можно 50–200k
+  for (let from = DEPLOY; from <= latest; from += STEP) {
+    const to = Math.min(from + STEP - 1, latest);
+    const chunk = await readSaleContract.queryFilter(
+      readSaleContract.filters.Bought(account),
+      from,
+      to
+    );
+    if (chunk.length) evts.push(...chunk);
+  }
+} else {
+  const LOOKBACK = 250_000; // как у тебя
+  const from = Math.max(0, latest - LOOKBACK);
+  evts = await readSaleContract.queryFilter(
+    readSaleContract.filters.Bought(account),
+    from,
+    latest
+  );
+}
+
+const volBN = evts.reduce((sum, ev) => {
   const add = ev?.args?.bonusIBITI ?? 0n;
   return sum + BigInt(add);
 }, 0n);
-bonusEl.textContent = Number(ethers.formatUnits(volBN, 8)).toFixed(2);
 
-    block.style.display = "block";
-  } catch (e) {
+bonusEl.textContent = Number(ethers.formatUnits(volBN, 8)).toFixed(2);
+block.style.display = "block";
     console.warn("Ошибка loadReferralStats:", e);
   }
 }
@@ -377,6 +392,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 console.log("✅ shop.js загружен");
+
 
 
 
