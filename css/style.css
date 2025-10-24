@@ -783,108 +783,94 @@ html, body {
   color: #fff;
 }
 
-/* ==== Wallet modal: стекло + blur, как у "Добавить IBITI" ==== */
-#walletModal{
-  display:none;                /* управляется твоим JS */
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.45);  /* затемнение */
-  backdrop-filter: blur(6px);  /* BLUR фон */
+/* === Выбор кошелька — стиль как у Add IBITI === */
+#walletModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  z-index:3000;
-  justify-content:center;
-  align-items:center;
+  z-index: 3000;
+  align-items: center;
+  justify-content: center;
 }
 
-#walletModal .wallet-glass{
-  position:relative;
-  width:90%;
-  max-width:420px;
-  padding:18px 18px 14px;
-  border-radius:12px;
-  background:rgba(17,17,17,.92);
-  border:1px solid rgba(255,215,0,.6);
+/* Контейнер */
+#walletModal .modal-content {
+  position: relative;
+  background: rgba(17, 17, 17, 0.9);
+  border: 1px solid gold;
+  border-radius: 12px;
+  padding: 20px 24px 16px;
+  width: 92%;
+  max-width: 420px;
+  color: #ffd700;
   box-shadow:
-    0 10px 30px rgba(0,0,0,.6),
-    0 0 0 1px rgba(255,215,0,.12) inset;
-  animation: fadeInScale .22s ease-out;
+    0 10px 30px rgba(0, 0, 0, 0.6),
+    0 0 12px rgba(255, 215, 0, 0.1) inset;
+  animation: fadeInScale 0.25s ease-out;
 }
 
-#walletModal .wallet-title{
-  margin:0 0 12px;
-  font-size:18px;
-  color:#ffd700;
-  text-align:center;
-  letter-spacing:.2px;
+/* Заголовок */
+#walletModal h2 {
+  font-size: 1.15rem;
+  margin: 0 0 12px;
+  color: #ffd700;
+  text-align: center;
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.4);
 }
 
-/* крестик в правом верхнем углу */
-#walletModal .close-x{
-  position:absolute;
-  top:8px;
-  right:10px;
-  width:28px; height:28px;
-  border:0;
-  border-radius:6px;
-  background:transparent;
-  color:#e5e7eb;
-  font-size:18px;
-  line-height:28px;
-  cursor:pointer;
-  transition: transform .15s ease, color .15s ease, background .15s ease;
+/* Крестик */
+#walletModal .close-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
 }
-#walletModal .close-x:hover{
-  transform: scale(1.08);
-  color:#fff;
-  background:rgba(255,255,255,.06);
+#walletModal .close-btn:hover {
+  transform: scale(1.15);
+  color: #ffd700;
 }
 
-/* кнопки внутри модалки */
-#walletModal .modal-btn{
-  width:100%;
-  margin:8px 0;
-  padding:12px 14px;
-  border:1px solid #3f3f46;
-  border-radius:10px;
-  font-weight:700;
-  cursor:pointer;
-  transition: transform .12s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+/* Кнопки */
+#walletModal button {
+  display: block;
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid #3f3f46;
+  margin: 8px 0;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
-/* золото — как в Add IBITI */
-#walletModal .btn-gold{
-  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-  color:#000;
-  border-color: rgba(255,215,0,.35);
-  box-shadow: 0 0 0 0 rgba(255,215,0,.0);
+/* Первая — золотая (MetaMask / Trust / Binance) */
+#walletModal button:first-of-type {
+  background: linear-gradient(135deg, #0b2e1f, #052e2b);
+  border-color: #10b981;
+  color: #d1fae5;
 }
-#walletModal .btn-gold:hover{
+#walletModal button:first-of-type:hover {
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(255,215,0,.18);
 }
 
-/* синий для Coinbase */
-#walletModal .btn-blue{
-  background:#0b5cff;
-  color:#fff;
-  border-color: rgba(11,92,255,.5);
-  box-shadow: 0 0 0 0 rgba(11,92,255,.0);
+/* Вторая — синяя (Coinbase) */
+#walletModal button:last-of-type {
+  background: #0b0f1a;
+  color: #e5e7eb;
 }
-#walletModal .btn-blue:hover{
+#walletModal button:last-of-type:hover {
+  background: #111827;
+  border-color: #2563eb;
+  box-shadow: 0 0 15px rgba(37, 99, 235, 0.3);
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(11,92,255,.25);
-}
-
-/* мобильные штрихи */
-@media (max-width:480px){
-  #walletModal .wallet-glass{ width:94%; padding:16px; }
-  #walletModal .modal-btn{ padding:11px 12px; }
-  #walletModal .wallet-title{ font-size:16px; }
-}
-
-/* если у тебя ещё нет fadeInScale, добавь: */
-@keyframes fadeInScale{
-  from{ opacity:0; transform:scale(.96); }
-  to  { opacity:1; transform:scale(1); }
 }
 
