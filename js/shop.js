@@ -335,7 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* 7.2 первичная загрузка */
   loadSaleStats();
-  loadReferralData();
+// loadReferralData(); // включишь обратно, когда убедишься, что всё ок
 
   // таймер нужен только на страницах, где есть #cap
   if (document.getElementById("cap")) {
@@ -419,6 +419,7 @@ btnCb?.addEventListener("click", async () => {
 });
 
 console.log("✅ shop.js загружен");
+
 
 
 
