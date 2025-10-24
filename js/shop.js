@@ -119,10 +119,10 @@ const evts = await readSaleContract.queryFilter(
   from,
   latest
 );
-      const volBN = evts.reduce(
-      (sum, ev) => sum + BigInt(ev.args.bonusIBITI),
-      0n
-    );
+     const volBN = evts.reduce((sum, ev) => {
+  const add = ev?.args?.bonusIBITI ?? 0n;
+  return sum + BigInt(add);
+}, 0n);
     bonusEl.textContent =
       Number(ethers.formatUnits(volBN, 8)).toFixed(2);
 
@@ -377,4 +377,5 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 console.log("✅ shop.js загружен");
+
 
