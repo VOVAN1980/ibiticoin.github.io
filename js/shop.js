@@ -104,49 +104,48 @@ async function loadReferralStats(account) {
   if (!sale) return;
 
   try {
-    /* 1) сколько друзей (1 IBI = 1 друг) */
+    // 1) сколько друзей (1 IBI = 1 друг)
     const refTokBN = await sale.referralRewards(account);
     const friends  = Number(ethers.formatUnits(refTokBN, 8));
     refCountEl.textContent = friends.toString();
 
-   try {
-  // --- читаем Bought(account) с блока деплоя чанками, чтобы не ловить "Block range is too large"
-  const latest = await rpcProvider.getBlockNumber();
-  const DEPLOY = Number(config.active?.saleDeployBlock ?? 0);
+    // 2) суммируем объём-бонусы из Bought(account) — чанками
+    const latest = await rpcProvider.getBlockNumber();
+    const DEPLOY = Number(config.active?.saleDeployBlock ?? 0);
 
-  let evts = [];
-  if (DEPLOY > 0) {
-    const STEP = 100_000; // размер чанка: 50–200k норм
-    for (let from = DEPLOY; from <= latest; from += STEP) {
-      const to = Math.min(from + STEP - 1, latest);
-      const chunk = await readSaleContract.queryFilter(
+    let evts = [];
+    if (DEPLOY > 0) {
+      const STEP = 100_000; // 50–200k норм
+      for (let from = DEPLOY; from <= latest; from += STEP) {
+        const to = Math.min(from + STEP - 1, latest);
+        const chunk = await readSaleContract.queryFilter(
+          readSaleContract.filters.Bought(account),
+          from,
+          to
+        );
+        if (chunk?.length) evts.push(...chunk);
+      }
+    } else {
+      const LOOKBACK = 250_000;
+      const from = Math.max(0, latest - LOOKBACK);
+      evts = await readSaleContract.queryFilter(
         readSaleContract.filters.Bought(account),
         from,
-        to
+        latest
       );
-      if (chunk?.length) evts.push(...chunk);
     }
-  } else {
-    // fallback, если блок деплоя неизвестен
-    const LOOKBACK = 250_000;
-    const from = Math.max(0, latest - LOOKBACK);
-    evts = await readSaleContract.queryFilter(
-      readSaleContract.filters.Bought(account),
-      from,
-      latest
-    );
-  }
 
-  const volBN = evts.reduce((sum, ev) => {
-    const add = ev?.args?.bonusIBITI ?? 0n; // в v6 это уже BigInt
-    return sum + BigInt(add);
-  }, 0n);
+    const volBN = evts.reduce((sum, ev) => {
+      const add = ev?.args?.bonusIBITI ?? 0n;
+      return sum + BigInt(add);
+    }, 0n);
 
-  bonusEl.textContent = Number(ethers.formatUnits(volBN, 8)).toFixed(2);
-  block.style.display = "block";
-} catch (e) {
-  console.warn("Ошибка loadReferralStats:", e);
+    bonusEl.textContent = Number(ethers.formatUnits(volBN, 8)).toFixed(2);
+    block.style.display = "block";
+  } catch (e) {
+    console.warn("Ошибка loadReferralStats:", e);
   }
+}
 
 /* проверяем, может ли текущий акк видеть панель-рефералку */
 async function loadReferralData() {
@@ -393,6 +392,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 console.log("✅ shop.js загружен");
+
 
 
 
