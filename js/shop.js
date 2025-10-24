@@ -13,12 +13,8 @@ import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
 import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 import { ibitiTokenAbi } from "./abis/ibitiTokenAbi.js";
 
-/* ---------- 0. Провайдеры (fallback) ---------- */
-const providers = [
-  new ethers.JsonRpcProvider("https://bsc-dataseed.binance.org"),
-  new ethers.JsonRpcProvider(config.active.rpcUrl)
-];
-const rpcProvider = new ethers.FallbackProvider(providers, 1);
+/* ---------- 0. Провайдер (фиксированная сеть BSC) ---------- */
+const rpcProvider = new ethers.JsonRpcProvider(config.active.rpcUrl, 56);
 
 /* ---------- 1. Контракты только-для-чтения ---------- */
 const readSaleContract = new ethers.Contract(
@@ -405,3 +401,4 @@ console.log("✅ shop.js загружен");
 /* ---------- 8. Экспорт некоторых функций в window для inline-скриптов ---------- */
 window.loadReferralStats = loadReferralStats;
 window.loadReferralData  = loadReferralData;
+
