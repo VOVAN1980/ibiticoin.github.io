@@ -140,13 +140,13 @@
     document.getElementById('installMM').style.display='none'; 
   }
 
-  // --- Тост-уведомление
   function toast(msg){
-    const el = document.getElementById('toastOK');
-    el.textContent = msg;
-    el.style.opacity = '1';
-    setTimeout(()=> el.style.opacity='0', 2200);
-  }
+  const el = document.getElementById('toastOK');
+  el.textContent = msg;
+  el.style.opacity = '1';
+  clearTimeout(el._timer);
+  el._timer = setTimeout(()=> el.style.opacity='0', 2600);
+}
 
   // --- Проверка наличия web3-провайдера
   function hasEthereum(){
@@ -229,6 +229,7 @@
 
 </body>
 </html>
+
 
 
 
