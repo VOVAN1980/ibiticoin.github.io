@@ -613,21 +613,11 @@ footer a:hover{text-decoration:underline}
 }
 
 @media (max-width: 768px) {
-  .roadmap h2 {
-    font-size: 1.8rem;
-  }
-
-  .roadmap-item {
-    padding: 16px 20px;
-  }
-
-  .roadmap-item h3 {
-    font-size: 1.2rem;
-  }
-
-  .roadmap-item p {
-    font-size: 1rem;
-  }
+  .roadmap h2 { font-size: 1.8rem; }
+  .roadmap-item { padding: 16px 20px; }
+  .roadmap-item h3 { font-size: 1.2rem; }
+  .roadmap-item p { font-size: 1rem; }
+} /* ← ЭТОЙ скобки сейчас не хватает */
 
   /* В css/style.css: */
 #walletModal {
@@ -737,4 +727,40 @@ html, body {
 /* Плавное появление/скрытие тоста */
 #toastOK {
   transition: opacity 0.4s ease;
+}
+
+/* === Modern touch для модалки выбора кошелька ====================== */
+#walletModal {
+  /* мягкое затемнение + лёгкий blur фона */
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+}
+
+#walletModal .modal-content {
+  background: rgba(17,17,17,0.85);
+  border: 1px solid rgba(255,215,0,0.35);
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+  transform-origin: center;
+  animation: fadeInScale .25s ease-out;
+}
+
+/* ховер на кнопках внутри модалки */
+#walletModal button {
+  transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+#walletModal button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(255,215,0,0.35);
+}
+
+/* если модалка раскрывается через display:flex|block — тоже анимируем */
+#walletModal[style*="display:"] .modal-content {
+  animation: fadeInScale .25s ease-out;
+}
+
+/* уже есть, но на всякий: плавная анимация масштаб+появление */
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(.92); }
+  to   { opacity: 1; transform: scale(1); }
 }
