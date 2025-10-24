@@ -756,15 +756,18 @@
   window.addTokenEip747 = addTokenEip747;
 </script>
 
+<script>
   document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('btnAddTokenAuto');
     if (btn) btn.addEventListener('click', (e) => {
       e.preventDefault();
-      addTokenEip747();
+      // на всякий случай лог
+      console.debug('[btnAddTokenAuto] click; has addTokenEip747 =', typeof window.addTokenEip747);
+      if (window.addTokenEip747) window.addTokenEip747();
     });
   });
 
-  // --- Кнопки в Coinbase-блоке (ручной импорт)
+  // Кнопки Coinbase-блока
   function copyText(sel){
     const text = document.querySelector(sel).textContent.trim();
     navigator.clipboard.writeText(text).then(() => toast('✅ Адрес скопирован'));
@@ -792,6 +795,7 @@
 
 </body>
 </html>
+
 
 
 
