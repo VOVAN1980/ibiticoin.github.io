@@ -552,4 +552,106 @@
   statsBlock.style.display = "block";
 };
 
+<!-- ===== ADD IBITI TOKEN MODAL ===== -->
+<div id="addTokenModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;align-items:center;justify-content:center;">
+  <div style="background:#111;padding:18px 18px 14px;border:1px solid gold;border-radius:10px;max-width:420px;width:92%;color:#ffd700;position:relative;">
+    <button onclick="closeAddTokenModal()" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer;">✕</button>
+    <h3 style="margin:0 0 10px;font-size:18px;">Куда добавить токен IBITI?</h3>
+
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button onclick="addTokenEip747()" style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
+        MetaMask / Trust Wallet / Binance Wallet (авто)
+      </button>
+
+      <details style="background:#0b0f1a;border:1px solid #333;border-radius:8px;padding:10px;">
+        <summary style="cursor:pointer;color:#e5e7eb">Coinbase Wallet (ручное добавление)</summary>
+        <div style="margin-top:10px;color:#e5e7eb;font-size:14px;line-height:1.4">
+          Открой Coinbase Wallet → <b>Tokens</b> → <b>+</b> → <b>Import Token</b> → вставь:
+          <div style="margin-top:8px">
+            <div>Contract: <code id="ctAddr">0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196</code></div>
+            <div>Symbol: <code>IBITI</code></div>
+            <div>Decimals: <code>8</code></div>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+            <button onclick="copyText('#ctAddr')" style="padding:6px 10px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">Скопировать адрес</button>
+            <button onclick="openBscscan()" style="padding:6px 10px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">Открыть в BscScan</button>
+          </div>
+        </div>
+      </details>
+
+      <div style="font-size:12px;color:#9ca3af;margin-top:4px">
+        Если у тебя мобильный Trust Wallet, открой сайт в их DApp-браузере и нажми кнопку авто-добавления.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ВАЖНО: этот скрипт НЕ module, чтобы функции были в window -->
+<script>
+  const IBITI_TOKEN = {
+    address: '0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196',
+    symbol:  'IBITI',
+    decimals: 8,
+    image:   'https://ibiticoin.com/img/IBITI-512.png'
+  };
+
+  function openAddTokenModal(){
+    const m = document.getElementById('addTokenModal');
+    m.style.display = 'flex';
+    m.onclick = (e)=>{ if (e.target === m) closeAddTokenModal(); };
+  }
+  function closeAddTokenModal(){
+    document.getElementById('addTokenModal').style.display='none';
+  }
+
+  async function addTokenEip747(){
+    if (!window.ethereum?.request){
+      alert('MetaMask/совместимый кошелёк не найден в браузере.');
+      return;
+    }
+    try {
+      const bscId = '0x38'; // BNB Smart Chain
+      const current = await window.ethereum.request({ method:'eth_chainId' });
+      if (current !== bscId){
+        try {
+          await window.ethereum.request({ method:'wallet_switchEthereumChain', params:[{ chainId: bscId }] });
+        } catch(e){
+          if (e.code === 4902){
+            await window.ethereum.request({
+              method:'wallet_addEthereumChain',
+              params:[{
+                chainId: bscId,
+                chainName:'BNB Smart Chain',
+                nativeCurrency:{ name:'BNB', symbol:'BNB', decimals:18 },
+                rpcUrls:['https://bsc-dataseed1.bnbchain.org'],
+                blockExplorerUrls:['https://bscscan.com']
+              }]
+            });
+          } else { throw e; }
+        }
+      }
+      await window.ethereum.request({
+        method:'wallet_watchAsset',
+        params:{ type:'ERC20', options: IBITI_TOKEN }
+      });
+      closeAddTokenModal();
+    } catch(err){
+      console.error(err);
+      alert('Не удалось добавить токен. Убедись, что кошелёк установлен и разблокирован.');
+    }
+  }
+
+  function copyText(sel){
+    const text = document.querySelector(sel).textContent.trim();
+    navigator.clipboard.writeText(text).then(()=>alert('Адрес скопирован'));
+  }
+  function openBscscan(){
+    window.open('https://bscscan.com/token/'+IBITI_TOKEN.address,'_blank');
+  }
+</script>
+<!-- ===== /ADD IBITI TOKEN MODAL ===== -->
+
+</body>
+</html>
+
 
