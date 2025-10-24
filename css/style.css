@@ -874,3 +874,33 @@ html, body {
   transform: translateY(-1px);
 }
 
+/* === CONNECT WALLET MODAL — стиль как у Add IBITI === */
+#walletModal .ibiti-card {
+  position: relative; /* важно для крестика */
+  background: #111;
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 18px;
+  width: 92%;
+  max-width: 420px;
+  color: #ffd700;
+  animation: fadeInScale 0.25s ease-out;
+}
+
+#walletModal .ibiti-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: transparent;
+  border: 0;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  transition: color 0.25s, transform 0.25s;
+}
+
+#walletModal .ibiti-close:hover {
+  color: var(--gold);
+  transform: scale(1.2);
+}
+
