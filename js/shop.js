@@ -125,8 +125,8 @@ const volBN = evts.reduce((sum, ev) => {
     bonusEl.textContent = Number(ethers.formatUnits(volBN, 8)).toFixed(2);
     block.style.display = "block";
   } catch (e) {
-    console.warn("Ошибка loadSaleStats:", e);
-  }
+  console.warn("Ошибка loadReferralStats:", e);
+ }
 }
 
 /* проверяем, может ли текущий акк видеть панель-рефералку */
@@ -374,6 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 console.log("✅ shop.js загружен");
+
 
 
 
