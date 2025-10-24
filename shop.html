@@ -642,35 +642,80 @@
     return !!(window.ethereum && typeof window.ethereum.request === 'function');
   }
 
-  // --- Основной UX-поток автодобавления
+  <script>
   async function addTokenEip747(){
-    // нет провайдера — предложим установить MetaMask
-    if (!hasEthereum()){
-      openInstallMM();
+    // 0) есть ли web3-провайдер?
+    if (!window.ethereum || typeof window.ethereum.request !== 'function') {
+      openInstallMM(); // твоя модалка «Установите MetaMask»
       return;
     }
+
+    // 1) убеждаемся, что сеть BSC (0x38)
+    const bscId = '0x38';
     try {
-      // 1) Переключаем/добавляем сеть BSC при необходимости
-      const bscId = '0x38'; // BSC mainnet
-      const current = await window.ethereum.request({ method:'eth_chainId' });
-      if (current !== bscId){
+      const current = await window.ethereum.request({ method: 'eth_chainId' });
+      if (current !== bscId) {
         try {
-          await window.ethereum.request({ method:'wallet_switchEthereumChain', params:[{ chainId: bscId }] });
-        } catch(e){
-          if (e.code === 4902){
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: bscId }]
+          });
+        } catch (e) {
+          if (e && e.code === 4902) {
+            // сети нет — добавим
             await window.ethereum.request({
-              method:'wallet_addEthereumChain',
-              params:[{
+              method: 'wallet_addEthereumChain',
+              params: [{
                 chainId: bscId,
-                chainName:'BNB Smart Chain',
-                nativeCurrency:{ name:'BNB', symbol:'BNB', decimals:18 },
-                rpcUrls:['https://bsc-dataseed1.bnbchain.org'],
-                blockExplorerUrls:['https://bscscan.com']
+                chainName: 'BNB Smart Chain',
+                nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+                rpcUrls: ['https://bsc-dataseed.binance.org'],
+                blockExplorerUrls: ['https://bscscan.com']
               }]
             });
-          } else { throw e; }
+          } else {
+            throw e;
+          }
         }
       }
+    } catch (netErr) {
+      console.error('switch/add chain error:', netErr);
+      alert('Не удалось переключить сеть на BSC. Открой кошелёк и выбери BNB Smart Chain.');
+      return;
+    }
+
+    // 2) собственно добавление токена
+    try {
+      const added = await window.ethereum.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20',
+          options: {
+            address: '0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196',
+            symbol:  'IBITI',
+            decimals: 8,
+            image:   'https://ibiticoin.com/img/IBITI-512.png'
+          }
+        }
+      });
+
+      if (added) {
+        toast('✅ IBITI добавлен в кошелёк'); // твой тост
+        closeAddTokenModal();
+      } else {
+        toast('ℹ️ Добавление отменено');
+      }
+    } catch (err) {
+      // 4001 — отказ пользователя в окне кошелька
+      if (err && err.code === 4001) {
+        toast('ℹ️ Действие отменено пользователем');
+      } else {
+        console.error('wallet_watchAsset error:', err);
+        alert('Не удалось добавить токен. Убедись, что кошелёк установлен и разблокирован.');
+      }
+    }
+  }
+</script>
 
       // 2) Добавляем сам токен
       const added = await window.ethereum.request({
@@ -722,5 +767,6 @@
 
 </body>
 </html>
+
 
 
