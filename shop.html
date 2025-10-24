@@ -609,48 +609,49 @@
     image:   'https://ibiticoin.com/img/IBITI-512.png'
   };
 
-  // --- Модалка выбора кошелька
+  // --- Модалка выбора кошелька (добавить токен)
   function openAddTokenModal(){
     const m = document.getElementById('addTokenModal');
     m.style.display = 'flex';
-    m.onclick = (e)=>{ if (e.target === m) closeAddTokenModal(); };
+    m.onclick = (e) => { if (e.target === m) closeAddTokenModal(); };
   }
   function closeAddTokenModal(){
-    document.getElementById('addTokenModal').style.display='none';
+    document.getElementById('addTokenModal').style.display = 'none';
   }
 
   // --- Модалка "Установите MetaMask"
-  function openInstallMM(){ 
-    const m = document.getElementById('installMM'); 
-    m.style.display='flex'; 
-    m.onclick=(e)=>{ if(e.target===m) closeInstallMM(); }; 
+  function openInstallMM(){
+    const m = document.getElementById('installMM');
+    m.style.display = 'flex';
+    m.onclick = (e) => { if (e.target === m) closeInstallMM(); };
   }
-  function closeInstallMM(){ 
-    document.getElementById('installMM').style.display='none'; 
+  function closeInstallMM(){
+    document.getElementById('installMM').style.display = 'none';
   }
 
+  // --- Тост
   function toast(msg){
-  const el = document.getElementById('toastOK');
-  el.textContent = msg;
-  el.style.opacity = '1';
-  clearTimeout(el._timer);
-  el._timer = setTimeout(()=> el.style.opacity='0', 2600);
-}
+    const el = document.getElementById('toastOK');
+    el.textContent = msg;
+    el.style.opacity = '1';
+    clearTimeout(el._timer);
+    el._timer = setTimeout(() => el.style.opacity = '0', 2600);
+  }
 
   // --- Проверка наличия web3-провайдера
   function hasEthereum(){
     return !!(window.ethereum && typeof window.ethereum.request === 'function');
   }
 
-  <script>
+  // --- Основной поток автодобавления токена (исправленная версия)
   async function addTokenEip747(){
-    // 0) есть ли web3-провайдер?
-    if (!window.ethereum || typeof window.ethereum.request !== 'function') {
-      openInstallMM(); // твоя модалка «Установите MetaMask»
+    // 0) есть ли провайдер?
+    if (!hasEthereum()){
+      openInstallMM();
       return;
     }
 
-    // 1) убеждаемся, что сеть BSC (0x38)
+    // 1) переключаем/добавляем сеть BSC (0x38)
     const bscId = '0x38';
     try {
       const current = await window.ethereum.request({ method: 'eth_chainId' });
@@ -662,7 +663,6 @@
           });
         } catch (e) {
           if (e && e.code === 4902) {
-            // сети нет — добавим
             await window.ethereum.request({
               method: 'wallet_addEthereumChain',
               params: [{
@@ -680,47 +680,23 @@
       }
     } catch (netErr) {
       console.error('switch/add chain error:', netErr);
-      alert('Не удалось переключить сеть на BSC. Открой кошелёк и выбери BNB Smart Chain.');
+      alert('Не удалось переключить сеть на BSC. Выберите BNB Smart Chain в кошельке.');
       return;
     }
 
-    // 2) собственно добавление токена
+    // 2) добавляем сам токен
     try {
       const added = await window.ethereum.request({
         method: 'wallet_watchAsset',
         params: {
           type: 'ERC20',
           options: {
-            address: '0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196',
-            symbol:  'IBITI',
-            decimals: 8,
-            image:   'https://ibiticoin.com/img/IBITI-512.png'
+            address: IBITI_TOKEN.address,
+            symbol:  IBITI_TOKEN.symbol,
+            decimals: IBITI_TOKEN.decimals,
+            image:   IBITI_TOKEN.image
           }
         }
-      });
-
-      if (added) {
-        toast('✅ IBITI добавлен в кошелёк'); // твой тост
-        closeAddTokenModal();
-      } else {
-        toast('ℹ️ Добавление отменено');
-      }
-    } catch (err) {
-      // 4001 — отказ пользователя в окне кошелька
-      if (err && err.code === 4001) {
-        toast('ℹ️ Действие отменено пользователем');
-      } else {
-        console.error('wallet_watchAsset error:', err);
-        alert('Не удалось добавить токен. Убедись, что кошелёк установлен и разблокирован.');
-      }
-    }
-  }
-</script>
-
-      // 2) Добавляем сам токен
-      const added = await window.ethereum.request({
-        method:'wallet_watchAsset',
-        params:{ type:'ERC20', options: IBITI_TOKEN }
       });
 
       if (added) {
@@ -729,13 +705,12 @@
       } else {
         toast('ℹ️ Добавление отменено');
       }
-    } catch(err){
-      // Отказ пользователя в MetaMask — code 4001
+    } catch (err) {
       if (err && err.code === 4001) {
         toast('ℹ️ Действие отменено пользователем');
       } else {
-        console.error('Add IBITI error:', err);
-        alert('Не удалось добавить токен. Проверь, что кошелёк установлен и разблокирован.');
+        console.error('wallet_watchAsset error:', err);
+        alert('Не удалось добавить токен. Убедись, что кошелёк установлен и разблокирован.');
       }
     }
   }
@@ -743,12 +718,13 @@
   // --- Кнопки в Coinbase-блоке
   function copyText(sel){
     const text = document.querySelector(sel).textContent.trim();
-    navigator.clipboard.writeText(text).then(()=>toast('✅ Адрес скопирован'));
+    navigator.clipboard.writeText(text).then(() => toast('✅ Адрес скопирован'));
   }
   function openBscscan(){
-    window.open('https://bscscan.com/token/'+IBITI_TOKEN.address,'_blank');
+    window.open('https://bscscan.com/token/' + IBITI_TOKEN.address, '_blank');
   }
 </script>
+
 <!-- ===== /ADD IBITI TOKEN MODAL ===== -->
 
 <!-- Toast -->
@@ -767,6 +743,7 @@
 
 </body>
 </html>
+
 
 
 
