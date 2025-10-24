@@ -573,13 +573,13 @@
     <h3 style="margin:0 0 10px;font-size:18px;">Куда добавить токен IBITI?</h3>
 
     <div style="display:flex;flex-direction:column;gap:10px">
-    <button
-  id="btnAddTokenAuto"
-  type="button"
-  onclick="window.addTokenEip747 ? window.addTokenEip747() : console.error('addTokenEip747 missing')"
-  style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
-  MetaMask / Trust Wallet / Binance Wallet (авто)
-</button>
+      <button
+        id="btnAddTokenAuto"
+        type="button"
+        onclick="window.addTokenEip747 ? window.addTokenEip747() : console.error('addTokenEip747 missing')"
+        style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
+        MetaMask / Trust Wallet / Binance Wallet (авто)
+      </button>
 
       <details style="background:#0b0f1a;border:1px solid #333;border-radius:8px;padding:10px;">
         <summary style="cursor:pointer;color:#e5e7eb">Coinbase Wallet (ручное добавление)</summary>
@@ -604,8 +604,22 @@
   </div>
 </div>
 
-<!-- НЕ module: функции должны быть в window -->
+<!-- Toast -->
+<div id="toastOK" style="position:fixed;right:20px;bottom:24px;background:#0b0f1a;border:1px solid #10b981;color:#d1fae5;padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:4000"></div>
+
+<!-- Install MetaMask modal -->
+<div id="installMM" style="display:none;position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.6);align-items:center;justify-content:center">
+  <div style="background:#111;border:1px solid gold;border-radius:10px;padding:18px;max-width:420px;width:92%;color:#ffd700;position:relative">
+    <button onclick="closeInstallMM()" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer">✕</button>
+    <h3 style="margin:0 0 10px">Установите MetaMask</h3>
+    <p style="color:#e5e7eb;margin:0 0 12px">Чтобы автоматически добавить токен, нужен кошелёк MetaMask (или совместимый).</p>
+    <a href="https://metamask.io/download/" target="_blank" rel="noopener"
+       style="display:inline-block;padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;text-decoration:none">Скачать MetaMask</a>
+  </div>
+</div>
+
 <script>
+  // ===== Константы токена =====
   const IBITI_TOKEN = {
     address: '0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196',
     symbol:  'IBITI',
@@ -613,168 +627,86 @@
     image:   'https://ibiticoin.com/img/IBITI-512.png'
   };
 
-  // --- Модалка выбора кошелька (добавить токен)
-  function openAddTokenModal(){
-    const m = document.getElementById('addTokenModal');
-    m.style.display = 'flex';
-    m.onclick = (e) => { if (e.target === m) closeAddTokenModal(); };
-  }
-  function closeAddTokenModal(){
-    document.getElementById('addTokenModal').style.display = 'none';
-  }
+  // ===== Вспомогалки =====
+  function openAddTokenModal(){ const m = document.getElementById('addTokenModal'); m.style.display = 'flex'; m.onclick = (e)=>{ if(e.target===m) closeAddTokenModal(); }; }
+  function closeAddTokenModal(){ document.getElementById('addTokenModal').style.display = 'none'; }
+  function openInstallMM(){ const m = document.getElementById('installMM'); m.style.display = 'flex'; m.onclick = (e)=>{ if(e.target===m) closeInstallMM(); }; }
+  function closeInstallMM(){ document.getElementById('installMM').style.display = 'none'; }
+  function toast(msg){ const el = document.getElementById('toastOK'); el.textContent = msg; el.style.opacity='1'; clearTimeout(el._timer); el._timer=setTimeout(()=>el.style.opacity='0',2600); }
 
-  // --- Модалка "Установите MetaMask"
-  function openInstallMM(){
-    const m = document.getElementById('installMM');
-    m.style.display = 'flex';
-    m.onclick = (e) => { if (e.target === m) closeInstallMM(); };
-  }
-  function closeInstallMM(){
-    document.getElementById('installMM').style.display = 'none';
-  }
-
-  // --- Тост
-  function toast(msg){
-    const el = document.getElementById('toastOK');
-    el.textContent = msg;
-    el.style.opacity = '1';
-    clearTimeout(el._timer);
-    el._timer = setTimeout(() => el.style.opacity = '0', 2600);
-  }
-
-  // --- Проверка наличия web3-провайдера
-  function hasEthereum(){
-    return !!(window.ethereum && typeof window.ethereum.request === 'function');
-  }
-
-  // --- Основной поток автодобавления токена
+  // ===== Автодобавление токена (EIP-747) =====
   async function addTokenEip747(){
     console.debug('[addTokenEip747] click');
-
-    // --- Нормализованный выбор провайдера
-    function getPreferredProvider() {
-      // 1) Список всех известных провайдеров, если есть мульти-инжект
-      const list = Array.isArray(window.ethereum?.providers)
-        ? window.ethereum.providers.slice()
-        : [];
-
-      // 2) Если единственный — тоже добавим
+    function getPreferredProvider(){
+      const list = Array.isArray(window.ethereum?.providers) ? window.ethereum.providers.slice() : [];
       if (window.ethereum && !list.length) list.push(window.ethereum);
-
-      // 3) Binance Wallet часто сидит отдельно
       if (window.BinanceChain) list.push(window.BinanceChain);
-
-      // 4) Приоритезируем «нормальные» для watchAsset
-      const flags = [
-        'isMetaMask', 'isTrust', 'isRabby', 'isBraveWallet',
-        'isOkxWallet', 'isBitKeep', 'isTokenPocket', 'isPortal'
-      ];
-
-      let pick =
-        list.find(p => flags.some(f => p && p[f])) // MetaMask/Trust/и пр.
-        || list.find(p => p && (p.isCoinbaseWallet || p.isTally)) // если вдруг
-        || window.BinanceChain
-        || window.ethereum
-        || null;
-
+      const flags = ['isMetaMask','isTrust','isRabby','isBraveWallet','isOkxWallet','isBitKeep','isTokenPocket','isPortal'];
+      let pick = list.find(p => flags.some(f => p && p[f]))
+                 || list.find(p => p && (p.isCoinbaseWallet || p.isTally))
+                 || window.BinanceChain
+                 || window.ethereum
+                 || null;
       return pick && typeof pick.request === 'function' ? pick : null;
     }
 
     const eth = getPreferredProvider();
-    if (!eth) {
-      openInstallMM();  // «Установите кошелёк»
-      return;
-    }
+    if (!eth) { openInstallMM(); return; }
 
-    // --- Переключаемся на BSC (0x38), где это поддерживается
     const bscId = '0x38';
     try {
-      const current = await eth.request({ method: 'eth_chainId' }).catch(() => null);
-
+      const current = await eth.request({ method:'eth_chainId' }).catch(()=>null);
       if (current !== bscId) {
         try {
-          await eth.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: bscId }] });
-        } catch (e) {
+          await eth.request({ method:'wallet_switchEthereumChain', params:[{ chainId:bscId }] });
+        } catch(e){
           if (e && e.code === 4902) {
-            await eth.request({
-              method: 'wallet_addEthereumChain',
-              params: [{
-                chainId: bscId,
-                chainName: 'BNB Smart Chain',
-                nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
-                rpcUrls: ['https://bsc-dataseed.binance.org'],
-                blockExplorerUrls: ['https://bscscan.com']
-              }]
-            });
-          } else {
-            throw e;
-          }
+            await eth.request({ method:'wallet_addEthereumChain', params:[{
+              chainId:bscId, chainName:'BNB Smart Chain',
+              nativeCurrency:{ name:'BNB', symbol:'BNB', decimals:18 },
+              rpcUrls:['https://bsc-dataseed.binance.org'], blockExplorerUrls:['https://bscscan.com']
+            }]});
+          } else { throw e; }
         }
       }
-    } catch (netErr) {
-      console.error('switch/add chain error:', netErr);
+    } catch(e){
+      console.error('switch/add chain error:', e);
       alert('Не удалось переключить сеть на BSC. Выберите BNB Smart Chain в кошельке.');
       return;
     }
 
-    // --- Пробуем EIP-747 (wallet_watchAsset). Для BinanceWallet тоже пробуем — в новых версиях работает.
     try {
       const added = await eth.request({
-        method: 'wallet_watchAsset',
-        params: {
-          type: 'ERC20',
-          options: {
-            address: IBITI_TOKEN.address,
-            symbol:  IBITI_TOKEN.symbol,
-            decimals: IBITI_TOKEN.decimals,
-            image:   IBITI_TOKEN.image
-          }
-        }
+        method:'wallet_watchAsset',
+        params:{ type:'ERC20', options:{
+          address:IBITI_TOKEN.address, symbol:IBITI_TOKEN.symbol,
+          decimals:IBITI_TOKEN.decimals, image:IBITI_TOKEN.image
+        }}
       });
-
-      if (added) {
-        toast('✅ IBITI добавлен в кошелёк');
-        closeAddTokenModal();
-      } else {
-        toast('ℹ️ Добавление отменено');
-      }
-    } catch (err) {
-      // Частые кейсы: -32601 (метод не найден) у старого Binance Wallet/некоторых сборок
-      const msg = String(err?.message || '');
-      if (err?.code === 4001) {
-        toast('ℹ️ Действие отменено пользователем');
-      } else if (err?.code === -32601 || msg.includes('watchAsset')) {
-        alert('Этот кошелёк не поддерживает авто-добавление. Открой сайт в MetaMask/Trust или добавь токен вручную.');
-      } else {
-        console.error('wallet_watchAsset error:', err);
-        alert('Не удалось добавить токен. Проверь, что кошелёк установлен и разблокирован.');
-      }
+      if (added) { toast('✅ IBITI добавлен в кошелёк'); closeAddTokenModal(); }
+      else { toast('ℹ️ Добавление отменено'); }
+    } catch(err){
+      const msg = String(err?.message||'');
+      if (err?.code === 4001) toast('ℹ️ Действие отменено пользователем');
+      else if (err?.code === -32601 || msg.includes('watchAsset')) alert('Этот кошелёк не поддерживает авто-добавление. Открой сайт в MetaMask/Trust или добавь токен вручную.');
+      else { console.error('wallet_watchAsset error:', err); alert('Не удалось добавить токен. Проверь, что кошелёк установлен и разблокирован.'); }
     }
   }
+  window.addTokenEip747 = addTokenEip747; // глобально
 
-  // Делаем глобальной — чтобы работал inline onclick
-  window.addTokenEip747 = addTokenEip747;
-</script>
+  // ===== Ручной импорт (Coinbase блок) =====
+  function copyText(sel){ const text = document.querySelector(sel).textContent.trim(); navigator.clipboard.writeText(text).then(()=>toast('✅ Адрес скопирован')); }
+  function openBscscan(){ window.open('https://bscscan.com/token/' + IBITI_TOKEN.address, '_blank'); }
 
-<script>
+  // ===== Навесить обработчик на кнопку (на всякий случай) =====
   document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('btnAddTokenAuto');
     if (btn) btn.addEventListener('click', (e) => {
       e.preventDefault();
-      // на всякий случай лог
       console.debug('[btnAddTokenAuto] click; has addTokenEip747 =', typeof window.addTokenEip747);
       if (window.addTokenEip747) window.addTokenEip747();
     });
   });
-
-  // Кнопки Coinbase-блока
-  function copyText(sel){
-    const text = document.querySelector(sel).textContent.trim();
-    navigator.clipboard.writeText(text).then(() => toast('✅ Адрес скопирован'));
-  }
-  function openBscscan(){
-    window.open('https://bscscan.com/token/' + IBITI_TOKEN.address, '_blank');
-  }
 </script>
 
 <!-- ===== /ADD IBITI TOKEN MODAL ===== -->
@@ -795,6 +727,7 @@
 
 </body>
 </html>
+
 
 
 
