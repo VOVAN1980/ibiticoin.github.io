@@ -573,9 +573,11 @@
     <h3 style="margin:0 0 10px;font-size:18px;">Куда добавить токен IBITI?</h3>
 
     <div style="display:flex;flex-direction:column;gap:10px">
-    <button id="btnAddTokenAuto"
-        onclick="addTokenEip747()"
-        style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
+    <button
+  id="btnAddTokenAuto"
+  type="button"
+  onclick="window.addTokenEip747 ? window.addTokenEip747() : console.error('addTokenEip747 missing')"
+  style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
   MetaMask / Trust Wallet / Binance Wallet (авто)
 </button>
 
@@ -765,6 +767,7 @@
 
 </body>
 </html>
+
 
 
 
