@@ -149,9 +149,9 @@ async function loadReferralStats(account) {
     const friends  = Number(ethers.formatUnits(refTokBN, 8));
     refCountEl.textContent = friends.toString();
 
-    // 2) суммируем объём-бонусы из Bought(account)
+    // 2) суммируем объём-бонусы из Bought(account) — безопасно, чанками
 const latest       = await rpcProvider.getBlockNumber();
-const MAX_LOOKBACK = 250_000;                         // страховка
+const MAX_LOOKBACK = 250_000; // страховка на случай некорректного деплоя
 const deployBlock  = Number(config.active?.saleDeployBlock ?? 0);
 const startBlock   = Math.max(deployBlock || 0, latest - MAX_LOOKBACK);
 
@@ -414,6 +414,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 console.log("✅ shop.js загружен");
+
 
 
 
