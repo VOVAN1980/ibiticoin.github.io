@@ -549,8 +549,9 @@
   if (typeof loadReferralStats === "function") {
     await loadReferralStats(account);
   }
-    statsBlock.style.display = "block";
+      statsBlock.style.display = "block";
 };
+}); // ← закрываем document.addEventListener("DOMContentLoaded", …)
 </script>  <!-- ← закрыли module-скрипт -->
 
 <!-- ===== ADD IBITI TOKEN MODAL ===== -->
@@ -709,6 +710,7 @@
 
 </body>
 </html>
+
 
 
 
