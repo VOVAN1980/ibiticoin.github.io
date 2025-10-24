@@ -1,4 +1,5 @@
-// js/shop.js
+// js/shop.js — ПОЛНАЯ ЗАМЕНА
+
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
 import config from "./config.js";
 import { buyIBITI, getSaleContract } from "./sale.js";
@@ -6,14 +7,20 @@ import {
   connectWallet,
   selectedAccount,
   showIbitiBalance,
-  signer           // ← нужен для работы с USDT
+  signer
 } from "./wallet.js";
 import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
 import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 import { ibitiTokenAbi } from "./abis/ibitiTokenAbi.js";
 
+/* ---------- 0. Провайдеры (fallback) ---------- */
+const providers = [
+  new ethers.JsonRpcProvider("https://bsc-dataseed.binance.org"),
+  new ethers.JsonRpcProvider(config.active.rpcUrl)
+];
+const rpcProvider = new ethers.FallbackProvider(providers, 1);
+
 /* ---------- 1. Контракты только-для-чтения ---------- */
-const rpcProvider     = new ethers.JsonRpcProvider(config.active.rpcUrl);
 const readSaleContract = new ethers.Contract(
   config.active.contracts.PHASED_TOKENSALE,
   PhasedTokenSaleAbi,
@@ -25,26 +32,26 @@ const ibitiTokenRead = new ethers.Contract(
   rpcProvider
 );
 
-// === УСТОЙЧИВЫЙ СБОР ЛОГОВ Bought(account) ПО ЧАНКАМ ===
+/* ---------- Устойчивый сбор Bought(account) чанками ---------- */
 function isBlockRangeError(err) {
   const s1 = (err && err.message) || "";
   const s2 = err?.info?.error?.message || "";
   const s3 = err?.error?.message || "";
   const s4 = typeof err === "string" ? err : "";
-  const text = `${s1} ${s2} ${s3} ${s4}`.toLowerCase();
-  return text.includes("block range is too large")
-      || text.includes("range is too large")
-      || text.includes("exceed maximum block range")
-      || text.includes("too many results")
-      || text.includes("query timeout")
-      || text.includes("413"); // иногда возвращают HTTP 413
+  const t = `${s1} ${s2} ${s3} ${s4}`.toLowerCase();
+  return t.includes("block range is too large")
+      || t.includes("range is too large")
+      || t.includes("exceed maximum block range")
+      || t.includes("too many results")
+      || t.includes("query timeout")
+      || t.includes("413");
 }
 
 async function fetchBoughtLogsSafe(account, startBlock, endBlock) {
   const logs = [];
   let from = startBlock;
-  let step = 20_000;       // стартовое окно меньше
-  let minStep = 2_000;     // можем опускаться до 2k (и ниже при нужде)
+  let step = 20_000;   // стартуем аккуратно
+  let minStep = 2_000; // допускаем мелкие окна
 
   while (from <= endBlock) {
     const to = Math.min(from + step - 1, endBlock);
@@ -55,24 +62,25 @@ async function fetchBoughtLogsSafe(account, startBlock, endBlock) {
         to
       );
       if (chunk?.length) logs.push(...chunk);
-      from = to + 1;                         // двигаем окно
-      if (step < 150_000) step = Math.floor(step * 1.25);  // чуть расширяем
+      from = to + 1;
+      if (step < 150_000) step = Math.floor(step * 1.25);
     } catch (e) {
-    if (isBlockRangeError(e)) {
-      // если даже minStep не помогает — ужимаемся ещё
-      if (step <= minStep) {
-        minStep = Math.max(500, Math.floor(minStep / 2));
+      if (isBlockRangeError(e)) {
+        if (step <= minStep) {
+          minStep = Math.max(500, Math.floor(minStep / 2));
+        }
+        step = Math.max(minStep, Math.floor(step / 2));
+        continue; // повторить с меньшим шагом
       }
-      step = Math.max(minStep, Math.floor(step / 2));
-      continue; // повторяем тот же from с меньшим шагом
+      console.warn("fetchBoughtLogsSafe fatal:", e);
+      return []; // не валим UI
     }
-    console.warn("fetchBoughtLogsSafe fatal:", e);
-    return []; // не валим UI — просто без логов
   }
+  return logs;
+}
 
 /* ---------- 2. Загрузка статистики продажи ---------- */
 async function loadSaleStats() {
-  // если на странице нет #cap, значит это не shop-страница → тихо выходим
   const capEl = document.getElementById("cap");
   if (!capEl) return;
 
@@ -89,12 +97,10 @@ async function loadSaleStats() {
   if (!saleContract) return;
 
   try {
-    /* 1) баланс контракта */
     const saleAddr  = config.active.contracts.PHASED_TOKENSALE;
     const depositBN = await ibitiTokenRead.balanceOf(saleAddr).catch(() => 0n);
     const cap       = Number(ethers.formatUnits(depositBN, 8));
 
-    /* 2) продано по фазам */
     let soldBN = 0n;
     for (let i = 0; i < 3; i++) {
       const p = await saleContract.phases(i);
@@ -102,79 +108,71 @@ async function loadSaleStats() {
     }
     const sold = Number(ethers.formatUnits(soldBN, 8));
 
-    /* 3) резервы ────────────────────────────────────────── */
-// реферальный резерв
-const refReserveBN  = await saleContract.rewardTokens();
-const refReserveNum = Number(ethers.formatUnits(refReserveBN, 8));
+    // реферальный резерв
+    const refReserveBN  = await saleContract.rewardTokens();
+    const refReserveNum = Number(ethers.formatUnits(refReserveBN, 8));
 
-// пул 10-процентного бонуса
-let bonusReserve = 0;
-try {
-  const bonusBN = await saleContract.volReserve();
-  bonusReserve  = Number(ethers.formatUnits(bonusBN, 8));
-} catch (e) {
-  console.warn("Не удалось получить volReserve:", e);
-}
+    // пул бонусов 10%
+    let bonusReserve = 0;
+    try {
+      const bonusBN = await saleContract.volReserve();
+      bonusReserve  = Number(ethers.formatUnits(bonusBN, 8));
+    } catch { /* метод мог отсутствовать в ранних деплоях */ }
 
-/* 4) пул, остаток, процент */
-const salePool = cap - refReserveNum - bonusReserve;
-const left     = salePool - sold;
-const pct      = salePool > 0 ? (sold / salePool) * 100 : 0;
-const fmt      = n => n.toLocaleString("ru-RU",
-                  { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const salePool = cap - refReserveNum - bonusReserve;
+    const left     = salePool - sold;
+    const pct      = salePool > 0 ? (sold / salePool) * 100 : 0;
+    const fmt      = n => n.toLocaleString("ru-RU",
+                      { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-/* 5) вывод в DOM */
-capEl.textContent        = fmt(cap);
-refReserveEl.textContent = fmt(refReserveNum);
-salePoolEl.textContent   = fmt(salePool);
-soldEl.textContent       = fmt(sold);
-leftEl.textContent       = fmt(left);
-bonusPoolEl.textContent  = fmt(bonusReserve);
+    capEl.textContent        = fmt(cap);
+    refReserveEl.textContent = fmt(refReserveNum);
+    salePoolEl.textContent   = fmt(salePool);
+    soldEl.textContent       = fmt(sold);
+    leftEl.textContent       = fmt(left);
+    bonusPoolEl.textContent  = fmt(bonusReserve);
 
-progressEl.style.width = `${Math.min(Math.max(pct, 0), 100)}%`;
-percentEl.textContent  = `${pct.toFixed(2)}%`;
-lastUpdEl.textContent  = `Обновлено: ${new Date().toLocaleTimeString("ru-RU")}`;
-} catch (e) {
-    console.warn("Ошибка loadReferralStats:", e);
+    progressEl.style.width = `${Math.min(Math.max(pct, 0), 100)}%`;
+    percentEl.textContent  = `${pct.toFixed(2)}%`;
+    lastUpdEl.textContent  = `Обновлено: ${new Date().toLocaleTimeString("ru-RU")}`;
+  } catch (e) {
+    console.warn("Ошибка loadSaleStats:", e);
   }
 }
 
+/* ---------- 3. Реферальная статистика ---------- */
 async function loadReferralStats(account) {
-  const refCountEl = document.getElementById("refCount");   // друзья
-  const bonusEl    = document.getElementById("refReward");  // объём-бонусы
+  const refCountEl = document.getElementById("refCount");
+  const bonusEl    = document.getElementById("refReward");
   const block      = document.getElementById("referralStats");
   if (!refCountEl || !bonusEl || !block) return;
 
-  const sale = getSaleContract();
+  const sale = getSaleContract() || readSaleContract;
   if (!sale) return;
 
   try {
-    // 1) сколько друзей (1 IBI = 1 друг)
     const refTokBN = await sale.referralRewards(account);
     const friends  = Number(ethers.formatUnits(refTokBN, 8));
     refCountEl.textContent = friends.toString();
 
-    // 2) суммируем объём-бонусы из Bought(account) — безопасно, чанками
-const latest       = await rpcProvider.getBlockNumber();
-const MAX_LOOKBACK = 250_000; // страховка на случай некорректного деплоя
-const deployBlock  = Number(config.active?.saleDeployBlock ?? 0);
-const startBlock   = Math.max(deployBlock || 0, latest - MAX_LOOKBACK);
+    const latest       = await rpcProvider.getBlockNumber();
+    const MAX_LOOKBACK = 250_000;
+    const deployBlock  = Number(config.active?.saleDeployBlock ?? 0);
+    const startBlock   = Math.max(deployBlock || 0, latest - MAX_LOOKBACK);
 
-const evts = await fetchBoughtLogsSafe(account, startBlock, latest);
+    const evts = await fetchBoughtLogsSafe(account, startBlock, latest);
+    const volBN = evts.reduce((sum, ev) => {
+      const add = ev?.args?.bonusIBITI ?? 0n;
+      return sum + BigInt(add);
+    }, 0n);
 
-const volBN = evts.reduce((sum, ev) => {
-  const add = ev?.args?.bonusIBITI ?? 0n;
-  return sum + BigInt(add);
-}, 0n);
-
-bonusEl.textContent = Number(ethers.formatUnits(volBN, 8)).toFixed(2);
+    bonusEl.textContent = Number(ethers.formatUnits(volBN, 8)).toFixed(2);
     block.style.display = "block";
   } catch (e) {
-  console.warn("Ошибка loadReferralStats:", e);
- }
+    console.warn("Ошибка loadReferralStats:", e);
+  }
 }
 
-/* проверяем, может ли текущий акк видеть панель-рефералку */
 async function loadReferralData() {
   if (!selectedAccount) return;
   await loadReferralStats(selectedAccount);
@@ -218,15 +216,12 @@ window.closePurchaseModal = () => {
   document.getElementById("nftAmount").value = "";
 };
 
-/* ---------- Константы старта ---------- */
-const SALE_START_TS   = Date.parse("2025-07-01T09:00:00Z"); // 09:00 UTC
+/* ---------- 6. Покупка ---------- */
+const SALE_START_TS   = Date.parse("2025-07-01T09:00:00Z");
 const SALE_START_TEXT = "Старт 1 июля в 09:00 UTC (12:00 Киев)";
-
 const IS_LOCAL = config.active.networkName === "Localhost";
 
-/* ---------- 6. Покупка ---------- */
 async function handlePurchase(amount, product) {
-  /* 0) Продажа ещё не началась — сообщаем и выходим (только вне локалки) */
   if (!IS_LOCAL && Date.now() < SALE_START_TS) {
     return Swal.fire({
       icon:  "info",
@@ -235,8 +230,6 @@ async function handlePurchase(amount, product) {
       confirmButtonText: "Ок"
     });
   }
-
-  /* 6.1 MetaMask */
   if (!window.ethereum) {
     return Swal.fire({
       icon: "warning",
@@ -245,7 +238,6 @@ async function handlePurchase(amount, product) {
     });
   }
 
-  /* 6.2 Лоадер */
   Swal.fire({
     title: "Ожидание подтверждения…",
     didOpen: () => Swal.showLoading(),
@@ -260,90 +252,80 @@ async function handlePurchase(amount, product) {
       throw new Error("Оплата через BNB временно отключена.");
     }
 
-    /* баланс USDT — проверяем только после даты старта */
-    const usdt    = new ethers.Contract(config.active.contracts.USDT_TOKEN, ibitiTokenAbi, signer);
+    const usdt = new ethers.Contract(
+      config.active.contracts.USDT_TOKEN,
+      ibitiTokenAbi,
+      signer
+    );
     const balance = await usdt.balanceOf(selectedAccount);
     if (balance < amountUnits) throw new Error("Недостаточно USDT.");
 
-    /* Транзакция */
     const ref = localStorage.getItem("referrer") || ethers.ZeroAddress;
     const tx  = await buyIBITI(amountUnits, ref);
     await tx.wait();
 
     await showIbitiBalance(true);
 
-    /* ≥10 IBITI → активируем рефералку */
     if (+amount >= 10) {
-  localStorage.setItem(`referralUnlocked_${selectedAccount}`, "1");
-  await loadReferralStats(selectedAccount);
+      localStorage.setItem(`referralUnlocked_${selectedAccount}`, "1");
+      await loadReferralStats(selectedAccount);
 
-  const link = `${location.origin}${location.pathname}?ref=${selectedAccount}`;
-  await Swal.fire({
-    icon: "info",
-    title: "Ваша реферальная ссылка",
-    html:  `<a href="${link}" target="_blank">${link}</a><br>Скопируйте и поделитесь.`,
-    confirmButtonText: "Скопировать",
-    preConfirm: () => navigator.clipboard.writeText(link)
-  });
+      const link = `${location.origin}${location.pathname}?ref=${selectedAccount}`;
+      await Swal.fire({
+        icon: "info",
+        title: "Ваша реферальная ссылка",
+        html:  `<a href="${link}" target="_blank">${link}</a><br>Скопируйте и поделитесь.`,
+        confirmButtonText: "Скопировать",
+        preConfirm: () => navigator.clipboard.writeText(link)
+      });
 
-  window.enableReferralAfterPurchase?.(selectedAccount);
-}
+      window.enableReferralAfterPurchase?.(selectedAccount);
+    }
 
-// Вынеси обновление бонусов после окна "Покупка успешна!" сюда!
-await Swal.fire({
-  icon: "success",
-  title: "Покупка успешна!",
-  timer: 3000,
-  showConfirmButton: false
-});
+    await Swal.fire({
+      icon: "success",
+      title: "Покупка успешна!",
+      timer: 3000,
+      showConfirmButton: false
+    });
 
-setTimeout(() => loadReferralStats(selectedAccount), 1500);
-
-  /* ---------- ТВОЙ желаемый catch-блок ---------- */
+    setTimeout(() => loadReferralStats(selectedAccount), 1500);
   } catch (error) {
     console.warn("Ошибка при покупке:", error);
-
     let rawReason = error?.revert?.args?.[0]
       || error?.shortMessage
       || error?.message
       || "Неизвестная ошибка";
-
     if (typeof rawReason === "string" && rawReason.startsWith("Error:")) {
       rawReason = rawReason.replace(/^Error:\s*/, "");
     }
-
     const reason = rawReason === "not started"
       ? "📅 Продажа начнётся: 1 июля в 09:00 UTC"
       : rawReason;
 
-    Swal.fire({
-      icon: "error",
-      title: "Ошибка",
-      text:  reason,
-      confirmButtonText: "Ок"
-    });
+    Swal.fire({ icon: "error", title: "Ошибка", text: reason, confirmButtonText: "Ок" });
   }
 }
-
 window.handlePurchase = handlePurchase;
 
 /* ---------- 7. DOMContentLoaded ---------- */
 document.addEventListener("DOMContentLoaded", () => {
-  /* 7.1 сохраняем ?ref=… */
+  // сохраняем ?ref=...
   const ref = new URLSearchParams(location.search).get("ref");
   if (ref && ethers.isAddress(ref)) localStorage.setItem("referrer", ref);
 
-  /* 7.2 первичная загрузка */
+  // первичная загрузка
   loadSaleStats();
-// loadReferralData(); // включишь обратно, когда убедишься, что всё ок
+  // Примечание: реферал-данные подтянем после подключения кошелька,
+  // чтобы не ловить лимиты RPC на старте:
+  // loadReferralData();
 
-  // таймер нужен только на страницах, где есть #cap
   if (document.getElementById("cap")) {
     setInterval(loadSaleStats, 30_000);
   }
   document.getElementById("refreshStats")?.addEventListener("click", loadSaleStats);
 
-  /* 7.3 форма покупки */
+  // форма покупки
   document.getElementById("purchaseForm")?.addEventListener("submit", async ev => {
     ev.preventDefault();
     if (!selectedAccount) {
@@ -355,14 +337,14 @@ document.addEventListener("DOMContentLoaded", () => {
     loadSaleStats();
   });
 
-  /* 7.4 включаем / выключаем кнопку «Купить» в модалке */
+  // включаем / выключаем кнопку «Подтвердить»
   const paymentSel = document.getElementById("paymentToken");
   const confirmBtn = document.getElementById("confirmBtn");
   paymentSel?.addEventListener("change", () => {
     if (confirmBtn) confirmBtn.disabled = !paymentSel.value;
   });
 
-  /* 7.5 таймер до старта продаж */
+  // таймер до старта
   const countdownEl = document.getElementById("countdownNotice");
   if (countdownEl) {
     const saleStart = new Date("2025-07-01T09:00:00Z").getTime();
@@ -380,7 +362,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1000);
   }
 
-  /* 7.6 подключение кошелька через модалку */
+  // модалка кошелька
   const walletModal = document.getElementById("walletModal");
   const openBtn     = document.getElementById("openWalletModal");
   const closeBtn    = document.getElementById("closeWalletModal");
@@ -401,17 +383,17 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   btnInj?.addEventListener("click", async () => {
-  walletModal.style.display = "none";
-  await connectWallet();        // импорт из wallet.js
-  loadReferralData();
-});
-btnCb?.addEventListener("click", async () => {
-  walletModal.style.display = "none";
-  await (window.connectViaCoinbase?.()); // если нет реализации — временно убери кнопку в HTML
-  loadReferralData();
-});
+    walletModal.style.display = "none";
+    await connectWallet();     // важный момент: вызываем импорт напрямую
+    loadReferralData();
+  });
+  btnCb?.addEventListener("click", async () => {
+    walletModal.style.display = "none";
+    await (window.connectViaCoinbase?.()); // если реализации нет — убери кнопку в HTML
+    loadReferralData();
+  });
 
-  /* 7.7 проверка владельца реф-ссылки */
+  // проверка владельца реф-ссылки
   const storedOwner = localStorage.getItem("referralOwner");
   if (storedOwner && selectedAccount && selectedAccount !== storedOwner) {
     localStorage.removeItem("referralOwner");
@@ -420,21 +402,6 @@ btnCb?.addEventListener("click", async () => {
 
 console.log("✅ shop.js загружен");
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* ---------- 8. Экспорт некоторых функций в window для inline-скриптов ---------- */
+window.loadReferralStats = loadReferralStats;
+window.loadReferralData  = loadReferralData;
