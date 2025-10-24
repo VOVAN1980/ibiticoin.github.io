@@ -904,3 +904,20 @@ html, body {
   transform: scale(1.2);
 }
 
+/* --- фикс крестика для модалки подключения --- */
+#walletModal .ibiti-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+  width: auto;
+  height: auto;
+  padding: 0;
+  z-index: 10;        /* поверх всего, но не перекрывает кнопки */
+}
+
