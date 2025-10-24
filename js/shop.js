@@ -34,14 +34,17 @@ function isBlockRangeError(err) {
   const text = `${s1} ${s2} ${s3} ${s4}`.toLowerCase();
   return text.includes("block range is too large")
       || text.includes("range is too large")
-      || text.includes("query timeout");
+      || text.includes("exceed maximum block range")
+      || text.includes("too many results")
+      || text.includes("query timeout")
+      || text.includes("413"); // иногда возвращают HTTP 413
 }
 
 async function fetchBoughtLogsSafe(account, startBlock, endBlock) {
   const logs = [];
   let from = startBlock;
-  let step = 100_000;        // стартовый размер окна
-  const MIN_STEP = 10_000;   // ниже не опускаем
+  let step = 20_000;       // стартовое окно меньше
+  let minStep = 2_000;     // можем опускаться до 2k (и ниже при нужде)
 
   while (from <= endBlock) {
     const to = Math.min(from + step - 1, endBlock);
@@ -55,15 +58,17 @@ async function fetchBoughtLogsSafe(account, startBlock, endBlock) {
       from = to + 1;                         // двигаем окно
       if (step < 150_000) step = Math.floor(step * 1.25);  // чуть расширяем
     } catch (e) {
-      if (isBlockRangeError(e) && step > MIN_STEP) {
-        step = Math.max(MIN_STEP, Math.floor(step / 2));   // сужаем окно
-        continue;                                          // повторяем тот же from
+    if (isBlockRangeError(e)) {
+      // если даже minStep не помогает — ужимаемся ещё
+      if (step <= minStep) {
+        minStep = Math.max(500, Math.floor(minStep / 2));
       }
-      throw e; // не «диапазонная» ошибка — наружу
+      step = Math.max(minStep, Math.floor(step / 2));
+      continue; // повторяем тот же from с меньшим шагом
     }
+    console.warn("fetchBoughtLogsSafe fatal:", e);
+    return []; // не валим UI — просто без логов
   }
-  return logs;
-}
 
 /* ---------- 2. Загрузка статистики продажи ---------- */
 async function loadSaleStats() {
@@ -396,15 +401,15 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   btnInj?.addEventListener("click", async () => {
-    walletModal.style.display = "none";
-    await window.connectWallet?.();
-    loadReferralData();
-  });
-  btnCb?.addEventListener("click", async () => {
-    walletModal.style.display = "none";
-    await window.connectViaCoinbase?.();
-    loadReferralData();
-  });
+  walletModal.style.display = "none";
+  await connectWallet();        // импорт из wallet.js
+  loadReferralData();
+});
+btnCb?.addEventListener("click", async () => {
+  walletModal.style.display = "none";
+  await (window.connectViaCoinbase?.()); // если нет реализации — временно убери кнопку в HTML
+  loadReferralData();
+});
 
   /* 7.7 проверка владельца реф-ссылки */
   const storedOwner = localStorage.getItem("referralOwner");
@@ -414,6 +419,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 console.log("✅ shop.js загружен");
+
 
 
 
