@@ -109,10 +109,16 @@ async function loadReferralStats(account) {
     const friends  = Number(ethers.formatUnits(refTokBN, 8));
     refCountEl.textContent = friends.toString();
 
-    /* 2) суммируем объём-бонусы из Bought(account) */
-    const evts = await readSaleContract.queryFilter(
-      readSaleContract.filters.Bought(account)
-    );
+    // --- ограничим диапазон блоков, чтобы RPC не ругался "Block range is too large"
+const latest = await rpcProvider.getBlockNumber();
+const LOOKBACK = 200_000;                      // можно 100–300k, подстрой при желании
+const from     = Math.max(0, latest - LOOKBACK);
+
+const evts = await readSaleContract.queryFilter(
+  readSaleContract.filters.Bought(account),
+  from,
+  latest
+);
       const volBN = evts.reduce(
       (sum, ev) => sum + BigInt(ev.args.bonusIBITI),
       0n
@@ -371,3 +377,4 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 console.log("✅ shop.js загружен");
+
