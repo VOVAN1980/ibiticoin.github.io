@@ -31,10 +31,10 @@ function isBlockRangeError(err) {
   const s2 = err?.info?.error?.message || "";
   const s3 = err?.error?.message || "";
   const s4 = typeof err === "string" ? err : "";
-  const haystack = `${s1} ${s2} ${s3} ${s4}`.toLowerCase();
-  return haystack.includes("block range is too large")
-      || haystack.includes("range is too large")
-      || haystack.includes("query timeout"); // на всякий пожарный у некоторых RPC
+  const text = `${s1} ${s2} ${s3} ${s4}`.toLowerCase();
+  return text.includes("block range is too large")
+      || text.includes("range is too large")
+      || text.includes("query timeout");
 }
 
 async function fetchBoughtLogsSafe(account, startBlock, endBlock) {
@@ -52,17 +52,14 @@ async function fetchBoughtLogsSafe(account, startBlock, endBlock) {
         to
       );
       if (chunk?.length) logs.push(...chunk);
-
-      // успех: двигаем окно и чуть расширяем следующий шаг
-      from = to + 1;
-      if (step < 150_000) step = Math.floor(step * 1.25);
+      from = to + 1;                         // двигаем окно
+      if (step < 150_000) step = Math.floor(step * 1.25);  // чуть расширяем
     } catch (e) {
       if (isBlockRangeError(e) && step > MIN_STEP) {
-        step = Math.max(MIN_STEP, Math.floor(step / 2));
-        // повторим тот же диапазон с меньшим шагом
-        continue;
+        step = Math.max(MIN_STEP, Math.floor(step / 2));   // сужаем окно
+        continue;                                          // повторяем тот же from
       }
-      throw e; // это не ошибка диапазона — пробрасываем
+      throw e; // не «диапазонная» ошибка — наружу
     }
   }
   return logs;
@@ -417,6 +414,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 console.log("✅ shop.js загружен");
+
 
 
 
