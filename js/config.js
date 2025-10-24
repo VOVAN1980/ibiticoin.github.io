@@ -6,6 +6,7 @@ const config = {
     chainId: 56,
     rpcUrl: "https://rpc.ankr.com/bsc/4dc6f6e684cd1df11bb6f81c742b0597781ed9aee0365faf48669a2bc06d3058",
     explorerUrl: "https://bscscan.com",
+    saleDeployBlock: 51339916,          // 👈 ДОБАВИЛИ ЭТО
     contracts: {
       USDT_TOKEN: "0x55d398326f99059fF775485246999027B3197955",
       IBITI_TOKEN: "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196",
@@ -44,3 +45,4 @@ const config = {
 config.active = config.mainnet;
 
 export default config;
+
