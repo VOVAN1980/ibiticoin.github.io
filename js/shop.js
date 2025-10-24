@@ -110,9 +110,10 @@ async function loadReferralStats(account) {
     refCountEl.textContent = friends.toString();
 
     // --- ограничим диапазон блоков, чтобы RPC не ругался "Block range is too large"
-const latest = await rpcProvider.getBlockNumber();
-const LOOKBACK = 200_000;                      // можно 100–300k, подстрой при желании
-const from     = Math.max(0, latest - LOOKBACK);
+const latest    = await rpcProvider.getBlockNumber();
+const LOOKBACK  = 250_000; // запас на случай отсутствия saleDeployBlock
+const FROM_BASE = Number(config.active?.saleDeployBlock ?? 0);
+const from      = Math.max(FROM_BASE, latest - LOOKBACK);
 
 const evts = await readSaleContract.queryFilter(
   readSaleContract.filters.Bought(account),
@@ -123,8 +124,7 @@ const evts = await readSaleContract.queryFilter(
   const add = ev?.args?.bonusIBITI ?? 0n;
   return sum + BigInt(add);
 }, 0n);
-    bonusEl.textContent =
-      Number(ethers.formatUnits(volBN, 8)).toFixed(2);
+bonusEl.textContent = Number(ethers.formatUnits(volBN, 8)).toFixed(2);
 
     block.style.display = "block";
   } catch (e) {
@@ -377,5 +377,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 console.log("✅ shop.js загружен");
+
 
 
