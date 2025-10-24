@@ -147,7 +147,6 @@ async function loadReferralStats(account) {
 } catch (e) {
   console.warn("Ошибка loadReferralStats:", e);
   }
-}
 
 /* проверяем, может ли текущий акк видеть панель-рефералку */
 async function loadReferralData() {
@@ -394,6 +393,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 console.log("✅ shop.js загружен");
+
 
 
 
