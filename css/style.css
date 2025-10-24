@@ -718,4 +718,25 @@ html, body {
 .legal-footer a:hover {
   text-decoration: underline;
 }
+
+ /* Анимация появления модалки */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
+#addTokenModal[style*="display: flex"] > div {
+  animation: fadeInScale 0.25s ease-out;
+}
+
+/* Плавное появление/скрытие тоста */
+#toastOK {
+  transition: opacity 0.4s ease;
+ }
+}
+
