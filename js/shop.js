@@ -26,6 +26,17 @@ const ibitiTokenRead = new ethers.Contract(
 );
 
 // === УСТОЙЧИВЫЙ СБОР ЛОГОВ Bought(account) ПО ЧАНКАМ ===
+function isBlockRangeError(err) {
+  const s1 = (err && err.message) || "";
+  const s2 = err?.info?.error?.message || "";
+  const s3 = err?.error?.message || "";
+  const s4 = typeof err === "string" ? err : "";
+  const haystack = `${s1} ${s2} ${s3} ${s4}`.toLowerCase();
+  return haystack.includes("block range is too large")
+      || haystack.includes("range is too large")
+      || haystack.includes("query timeout"); // на всякий пожарный у некоторых RPC
+}
+
 async function fetchBoughtLogsSafe(account, startBlock, endBlock) {
   const logs = [];
   let from = startBlock;
@@ -40,19 +51,18 @@ async function fetchBoughtLogsSafe(account, startBlock, endBlock) {
         from,
         to
       );
-      if (chunk && chunk.length) logs.push(...chunk);
+      if (chunk?.length) logs.push(...chunk);
 
-      // успех: двигаем окно и немного увеличиваем шаг
+      // успех: двигаем окно и чуть расширяем следующий шаг
       from = to + 1;
       if (step < 150_000) step = Math.floor(step * 1.25);
     } catch (e) {
-      const msg = String(e?.message || e);
-      // если RPC ругается на диапазон — уменьшаем шаг и пробуем снова
-      if (/range is too large|block range/i.test(msg) && step > MIN_STEP) {
+      if (isBlockRangeError(e) && step > MIN_STEP) {
         step = Math.max(MIN_STEP, Math.floor(step / 2));
-        continue; // повторяем тот же from с новым шагом
+        // повторим тот же диапазон с меньшим шагом
+        continue;
       }
-      throw e; // другие ошибки наружу
+      throw e; // это не ошибка диапазона — пробрасываем
     }
   }
   return logs;
@@ -407,6 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 console.log("✅ shop.js загружен");
+
 
 
 
