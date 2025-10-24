@@ -143,7 +143,7 @@ async function loadReferralStats(account) {
     bonusEl.textContent = Number(ethers.formatUnits(volBN, 8)).toFixed(2);
     block.style.display = "block";
   } catch (e) {
-    console.warn("Ошибка loadReferralStats:", e);
+    console.warn("Ошибка loadSaleStats:", e);
   }
 }
 
@@ -154,7 +154,7 @@ async function loadReferralData() {
 }
 
 /* ---------- 4. UI-утилиты ---------- */
-export function showDappBrowserNotice() {
+function showDappBrowserNotice() {
   Swal.fire({
     icon: "info",
     title: "Откройте в кошельке",
@@ -392,6 +392,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 console.log("✅ shop.js загружен");
+
 
 
 
