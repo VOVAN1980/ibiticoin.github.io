@@ -573,9 +573,9 @@
     <h3 style="margin:0 0 10px;font-size:18px;">Куда добавить токен IBITI?</h3>
 
     <div style="display:flex;flex-direction:column;gap:10px">
-      <button onclick="addTokenEip747()" style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
-        MetaMask / Trust Wallet / Binance Wallet (авто)
-      </button>
+      <button id="btnAddTokenAuto" onclick="addTokenEip747()" style="padding:10px 14px; ...">
+  MetaMask / Trust Wallet / Binance Wallet (авто)
+</button>
 
       <details style="background:#0b0f1a;border:1px solid #333;border-radius:8px;padding:10px;">
         <summary style="cursor:pointer;color:#e5e7eb">Coinbase Wallet (ручное добавление)</summary>
@@ -645,6 +645,16 @@
 
   // --- Основной поток автодобавления токена (исправленная версия)
   async function addTokenEip747(){
+  window.addTokenEip747 = addTokenEip747;   // <- делаем глобальной точно
+
+    document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('btnAddTokenAuto');
+  if (btn) btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    addTokenEip747();
+  });
+});
+
   // Пишем в консоль, чтобы видеть, что клик дошёл
   console.debug('[addTokenEip747] click');
 
@@ -754,6 +764,7 @@
 
 </body>
 </html>
+
 
 
 
