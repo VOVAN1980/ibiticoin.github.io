@@ -764,3 +764,22 @@ html, body {
   from { opacity: 0; transform: scale(.92); }
   to   { opacity: 1; transform: scale(1); }
 }
+
+/* === Крестик закрытия модалки (в правом верхнем углу) === */
+#walletModal .close-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #ffd700;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  line-height: 1;
+}
+#walletModal .close-btn:hover {
+  color: #fff;
+}
+
