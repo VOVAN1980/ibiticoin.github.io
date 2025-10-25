@@ -766,7 +766,7 @@
   <script>
   // Мобильный UX: сначала показываем модалку выбора
   document.getElementById('openWalletModal')?.addEventListener('click', (e) => {
-    if (IS_MOBILE && !(window.ethereum && window.ethereum.request))) {
+    if (IS_MOBILE && !(window.ethereum && window.ethereum.request)) { // ← убрали лишнюю ')'
       e.preventDefault();
       document.getElementById('walletModal').style.display = 'flex';
       return;
@@ -778,7 +778,6 @@
   document.getElementById('btnInjected')?.addEventListener('click', async (e) => {
     if (IS_MOBILE && !(window.ethereum && window.ethereum.request)) {
       e.preventDefault();
-      // Быстренький выбор через SweetAlert2 (он у тебя уже подключен)
       const result = await Swal.fire({
         title: 'Открыть в…',
         showDenyButton: true,
@@ -799,9 +798,10 @@
   // Кнопка Coinbase — открываем dApp в Coinbase Wallet
   document.getElementById('btnCoinbase')?.addEventListener('click', (e) => {
     if (IS_MOBILE && !(window.ethereum && window.ethereum.request)) {
-  openInMetaMaskDapp('addToken'); // ← было без аргумента
-  return;
-}
+      e.preventDefault();
+      openInCoinbaseDapp('connect'); // ← правильно: Coinbase, не MetaMask
+      return;
+    }
   });
 </script>
 
@@ -906,27 +906,3 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
