@@ -260,36 +260,6 @@
   <div id="ibitiBalance"></div>
 </section>
 
-  <!-- Показываем только на мобиле без injected-провайдера -->
-<div id="mobileOpeners" class="wallet-section" style="display:none">
-  <div style="margin:6px 0;color:#ccc">
-    Нет кошелька в браузере? Открой сайт внутри кошелька:
-  </div>
-  <button onclick="openInMetaMask()" style="margin:6px">Открыть в MetaMask</button>
-  <button onclick="openInTrust()"   style="margin:6px">Открыть в Trust Wallet</button>
-</div>
-
-<script>
-  (function(){
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const hasInjected = typeof window.ethereum !== 'undefined';
-    if (isMobile && !hasInjected) {
-      document.getElementById('mobileOpeners').style.display = 'block';
-    }
-  })();
-
-  function openInMetaMask(){
-    // MetaMask ждёт домен без https://
-    const dappPath = location.hostname + location.pathname + location.search;
-    location.href = 'https://metamask.app.link/dapp/' + dappPath;
-  }
-
-  function openInTrust(){
-    const dappUrl = encodeURIComponent(location.href);
-    location.href = 'https://link.trustwallet.com/open_url?coin_id=56&url=' + dappUrl;
-  }
-</script>
-
   <button type="button" onclick="openAddTokenModal()"
   style="margin-top:10px;background:#0f172a;color:#d1fae5;border:1px solid #10b981;padding:10px 16px;border-radius:10px;cursor:pointer;">
   Добавить IBITI в кошелёк
@@ -451,7 +421,7 @@
     📣 Поделиться ссылкой
   </button>
 
-  <div id="referralStats" style=";display:none">
+  <div id="referralStats" style="…;display:none">
   👥 Приведено друзей: <span id="refCount">0</span><br>
   💰 Получено бонусов: <span id="refReward">0</span> IBITI
 </div>
@@ -731,7 +701,7 @@
   }
 </script>
 <!-- ===== /ADD IBITI TOKEN MODAL ===== -->
-  
+
 <!-- Toast -->
 <div id="toastOK" style="position:fixed;right:20px;bottom:24px;background:#0b0f1a;border:1px solid #10b981;color:#d1fae5;padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:4000"></div>
 
@@ -748,16 +718,3 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
