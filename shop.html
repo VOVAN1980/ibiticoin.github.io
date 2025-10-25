@@ -279,27 +279,41 @@
 
     function toast(msg){ const el=document.getElementById('toastOK'); el.textContent=msg; el.style.opacity='1'; clearTimeout(el._timer); el._timer=setTimeout(()=> el.style.opacity='0',2600); }
 
-    function hasEthereum(){ return !!(window.ethereum && typeof window.ethereum.request==='function'); }
+    // ========= НОВОЕ: определение реального injected-провайдера =========
+    function getInjectedProvider() {
+      const eth = window.ethereum;
+      if (!eth) return null;
+      if (Array.isArray(eth.providers) && eth.providers.length) {
+        const p = eth.providers.find(p => p?.isMetaMask || p?.isTrust || p?.isBraveWallet || p?.isOkxWallet);
+        if (p) return p;
+      }
+      if (eth.isMetaMask || eth.isTrust || eth.isBraveWallet || eth.isOkxWallet) return eth;
+      return null; // игнорим Coinbase SDK и прочих «заменителей»
+    }
+    function hasRealInjected(){ return !!getInjectedProvider(); }
 
+    // Добавление токена по EIP-747 (с реальным провайдером)
     async function addTokenEip747(){
-      if (IS_MOBILE && !hasEthereum()) { openInMetaMaskDapp('addToken'); return; }
-      if (!hasEthereum()) { openInstallMM(); return; }
+      if (IS_MOBILE && !hasRealInjected()) { openInMetaMaskDapp('addToken'); return; }
+      if (!hasRealInjected()) { openInstallMM(); return; }
+
+      const eth = getInjectedProvider();
       try{
         const bscId='0x38';
-        const current=await window.ethereum.request({method:'eth_chainId'});
+        const current=await eth.request({method:'eth_chainId'});
         if(current!==bscId){
-          try{ await window.ethereum.request({method:'wallet_switchEthereumChain', params:[{chainId:bscId}]}); }
+          try{ await eth.request({method:'wallet_switchEthereumChain', params:[{chainId:bscId}]}); }
           catch(e){
-            if(e.code===4902){
-              await window.ethereum.request({ method:'wallet_addEthereumChain', params:[{ chainId:bscId, chainName:'BNB Smart Chain', nativeCurrency:{name:'BNB',symbol:'BNB',decimals:18}, rpcUrls:['https://bsc-dataseed1.bnbchain.org'], blockExplorerUrls:['https://bscscan.com'] }] });
+            if(e && e.code===4902){
+              await eth.request({ method:'wallet_addEthereumChain', params:[{ chainId:bscId, chainName:'BNB Smart Chain', nativeCurrency:{name:'BNB',symbol:'BNB',decimals:18}, rpcUrls:['https://bsc-dataseed1.bnbchain.org'], blockExplorerUrls:['https://bscscan.com'] }] });
             } else { throw e; }
           }
         }
-        const added=await window.ethereum.request({ method:'wallet_watchAsset', params:{ type:'ERC20', options:IBITI_TOKEN } });
+        const added=await eth.request({ method:'wallet_watchAsset', params:{ type:'ERC20', options:IBITI_TOKEN } });
         if(added){ toast('✅ IBITI добавлен в кошелёк'); closeAddTokenModal(); } else { toast('ℹ️ Добавление отменено'); }
       }catch(err){
         if(err && err.code===4001){ toast('ℹ️ Действие отменено пользователем'); }
-        else { console.error('Add IBITI error:', err); alert('Не удалось добавить токен. Проверь, что кошелёк установлен и разблокирован.'); }
+        else { console.error('Add IBITI error:', err); alert('Не удалось добавить токен автоматически. Открой MetaMask/Trust (dApp-браузер) или добавь вручную в Coinbase.'); }
       }
     }
 
@@ -321,7 +335,7 @@
   <script>
     // Mobile UX: показываем нашу модалку вместо мгновенного ухода в MetaMask
     document.getElementById('openWalletModal')?.addEventListener('click', (e) => {
-      if (IS_MOBILE && !(window.ethereum && window.ethereum.request)) {
+      if (IS_MOBILE && !hasRealInjected()) {
         e.preventDefault();
         document.getElementById('walletModal').style.display='flex';
         return;
@@ -334,7 +348,7 @@
 
     // Кнопка MetaMask / Trust — явный выбор
     document.getElementById('btnInjected')?.addEventListener('click', async (e) => {
-      if (IS_MOBILE && !(window.ethereum && window.ethereum.request)) {
+      if (IS_MOBILE && !hasRealInjected()) {
         e.preventDefault();
         const res = await Swal.fire({
           title: 'Открыть в…',
@@ -354,16 +368,16 @@
 
     // Кнопка Coinbase — deeplink в Coinbase Wallet
     document.getElementById('btnCoinbase')?.addEventListener('click', (e) => {
-      if (IS_MOBILE && !(window.ethereum && window.ethereum.request)) {
+      if (IS_MOBILE && !hasRealInjected()) {
         e.preventDefault();
         openInCoinbaseDapp('connect');
         return;
       }
     });
 
-    // Патч на eth_requestAccounts: без дублей и без -32002 наверх
+    // Патч на eth_requestAccounts: без дублей и без -32002 наверх (на реальном провайдере)
     (function patchEthRequestAccounts() {
-      const eth = window.ethereum;
+      const eth = getInjectedProvider();
       if (!eth || !eth.request) return;
       const orig = eth.request.bind(eth);
       let pendingPromise = null;
@@ -384,8 +398,8 @@
         pendingPromise = (async () => {
           try { return await orig(args); }
           catch (e) {
-            const already = e && (e.code === -32002 || /Already processing/i.test(e.message||''));
-            if (already) { try{ console.log('[wallet] Waiting for MetaMask approval…'); }catch{}; return await waitForAccounts(); }
+            const already = e && (e.code === -32002 || /Already processing/i.test(e.message||'')); 
+            if (already) { try{ console.log('[wallet] Waiting for approval…'); }catch{}; return await waitForAccounts(); }
             throw e;
           } finally { pendingPromise = null; }
         })();
