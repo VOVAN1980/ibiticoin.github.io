@@ -951,23 +951,21 @@ html, body {
 
 .shop-item {
   position: relative;
-  overflow: hidden !important;  /* обрезает всё, что выходит за рамку */
-  border-radius: 10px;          /* чтобы углы тоже совпадали */
-  border: 1px solid gold;       /* рамка */
+  overflow: hidden;        /* обрезает всё, что выше рамки */
+  border: 1px solid gold;
+  border-radius: 10px;
+  background: #000;
   display: flex;
   flex-direction: column;
-  background: #000;
+  align-items: center;
 }
 
 .shop-item img {
   display: block;
   width: 100%;
   height: auto;
+  margin-top: 5px;         /* ↓ смещаем вниз, регулируй по вкусу */
+  border-radius: 9px;      /* чуть меньше, чтобы не торчал угол */
   object-fit: contain;
   background: #000;
-  margin: 0;
-  padding: 0;
-  border: none;
 }
-
-
