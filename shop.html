@@ -604,28 +604,39 @@
   <script>
   const IS_MOBILE = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-  function openInMetaMaskDapp(target /* 'connect' | 'addToken' */) {
-    // формируем URL этой же страницы + метка действия
+  // общий построитель URL этой же страницы с меткой действия (?go=...)
+  function buildTargetUrl(target /* 'connect' | 'addToken' */) {
     const url = new URL(location.href);
     if (target) url.searchParams.set('go', target);
-    const full = url.toString();
-    const bare = full.replace(/^https?:\/\//, ''); // для схемы/metamask
+    return url.toString();
+  }
 
-    const scheme  = 'metamask://dapp/' + bare;                      // прямой вызов приложения
-    const appLink = 'https://metamask.app.link/dapp/' + bare;       // fallback App Link
-
+  // MetaMask deeplink
+  function openInMetaMaskDapp(target) {
+    const full = buildTargetUrl(target);
+    const bare = full.replace(/^https?:\/\//, '');     // host/path?query#hash
+    const scheme  = 'metamask://dapp/' + encodeURI(bare);
+    const appLink = 'https://metamask.app.link/dapp/' + encodeURI(bare);
     try { location.href = scheme; setTimeout(() => location.href = appLink, 600); }
     catch { location.href = appLink; }
-   }
-   function openInTrustDapp() {
-    // Trust Wallet deeplink (универсальный)
-    location.href = 'trust://browser_enable?url=' + encodeURIComponent(HERE);
-    setTimeout(()=> location.href = 'https://link.trustwallet.com/open_url?url=' + encodeURIComponent(HERE), 600);
   }
-  function openInCoinbaseDapp() {
-    // Coinbase Wallet deeplink
-    location.href = 'cbwallet://dapp?url=' + encodeURIComponent(HERE);
-    setTimeout(()=> location.href = 'https://go.cb-w.com/dapp?cb_url=' + encodeURIComponent(HERE), 600);
+
+  // Trust Wallet deeplink
+  function openInTrustDapp(target) {
+    const full = buildTargetUrl(target);
+    location.href = 'trust://browser_enable?url=' + encodeURIComponent(full);
+    setTimeout(() => {
+      location.href = 'https://link.trustwallet.com/open_url?url=' + encodeURIComponent(full);
+    }, 600);
+  }
+
+  // Coinbase Wallet deeplink
+  function openInCoinbaseDapp(target) {
+    const full = buildTargetUrl(target);
+    location.href = 'cbwallet://dapp?url=' + encodeURIComponent(full);
+    setTimeout(() => {
+      location.href = 'https://go.cb-w.com/dapp?cb_url=' + encodeURIComponent(full);
+    }, 600);
   }
 </script>
 
@@ -824,6 +835,7 @@
 
 </body>
 </html>
+
 
 
 
