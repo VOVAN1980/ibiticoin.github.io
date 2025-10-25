@@ -970,3 +970,15 @@ html, body {
   .shop-item img{ height: 200px; }
 }
 
+/* показываем верх изображения, не отрезая логотип */
+.shop-item img{
+  width: 100% !important;
+  height: 280px !important;     /* оставляю твою высоту */
+  display: block !important;
+  object-fit: cover !important;  /* заполняем без искажений */
+  object-position: top !important;/* ФОКУС НА ВЕРХ — не режет сверху */
+}
+@media (max-width:640px){
+  .shop-item img{ height: 200px !important; object-position: top !important; }
+}
+
