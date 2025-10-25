@@ -258,6 +258,7 @@
   <button id="openWalletModal">Подключить кошелек</button>
   <div id="walletAddress"></div>
   <div id="ibitiBalance"></div>
+  <button class="btn-coinbase" id="btnWalletConnect">WalletConnect (Trust / iOS)</button>
 </section>
 
   <button type="button" onclick="openAddTokenModal()"
@@ -489,6 +490,7 @@
 
 <!-- Подключаем библиотеки -->
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2/dist/umd/index.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk@4.3.3/dist/CoinbaseWalletSDK.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
@@ -716,5 +718,74 @@
   </div>
 </div>
 
+  <script>
+  // === WalletConnect v2 (BSC) ===
+  const WC_PROJECT_ID = '95f126f3a088cebcf781d2a1c10711fc';
+
+  // небольшой хелпер для отображения адреса
+  const short = a => a ? (a.slice(0,6) + '…' + a.slice(-4)) : '';
+
+  async function connectWithWalletConnect() {
+    try {
+      const EthereumProvider = window.WalletConnectProviderEthereum?.EthereumProvider;
+      if (!EthereumProvider) {
+        alert('WalletConnect не загрузился. Проверь интернет/блокировщик.');
+        return;
+      }
+
+      // Инициализируем провайдер под BSC mainnet (chainId 56)
+      const wcProvider = await EthereumProvider.init({
+        projectId: WC_PROJECT_ID,
+        chains: [56],
+        showQrModal: true,
+        rpcMap: { 56: 'https://bsc-dataseed1.bnbchain.org' },
+        metadata: {
+          name: 'IBITIcoin',
+          description: 'IBITIcoin dApp',
+          url: 'https://ibiticoin.com',
+          icons: ['https://ibiticoin.com/img/IBITI-512.png']
+        }
+      });
+
+      // Откроет QR / deep-link на мобильном
+      await wcProvider.enable();
+
+      // Сделаем доступным глобально (если понадобится дисконнект/слушатели)
+      window.ibitiWcProvider = wcProvider;
+
+      // Ethers v6 интеграция
+      const ethersProvider = new ethers.BrowserProvider(wcProvider);
+      const signer = await ethersProvider.getSigner();
+      const addr = await signer.getAddress();
+
+      // Обновим UI (твои элементы уже есть)
+      const addrEl = document.getElementById('walletAddress');
+      if (addrEl) addrEl.textContent = 'Кошелёк: ' + short(addr);
+
+      // Слушатели (по желанию)
+      wcProvider.on('accountsChanged', accounts => {
+        if (addrEl) addrEl.textContent = 'Кошелёк: ' + short(accounts?.[0] || '');
+      });
+      wcProvider.on('chainChanged', ch => console.log('WC chainChanged:', ch));
+      wcProvider.on('disconnect', () => {
+        if (addrEl) addrEl.textContent = '';
+        console.log('WC disconnect');
+      });
+
+      // Если у тебя есть функция после-коннекта — дерни её тут
+      // например: window.afterWalletConnected && window.afterWalletConnected(signer);
+
+    } catch (e) {
+      console.error('WalletConnect error:', e);
+      alert('Не удалось подключить WalletConnect. Попробуй ещё раз или открой встроенный браузер кошелька.');
+    }
+  }
+
+  // Навесим на кнопку модалки
+  const btnWC = document.getElementById('btnWalletConnect');
+  if (btnWC) btnWC.onclick = connectWithWalletConnect;
+</script>
+
 </body>
 </html>
+
