@@ -644,13 +644,24 @@
   }
 
   // --- Основной UX-поток автодобавления
+  <script>
   async function addTokenEip747(){
-    if (!hasEthereum()){
-      openInstallMM();
+    // если мы на мобиле и нет injected-провайдера — открываем страницу в dApp-браузере MetaMask
+    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) &&
+        !(window.ethereum && typeof window.ethereum.request === 'function')) {
+      // функция есть ниже в твоём коде
+      openInMetaMaskDapp();
       return;
     }
+
+    // дальше — как было (переключение сети + добавление токена)
+    if (!(window.ethereum && window.ethereum.request)){
+      openInstallMM(); // для ПК без кошелька
+      return;
+    }
+
     try {
-      const bscId = '0x38'; // BSC mainnet
+      const bscId = '0x38';
       const current = await window.ethereum.request({ method:'eth_chainId' });
       if (current !== bscId){
         try {
@@ -675,30 +686,12 @@
         method:'wallet_watchAsset',
         params:{ type:'ERC20', options: IBITI_TOKEN }
       });
-
-      if (added) {
-        toast('✅ IBITI добавлен в кошелёк');
-        closeAddTokenModal();
-      } else {
-        toast('ℹ️ Добавление отменено');
-      }
+      if (added) { toast('✅ IBITI добавлен в кошелёк'); closeAddTokenModal(); }
+      else { toast('ℹ️ Добавление отменено'); }
     } catch(err){
-      if (err && err.code === 4001) {
-        toast('ℹ️ Действие отменено пользователем');
-      } else {
-        console.error('Add IBITI error:', err);
-        alert('Не удалось добавить токен. Проверь, что кошелёк установлен и разблокирован.');
-      }
+      if (err && err.code === 4001) toast('ℹ️ Действие отменено пользователем');
+      else { console.error('Add IBITI error:', err); alert('Не удалось добавить токен.'); }
     }
-  }
-
-  // --- Кнопки в Coinbase-блоке
-  function copyText(sel){
-    const text = document.querySelector(sel).textContent.trim();
-    navigator.clipboard.writeText(text).then(()=>toast('✅ Адрес скопирован'));
-  }
-  function openBscscan(){
-    window.open('https://bscscan.com/token/'+IBITI_TOKEN.address,'_blank');
   }
 </script>
 <!-- ===== /ADD IBITI TOKEN MODAL ===== -->
@@ -811,6 +804,7 @@
 
 </body>
 </html>
+
 
 
 
