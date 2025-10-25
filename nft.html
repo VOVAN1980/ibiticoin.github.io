@@ -148,17 +148,17 @@
 
   </section>
 
-  <!-- Унифицированная модалка выбора кошелька (как в магазине) -->
-  <div id="walletModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;align-items:center;justify-content:center;backdrop-filter:blur(2px)">
-    <div class="ibiti-card" style="background:#111;padding:18px;border:1px solid gold;border-radius:10px;max-width:420px;width:92%;color:#ffd700;position:relative;">
-      <button type="button" id="closeWalletModal" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer;">✕</button>
-      <h3 style="margin:0 0 10px;font-size:18px;">Выберите кошелёк</h3>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <button id="btnInjected"  style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">MetaMask / Trust Wallet</button>
-        <button id="btnCoinbase" style="padding:10px 14px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">Coinbase Wallet</button>
-      </div>
+  <div id="walletModal">
+  <div class="modal-content">
+    <button class="close-btn" id="closeWalletModal">✕</button>
+    <h2>Выберите кошелек</h2>
+
+    <div class="wallet-actions">
+      <button class="btn-injected" id="btnInjected">MetaMask / Trust Wallet</button>
+      <button class="btn-coinbase"  id="btnCoinbase">Coinbase Wallet</button>
     </div>
   </div>
+</div>
 
   <!-- Модалка покупки NFT -->
   <div id="mintModal" class="modal" aria-hidden="true">
@@ -304,3 +304,4 @@
   </script>
 </body>
 </html>
+
