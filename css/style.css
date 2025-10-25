@@ -958,20 +958,23 @@ html, body {
   background: #0d0d0d;
 }
 
-/* Картинка: без кропа, без сдвигов, без фокусов */
-.shop-item img{
-  display: block;             /* убирает базовую линию/зазоры */
-  width: 100%;
-  height: auto;               /* показываем целиком по пропорциям */
-  margin: 0 !important;       /* обнуляем все возможные «подъёмы» */
-  padding: 0 !important;
-  border: 0 !important;
-  transform: none !important; /* на всякий — если где-то висел translate */
+.shop-item {
+  position: relative;
+  border: 1px solid gold;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
 }
 
-/* Подвал карточки (заголовок/описание/кнопка) не должен лежать поверх картинки */
-.shop-item h3,
-.shop-item p,
-.shop-item button{
-  position: static !important;
+.shop-item img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: middle;
+  transform: none !important;
+  object-fit: contain;
+  background: #000;
 }
