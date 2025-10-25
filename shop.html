@@ -674,8 +674,15 @@
 
   // --- Основной UX-поток автодобавления
   async function addTokenEip747(){
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
     if (!hasEthereum()){
-      openInstallMM();
+      if (isMobile) {
+        // Откроем текущую страницу внутри MetaMask Mobile
+        openInMetaMask();
+      } else {
+        openInstallMM();
+      }
       return;
     }
     try {
@@ -748,4 +755,5 @@
 
 </body>
 </html>
+
 
