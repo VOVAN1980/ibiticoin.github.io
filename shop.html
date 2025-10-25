@@ -673,20 +673,43 @@
   }
 
   // --- Основной UX-поток автодобавления
+ <script>
+  // Добавление IBITI в кошелёк (с учётом мобилки/сетей/разных кошельков)
   async function addTokenEip747(){
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const eth = window.ethereum;
+
+    // Нет провайдера → на мобиле открываем в MetaMask, на десктопе — показываем установку
     if (!hasEthereum()){
-      openInstallMM();
+      if (isMobile && typeof openInMetaMask === 'function') {
+        openInMetaMask();
+      } else {
+        openInstallMM();
+      }
       return;
     }
+
+    // Определяем кошелёк (для понятных подсказок)
+    const wallet = (() => {
+      if (eth?.isMetaMask) return 'metamask';
+      if (eth?.isTrust || /Trust/i.test(navigator.userAgent)) return 'trust';
+      if (eth?.isCoinbaseWallet) return 'coinbase';
+      return 'unknown';
+    })();
+
     try {
-      const bscId = '0x38'; // BSC mainnet
-      const current = await window.ethereum.request({ method:'eth_chainId' });
+      // 0) Попросим аккаунт (MetaMask Mobile иногда требует перед watchAsset)
+      try { await eth.request({ method: 'eth_requestAccounts' }); } catch (_) {}
+
+      // 1) Переключимся на BSC (56, 0x38)
+      const bscId = '0x38';
+      const current = await eth.request({ method: 'eth_chainId' });
       if (current !== bscId){
         try {
-          await window.ethereum.request({ method:'wallet_switchEthereumChain', params:[{ chainId: bscId }] });
+          await eth.request({ method:'wallet_switchEthereumChain', params:[{ chainId: bscId }] });
         } catch(e){
-          if (e.code === 4902){
-            await window.ethereum.request({
+          if (e && e.code === 4902){
+            await eth.request({
               method:'wallet_addEthereumChain',
               params:[{
                 chainId: bscId,
@@ -700,23 +723,43 @@
         }
       }
 
-      const added = await window.ethereum.request({
+      // 2) Добавляем токен (EIP-747)
+      const ok = await eth.request({
         method:'wallet_watchAsset',
         params:{ type:'ERC20', options: IBITI_TOKEN }
       });
 
-      if (added) {
+      if (ok) {
         toast('✅ IBITI добавлен в кошелёк');
-        closeAddTokenModal();
+        if (typeof closeAddTokenModal === 'function') closeAddTokenModal();
       } else {
         toast('ℹ️ Добавление отменено');
       }
+
     } catch(err){
+      console.error('watchAsset error:', err);
+
+      // Неподдерживаемый метод / особенности Trust & Coinbase
+      if (err?.code === -32601 || /watchAsset/i.test(err?.message || '')) {
+        if (wallet === 'trust') {
+          toast('ℹ️ Trust Wallet не поддерживает авто-добавление. Добавь токен вручную ниже.');
+          return;
+        }
+        if (wallet === 'coinbase') {
+          toast('ℹ️ В Coinbase Wallet добавь токен вручную (Import Token).');
+          return;
+        }
+      }
+
       if (err && err.code === 4001) {
         toast('ℹ️ Действие отменено пользователем');
       } else {
-        console.error('Add IBITI error:', err);
-        alert('Не удалось добавить токен. Проверь, что кошелёк установлен и разблокирован.');
+        alert(
+          'Не удалось добавить токен.\n' +
+          'Кошелёк: ' + wallet + '\n' +
+          'Код: ' + (err && err.code) + '\n' +
+          'Сообщение: ' + (err && err.message ? err.message : err)
+        );
       }
     }
   }
@@ -730,6 +773,7 @@
     window.open('https://bscscan.com/token/'+IBITI_TOKEN.address,'_blank');
   }
 </script>
+
 <!-- ===== /ADD IBITI TOKEN MODAL ===== -->
 
 <!-- Toast -->
@@ -748,6 +792,7 @@
 
 </body>
 </html>
+
 
 
 
