@@ -260,6 +260,34 @@
   <div id="ibitiBalance"></div>
 </section>
 
+  <div id="mobileOpeners" class="wallet-section" style="display:none">
+  <div style="margin:6px 0;color:#ccc">Нет кошелька в браузере? Открой сайт внутри кошелька:</div>
+  <button onclick="openInMetaMask()" style="margin:6px">Открыть в MetaMask</button>
+  <button onclick="openInTrust()"   style="margin:6px">Открыть в Trust Wallet</button>
+</div>
+
+<script>
+  (function(){
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const hasInjected = typeof window.ethereum !== 'undefined';
+    if (isMobile && !hasInjected) {
+      document.getElementById('mobileOpeners').style.display = 'block';
+    }
+  })();
+
+  function openInMetaMask(){
+    // Откроет текущую страницу внутри браузера MetaMask Mobile
+    const dappUrl = location.origin + location.pathname;
+    location.href = 'https://metamask.app.link/dapp/' + dappUrl;
+  }
+
+  function openInTrust(){
+    // Универсальная ссылка Trust Wallet (BSC = coin_id 56)
+    const dappUrl = encodeURIComponent(location.href);
+    location.href = 'https://link.trustwallet.com/open_url?coin_id=56&url=' + dappUrl;
+  }
+</script>
+
   <section class="wallet-section">
   <button onclick="addIbitiToMetaMask()"
     style="margin-top:10px;background:#0f172a;color:#d1fae5;border:1px solid #10b981;padding:10px 16px;border-radius:10px;cursor:pointer;">
@@ -726,17 +754,19 @@
   <script>
   // Мини-хелпер: при необходимости переключит на BSC и добавит токен IBITI с логотипом
   async function addIbitiToMetaMask() {
-    const TOKEN = {
-      address: '0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196',
-      symbol:  'IBITI',
-      decimals: 8,
-      image:   'https://ibiticoin.com/img/IBITI-512.png'
-    };
+  const TOKEN = {
+    address: '0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196',
+    symbol:  'IBITI',
+    decimals: 8,
+    image:   'https://ibiticoin.com/img/IBITI-512.png'
+  };
 
-    if (!window.ethereum || !window.ethereum.request) {
-      alert('MetaMask не найден. Установи расширение и разблокируй кошелёк.');
-      return;
-    }
+  if (!window.ethereum?.request) {
+    // Мобильный fallback: открыть диплинк MetaMask с вашим сайтом,
+    // после чего пользователь нажмёт кнопку «Добавить IBITI» уже внутри MetaMask.
+    openInMetaMask();
+    return;
+  }
 
     try {
       // 1) Убедимся, что сеть BSC
@@ -779,4 +809,5 @@
 
 </body>
 </html>
+
 
