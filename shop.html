@@ -719,73 +719,98 @@
 </div>
 
   <script>
-  // === WalletConnect v2 (BSC) ===
-  const WC_PROJECT_ID = '95f126f3a088cebcf781d2a1c10711fc';
+  // --- детекция окружения ---
+  const IS_MOBILE   = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const hasInjected = !!(window.ethereum && window.ethereum.request);
+  const isMetaMask  = !!(window.ethereum && window.ethereum.isMetaMask);
 
-  // небольшой хелпер для отображения адреса
-  const short = a => a ? (a.slice(0,6) + '…' + a.slice(-4)) : '';
-
-  async function connectWithWalletConnect() {
-    try {
-      const EthereumProvider = window.WalletConnectProviderEthereum?.EthereumProvider;
-      if (!EthereumProvider) {
-        alert('WalletConnect не загрузился. Проверь интернет/блокировщик.');
-        return;
-      }
-
-      // Инициализируем провайдер под BSC mainnet (chainId 56)
-      const wcProvider = await EthereumProvider.init({
-        projectId: WC_PROJECT_ID,
-        chains: [56],
-        showQrModal: true,
-        rpcMap: { 56: 'https://bsc-dataseed1.bnbchain.org' },
-        metadata: {
-          name: 'IBITIcoin',
-          description: 'IBITIcoin dApp',
-          url: 'https://ibiticoin.com',
-          icons: ['https://ibiticoin.com/img/IBITI-512.png']
-        }
-      });
-
-      // Откроет QR / deep-link на мобильном
-      await wcProvider.enable();
-
-      // Сделаем доступным глобально (если понадобится дисконнект/слушатели)
-      window.ibitiWcProvider = wcProvider;
-
-      // Ethers v6 интеграция
-      const ethersProvider = new ethers.BrowserProvider(wcProvider);
-      const signer = await ethersProvider.getSigner();
-      const addr = await signer.getAddress();
-
-      // Обновим UI (твои элементы уже есть)
-      const addrEl = document.getElementById('walletAddress');
-      if (addrEl) addrEl.textContent = 'Кошелёк: ' + short(addr);
-
-      // Слушатели (по желанию)
-      wcProvider.on('accountsChanged', accounts => {
-        if (addrEl) addrEl.textContent = 'Кошелёк: ' + short(accounts?.[0] || '');
-      });
-      wcProvider.on('chainChanged', ch => console.log('WC chainChanged:', ch));
-      wcProvider.on('disconnect', () => {
-        if (addrEl) addrEl.textContent = '';
-        console.log('WC disconnect');
-      });
-
-      // Если у тебя есть функция после-коннекта — дерни её тут
-      // например: window.afterWalletConnected && window.afterWalletConnected(signer);
-
-    } catch (e) {
-      console.error('WalletConnect error:', e);
-      alert('Не удалось подключить WalletConnect. Попробуй ещё раз или открой встроенный браузер кошелька.');
-    }
+  // --- аккуратный диплинк только для мобилы, когда нет injected-провайдера ---
+  function openInMetaMaskDapp() {
+    const path = location.host + location.pathname;                // ibiticoin.com/shop.html
+    const scheme = 'metamask://dapp/' + path;                      // пробуем открыть приложение напрямую
+    const appLink = 'https://metamask.app.link/dapp/' + path;      // fallback если схема не сработала
+    // сначала попытка через URL-схему, через 800 мс — fallback
+    try { location.href = scheme; setTimeout(() => location.href = appLink, 800); }
+    catch { location.href = appLink; }
   }
 
-  // Навесим на кнопку модалки
-  const btnWC = document.getElementById('btnWalletConnect');
-  if (btnWC) btnWC.onclick = connectWithWalletConnect;
+  // --- показать/спрятать кнопки по окружению ---
+  (function tuneButtons() {
+    const btnInjected     = document.getElementById('btnInjected');      // MetaMask / Trust Wallet
+    const btnWalletConnect= document.getElementById('btnWalletConnect'); // WalletConnect
+    // PC с расширением → показываем injected, прячем WC
+    if (!IS_MOBILE && hasInjected) {
+      if (btnInjected) btnInjected.style.display = 'block';
+      if (btnWalletConnect) btnWalletConnect.style.display = 'none';
+    }
+    // Мобила без injected → показываем WC и оставляем injected как "переход в MetaMask"
+    if (IS_MOBILE && !hasInjected) {
+      if (btnInjected) btnInjected.onclick = () => openInMetaMaskDapp();
+      if (btnWalletConnect) btnWalletConnect.style.display = 'block';
+    }
+  })();
+
+  // --- добавить токен IBITI в MetaMask (глобально!) ---
+  async function addIbitiToMetaMask() {
+    const TOKEN = {
+      address: '0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196',
+      symbol:  'IBITI',
+      decimals: 8,
+      image:   'https://ibiticoin.com/img/IBITI-512.png'
+    };
+
+    // если с мобилы и нет injected-провайдера — сначала открываем страницу внутри MetaMask
+    if (IS_MOBILE && !hasInjected) {
+      openInMetaMaskDapp();
+      return;
+    }
+
+    if (!window.ethereum || !window.ethereum.request) {
+      alert('MetaMask не найден. Открой страницу внутри браузера MetaMask/Trust Wallet.');
+      return;
+    }
+
+    try {
+      // 1) убедимся, что сеть — BSC mainnet (0x38)
+      const bsc = { chainId: '0x38' };
+      const current = await window.ethereum.request({ method: 'eth_chainId' });
+      if (current !== bsc.chainId) {
+        try {
+          await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [bsc] });
+        } catch (e) {
+          if (e.code === 4902) {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [{
+                chainId: '0x38',
+                chainName: 'BNB Smart Chain',
+                nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+                rpcUrls: ['https://bsc-dataseed1.bnbchain.org'],
+                blockExplorerUrls: ['https://bscscan.com']
+              }]
+            });
+          } else { throw e; }
+        }
+      }
+
+      // 2) собственно добавление токена
+      const ok = await window.ethereum.request({
+        method: 'wallet_watchAsset',
+        params: { type: 'ERC20', options: TOKEN }
+      });
+      console.log('wallet_watchAsset:', ok);
+      if (ok === false) alert('Пользователь отменил добавление токена.');
+
+    } catch (err) {
+      console.error('Add IBITI error:', err);
+      alert('Не удалось добавить токен. Проверь, что MetaMask разблокирован и разрешения выданы.');
+    }
+  }
+  // гарантируем ГЛОБАЛЬНУЮ доступность для onclick
+  window.addIbitiToMetaMask = addIbitiToMetaMask;
 </script>
 
 </body>
 </html>
+
 
