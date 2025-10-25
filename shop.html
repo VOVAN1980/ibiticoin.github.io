@@ -604,11 +604,6 @@
   <script>
   const IS_MOBILE = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-  // текущий URL (включая query и hash)
-  const HERE = location.protocol + '//' + location.host + location.pathname + location.search + location.hash;
-
-  const IS_MOBILE = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
   function openInMetaMaskDapp(target /* 'connect' | 'addToken' */) {
     // формируем URL этой же страницы + метка действия
     const url = new URL(location.href);
@@ -621,9 +616,8 @@
 
     try { location.href = scheme; setTimeout(() => location.href = appLink, 600); }
     catch { location.href = appLink; }
-  }
-
-  function openInTrustDapp() {
+   }
+   function openInTrustDapp() {
     // Trust Wallet deeplink (универсальный)
     location.href = 'trust://browser_enable?url=' + encodeURIComponent(HERE);
     setTimeout(()=> location.href = 'https://link.trustwallet.com/open_url?url=' + encodeURIComponent(HERE), 600);
@@ -831,6 +825,7 @@
 
 </body>
 </html>
+
 
 
 
