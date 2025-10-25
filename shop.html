@@ -643,77 +643,68 @@
   }
 
   // --- Основной UX-поток автодобавления
-  async function addTokenEip747(){
-  // нормализованный провайдер (MM/Trust/Binance)
-  const eth = (() => {
-    const list = Array.isArray(window.ethereum?.providers)
-      ? window.ethereum.providers.slice()
-      : [];
-    if (window.ethereum && !list.length) list.push(window.ethereum);
-    if (window.BinanceChain) list.push(window.BinanceChain);
-    const pick =
-      list.find(p => p && (p.isMetaMask || p.isTrust || p.isRabby || p.isBraveWallet)) ||
-      window.BinanceChain ||
-      window.ethereum ||
-      null;
-    return (pick && typeof pick.request === 'function') ? pick : null;
-  })();
+  async function addTokenEip747() {
+  if (!hasEthereum()) {            // как у тебя
+    openInstallMM();
+    return;
+  }
 
-  if (!eth){ openInstallMM(); return; }
-
-  // (опционально) заблокируем авто-кнопку, если она есть
-  const btn = document.querySelector('#addTokenModal button');
-  const prevText = btn ? btn.textContent : null;
-  if (btn) { btn.disabled = true; btn.textContent = 'Подождите…'; }
+  const eth = window.ethereum;     // без провайдер-танцев
+  const bscId = '0x38';            // BSC mainnet
 
   try {
-    // 1) сеть BSC
-    const bscId = '0x38';
-    const current = await eth.request({ method:'eth_chainId' }).catch(()=>null);
-    if (current !== bscId){
+    // 1) узнаём текущую сеть
+    let current = null;
+    try {
+      current = await eth.request({ method: 'eth_chainId' });
+    } catch (_) { /* оставляем null */ }
+
+    // 2) переключаемся/добавляем BSC при необходимости
+    if (current !== bscId) {
       try {
-        await eth.request({ method:'wallet_switchEthereumChain', params:[{ chainId:bscId }] });
-      } catch(e){
-        if (e?.code === 4902){
+        await eth.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: bscId }]
+        });
+      } catch (e) {
+        if (e && e.code === 4902) {
           await eth.request({
-            method:'wallet_addEthereumChain',
-            params:[{
-              chainId:bscId,
-              chainName:'BNB Smart Chain',
-              nativeCurrency:{ name:'BNB', symbol:'BNB', decimals:18 },
-              rpcUrls:['https://bsc-dataseed1.bnbchain.org'],
-              blockExplorerUrls:['https://bscscan.com']
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: bscId,
+              chainName: 'BNB Smart Chain',
+              nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+              rpcUrls: ['https://bsc-dataseed1.bnbchain.org'],
+              blockExplorerUrls: ['https://bscscan.com']
             }]
           });
-        } else { throw e; }
+        } else {
+          throw e;
+        }
       }
     }
 
-    // 2) EIP-747: добавить токен
+    // 3) добавляем токен через EIP-747
     const added = await eth.request({
-      method:'wallet_watchAsset',
-      params:{ type:'ERC20', options: IBITI_TOKEN }
+      method: 'wallet_watchAsset',
+      params: { type: 'ERC20', options: IBITI_TOKEN }
     });
 
     if (added) {
       toast('✅ IBITI добавлен в кошелёк');
       closeAddTokenModal();
-      localStorage.setItem('ibiti_token_added','1');
     } else {
       toast('ℹ️ Добавление отменено');
     }
-  } catch(err){
-    const msg = String(err?.message || '');
-    if (err?.code === 4001) {
+  } catch (err) {
+    if (err && err.code === 4001) {
       toast('ℹ️ Действие отменено пользователем');
-    } else if (err?.code === -32601 || msg.includes('watchAsset')) {
-      alert('Кошелёк не поддерживает авто-добавление. Открой сайт в MetaMask/Trust или добавь токен вручную.');
+    } else if (String(err?.message || '').includes('watchAsset') || err?.code === -32601) {
+      alert('Этот кошелёк не поддерживает авто-добавление. Добавь токен вручную.');
     } else {
       console.error('Add IBITI error:', err);
       alert('Не удалось добавить токен. Проверь, что кошелёк установлен и разблокирован.');
     }
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = prevText; }
   }
 }
 
@@ -743,6 +734,7 @@ function openBscscan(){
 
 </body>
 </html>
+
 
 
 
