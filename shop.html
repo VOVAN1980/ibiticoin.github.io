@@ -601,6 +601,32 @@
   </div>
 </div>
 
+  <script>
+  const IS_MOBILE = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  // текущий URL (включая query и hash)
+  const HERE = location.protocol + '//' + location.host + location.pathname + location.search + location.hash;
+
+  function openInMetaMaskDapp() {
+    // сначала пробуем URL-схему, затем fallback-линк
+    const scheme  = 'metamask://dapp/' + location.host + location.pathname + location.search + location.hash;
+    const appLink = 'https://metamask.app.link/dapp/' + location.host + location.pathname + location.search + location.hash;
+    try { location.href = scheme; setTimeout(()=>location.href = appLink, 600); }
+    catch { location.href = appLink; }
+  }
+  function openInTrustDapp() {
+    // Trust Wallet deeplink (универсальный)
+    location.href = 'trust://browser_enable?url=' + encodeURIComponent(HERE);
+    setTimeout(()=> location.href = 'https://link.trustwallet.com/open_url?url=' + encodeURIComponent(HERE), 600);
+  }
+  function openInCoinbaseDapp() {
+    // Coinbase Wallet deeplink
+    location.href = 'cbwallet://dapp?url=' + encodeURIComponent(HERE);
+    setTimeout(()=> location.href = 'https://go.cb-w.com/dapp?cb_url=' + encodeURIComponent(HERE), 600);
+  }
+</script>
+
+
 <!-- НЕ module: функции должны быть в window -->
 <script>
   const IBITI_TOKEN = {
@@ -818,6 +844,7 @@
 
 </body>
 </html>
+
 
 
 
