@@ -691,14 +691,15 @@
     }
   }
 
-// --- Кнопки в Coinbase-блоке (ручной импорт)
-function copyText(sel){
-  const text = document.querySelector(sel).textContent.trim();
-  navigator.clipboard.writeText(text).then(()=>toast('✅ Адрес скопирован'));
-}
-function openBscscan(){
-  window.open('https://bscscan.com/token/'+IBITI_TOKEN.address,'_blank');
-}
+  // --- Кнопки в Coinbase-блоке
+  function copyText(sel){
+    const text = document.querySelector(sel).textContent.trim();
+    navigator.clipboard.writeText(text).then(()=>toast('✅ Адрес скопирован'));
+  }
+  function openBscscan(){
+    window.open('https://bscscan.com/token/'+IBITI_TOKEN.address,'_blank');
+  }
+</script>
 <!-- ===== /ADD IBITI TOKEN MODAL ===== -->
 
 <!-- Toast -->
@@ -717,20 +718,3 @@ function openBscscan(){
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
