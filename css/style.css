@@ -982,3 +982,11 @@ html, body {
   .shop-item img{ height: 200px !important; object-position: top !important; }
 }
 
+.shop-item img {
+  display: block;
+  width: 100%;
+  height: auto !important;  /* убираем фиксированную высоту */
+  object-fit: contain !important; /* не обрезает */
+  background: #000; /* если будут поля сверху/снизу */
+}
+
