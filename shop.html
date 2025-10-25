@@ -630,48 +630,7 @@
   </div>
 </div>
 
-<script>
-  <!-- НЕ module: функции должны быть в window -->
-  const IBITI_TOKEN = {
-    address: '0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196',
-    symbol:  'IBITI',
-    decimals: 8,
-    image:   'https://ibiticoin.com/img/IBITI-512.png'
-  };
-
-  // --- Модалка выбора кошелька
-  function openAddTokenModal(){
-    const m = document.getElementById('addTokenModal');
-    m.style.display = 'flex';
-    m.onclick = (e)=>{ if (e.target === m) closeAddTokenModal(); };
-  }
-  function closeAddTokenModal(){
-    document.getElementById('addTokenModal').style.display='none';
-  }
-
-  // --- Модалка "Установите MetaMask"
-  function openInstallMM(){ 
-    const m = document.getElementById('installMM'); 
-    m.style.display='flex'; 
-    m.onclick=(e)=>{ if(e.target===m) closeInstallMM(); }; 
-  }
-  function closeInstallMM(){ 
-    document.getElementById('installMM').style.display='none'; 
-  }
-
-  function toast(msg){
-  const el = document.getElementById('toastOK');
-  el.textContent = msg;
-  el.style.opacity = '1';
-  clearTimeout(el._timer);
-  el._timer = setTimeout(()=> el.style.opacity='0', 2600);
-}
-
-  // --- Проверка наличия web3-провайдера
-  function hasEthereum(){
-    return !!(window.ethereum && typeof window.ethereum.request === 'function');
-  }
-
+<!-- НЕ module: функции должны быть в window -->
 <script>
   const IBITI_TOKEN = {
     address: '0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196',
@@ -834,6 +793,7 @@
 
 </body>
 </html>
+
 
 
 
