@@ -9,27 +9,74 @@
   <link rel="stylesheet" href="css/style.css" />
 
   <!-- Локальные стили страницы -->
-  <style>
-    body { margin:0; background:#000; color:#fff; font-family:'Orbitron',sans-serif; }
-    header { text-align:center; padding:20px; }
-    header h1 { margin:0; color:gold; font-size:2.5rem; }
-    header p { margin:10px auto 0; color:#ccc; max-width:900px; line-height:1.4; }
+<style>
+  /* базис */
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #000;
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+  }
 
-    .wallet-section { text-align:center; margin:20px auto; }
-    .wallet-section button { background:gold; color:#000; border:0; padding:10px 24px; border-radius:6px; font-weight:700; cursor:pointer; }
-    .wallet-section button:hover { background:#c0a000; }
-    #walletAddress { margin-top:10px; color:gold; font-weight:700; word-break:break-all; }
+  /* заголовок */
+  header { text-align: center; padding: 20px; }
+  header h1 { margin: 0; color: gold; font-size: 2.5rem; }
+  header p  { margin: 10px auto 0; color: #ccc; max-width: 900px; line-height: 1.4; }
 
-    .nft-gallery {
-      display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-      gap:20px; padding:40px 20px; max-width:1200px; margin:0 auto;
-    }
-    .nft-item { position:relative; background:#111; border:1px solid gold; border-radius:10px; overflow:hidden; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,.5); transition:transform .3s; }
-    .nft-item:hover { transform:scale(1.02); }
-    .nft-item img { width:100%; display:block; border-bottom:1px solid gold; }
-    .rarity-label { position:absolute; left:0; right:0; bottom:0; background:rgba(0,0,0,.7); color:gold; font-weight:700; padding:10px; }
-    .buy-button { position:absolute; top:10px; left:50%; transform:translateX(-50%); background:gold; color:#000; padding:8px 18px; border-radius:6px; font-weight:700; border:0; cursor:pointer; }
-    .buy-button:hover { background:#c0a000; }
+  /* секция кошелька */
+  .wallet-section { text-align: center; margin: 20px auto; }
+  .wallet-section button{
+    appearance: none; -webkit-appearance: none;
+    background: gold; color: #000; border: 0;
+    padding: 10px 24px; border-radius: 6px; font-weight: 700; cursor: pointer;
+    transition: background .25s ease;
+  }
+  .wallet-section button:hover { background: #c0a000; }
+  #walletAddress { margin-top: 10px; color: gold; font-weight: 700; word-break: break-all; }
+
+  /* галерея */
+  .nft-gallery{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px; padding: 40px 20px; max-width: 1200px; margin: 0 auto;
+  }
+  .nft-item{
+    position: relative; background: #111; border: 1px solid gold; border-radius: 10px;
+    overflow: hidden; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,.5);
+    transition: transform .3s ease;
+  }
+  .nft-item:hover { transform: scale(1.02); }
+  .nft-item img{ width: 100%; height: auto; display: block; border-bottom: 1px solid gold; }
+  .rarity-label{
+    position: absolute; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,.7); color: gold; font-weight: 700; padding: 10px;
+  }
+
+  /* кнопка «Купить» на карточке */
+  .buy-button{
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    background: gold; color: #000; padding: 8px 18px; border-radius: 6px;
+    font-weight: 700; border: 0; cursor: pointer; transition: background .25s ease;
+  }
+  .buy-button:hover{ background: #c0a000; }
+
+  /* фикс крестика в модалке выбора кошелька (как в магазине) */
+  #closeWalletModal{
+    all: unset;            /* сносим наследованные width:100% и т.п. из глобальных правил */
+    position: absolute; top: 8px; right: 10px;
+    cursor: pointer; color: #fff; font-size: 18px; line-height: 1;
+  }
+  #closeWalletModal:hover{ opacity: .85; }
+
+  /* мобилка */
+  @media (max-width: 640px){
+    header h1{ font-size: 1.8rem; }
+    header p { font-size: 1rem; }
+    .wallet-section button{ width: 80%; }
+    .nft-gallery{ padding: 20px 10px; gap: 12px; }
+  }
+</style>
 
     /* Модалка покупки NFT */
     .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:4000; }
@@ -304,4 +351,5 @@
   </script>
 </body>
 </html>
+
 
