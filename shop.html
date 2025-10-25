@@ -4,8 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Магазин IBITIcoin</title>
+
+  <!-- Стили проекта -->
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
+  <!-- Минимальные общие стили модалок (без лишнего) -->
   <style>
     .hero-header{padding:15px 20px;text-align:center}
     .hero-header h1{font-size:3em;color:gold;margin:0}
@@ -27,349 +31,271 @@
     .shop-item button{background:gold;color:#000;border:none;padding:10px;width:100%;font-weight:bold;cursor:pointer;border-radius:0 0 10px 10px;transition:background .3s}
     .shop-item button:hover{background:#c0a000}
 
-    /* ===== Универсальные модалки с крестом справа ===== */
+    /* Универсальные модалки */
     .modal{display:none;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.6);align-items:center;justify-content:center;backdrop-filter:blur(2px)}
-    .modal-card{background:#111;color:#ffd700;border:1px solid gold;border-radius:10px;position:relative}
-    .modal-card .close-x{position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer;line-height:1}
+    .modal-card{position:relative;background:#111;border:1px solid gold;border-radius:10px;color:#ffd700;padding:18px;width:92%;max-width:420px}
+    .modal-card .close-x{position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;line-height:1;cursor:pointer}
 
-    /* Специфика этих двух модалок */
-    #walletModal .modal-card{padding:18px;max-width:420px;width:92%}
-    #addTokenModal .modal-card{padding:18px 18px 14px;max-width:420px;width:92%}
-    #installMM .modal-card{padding:18px;max-width:420px;width:92%}
-
-    /* Sale/referral блоки (как у тебя) */
-    footer{padding:20px;background:rgba(0,0,0,.8);border-top:2px solid gold;text-align:center;color:gold}
-    footer a{color:gold;text-decoration:none}
-    footer a:hover{text-decoration:underline}
-
-    /* ===== Видимость кнопок по устройству ===== */
-    .only-mobile{display:none}
-    .only-desktop{display:inline-block}
-    @media (max-width: 900px){
-      .only-mobile{display:inline-block}
-      .only-desktop{display:none}
-    }
-
-    /* Toast */
+    /* Тост */
     #toastOK{position:fixed;right:20px;bottom:24px;background:#0b0f1a;border:1px solid #10b981;color:#d1fae5;padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:4000}
   </style>
 </head>
 <body>
-<header class="hero-header">
-  <h1>Магазин IBITIcoin</h1>
-  <p>Приобретайте эксклюзивные товары, связанные с IBITIcoin!</p>
-</header>
+  <header class="hero-header">
+    <h1>Магазин IBITIcoin</h1>
+    <p>Приобретайте эксклюзивные товары, связанные с IBITIcoin!</p>
+  </header>
 
-<div id="countdownNotice"></div>
+  <div id="countdownNotice"></div>
 
-<section class="wallet-section">
-  <button id="openWalletModal">Подключить кошелек</button>
-  <div id="walletAddress"></div>
-  <div id="ibitiBalance"></div>
+  <section class="wallet-section">
+    <button id="openWalletModal">Подключить кошелек</button>
+    <div id="walletAddress"></div>
+    <div id="ibitiBalance"></div>
 
-  <!-- ПК-кнопка: прямое добавление токена (если есть провайдер) -->
-  <button class="only-desktop" type="button" onclick="openAddTokenModal()"
-    style="margin-top:10px;background:#0f172a;color:#d1fae5;border:1px solid #10b981;padding:10px 16px;border-radius:10px;cursor:pointer;">
-    Добавить IBITI в кошелёк
-  </button>
+    <!-- Кнопка добавления токена (универсальная; на мобиле откроется диплинком через js) -->
+    <button type="button" onclick="openAddTokenModal()" style="margin-top:10px">
+      Добавить IBITI в кошелёк
+    </button>
+  </section>
 
-  <!-- МОБИЛА: диплинки открыть сайт внутри кошельков -->
-  <div class="only-mobile" style="margin-top:12px">
-    <div style="margin:6px 0;color:#ccc">На телефоне открой сайт внутри кошелька:</div>
-    <button onclick="openInMetaMask()" style="margin:6px 6px 0 0">Открыть в MetaMask</button>
-    <button onclick="openInTrust()"   style="margin:6px 0 0 6px">Открыть в Trust Wallet</button>
-    <div style="margin-top:10px">
-      <button onclick="openAddTokenModal()"
-        style="background:#0f172a;color:#d1fae5;border:1px solid #10b981;padding:10px 16px;border-radius:10px;cursor:pointer;">
-        Добавить IBITI в кошелёк
-      </button>
-    </div>
-  </div>
-</section>
-
-<!-- ===== CONNECT WALLET MODAL ===== -->
-<div id="walletModal" class="modal">
-  <div class="modal-card">
-    <button type="button" id="closeWalletModal" class="close-x">✕</button>
-    <h3 style="margin:0 0 10px;font-size:18px;">Выберите кошелёк</h3>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <button id="btnInjected"
-              style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
-        MetaMask / Trust Wallet
-      </button>
-      <button id="btnCoinbase"
-              style="padding:10px 14px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">
-        Coinbase Wallet
-      </button>
-    </div>
-  </div>
-</div>
-
-<section class="shop-items">
-  <div class="shop-item">
-    <img src="img/IBITIcoin.webp" alt="IBITIcoin">
-    <h3>Название товара 1 (IBITIcoin)</h3>
-    <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-    <button class="buy-button" onclick="openPurchaseModal('IBITIcoin')">Купить</button>
-  </div>
-  <div class="shop-item">
-    <img src="img/NFT.webp" alt="NFT">
-    <h3>Название товара 2 (NFT)</h3>
-    <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-    <button class="buy-button" onclick="openPurchaseModal('NFT')">Купить</button>
-  </div>
-</section>
-
-<!-- Покупка -->
-<div id="purchaseModal" class="modal">
-  <div class="modal-card" style="max-width:500px;width:92%;padding:20px">
-    <button class="close-x" onclick="closePurchaseModal()">&times;</button>
-    <h2 id="purchaseTitle" style="margin-top:0">Покупка</h2>
-    <form id="purchaseForm">
-      <label for="nftAmount">Введите количество:</label>
-      <input type="number" id="nftAmount" name="nftAmount" min="1" required
-             style="padding:10px;width:80%;border:1px solid gold;border-radius:5px;margin-bottom:20px;background:#000;color:gold">
-      <label for="paymentToken">Способ оплаты:</label>
-      <select id="paymentToken" required
-              style="padding:10px;width:85%;border:1px solid gold;border-radius:5px;margin-bottom:20px;background:#000;color:gold;font-weight:bold">
-        <option value="">-- Выберите --</option>
-        <option value="USDT">USDT</option>
-      </select><br><br>
-      <button type="submit" id="confirmBtn" disabled
-              style="background:gold;color:#000;border:none;padding:10px 20px;border-radius:5px;font-weight:bold;cursor:pointer">Подтвердить покупку</button>
-      <button type="button" class="cancel" onclick="closePurchaseModal()"
-              style="background:gold;color:#000;border:none;padding:10px 20px;border-radius:5px;font-weight:bold;cursor:pointer;margin-left:8px">Отмена</button>
-    </form>
-  </div>
-</div>
-
-<!-- ===== Статистика токенсейла (как было) ===== -->
-<section id="saleStats" data-aos="fade-up" style="margin:40px auto;max-width:800px;padding:24px;background:#111;color:#fff;border:1px solid gold;border-radius:10px;text-align:center;box-shadow:0 0 20px rgba(255,215,0,.1)">
-  <div class="progress-container"><div id="salesProgress" class="progress-bar"></div></div>
-  <div style="font-size:.9em;color:#aaa">Продано: <span id="soldPercent">0%</span></div>
-  <h3 style="color:gold;font-size:1.8em;margin-bottom:16px">📊 Статистика токенсейла</h3>
-  <ul style="list-style:none;padding-left:0;color:gold;font-size:1.1em">
-    <li>🔹 Всего на контракте:   <strong><span id="cap">—</span></strong> IBI</li>
-    <li>🔹 Резерв рефералов:      <strong><span id="refReserve">—</span></strong> IBI</li>
-    <li>🔹 Основной пул продаж:   <strong><span id="salePool">—</span></strong> IBI</li>
-    <li>🔹 Продано:               <strong><span id="sold">—</span></strong> IBI</li>
-    <li>🔹 Осталось продаж:       <strong><span id="left">—</span></strong> IBI</li>
-    <li>🔹 Пул бонусов (10%):     <strong><span id="bonusPool">—</span></strong> IBI</li>
-  </ul>
-  <div style="margin-top:16px;font-size:.9em;color:#aaa">
-    <span id="lastUpdated">Обновлено: —</span>
-    <button id="refreshStats" style="margin-left:12px;background:gold;color:#000;border:none;padding:4px 8px;border-radius:4px;cursor:pointer">🔄 Обновить</button>
-  </div>
-</section>
-
-<section id="referralInfo" data-aos="fade-up" style="margin:40px auto;max-width:800px;padding:24px;background:#111;color:#fff;border:1px solid gold;border-radius:10px;text-align:center;box-shadow:0 0 20px rgba(255,215,0,.1)">
-  <h3 style="color:gold;font-size:1.8em;margin-bottom:16px">🎁 Реферальная программа</h3>
-  <p>🔸 Купите <strong>от 10 IBITI</strong> — и получите <strong>1 IBITI бонусом</strong> сразу.</p>
-  <p>🔸 После покупки вы получите персональную ссылку для приглашений.</p>
-  <p>🔸 Делитесь ею — и за каждого друга, который купит токены, вы получите ещё <strong>+1 IBITI</strong>.</p>
-  <p style="margin-top:16px">📌 Всё работает автоматически — никаких регистраций и подтверждений не нужно.</p>
-</section>
-
-<div style="margin:32px auto 64px;text-align:center">
-  <input type="text" id="myReferralLink" readonly placeholder="Ссылка появится после первой покупки от 10 IBITI"
-         style="width:100%;max-width:500px;padding:10px;border:1px solid gold;border-radius:6px;background:#000;color:gold;font-weight:bold;margin-bottom:12px"/>
-  <br/>
-  <button id="copyMyReferralLink" class="btn-small" style="padding:10px 24px;font-weight:bold">📋 Скопировать мою ссылку</button>
-  <button id="openShareModal" style="margin-top:12px;margin-left:8px;padding:10px 24px;font-weight:bold;background:gold;color:#000;border:none;border-radius:6px;cursor:pointer">📣 Поделиться ссылкой</button>
-  <div id="referralStats" style="display:none">👥 Приведено друзей: <span id="refCount">0</span><br>💰 Получено бонусов: <span id="refReward">0</span> IBITI</div>
-</div>
-
-<!-- Share modal -->
-<div id="shareModal" class="modal" style="justify-content:center;align-items:center">
-  <div class="modal-card" style="max-width:500px;width:92%;padding:20px">
-    <button id="closeShareModal" class="close-x">&times;</button>
-    <h3 style="margin-bottom:20px">Выберите соцсеть для шаринга</h3>
-    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px">
-      <a id="share-facebook"  target="_blank" class="btn-small">Facebook</a>
-      <a id="share-twitter"   target="_blank" class="btn-small">Twitter</a>
-      <a id="share-vk"        target="_blank" class="btn-small">VK</a>
-      <a id="share-telegram"  target="_blank" class="btn-small">Telegram</a>
-      <a id="share-ok"        target="_blank" class="btn-small">Одноклассники</a>
-      <a id="share-linkedin"  target="_blank" class="btn-small">LinkedIn</a>
-      <a id="share-weibo"     target="_blank" class="btn-small">Weibo</a>
-    </div>
-  </div>
-</div>
-
-<div id="toastOK"></div>
-
-<!-- Install MetaMask modal -->
-<div id="installMM" class="modal">
-  <div class="modal-card">
-    <button class="close-x" onclick="closeInstallMM()">✕</button>
-    <h3 style="margin:0 0 10px">Установите MetaMask</h3>
-    <p style="color:#e5e7eb;margin:0 0 12px">Чтобы автоматически добавить токен, нужен кошелёк MetaMask (или совместимый).</p>
-    <a href="https://metamask.io/download/" target="_blank" rel="noopener"
-       style="display:inline-block;padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;text-decoration:none">Скачать MetaMask</a>
-  </div>
-</div>
-
-<footer>
-  <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
-  <p><a href="index.html">Вернуться на главную</a></p>
-</footer>
-
-<!-- Libs -->
-<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk@4.3.3/dist/CoinbaseWalletSDK.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script>AOS.init({ once:true });</script>
-
-<!-- Modules -->
-<script type="module" src="js/config.js"></script>
-<script type="module" src="js/sale.js"></script>
-<script type="module" src="js/wallet.js"></script>
-<script type="module" src="js/shop.js"></script>
-
-<!-- Page logic (share/referral) -->
-<script type="module">
-  import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
-  document.addEventListener("DOMContentLoaded", () => {
-    const linkInput   = document.getElementById("myReferralLink");
-    const copyBtn     = document.getElementById("copyMyReferralLink");
-    const toast       = document.getElementById("toastOK");
-    const statsBlock  = document.getElementById("referralStats");
-    const shareModal  = document.getElementById("shareModal");
-    const openBtn     = document.getElementById("openShareModal");
-    const closeBtn    = document.getElementById("closeShareModal");
-    const pageTitle   = encodeURIComponent(document.title);
-
-    copyBtn.addEventListener("click", () => {
-      Swal.fire({icon:"info",title:"Недоступно",text:"Сначала купите от 10 IBITI, чтобы получить реферальную ссылку."});
-    });
-
-    window.enableReferralAfterPurchase = async function(account){
-      const refLink = `${window.location.origin}${window.location.pathname}?ref=${account}`;
-      linkInput.value = refLink;
-
-      copyBtn.onclick = () => {
-        navigator.clipboard.writeText(refLink).then(()=>{
-          toast.textContent = "✅ Скопировано в буфер";
-          toast.style.opacity = "1";
-          setTimeout(()=>toast.style.opacity="0", 2500);
-        });
-      };
-
-      const map = {
-        'share-facebook':  `https://www.facebook.com/sharer/sharer.php?u=${refLink}`,
-        'share-twitter':   `https://twitter.com/intent/tweet?url=${refLink}&text=${pageTitle}`,
-        'share-vk':        `https://vk.com/share.php?url=${refLink}&title=${pageTitle}`,
-        'share-telegram':  `https://telegram.me/share/url?url=${refLink}&text=${pageTitle}`,
-        'share-ok':        `https://connect.ok.ru/offer?url=${refLink}`,
-        'share-linkedin':  `https://www.linkedin.com/sharing/share-offsite/?url=${refLink}`,
-        'share-weibo':     `http://service.weibo.com/share/share.php?url=${refLink}&title=${pageTitle}`
-      };
-      Object.entries(map).forEach(([id, url]) => document.getElementById(id).href = url);
-
-      openBtn.onclick = () => shareModal.style.display = 'flex';
-      closeBtn.onclick = () => shareModal.style.display = 'none';
-      window.addEventListener('click', e => { if (e.target === shareModal) shareModal.style.display = 'none'; });
-
-      if (typeof loadReferralStats === "function") await loadReferralStats(account);
-      statsBlock.style.display = "block";
-    };
-  });
-</script>
-
-<!-- ===== Add token modal + helpers (НЕ module) ===== -->
-<div id="addTokenModal" class="modal">
-  <div class="modal-card">
-    <button class="close-x" onclick="closeAddTokenModal()">✕</button>
-    <h3 style="margin:0 0 10px;font-size:18px;">Куда добавить токен IBITI?</h3>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <button onclick="addTokenEip747()" style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
-        MetaMask / Trust Wallet / Binance Wallet (авто)
-      </button>
-      <details style="background:#0b0f1a;border:1px solid #333;border-radius:8px;padding:10px">
-        <summary style="cursor:pointer;color:#e5e7eb">Coinbase Wallet (ручное добавление)</summary>
-        <div style="margin-top:10px;color:#e5e7eb;font-size:14px;line-height:1.4">
-          Открой Coinbase Wallet → <b>Tokens</b> → <b>+</b> → <b>Import Token</b> → вставь:
-          <div style="margin-top:8px">
-            <div>Contract: <code id="ctAddr">0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196</code></div>
-            <div>Symbol: <code>IBITI</code></div>
-            <div>Decimals: <code>8</code></div>
-          </div>
-          <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-            <button onclick="copyText('#ctAddr')" style="padding:6px 10px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">Скопировать адрес</button>
-            <button onclick="openBscscan()" style="padding:6px 10px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">Открыть в BscScan</button>
-          </div>
-        </div>
-      </details>
-      <div style="font-size:12px;color:#9ca3af;margin-top:4px">
-        На мобиле открывай сайт в DApp-браузере кошелька и жми авто-добавление.
+  <!-- Модалка выбора кошелька -->
+  <div id="walletModal" class="modal">
+    <div class="modal-card">
+      <button type="button" id="closeWalletModal" class="close-x">✕</button>
+      <h3 style="margin:0 0 10px;font-size:18px;">Выберите кошелёк</h3>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button id="btnInjected"
+                style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
+          MetaMask / Trust Wallet
+        </button>
+        <button id="btnCoinbase"
+                style="padding:10px 14px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">
+          Coinbase Wallet
+        </button>
       </div>
     </div>
   </div>
-</div>
 
-<script>
-  const IBITI_TOKEN = {
-    address:'0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196',
-    symbol:'IBITI',
-    decimals:8,
-    image:'https://ibiticoin.com/img/IBITI-512.png'
-  };
+  <!-- Товары -->
+  <section class="shop-items">
+    <div class="shop-item">
+      <img src="img/IBITIcoin.webp" alt="IBITIcoin">
+      <h3>Название товара 1 (IBITIcoin)</h3>
+      <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
+      <button class="buy-button" onclick="openPurchaseModal('IBITIcoin')">Купить</button>
+    </div>
+    <div class="shop-item">
+      <img src="img/NFT.webp" alt="NFT">
+      <h3>Название товара 2 (NFT)</h3>
+      <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
+      <button class="buy-button" onclick="openPurchaseModal('NFT')">Купить</button>
+    </div>
+  </section>
 
-  const uaMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  <!-- Модалка покупки -->
+  <div id="purchaseModal" class="modal">
+    <div class="modal-card" style="max-width:500px">
+      <button class="close-x" onclick="closePurchaseModal()">✕</button>
+      <h2 id="purchaseTitle" style="margin:0 0 12px">Покупка</h2>
+      <form id="purchaseForm">
+        <label for="nftAmount" style="display:block;margin-bottom:8px;font-weight:700;color:gold">Введите количество:</label>
+        <input type="number" id="nftAmount" name="nftAmount" min="1" required
+               style="padding:10px;width:80%;border:1px solid gold;border-radius:5px;margin-bottom:16px;background:#000;color:gold">
+        <label for="paymentToken" style="display:block;margin:8px 0;font-weight:700;color:gold">Способ оплаты:</label>
+        <select id="paymentToken" required
+                style="padding:10px;width:85%;border:1px solid gold;border-radius:5px;margin-bottom:16px;background:#000;color:gold;font-weight:bold">
+          <option value="">-- Выберите --</option>
+          <option value="USDT">USDT</option>
+        </select>
+        <div style="margin-top:8px">
+          <button type="submit" id="confirmBtn" disabled
+                  style="background:gold;color:#000;border:none;padding:10px 20px;border-radius:5px;font-weight:bold;cursor:pointer">
+            Подтвердить покупку
+          </button>
+          <button type="button" class="cancel" onclick="closePurchaseModal()"
+                  style="background:gold;color:#000;border:none;padding:10px 20px;border-radius:5px;font-weight:bold;cursor:pointer;margin-left:8px">
+            Отмена
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-  // Модалки
-  function openAddTokenModal(){ const m=document.getElementById('addTokenModal'); m.style.display='flex'; m.onclick=e=>{ if(e.target===m) closeAddTokenModal(); }; }
-  function closeAddTokenModal(){ document.getElementById('addTokenModal').style.display='none'; }
+  <!-- Статистика токенсейла -->
+  <section id="saleStats" data-aos="fade-up"
+           style="margin:40px auto;max-width:800px;padding:24px;background:#111;color:#fff;border:1px solid gold;border-radius:10px;text-align:center;box-shadow:0 0 20px rgba(255,215,0,.1)">
+    <div class="progress-container"><div id="salesProgress" class="progress-bar"></div></div>
+    <div style="font-size:.9em;color:#aaa">Продано: <span id="soldPercent">0%</span></div>
+    <h3 style="color:gold;font-size:1.8em;margin-bottom:16px">📊 Статистика токенсейла</h3>
+    <ul style="list-style:none;padding-left:0;color:gold;font-size:1.1em">
+      <li>🔹 Всего на контракте:   <strong><span id="cap">—</span></strong> IBI</li>
+      <li>🔹 Резерв рефералов:      <strong><span id="refReserve">—</span></strong> IBI</li>
+      <li>🔹 Основной пул продаж:   <strong><span id="salePool">—</span></strong> IBI</li>
+      <li>🔹 Продано:               <strong><span id="sold">—</span></strong> IBI</li>
+      <li>🔹 Осталось продаж:       <strong><span id="left">—</span></strong> IBI</li>
+      <li>🔹 Пул бонусов (10%):     <strong><span id="bonusPool">—</span></strong> IBI</li>
+    </ul>
+    <div style="margin-top:16px;font-size:.9em;color:#aaa">
+      <span id="lastUpdated">Обновлено: —</span>
+      <button id="refreshStats" style="margin-left:12px;background:gold;color:#000;border:none;padding:4px 8px;border-radius:4px;cursor:pointer">🔄 Обновить</button>
+    </div>
+  </section>
 
-  function openInstallMM(){ const m=document.getElementById('installMM'); m.style.display='flex'; m.onclick=e=>{ if(e.target===m) closeInstallMM(); }; }
-  function closeInstallMM(){ document.getElementById('installMM').style.display='none'; }
+  <!-- Реферальный блок -->
+  <section id="referralInfo" data-aos="fade-up"
+           style="margin:40px auto;max-width:800px;padding:24px;background:#111;color:#fff;border:1px solid gold;border-radius:10px;text-align:center;box-shadow:0 0 20px rgba(255,215,0,.1)">
+    <h3 style="color:gold;font-size:1.8em;margin-bottom:16px">🎁 Реферальная программа</h3>
+    <p>🔸 Купите <strong>от 10 IBITI</strong> — и получите <strong>1 IBITI бонусом</strong> сразу.</p>
+    <p>🔸 После покупки вы получите персональную ссылку для приглашений.</p>
+    <p>🔸 Делитесь ею — и за каждого друга, который купит токены, вы получите ещё <strong>+1 IBITI</strong>.</p>
+    <p style="margin-top:16px">📌 Всё работает автоматически — никаких регистраций и подтверждений не нужно.</p>
+  </section>
 
-  function toast(msg){ const el=document.getElementById('toastOK'); el.textContent=msg; el.style.opacity='1'; clearTimeout(el._t); el._t=setTimeout(()=>el.style.opacity='0',2600); }
+  <!-- Реферальная ссылка + шаринг -->
+  <div style="margin:32px auto 64px;text-align:center">
+    <input type="text" id="myReferralLink" readonly
+           placeholder="Ссылка появится после первой покупки от 10 IBITI"
+           style="width:100%;max-width:500px;padding:10px;border:1px solid gold;border-radius:6px;background:#000;color:gold;font-weight:bold;margin-bottom:12px"/>
+    <br/>
+    <button id="copyMyReferralLink" class="btn-small" style="padding:10px 24px;font-weight:bold">📋 Скопировать мою ссылку</button>
+    <button id="openShareModal" style="margin-top:12px;margin-left:8px;padding:10px 24px;font-weight:bold;background:gold;color:#000;border:none;border-radius:6px;cursor:pointer">
+      📣 Поделиться ссылкой
+    </button>
+    <div id="referralStats" style="display:none">
+      👥 Приведено друзей: <span id="refCount">0</span><br>
+      💰 Получено бонусов: <span id="refReward">0</span> IBITI
+    </div>
+  </div>
 
-  function hasEthereum(){ return !!(window.ethereum && typeof window.ethereum.request==='function'); }
+  <!-- Модалка шаринга -->
+  <div id="shareModal" class="modal">
+    <div class="modal-card" style="max-width:500px">
+      <button id="closeShareModal" class="close-x">✕</button>
+      <h3 style="margin:0 0 12px">Выберите соцсеть для шаринга</h3>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px">
+        <a id="share-facebook"  target="_blank" class="btn-small">Facebook</a>
+        <a id="share-twitter"   target="_blank" class="btn-small">Twitter</a>
+        <a id="share-vk"        target="_blank" class="btn-small">VK</a>
+        <a id="share-telegram"  target="_blank" class="btn-small">Telegram</a>
+        <a id="share-ok"        target="_blank" class="btn-small">Одноклассники</a>
+        <a id="share-linkedin"  target="_blank" class="btn-small">LinkedIn</a>
+        <a id="share-weibo"     target="_blank" class="btn-small">Weibo</a>
+      </div>
+    </div>
+  </div>
 
-  // Диплинки (только для мобилы)
-  function openInMetaMask(){ const dapp = location.origin + location.pathname; location.href = 'https://metamask.app.link/dapp/' + dapp; }
-  function openInTrust(){ const dapp = encodeURIComponent(location.href); location.href = 'https://link.trustwallet.com/open_url?coin_id=56&url=' + dapp; }
+  <!-- Toast -->
+  <div id="toastOK"></div>
 
-  // Автодобавление токена
-  async function addTokenEip747(){
-    if (!hasEthereum()){
-      if (uaMobile) { openInMetaMask(); } else { openInstallMM(); }
-      return;
-    }
-    try{
-      const bscId = '0x38';
-      const current = await window.ethereum.request({ method:'eth_chainId' });
-      if (current !== bscId){
-        try{
-          await window.ethereum.request({ method:'wallet_switchEthereumChain', params:[{ chainId:bscId }] });
-        }catch(e){
-          if (e.code === 4902){
-            await window.ethereum.request({
-              method:'wallet_addEthereumChain',
-              params:[{ chainId:bscId, chainName:'BNB Smart Chain',
-                        nativeCurrency:{ name:'BNB', symbol:'BNB', decimals:18 },
-                        rpcUrls:['https://bsc-dataseed1.bnbchain.org'],
-                        blockExplorerUrls:['https://bscscan.com'] }]
-            });
-          }else{ throw e; }
+  <!-- Install MetaMask (если нет провайдера на ПК) -->
+  <div id="installMM" class="modal">
+    <div class="modal-card">
+      <button class="close-x" onclick="closeInstallMM()">✕</button>
+      <h3 style="margin:0 0 10px">Установите MetaMask</h3>
+      <p style="color:#e5e7eb;margin:0 0 12px">Чтобы добавить токен автоматически, нужен MetaMask (или совместимый).</p>
+      <a href="https://metamask.io/download/" target="_blank" rel="noopener"
+         style="display:inline-block;padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;text-decoration:none">
+        Скачать MetaMask
+      </a>
+    </div>
+  </div>
+
+  <!-- Add IBITI Token -->
+  <div id="addTokenModal" class="modal">
+    <div class="modal-card">
+      <button class="close-x" onclick="closeAddTokenModal()">✕</button>
+      <h3 style="margin:0 0 10px;font-size:18px;">Куда добавить токен IBITI?</h3>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button onclick="addTokenEip747()"
+                style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
+          MetaMask / Trust Wallet / Binance Wallet (авто)
+        </button>
+        <details style="background:#0b0f1a;border:1px solid #333;border-radius:8px;padding:10px">
+          <summary style="cursor:pointer;color:#e5e7eb">Coinbase Wallet (ручное добавление)</summary>
+          <div style="margin-top:10px;color:#e5e7eb;font-size:14px;line-height:1.4">
+            Contract: <code id="ctAddr">0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196</code><br>
+            Symbol: <code>IBITI</code><br>
+            Decimals: <code>8</code>
+            <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+              <button onclick="copyText('#ctAddr')" style="padding:6px 10px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">Скопировать адрес</button>
+              <button onclick="openBscscan()" style="padding:6px 10px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">Открыть в BscScan</button>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
+    <p><a href="index.html">Вернуться на главную</a></p>
+  </footer>
+
+  <!-- Библиотеки -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk@4.3.3/dist/CoinbaseWalletSDK.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script>AOS.init({ once:true });</script>
+
+  <!-- Модули проекта -->
+  <script type="module" src="js/config.js"></script>
+  <script type="module" src="js/sale.js"></script>
+  <script type="module" src="js/wallet.js"></script>
+  <script type="module" src="js/shop.js"></script>
+
+  <!-- Helper-функции для Add Token и диплинков (НЕ module) -->
+  <script>
+    const IBITI_TOKEN = {
+      address:'0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196',
+      symbol:'IBITI',
+      decimals:8,
+      image:'https://ibiticoin.com/img/IBITI-512.png'
+    };
+    const uaMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    function openAddTokenModal(){ const m=document.getElementById('addTokenModal'); m.style.display='flex'; m.onclick=e=>{ if(e.target===m) closeAddTokenModal(); }; }
+    function closeAddTokenModal(){ document.getElementById('addTokenModal').style.display='none'; }
+
+    function openInstallMM(){ const m=document.getElementById('installMM'); m.style.display='flex'; m.onclick=e=>{ if(e.target===m) closeInstallMM(); }; }
+    function closeInstallMM(){ document.getElementById('installMM').style.display='none'; }
+
+    function toast(msg){ const el=document.getElementById('toastOK'); el.textContent=msg; el.style.opacity='1'; clearTimeout(el._t); el._t=setTimeout(()=>el.style.opacity='0',2600); }
+
+    function hasEthereum(){ return !!(window.ethereum && typeof window.ethereum.request==='function'); }
+    function openInMetaMask(){ const dapp = location.origin + location.pathname; location.href = 'https://metamask.app.link/dapp/' + dapp; }
+    function openInTrust(){ const dapp = encodeURIComponent(location.href); location.href = 'https://link.trustwallet.com/open_url?coin_id=56&url=' + dapp; }
+
+    async function addTokenEip747(){
+      if (!hasEthereum()){ if (uaMobile) { openInMetaMask(); } else { openInstallMM(); } return; }
+      try{
+        const bscId = '0x38';
+        const current = await window.ethereum.request({ method:'eth_chainId' });
+        if (current !== bscId){
+          try{
+            await window.ethereum.request({ method:'wallet_switchEthereumChain', params:[{ chainId:bscId }] });
+          }catch(e){
+            if (e.code === 4902){
+              await window.ethereum.request({
+                method:'wallet_addEthereumChain',
+                params:[{ chainId:bscId, chainName:'BNB Smart Chain',
+                          nativeCurrency:{ name:'BNB', symbol:'BNB', decimals:18 },
+                          rpcUrls:['https://bsc-dataseed1.bnbchain.org'],
+                          blockExplorerUrls:['https://bscscan.com'] }]
+              });
+            } else { throw e; }
+          }
         }
+        const added = await window.ethereum.request({ method:'wallet_watchAsset', params:{ type:'ERC20', options:IBITI_TOKEN } });
+        if (added){ toast('✅ IBITI добавлен в кошелёк'); closeAddTokenModal(); } else { toast('ℹ️ Добавление отменено'); }
+      }catch(err){
+        if (err && err.code===4001){ toast('ℹ️ Действие отменено пользователем'); }
+        else { console.error('Add IBITI error:', err); alert('Не удалось добавить токен. Проверь, что кошелёк установлен и разблокирован.'); }
       }
-      const added = await window.ethereum.request({ method:'wallet_watchAsset', params:{ type:'ERC20', options:IBITI_TOKEN } });
-      if (added){ toast('✅ IBITI добавлен в кошелёк'); closeAddTokenModal(); } else { toast('ℹ️ Добавление отменено'); }
-    }catch(err){
-      if (err && err.code===4001){ toast('ℹ️ Действие отменено пользователем'); }
-      else { console.error('Add IBITI error:', err); alert('Не удалось добавить токен. Проверь, что кошелёк установлен и разблокирован.'); }
     }
-  }
-
-  function copyText(sel){ const text=document.querySelector(sel).textContent.trim(); navigator.clipboard.writeText(text).then(()=>toast('✅ Адрес скопирован')); }
-  function openBscscan(){ window.open('https://bscscan.com/token/'+IBITI_TOKEN.address, '_blank'); }
-
-  // Закрытие модалок «крестиком» уже справа — позиции фиксированы стилями .close-x
-</script>
-
+    function copyText(sel){ const text=document.querySelector(sel).textContent.trim(); navigator.clipboard.writeText(text).then(()=>toast('✅ Адрес скопирован')); }
+    function openBscscan(){ window.open('https://bscscan.com/token/'+IBITI_TOKEN.address, '_blank'); }
+  </script>
 </body>
 </html>
