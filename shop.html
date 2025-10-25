@@ -672,13 +672,64 @@
     return !!(window.ethereum && typeof window.ethereum.request === 'function');
   }
 
- <script>
-  // Добавление IBITI в кошелёк (с учётом мобилки/сетей/разных кошельков)
+ <!-- НЕ module: функции должны быть в window -->
+<script>
+  const IBITI_TOKEN = {
+    address: '0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196',
+    symbol:  'IBITI',
+    decimals: 8,
+    image:   'https://ibiticoin.com/img/IBITI-512.png'
+  };
+
+  // --- Модалка выбора кошелька
+  function openAddTokenModal(){
+    const m = document.getElementById('addTokenModal');
+    m.style.display = 'flex';
+    m.onclick = (e)=>{ if (e.target === m) closeAddTokenModal(); };
+  }
+  function closeAddTokenModal(){
+    document.getElementById('addTokenModal').style.display='none';
+  }
+
+  // --- Модалка "Установите MetaMask"
+  function openInstallMM(){ 
+    const m = document.getElementById('installMM'); 
+    m.style.display='flex'; 
+    m.onclick=(e)=>{ if(e.target===m) closeInstallMM(); }; 
+  }
+  function closeInstallMM(){ 
+    document.getElementById('installMM').style.display='none'; 
+  }
+
+  // Toast
+  function toast(msg){
+    const el = document.getElementById('toastOK');
+    el.textContent = msg;
+    el.style.opacity = '1';
+    clearTimeout(el._timer);
+    el._timer = setTimeout(()=> el.style.opacity='0', 2600);
+  }
+
+  // Провайдер есть?
+  function hasEthereum(){
+    return !!(window.ethereum && typeof window.ethereum.request === 'function');
+  }
+
+  // Тип кошелька (для подсказок)
+  function getWalletType() {
+    const eth = window.ethereum || {};
+    if (eth.isMetaMask) return 'metamask';
+    if (eth.isTrust || /Trust/i.test(navigator.userAgent)) return 'trust';
+    if (eth.isCoinbaseWallet) return 'coinbase';
+    return 'unknown';
+  }
+
+  // Добавление IBITI в кошелёк (EIP-747) с учётом мобилки/сетей/разных кошельков
   async function addTokenEip747(){
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     const eth = window.ethereum;
 
-    // Нет провайдера → на мобиле открываем в MetaMask, на десктопе — показываем установку
+    // Нет провайдера → на мобиле диплинк в MetaMask, на десктопе — установка
     if (!hasEthereum()){
       if (isMobile && typeof openInMetaMask === 'function') {
         openInMetaMask();
@@ -688,16 +739,10 @@
       return;
     }
 
-    // Определяем кошелёк (для понятных подсказок)
-    const wallet = (() => {
-      if (eth?.isMetaMask) return 'metamask';
-      if (eth?.isTrust || /Trust/i.test(navigator.userAgent)) return 'trust';
-      if (eth?.isCoinbaseWallet) return 'coinbase';
-      return 'unknown';
-    })();
+    const wallet = getWalletType();
 
     try {
-      // 0) Попросим аккаунт (MetaMask Mobile иногда требует перед watchAsset)
+      // 0) На всякий — запросим аккаунт (MetaMask Mobile иногда требует до watchAsset)
       try { await eth.request({ method: 'eth_requestAccounts' }); } catch (_) {}
 
       // 1) Переключимся на BSC (56, 0x38)
@@ -738,7 +783,7 @@
     } catch(err){
       console.error('watchAsset error:', err);
 
-      // Неподдерживаемый метод / особенности Trust & Coinbase
+      // Trust/CB часто не поддерживают watchAsset → показываем понятный фоллбек
       if (err?.code === -32601 || /watchAsset/i.test(err?.message || '')) {
         if (wallet === 'trust') {
           toast('ℹ️ Trust Wallet не поддерживает авто-добавление. Добавь токен вручную ниже.');
@@ -773,8 +818,7 @@
   }
 </script>
 
-<!-- ===== /ADD IBITI TOKEN MODAL ===== -->
-
+  <!-- ===== /ADD IBITI TOKEN MODAL ===== -->
 <!-- Toast -->
 <div id="toastOK" style="position:fixed;right:20px;bottom:24px;background:#0b0f1a;border:1px solid #10b981;color:#d1fae5;padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:4000"></div>
 
@@ -791,6 +835,7 @@
 
 </body>
 </html>
+
 
 
 
