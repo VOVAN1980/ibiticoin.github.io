@@ -62,31 +62,15 @@
     }
 
     /* ----------------------------------------- */
-    /* 4. Секция подключения кошелька */
-    .wallet-section {
-      text-align: center;
-      margin: 20px auto;
-    }
-    .wallet-section button {
-      background: gold;
-      color: #000;
-      border: none;
-      padding: 10px 24px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background 0.3s;
-    }
-    .wallet-section button:hover {
-      background: #c0a000;
-    }
-    .wallet-section #walletAddress {
-      margin-top: 10px;
-      font-weight: bold;
-      color: gold;
-      word-break: break-all;
-    }
+    <!-- === 5. Модалка выбора кошелька === -->
+<div id="walletModal">
+  <div class="modal-content">
+    <button class="close-btn" id="closeWalletModal">✕</button>
+    <h2>Выберите кошелек</h2>
+    <button class="btn-injected" id="btnInjected">MetaMask / Trust Wallet</button>
+    <button class="btn-coinbase" id="btnCoinbase">Coinbase Wallet</button>
+  </div>
+</div>
 
     /* ----------------------------------------- */
     /* 5. Галерея NFT */
@@ -571,3 +555,4 @@
   </script>
 </body>
 </html>
+
