@@ -9,99 +9,112 @@
   <link rel="stylesheet" href="css/style.css" />
 
   <!-- Локальные стили страницы -->
-  <style>
+<style>
   /* базис */
   * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: #000;
-    color: #fff;
-    font-family: 'Orbitron', sans-serif;
-  }
+  body { margin:0; background:#000; color:#fff; font-family:'Orbitron',sans-serif; }
 
   /* заголовок */
-  header { text-align: center; padding: 20px; }
-  header h1 { margin: 0; color: gold; font-size: 2.5rem; }
-  header p  { margin: 10px auto 0; color: #ccc; max-width: 900px; line-height: 1.4; }
+  header { text-align:center; padding:20px; }
+  header h1 { margin:0; color:gold; font-size:2.5rem; }
+  header p  { margin:10px auto 0; color:#ccc; max-width:900px; line-height:1.4; }
 
   /* секция кошелька */
-  .wallet-section { text-align: center; margin: 20px auto; }
+  .wallet-section { text-align:center; margin:20px auto; }
   .wallet-section button{
-    -webkit-appearance: none; appearance: none;
-    background: gold; color: #000; border: 0;
-    padding: 10px 24px; border-radius: 6px; font-weight: 700; cursor: pointer;
-    transition: background .25s ease;
+    appearance:none;-webkit-appearance:none;
+    background:gold;color:#000;border:0;
+    padding:10px 24px;border-radius:6px;font-weight:700;cursor:pointer;
+    transition:background .25s;
   }
-  .wallet-section button:hover { background: #c0a000; }
-  #walletAddress { margin-top: 10px; color: gold; font-weight: 700; word-break: break-all; }
+  .wallet-section button:hover{ background:#c0a000; }
+  #walletAddress{ margin-top:10px;color:gold;font-weight:700;word-break:break-all; }
 
-  /* ==== Wallet modal (отдельные классы, не конфликтуют с .modal/.modal-content) ==== */
+  /* ===== модалка выбора кошелька (свои классы) ===== */
   .wallet-modal{
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,.6); z-index: 3000;
-    align-items: center; justify-content: center;
-    backdrop-filter: blur(2px);
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,.6); z-index:3000;
+    align-items:center; justify-content:center; backdrop-filter:blur(2px);
   }
   .wallet-card{
-    position: relative;
-    background: #111; color: #ffd700;
-    border: 1px solid gold; border-radius: 10px;
-    padding: 18px; width: 92%; max-width: 420px;
-    box-shadow: 0 8px 24px rgba(0,0,0,.5);
+    position:relative; background:#111; color:#ffd700;
+    border:1px solid gold; border-radius:10px; padding:18px;
+    width:92%; max-width:420px; box-shadow:0 8px 24px rgba(0,0,0,.5);
   }
-  .wallet-title{ margin: 0 0 10px; font-size: 18px; text-align: center; }
-  .wallet-close{
-    all: unset;
-    position: absolute; top: 8px; right: 10px;
-    color: #fff; font-size: 18px; line-height: 1; cursor: pointer;
-  }
-  .wallet-close:hover{ opacity: .85; }
-  .wallet-actions{ display: flex; flex-direction: column; gap: 10px; }
+  .wallet-title{ margin:0 0 10px; font-size:18px; text-align:center; }
+  .wallet-actions{ display:flex; flex-direction:column; gap:10px; }
   .btn-injected{
-    padding: 10px 14px; border: 1px solid #10b981; border-radius: 8px;
-    background: #052e2b; color: #d1fae5; cursor: pointer;
+    padding:10px 14px; border:1px solid #10b981; border-radius:8px;
+    background:#052e2b; color:#d1fae5; cursor:pointer;
   }
   .btn-coinbase{
-    padding: 10px 14px; border: 1px solid #3f3f46; border-radius: 8px;
-    background: #111827; color: #e5e7eb; cursor: pointer;
+    padding:10px 14px; border:1px solid #3f3f46; border-radius:8px;
+    background:#111827; color:#e5e7eb; cursor:pointer;
   }
-  .btn-coinbase:hover{ background: #0f172a;}
+  .btn-coinbase:hover{ background:#0f172a; }
+
+  /* крестик — глушим глобальные button-правила */
+  .wallet-close{
+    all:unset; position:absolute; top:8px; right:10px;
+    color:#fff; font-size:18px; line-height:1; cursor:pointer;
+  }
+  .wallet-close:hover{ opacity:.85; }
 
   /* галерея */
   .nft-gallery{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px; padding: 40px 20px; max-width: 1200px; margin: 0 auto;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:20px; padding:40px 20px; max-width:1200px; margin:0 auto;
   }
   .nft-item{
-    position: relative; background: #111; border: 1px solid gold; border-radius: 10px;
-    overflow: hidden; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,.5);
-    transition: transform .3s ease;
+    position:relative; background:#111; border:1px solid gold; border-radius:10px;
+    overflow:hidden; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,.5);
+    transition:transform .3s;
   }
-  .nft-item:hover{ transform: scale(1.02); }
-  .nft-item img{ width: 100%; height: auto; display: block; border-bottom: 1px solid gold; }
+  .nft-item:hover{ transform:scale(1.02); }
+  .nft-item img{ width:100%; display:block; border-bottom:1px solid gold; }
   .rarity-label{
-    position: absolute; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,.7); color: gold; font-weight: 700; padding: 10px;
+    position:absolute; left:0; right:0; bottom:0;
+    background:rgba(0,0,0,.7); color:gold; font-weight:700; padding:10px;
   }
-
-  /* кнопка «Купить» на карточке */
   .buy-button{
-    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
-    background: gold; color: #000; padding: 8px 18px; border-radius: 6px;
-    font-weight: 700; border: 0; cursor: pointer; transition: background .25s ease;
+    position:absolute; top:10px; left:50%; transform:translateX(-50%);
+    background:gold; color:#000; padding:8px 18px; border-radius:6px;
+    font-weight:700; border:0; cursor:pointer; transition:background .25s;
   }
-  .buy-button:hover{ background: #c0a000; }
+  .buy-button:hover{ background:#c0a000; }
+
+  /* модалка покупки NFT */
+  .modal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:4000; }
+  .modal-content{
+    position:relative; margin:10% auto; width:90%; max-width:500px;
+    background:#111; color:gold; border:2px solid gold; border-radius:10px; padding:20px; text-align:center;
+  }
+  .modal-content .close{ position:absolute; right:15px; top:10px; font-size:1.5rem; cursor:pointer; }
+  .modal-content button{ background:gold; color:#000; border:0; padding:10px 20px; border-radius:6px; font-weight:700; margin:6px; cursor:pointer; }
+  .modal-content button:hover{ background:#c0a000; }
+  #mintStatus{ margin-top:12px; min-height:20px; color:#ffecb3; white-space:pre-wrap; }
+
+  /* навигационные кнопки */
+  .nft-footer-buttons{ display:flex; justify-content:center; gap:16px; margin:40px 0 20px; }
+  .nft-footer-buttons .btn-small{
+    background:linear-gradient(135deg,#ffd700,#c0a000); color:#000; font-weight:700;
+    padding:10px 22px; border-radius:6px; text-decoration:none;
+  }
+  .nft-footer-buttons .btn-small:hover{ background:#c0a000; }
+
+  footer{ text-align:center; padding:20px; background:#111; color:gold; border-top:1px solid gold; }
+  footer a{ color:gold; text-decoration:none; }
+  footer a:hover{ text-decoration:underline; }
 
   /* мобилка */
-  @media (max-width: 640px){
-    header h1{ font-size: 1.8rem; }
-    header p { font-size: 1rem; }
-    .wallet-section button{ width: 80%; }
-    .nft-gallery{ padding: 20px 10px; gap: 12px; }
+  @media (max-width:640px){
+    header h1{ font-size:1.8rem; }
+    header p { font-size:1rem; }
+    .wallet-section button{ width:80%; }
+    .nft-gallery{ padding:20px 10px; gap:12px; }
   }
+</style>
 
-    <style>
 /* === Wallet modal: антиконфликтные стили === */
 #walletModal.wallet-modal{
   display:none; position:fixed; inset:0;
@@ -412,6 +425,7 @@
   </script>
 </body>
 </html>
+
 
 
 
