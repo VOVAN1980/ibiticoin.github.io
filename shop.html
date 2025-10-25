@@ -846,8 +846,26 @@
 })();
 </script>
 
+  <script>
+// Автовыполнение действия в dApp-браузере по параметру ?go=
+(function autoRunInsideWallet(){
+  const p = new URLSearchParams(location.search).get('go');
+  if (!p) return;
+  // маленькая задержка — чтобы провайдер успел инициализироваться
+  setTimeout(() => {
+    if (p === 'connect' && window.ethereum) {
+      window.ethereum.request({ method: 'eth_requestAccounts' }).catch(()=>{});
+    }
+    if (p === 'addToken' && typeof window.addTokenEip747 === 'function') {
+      window.addTokenEip747();
+    }
+  }, 350);
+})();
+</script>
+
 </body>
 </html>
+
 
 
 
