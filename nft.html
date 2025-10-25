@@ -273,6 +273,53 @@
 </head>
 <body>
 
+  <script type="module">
+  import { connectWallet, connectViaCoinbase } from "./js/wallet.js";
+
+  const openBtn   = document.getElementById("openWalletModal");
+  const closeBtn  = document.getElementById("closeWalletModal");
+  const walletMod = document.getElementById("walletModal");
+  const btnInj    = document.getElementById("btnInjected");
+  const btnCb     = document.getElementById("btnCoinbase");
+
+  // Открыть модалку (как в магазине)
+  openBtn?.addEventListener("click", () => {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isMobile && !window.ethereum) {
+      alert("Откройте сайт во встроенном браузере кошелька (MetaMask/Trust/Coinbase).");
+      return;
+    }
+    walletMod.style.display = "flex";
+  });
+
+  // Закрыть модалку
+  closeBtn?.addEventListener("click", () => (walletMod.style.display = "none"));
+  walletMod?.addEventListener("click", (e) => {
+    if (e.target === walletMod) walletMod.style.display = "none";
+  });
+
+  // MetaMask / Trust
+  btnInj?.addEventListener("click", async () => {
+    walletMod.style.display = "none";
+    await connectWallet();
+    const addr = window.selectedAccount;
+    if (addr) document.getElementById("walletAddress").innerText = addr;
+  });
+
+  // Coinbase
+  btnCb?.addEventListener("click", async () => {
+    walletMod.style.display = "none";
+    if (typeof connectViaCoinbase === "function") {
+      await connectViaCoinbase();
+      const addr = window.selectedAccount;
+      if (addr) document.getElementById("walletAddress").innerText = addr;
+    } else {
+      alert("Coinbase Wallet временно недоступен.");
+    }
+  });
+</script>
+
+
   <!-- === 2. Заголовок === -->
   <header>
     <h1>NFT Галерея IBITIcoin</h1>
@@ -511,6 +558,7 @@
   </script>
 </body>
 </html>
+
 
 
 
