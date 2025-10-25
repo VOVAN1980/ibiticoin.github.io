@@ -645,20 +645,12 @@
 
   // --- Основной UX-поток автодобавления (без лишних <script>)
   async function addTokenEip747(){
-    // мобила без injected → открываем в dApp-браузере MetaMask
-    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) && !hasEthereum()){
-      openInMetaMaskDapp();
-      return;
-    }
-
-    // ПК без кошелька → подсказать установить
     if (!hasEthereum()){
       openInstallMM();
       return;
     }
-
     try {
-      const bscId = '0x38';
+      const bscId = '0x38'; // BSC mainnet
       const current = await window.ethereum.request({ method:'eth_chainId' });
       if (current !== bscId){
         try {
@@ -684,15 +676,23 @@
         params:{ type:'ERC20', options: IBITI_TOKEN }
       });
 
-      if (added) { toast('✅ IBITI добавлен в кошелёк'); closeAddTokenModal(); }
-      else { toast('ℹ️ Добавление отменено'); }
+      if (added) {
+        toast('✅ IBITI добавлен в кошелёк');
+        closeAddTokenModal();
+      } else {
+        toast('ℹ️ Добавление отменено');
+      }
     } catch(err){
-      if (err && err.code === 4001) toast('ℹ️ Действие отменено пользователем');
-      else { console.error('Add IBITI error:', err); alert('Не удалось добавить токен.'); }
+      if (err && err.code === 4001) {
+        toast('ℹ️ Действие отменено пользователем');
+      } else {
+        console.error('Add IBITI error:', err);
+        alert('Не удалось добавить токен. Проверь, что кошелёк установлен и разблокирован.');
+      }
     }
   }
 
-  // Кнопки в Coinbase-блоке
+  // --- Кнопки в Coinbase-блоке
   function copyText(sel){
     const text = document.querySelector(sel).textContent.trim();
     navigator.clipboard.writeText(text).then(()=>toast('✅ Адрес скопирован'));
@@ -811,6 +811,7 @@
 
 </body>
 </html>
+
 
 
 
