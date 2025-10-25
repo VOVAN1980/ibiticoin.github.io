@@ -451,7 +451,7 @@
     📣 Поделиться ссылкой
   </button>
 
-  <div id="referralStats" style="…;display:none">
+  <div id="referralStats" style=";display:none">
   👥 Приведено друзей: <span id="refCount">0</span><br>
   💰 Получено бонусов: <span id="refReward">0</span> IBITI
 </div>
@@ -674,15 +674,8 @@
 
   // --- Основной UX-поток автодобавления
   async function addTokenEip747(){
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
     if (!hasEthereum()){
-      if (isMobile) {
-        // Откроем текущую страницу внутри MetaMask Mobile
-        openInMetaMask();
-      } else {
-        openInstallMM();
-      }
+      openInstallMM();
       return;
     }
     try {
@@ -755,5 +748,6 @@
 
 </body>
 </html>
+
 
 
