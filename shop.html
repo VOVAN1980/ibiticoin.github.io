@@ -644,19 +644,67 @@
   }
 
   // --- Основной UX-поток автодобавления
-  <script>
+  <!-- НЕ module: функции должны быть в window -->
+<script>
+  const IBITI_TOKEN = {
+    address: '0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196',
+    symbol:  'IBITI',
+    decimals: 8,
+    image:   'https://ibiticoin.com/img/IBITI-512.png'
+  };
+
+  // Модалка "Добавить токен"
+  function openAddTokenModal(){
+    const m = document.getElementById('addTokenModal');
+    m.style.display = 'flex';
+    m.onclick = (e)=>{ if (e.target === m) closeAddTokenModal(); };
+  }
+  function closeAddTokenModal(){
+    document.getElementById('addTokenModal').style.display='none';
+  }
+
+  // Модалка "Установите MetaMask" (для ПК без расширения)
+  function openInstallMM(){
+    const m = document.getElementById('installMM');
+    m.style.display='flex';
+    m.onclick=(e)=>{ if(e.target===m) closeInstallMM(); };
+  }
+  function closeInstallMM(){
+    document.getElementById('installMM').style.display='none';
+  }
+
+  function toast(msg){
+    const el = document.getElementById('toastOK');
+    el.textContent = msg;
+    el.style.opacity = '1';
+    clearTimeout(el._timer);
+    el._timer = setTimeout(()=> el.style.opacity='0', 2600);
+  }
+
+  function hasEthereum(){
+    return !!(window.ethereum && typeof window.ethereum.request === 'function');
+  }
+
+  // Уточнённый диплинк (берём ещё query и hash)
+  function openInMetaMaskDapp() {
+    const path = location.host + location.pathname + location.search + location.hash;
+    const scheme  = 'metamask://dapp/' + path;
+    const appLink = 'https://metamask.app.link/dapp/' + path;
+    try { location.href = scheme; setTimeout(()=>location.href = appLink, 800); }
+    catch { location.href = appLink; }
+  }
+
+  // --- Основной UX-поток автодобавления (без лишних <script>)
   async function addTokenEip747(){
-    // если мы на мобиле и нет injected-провайдера — открываем страницу в dApp-браузере MetaMask
-    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) &&
-        !(window.ethereum && typeof window.ethereum.request === 'function')) {
-      // функция есть ниже в твоём коде
+    // мобила без injected → открываем в dApp-браузере MetaMask
+    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) && !hasEthereum()){
       openInMetaMaskDapp();
       return;
     }
 
-    // дальше — как было (переключение сети + добавление токена)
-    if (!(window.ethereum && window.ethereum.request)){
-      openInstallMM(); // для ПК без кошелька
+    // ПК без кошелька → подсказать установить
+    if (!hasEthereum()){
+      openInstallMM();
       return;
     }
 
@@ -686,6 +734,7 @@
         method:'wallet_watchAsset',
         params:{ type:'ERC20', options: IBITI_TOKEN }
       });
+
       if (added) { toast('✅ IBITI добавлен в кошелёк'); closeAddTokenModal(); }
       else { toast('ℹ️ Добавление отменено'); }
     } catch(err){
@@ -693,7 +742,8 @@
       else { console.error('Add IBITI error:', err); alert('Не удалось добавить токен.'); }
     }
   }
-  // --- Кнопки в Coinbase-блоке
+
+  // Кнопки в Coinbase-блоке
   function copyText(sel){
     const text = document.querySelector(sel).textContent.trim();
     navigator.clipboard.writeText(text).then(()=>toast('✅ Адрес скопирован'));
@@ -812,6 +862,7 @@
 
 </body>
 </html>
+
 
 
 
