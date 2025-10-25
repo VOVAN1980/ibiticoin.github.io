@@ -768,9 +768,35 @@
   });
 </script>
 
+  <script>
+// ПК: защита от дублирующего eth_requestAccounts (без правок wallet.js)
+(function guardEthRequest() {
+  const eth = window.ethereum;
+  if (!eth || !eth.request) return;
+  const orig = eth.request.bind(eth);
+  let inFlight = false;
+
+  eth.request = async (args) => {
+    // ловим только запрос авторизации
+    if (args && args.method === 'eth_requestAccounts') {
+      if (inFlight) {
+        console.log('[guard] skip duplicate eth_requestAccounts');
+        alert('Открой окно MetaMask — там уже ждёт подтверждение.');
+        return null; // важное: не шлём второй запрос
+      }
+      inFlight = true;
+      try { return await orig(args); }
+      finally { inFlight = false; }
+    }
+    // всё остальное пропускаем как есть
+    return orig(args);
+  };
+})();
+</script>
 
 </body>
 </html>
+
 
 
 
