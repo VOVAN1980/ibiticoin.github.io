@@ -645,10 +645,17 @@
 
   // --- Основной UX-поток автодобавления (без лишних <script>)
   async function addTokenEip747(){
-    if (!hasEthereum()){
-      openInstallMM();
-      return;
-    }
+  // если внеш. мобильный браузер и нет injected — уводим в MetaMask app на эту же страницу
+  if (IS_MOBILE && !(window.ethereum && window.ethereum.request)) {
+    openInMetaMaskDapp();
+    return;
+  }
+  // ПК без расширения — показать установку
+  if (!(window.ethereum && window.ethereum.request)) {
+    openInstallMM();
+    return;
+  }
+  // дальше твой код переключения сети и wallet_watchAsset ...
     try {
       const bscId = '0x38'; // BSC mainnet
       const current = await window.ethereum.request({ method:'eth_chainId' });
@@ -811,6 +818,7 @@
 
 </body>
 </html>
+
 
 
 
