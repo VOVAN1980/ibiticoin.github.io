@@ -82,68 +82,6 @@
   }
   .buy-button:hover{ background:#c0a000; }
 
-  /* модалка покупки NFT */
-  .modal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:4000; }
-  .modal-content{
-    position:relative; margin:10% auto; width:90%; max-width:500px;
-    background:#111; color:gold; border:2px solid gold; border-radius:10px; padding:20px; text-align:center;
-  }
-  .modal-content .close{ position:absolute; right:15px; top:10px; font-size:1.5rem; cursor:pointer; }
-  .modal-content button{ background:gold; color:#000; border:0; padding:10px 20px; border-radius:6px; font-weight:700; margin:6px; cursor:pointer; }
-  .modal-content button:hover{ background:#c0a000; }
-  #mintStatus{ margin-top:12px; min-height:20px; color:#ffecb3; white-space:pre-wrap; }
-
-  /* навигационные кнопки */
-  .nft-footer-buttons{ display:flex; justify-content:center; gap:16px; margin:40px 0 20px; }
-  .nft-footer-buttons .btn-small{
-    background:linear-gradient(135deg,#ffd700,#c0a000); color:#000; font-weight:700;
-    padding:10px 22px; border-radius:6px; text-decoration:none;
-  }
-  .nft-footer-buttons .btn-small:hover{ background:#c0a000; }
-
-  footer{ text-align:center; padding:20px; background:#111; color:gold; border-top:1px solid gold; }
-  footer a{ color:gold; text-decoration:none; }
-  footer a:hover{ text-decoration:underline; }
-
-  /* мобилка */
-  @media (max-width:640px){
-    header h1{ font-size:1.8rem; }
-    header p { font-size:1rem; }
-    .wallet-section button{ width:80%; }
-    .nft-gallery{ padding:20px 10px; gap:12px; }
-  }
-  #walletModal.wallet-modal{
-  display:none; position:fixed; inset:0;
-  background:rgba(0,0,0,.6); z-index:3000;
-  align-items:center; justify-content:center; backdrop-filter:blur(2px);
-}
-#walletModal .wallet-card{
-  position:relative; background:#111; color:#ffd700;
-  border:1px solid gold; border-radius:10px; padding:18px;
-  width:92%; max-width:420px; box-shadow:0 8px 24px rgba(0,0,0,.5);
-  text-align:initial; /* чтобы центрирование где-то «сверху» не влияло */
-}
-#walletModal .wallet-title{ margin:0 0 10px; font-size:18px; text-align:center; }
-
-/* Крестик — не кнопка, а span, и полностью «разоружён» */
-#walletModal .wallet-close{
-  position:absolute; top:8px; right:10px;
-  display:inline-block; width:auto; padding:0;
-  color:#fff; font-size:18px; line-height:1; cursor:pointer;
-  background:transparent !important; border:0 !important; box-shadow:none !important;
-}
-#walletModal .wallet-close:hover{ opacity:.85; }
-
-#walletModal .wallet-actions{ display:flex; flex-direction:column; gap:10px; }
-#walletModal .btn-injected{
-  padding:10px 14px; border:1px solid #10b981; border-radius:8px;
-  background:#052e2b; color:#d1fae5; cursor:pointer;
-}
-#walletModal .btn-coinbase{
-  padding:10px 14px; border:1px solid #3f3f46; border-radius:8px;
-  background:#111827; color:#e5e7eb; cursor:pointer;
-}
-#walletModal .btn-coinbase:hover{ background:#0f172a; }
 </style>
 
     /* Модалка покупки NFT */
@@ -421,6 +359,7 @@
   </script>
 </body>
 </html>
+
 
 
 
