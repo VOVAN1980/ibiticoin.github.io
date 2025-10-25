@@ -764,20 +764,44 @@
 </div>
 
   <script>
-  // Если мобильный внешний браузер и провайдера нет — по кнопке открываем MetaMask dApp
+  // Мобильный UX: сначала показываем модалку выбора
   document.getElementById('openWalletModal')?.addEventListener('click', (e) => {
-    if (IS_MOBILE && !(window.ethereum && window.ethereum.request)) {
+    if (IS_MOBILE && !(window.ethereum && window.ethereum.request))) {
       e.preventDefault();
-      openInMetaMaskDapp(); // при желании поменяй на openInTrustDapp() / openInCoinbaseDapp()
+      document.getElementById('walletModal').style.display = 'flex';
+      return;
     }
+    // десктоп/встроенный провайдер — пусть работает как обычно (wallet.js)
   });
 
-  // Если пользователь в модалке жмёт "MetaMask / Trust Wallet" — тоже диплинк во внешнем браузере
-  document.getElementById('btnInjected')?.addEventListener('click', (e) => {
+  // Кнопка MetaMask / Trust — спросим, в каком именно открыть
+  document.getElementById('btnInjected')?.addEventListener('click', async (e) => {
     if (IS_MOBILE && !(window.ethereum && window.ethereum.request)) {
       e.preventDefault();
-      openInMetaMaskDapp();
+      // Быстренький выбор через SweetAlert2 (он у тебя уже подключен)
+      const result = await Swal.fire({
+        title: 'Открыть в…',
+        showDenyButton: true,
+        confirmButtonText: 'MetaMask',
+        denyButtonText: 'Trust Wallet',
+        confirmButtonColor: '#f6851b',
+        denyButtonColor: '#3375bb',
+        background: '#111',
+        color: '#ffd700'
+      });
+      if (result.isConfirmed)  openInMetaMaskDapp('connect');
+      else if (result.isDenied) openInTrustDapp('connect');
+      return;
     }
+    // если провайдер есть — обычный поток
+  });
+
+  // Кнопка Coinbase — открываем dApp в Coinbase Wallet
+  document.getElementById('btnCoinbase')?.addEventListener('click', (e) => {
+    if (IS_MOBILE && !(window.ethereum && window.ethereum.request)) {
+  openInMetaMaskDapp('addToken'); // ← было без аргумента
+  return;
+}
   });
 </script>
 
@@ -851,20 +875,38 @@
 (function autoRunInsideWallet(){
   const p = new URLSearchParams(location.search).get('go');
   if (!p) return;
-  // маленькая задержка — чтобы провайдер успел инициализироваться
-  setTimeout(() => {
+
+  const run = () => {
     if (p === 'connect' && window.ethereum) {
       window.ethereum.request({ method: 'eth_requestAccounts' }).catch(()=>{});
     }
     if (p === 'addToken' && typeof window.addTokenEip747 === 'function') {
       window.addTokenEip747();
     }
-  }, 350);
+  };
+
+  // даём провайдеру инициализироваться
+  setTimeout(run, 1000);
+
+  // если через 3 сек. ничего не произошло — покажем unobtrusive подсказку
+  setTimeout(() => {
+    try {
+      Swal.fire({
+        title: 'Нужен тап',
+        text: 'Нажмите «Подключить» или «Добавить токен» ещё раз внутри кошелька.',
+        icon: 'info',
+        confirmButtonText: 'Ок',
+        background: '#111',
+        color: '#ffd700'
+      });
+    } catch {}
+  }, 3000);
 })();
 </script>
 
 </body>
 </html>
+
 
 
 
