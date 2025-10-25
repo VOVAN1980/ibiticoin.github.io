@@ -21,28 +21,6 @@
     .shop-item:hover { transform: scale(1.02); }
     .shop-item img { width: 100%; display: block; }
     .shop-item h3 { margin: 10px 0; color: gold; font-size: 1.3em; }
-    .shop-item p { color: gold; margin: 0 10px 10px; }
-    .shop-item button { background: gold; color: #000; border: none; padding: 10px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 0 0 10px 10px; transition: background .3s; }
-    .shop-item button:hover { background: #c0a000; }
-    /* --- ФИКС КНОПКИ "КУПИТЬ" --- */
-.shop-items {
-  align-items: stretch; /* выравниваем карточки по высоте */
-}
-.shop-item {
-  display: flex;
-  flex-direction: column; /* делаем карточку вертикальной */
-  height: 100%; /* растягиваем по высоте */
-}
-.shop-item img {
-  width: 100%;
-  height: 220px; /* одинаковая высота картинки */
-  object-fit: cover; /* чтобы не искажалась */
-}
-.shop-item .buy-button {
-  margin-top: auto; /* прибивает кнопку к низу */
-  border-radius: 0 0 10px 10px;
-  width: 100%;
-}
     /* одинаковая высота для заголовка и описания */
 .shop-item h3{
   min-height: 2.6em;           /* ~2 строки */
@@ -64,6 +42,28 @@
 @media (max-width: 480px){
   .shop-item img{ height: 180px; }
   .shop-item p{ min-height: 3.6em; }
+}
+    .shop-item p { color: gold; margin: 0 10px 10px; }
+    .shop-item button { background: gold; color: #000; border: none; padding: 10px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 0 0 10px 10px; transition: background .3s; }
+    .shop-item button:hover { background: #c0a000; }
+    /* --- ФИКС КНОПКИ "КУПИТЬ" --- */
+.shop-items {
+  align-items: stretch; /* выравниваем карточки по высоте */
+}
+.shop-item {
+  display: flex;
+  flex-direction: column; /* делаем карточку вертикальной */
+  height: 100%; /* растягиваем по высоте */
+}
+.shop-item img {
+  width: 100%;
+  height: 220px; /* одинаковая высота картинки */
+  object-fit: cover; /* чтобы не искажалась */
+}
+.shop-item .buy-button {
+  margin-top: auto; /* прибивает кнопку к низу */
+  border-radius: 0 0 10px 10px;
+  width: 100%;
 }
     #walletModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.6); justify-content: center; align-items: center; z-index: 3000; backdrop-filter: blur(2px); }
     #walletModal .ibiti-card { background:#111; padding:18px; border:1px solid gold; border-radius:10px; max-width:420px; width:92%; color:#ffd700; position:relative; }
@@ -464,5 +464,6 @@
   </script>
 </body>
 </html>
+
 
 
