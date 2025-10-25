@@ -33,7 +33,43 @@
     transition: background .25s ease;
   }
   .wallet-section button:hover { background: #c0a000; }
-  #walletAddress { margin-top: 10px; color: gold; font-weight: 700; word-break: break-all; }
+  #walletAddress { margin-top: 10px; color: gold; font-weight: 700; word-break: break-all;
+  }
+
+  /* ==== Wallet modal (не конфликтует с .modal/.modal-content NFT) ==== */
+.wallet-modal{
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.6);
+  z-index:3000;
+  align-items:center; justify-content:center;
+  backdrop-filter:blur(2px);
+}
+.wallet-card{
+  position:relative;
+  background:#111; color:#ffd700;
+  border:1px solid gold; border-radius:10px;
+  padding:18px; width:92%; max-width:420px;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+}
+.wallet-title{ margin:0 0 10px; font-size:18px; text-align:center; }
+
+.wallet-close{
+  all:unset;
+  position:absolute; top:8px; right:10px;
+  color:#fff; font-size:18px; line-height:1; cursor:pointer;
+}
+.wallet-close:hover{ opacity:.85; }
+
+.wallet-actions{ display:flex; flex-direction:column; gap:10px; }
+.btn-injected{
+  padding:10px 14px; border:1px solid #10b981; border-radius:8px;
+  background:#052e2b; color:#d1fae5; cursor:pointer;
+}
+.btn-coinbase{
+  padding:10px 14px; border:1px solid #3f3f46; border-radius:8px;
+  background:#111827; color:#e5e7eb; cursor:pointer;
+}
+.btn-coinbase:hover{ background:#0f172a; }
 
   /* галерея */
   .nft-gallery{
@@ -194,11 +230,11 @@
     </div>
 
   </section>
-
-  <div id="walletModal">
-  <div class="modal-content">
-    <button class="close-btn" id="closeWalletModal">✕</button>
-    <h2>Выберите кошелек</h2>
+ <!-- Модалка выбора кошелька (свои классы, без конфликтов) -->
+<div id="walletModal" class="wallet-modal">
+  <div class="wallet-card">
+    <button class="wallet-close" id="closeWalletModal">✕</button>
+    <h3 class="wallet-title">Выберите кошелёк</h3>
 
     <div class="wallet-actions">
       <button class="btn-injected" id="btnInjected">MetaMask / Trust Wallet</button>
@@ -206,6 +242,7 @@
     </div>
   </div>
 </div>
+
 
   <!-- Модалка покупки NFT -->
   <div id="mintModal" class="modal" aria-hidden="true">
@@ -351,5 +388,6 @@
   </script>
 </body>
 </html>
+
 
 
