@@ -643,57 +643,6 @@
     return !!(window.ethereum && typeof window.ethereum.request === 'function');
   }
 
-  // --- Основной UX-поток автодобавления
-  <!-- НЕ module: функции должны быть в window -->
-<script>
-  const IBITI_TOKEN = {
-    address: '0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196',
-    symbol:  'IBITI',
-    decimals: 8,
-    image:   'https://ibiticoin.com/img/IBITI-512.png'
-  };
-
-  // Модалка "Добавить токен"
-  function openAddTokenModal(){
-    const m = document.getElementById('addTokenModal');
-    m.style.display = 'flex';
-    m.onclick = (e)=>{ if (e.target === m) closeAddTokenModal(); };
-  }
-  function closeAddTokenModal(){
-    document.getElementById('addTokenModal').style.display='none';
-  }
-
-  // Модалка "Установите MetaMask" (для ПК без расширения)
-  function openInstallMM(){
-    const m = document.getElementById('installMM');
-    m.style.display='flex';
-    m.onclick=(e)=>{ if(e.target===m) closeInstallMM(); };
-  }
-  function closeInstallMM(){
-    document.getElementById('installMM').style.display='none';
-  }
-
-  function toast(msg){
-    const el = document.getElementById('toastOK');
-    el.textContent = msg;
-    el.style.opacity = '1';
-    clearTimeout(el._timer);
-    el._timer = setTimeout(()=> el.style.opacity='0', 2600);
-  }
-
-  function hasEthereum(){
-    return !!(window.ethereum && typeof window.ethereum.request === 'function');
-  }
-
-  // Уточнённый диплинк (берём ещё query и hash)
-  function openInMetaMaskDapp() {
-    const path = location.host + location.pathname + location.search + location.hash;
-    const scheme  = 'metamask://dapp/' + path;
-    const appLink = 'https://metamask.app.link/dapp/' + path;
-    try { location.href = scheme; setTimeout(()=>location.href = appLink, 800); }
-    catch { location.href = appLink; }
-  }
-
   // --- Основной UX-поток автодобавления (без лишних <script>)
   async function addTokenEip747(){
     // мобила без injected → открываем в dApp-браузере MetaMask
@@ -862,6 +811,7 @@
 
 </body>
 </html>
+
 
 
 
