@@ -781,60 +781,74 @@
   });
 </script>
 
-  <script>
-// ПК: защита от дублирующего eth_requestAccounts (без правок wallet.js)
-(function guardEthRequest() {
+ <script>
+// Умный перехват eth_requestAccounts: без дублей и без -32002 наверх
+(function patchEthRequestAccounts() {
   const eth = window.ethereum;
   if (!eth || !eth.request) return;
+
   const orig = eth.request.bind(eth);
-  let inFlight = false;
+  let pendingPromise = null;           // одна общая «в полёте»
+
+  function waitForAccounts(timeoutMs = 120000) {
+    return new Promise((resolve, reject) => {
+      // если MetaMask уже знает адрес — отдадим сразу
+      if (eth.selectedAddress) return resolve([eth.selectedAddress]);
+
+      const onChange = (accounts) => {
+        cleanup();
+        if (accounts && accounts.length) resolve(accounts);
+        else reject(new Error('Empty accounts'));
+      };
+      const timer = setTimeout(() => {
+        cleanup();
+        reject(new Error('accountsChanged timeout'));
+      }, timeoutMs);
+
+      function cleanup() {
+        clearTimeout(timer);
+        eth.removeListener?.('accountsChanged', onChange);
+      }
+
+      eth.on?.('accountsChanged', onChange);
+    });
+  }
 
   eth.request = async (args) => {
-    // ловим только запрос авторизации
-    if (args && args.method === 'eth_requestAccounts') {
-      if (inFlight) {
-        console.log('[guard] skip duplicate eth_requestAccounts');
-        alert('Открой окно MetaMask — там уже ждёт подтверждение.');
-        return null; // важное: не шлём второй запрос
-      }
-      inFlight = true;
-      try { return await orig(args); }
-      finally { inFlight = false; }
+    if (!args || args.method !== 'eth_requestAccounts') {
+      return orig(args);
     }
-    // всё остальное пропускаем как есть
-    return orig(args);
-  };
-})();
-</script>
 
-  <script>
-// Лёгкий дебаунс для кнопок коннекта (не меняет wallet.js)
-(function debounceConnectButtons(){
-  const ids = ['openWalletModal','btnInjected','btnCoinbase'];
-  let lock = false;
+    // если уже есть запрос — вернём его же (никаких дублей)
+    if (pendingPromise) return pendingPromise;
 
-  ids.forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.addEventListener('click', (ev) => {
-      if (lock) { // второй клик в окно
-        ev.stopImmediatePropagation();
-        ev.preventDefault();
-        return;
+    pendingPromise = (async () => {
+      try {
+        const res = await orig(args);      // первый нормальный вызов
+        return res;
+      } catch (e) {
+        // Уже открыто окно авторизации — ждём подтверждения,
+        // вместо того чтобы ронять промис (и вызывать твой alert в wallet.js)
+        const already = e && (e.code === -32002 || /Already processing/i.test(e.message || ''));
+        if (already) {
+          // Подсказка один раз — откройте окно MetaMask
+          try { console.log('[wallet] Waiting for MetaMask approval…'); } catch {}
+          return await waitForAccounts();
+        }
+        throw e; // другие ошибки не трогаем
+      } finally {
+        pendingPromise = null;
       }
-      lock = true;
-      el.disabled = true; el.style.opacity = 0.6;
-      setTimeout(() => { // через пару секунд снова можно
-        lock = false;
-        el.disabled = false; el.style.opacity = 1;
-      }, 3000);
-    }, true); // <— capture, чтобы опередить любые другие обработчики
-  });
+    })();
+
+    return pendingPromise;
+  };
 })();
 </script>
 
 </body>
 </html>
+
 
 
 
