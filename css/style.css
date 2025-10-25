@@ -949,39 +949,6 @@ html, body {
   cursor:pointer; z-index:10;
 }
 
-/* карточка: ничего не должно торчать за рамку */
-.shop-item{
-  overflow: hidden;
-  border-radius: 10px;     /* чтобы скругление работало и для картинки */
-  display: flex;
-  flex-direction: column;
-}
-
-/* картинка: фиксированная витрина + аккуратный кроп */
-.shop-item img{
-  display: block;
-  width: 100%;
-  height: 280px;           /* подбери под себя: 240–320px ок */
-  object-fit: cover;       /* заполняем и обрезаем лишнее, не тянем */
-}
-
-/* на мобильных делаем чуть ниже */
-@media (max-width:640px){
-  .shop-item img{ height: 200px; }
-}
-
-/* показываем верх изображения, не отрезая логотип */
-.shop-item img{
-  width: 100% !important;
-  height: 280px !important;     /* оставляю твою высоту */
-  display: block !important;
-  object-fit: cover !important;  /* заполняем без искажений */
-  object-position: top !important;/* ФОКУС НА ВЕРХ — не режет сверху */
-}
-@media (max-width:640px){
-  .shop-item img{ height: 200px !important; object-position: top !important; }
-}
-
 .shop-item img {
   display: block;
   width: 100%;
@@ -989,4 +956,5 @@ html, body {
   object-fit: contain !important; /* не обрезает */
   background: #000; /* если будут поля сверху/снизу */
 }
+
 
