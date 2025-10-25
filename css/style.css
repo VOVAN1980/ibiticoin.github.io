@@ -978,3 +978,20 @@ html, body {
   object-fit: contain;
   background: #000;
 }
+
+/* карточка — ничего не торчит */
+.shop-item{
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+/* добавляем равномерный внутренний зазор у изображения */
+.shop-item img{
+  display: block;
+  width: 100%;
+  height: auto;
+  box-sizing: border-box;
+  padding: 12px;          /* зазор от рамки со всех сторон */
+  background: #111;       /* цвет под «полями» */
+  border-radius: 8px;     /* чтобы углы совпали с рамкой */
+}
