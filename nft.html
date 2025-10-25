@@ -65,7 +65,7 @@
     padding: 10px 14px; border: 1px solid #3f3f46; border-radius: 8px;
     background: #111827; color: #e5e7eb; cursor: pointer;
   }
-  .btn-coinbase:hover{ background: #0f172a; }
+  .btn-coinbase:hover{ background: #0f172a;}
 
   /* галерея */
   .nft-gallery{
@@ -100,6 +100,41 @@
     .wallet-section button{ width: 80%; }
     .nft-gallery{ padding: 20px 10px; gap: 12px; }
   }
+
+    <style>
+/* === Wallet modal: антиконфликтные стили === */
+#walletModal.wallet-modal{
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.6); z-index:3000;
+  align-items:center; justify-content:center; backdrop-filter:blur(2px);
+}
+#walletModal .wallet-card{
+  position:relative; background:#111; color:#ffd700;
+  border:1px solid gold; border-radius:10px; padding:18px;
+  width:92%; max-width:420px; box-shadow:0 8px 24px rgba(0,0,0,.5);
+  text-align:initial; /* чтобы центрирование где-то «сверху» не влияло */
+}
+#walletModal .wallet-title{ margin:0 0 10px; font-size:18px; text-align:center; }
+
+/* Крестик — не кнопка, а span, и полностью «разоружён» */
+#walletModal .wallet-close{
+  position:absolute; top:8px; right:10px;
+  display:inline-block; width:auto; padding:0;
+  color:#fff; font-size:18px; line-height:1; cursor:pointer;
+  background:transparent !important; border:0 !important; box-shadow:none !important;
+}
+#walletModal .wallet-close:hover{ opacity:.85; }
+
+#walletModal .wallet-actions{ display:flex; flex-direction:column; gap:10px; }
+#walletModal .btn-injected{
+  padding:10px 14px; border:1px solid #10b981; border-radius:8px;
+  background:#052e2b; color:#d1fae5; cursor:pointer;
+}
+#walletModal .btn-coinbase{
+  padding:10px 14px; border:1px solid #3f3f46; border-radius:8px;
+  background:#111827; color:#e5e7eb; cursor:pointer;
+}
+#walletModal .btn-coinbase:hover{ background:#0f172a; }
 </style>
 
     /* Модалка покупки NFT */
@@ -218,10 +253,10 @@
     </div>
 
   </section>
- <!-- Модалка выбора кошелька (свои классы, без конфликтов) -->
-<div id="walletModal" class="wallet-modal">
+<!-- Модалка выбора кошелька (чистые классы, без пересечений) -->
+<div id="walletModal" class="wallet-modal" aria-hidden="true">
   <div class="wallet-card">
-    <button class="wallet-close" id="closeWalletModal">✕</button>
+    <span class="wallet-close" id="closeWalletModal" aria-label="Закрыть">✕</span>
     <h3 class="wallet-title">Выберите кошелёк</h3>
 
     <div class="wallet-actions">
@@ -230,6 +265,7 @@
     </div>
   </div>
 </div>
+
 
 
   <!-- Модалка покупки NFT -->
@@ -376,6 +412,7 @@
   </script>
 </body>
 </html>
+
 
 
 
