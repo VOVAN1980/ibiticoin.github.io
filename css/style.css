@@ -949,12 +949,19 @@ html, body {
   cursor:pointer; z-index:10;
 }
 
-.shop-item img {
+/* Карточка — аккуратная рамка, ничего не вылезает */
+.shop-item{
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+/* Картинка — показываем целиком, БЕЗ обрезки */
+.shop-item img{
   display: block;
   width: 100%;
-  height: auto !important;  /* убираем фиксированную высоту */
-  object-fit: contain !important; /* не обрезает */
-  background: #000; /* если будут поля сверху/снизу */
+  height: auto;
 }
+
 
 
