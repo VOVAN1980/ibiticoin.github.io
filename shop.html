@@ -252,7 +252,7 @@
   <div id="countdownNotice"></div>
 
   <section class="wallet-section">
-  <button onclick="openWalletSelector()">Подключить кошелёк</button>
+  <button onclick="onConnectClick()">Подключить кошелёк</button>
   <div id="walletAddress"></div>
   <div id="ibitiBalance"></div>
 </section>
@@ -816,9 +816,7 @@ async function onConnectClick() {
   }
 
   // Десктоп: показываем твою модалку
-  const modal = document.getElementById('walletModal');
-  if (modal) modal.style.display = 'flex';
-}
+  openDesktopWalletModal();
 
 /**
  * Подключение внутри dApp-браузера кошелька без участия wallet.js (чтобы его не трогать).
@@ -910,8 +908,10 @@ async function useProvider(p) {
   } else {
     const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
     const acc = accs?.[0];
-    if (acc) document.getElementById('walletAddress')?.append(acc);
-  }
+    if (acc) {
+  const wa = document.getElementById('walletAddress');
+  if (wa) wa.textContent = acc;
+}
 }
 
 async function connectBinanceExtension() {
@@ -923,8 +923,10 @@ async function connectBinanceExtension() {
     if (acc) {
       if (window.ethereum !== b) { try { window.ethereum = b; } catch {} }
       if (typeof window.connectWallet === 'function') await window.connectWallet();
-      else document.getElementById('walletAddress')?.append(acc);
-    }
+      else {
+  const wa = document.getElementById('walletAddress');
+  if (wa) wa.textContent = acc;
+  }
   } catch (e) {
     alert('Binance Wallet: ' + (e?.message || e));
   }
@@ -990,6 +992,7 @@ function openDesktopWalletModal() {
 
 </body>
 </html>
+
 
 
 
