@@ -817,7 +817,7 @@ async function onConnectClick() {
 
   // Десктоп: показываем твою модалку
   openDesktopWalletModal();
-
+  }
 /**
  * Подключение внутри dApp-браузера кошелька без участия wallet.js (чтобы его не трогать).
  * Если wallet.js уже повесил window.connectWallet — вызовем его.
@@ -880,8 +880,8 @@ async function safeConnectInApp() {
   }
 })();
 </script>
-
-  <script>
+  
+<script>
 // ==== DESKTOP WALLET SELECTOR (PC) ====
 
 function getInjectedProviders() {
@@ -909,9 +909,10 @@ async function useProvider(p) {
     const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
     const acc = accs?.[0];
     if (acc) {
-  const wa = document.getElementById('walletAddress');
-  if (wa) wa.textContent = acc;
-}
+      const wa = document.getElementById('walletAddress');
+      if (wa) wa.textContent = acc;
+    }
+  }
 }
 
 async function connectBinanceExtension() {
@@ -922,11 +923,13 @@ async function connectBinanceExtension() {
     const acc = accounts?.[0];
     if (acc) {
       if (window.ethereum !== b) { try { window.ethereum = b; } catch {} }
-      if (typeof window.connectWallet === 'function') await window.connectWallet();
-      else {
-  const wa = document.getElementById('walletAddress');
-  if (wa) wa.textContent = acc;
-  }
+      if (typeof window.connectWallet === 'function') {
+        await window.connectWallet();
+      } else {
+        const wa = document.getElementById('walletAddress');
+        if (wa) wa.textContent = acc;
+      }
+    }
   } catch (e) {
     alert('Binance Wallet: ' + (e?.message || e));
   }
@@ -992,6 +995,7 @@ function openDesktopWalletModal() {
 
 </body>
 </html>
+
 
 
 
