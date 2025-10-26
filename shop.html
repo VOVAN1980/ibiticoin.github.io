@@ -252,7 +252,7 @@
   <div id="countdownNotice"></div>
 
   <section class="wallet-section">
-  <button id="openWalletModal">Подключить кошелек</button>
+  <button onclick="openWalletSelector()">Подключить кошелёк</button>
   <div id="walletAddress"></div>
   <div id="ibitiBalance"></div>
 </section>
@@ -717,5 +717,56 @@
   </div>
 </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+// === Универсальный выбор кошельков ===
+function openWalletSelector() {
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (!isMobile) {
+    document.getElementById('walletModal').style.display = 'flex';
+    return;
+  }
+
+  Swal.fire({
+    title: 'Выберите кошелёк',
+    showCancelButton: true,
+    showConfirmButton: false,
+    html: `
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button onclick="openInWallet('metamask')" class="btn-small">🦊 MetaMask</button>
+        <button onclick="openInWallet('trust')" class="btn-small">🔵 Trust Wallet</button>
+        <button onclick="openInWallet('binance')" class="btn-small">🟡 Binance Wallet</button>
+        <button onclick="openInWallet('coinbase')" class="btn-small">🧢 Coinbase</button>
+      </div>
+    `
+  });
+}
+
+function openInWallet(wallet) {
+  const appUrl = encodeURIComponent(window.location.href);
+  let deeplink = "";
+
+  switch (wallet) {
+    case 'metamask':
+      deeplink = `https://metamask.app.link/dapp/${location.hostname}${location.pathname}`;
+      break;
+    case 'trust':
+      deeplink = `https://link.trustwallet.com/open_url?coin_id=60&url=${appUrl}`;
+      break;
+    case 'binance':
+      deeplink = `https://dapp.bnbchain.org/#/dapp/${appUrl}`;
+      break;
+    case 'coinbase':
+      deeplink = `https://go.cb-w.com/dapp?cb_url=${appUrl}`;
+      break;
+    default:
+      return;
+  }
+
+  window.location.href = deeplink;
+}
+</script>
+
 </body>
-</div>
+</html>
+
