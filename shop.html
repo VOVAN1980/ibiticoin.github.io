@@ -884,6 +884,12 @@ async function safeConnectInApp() {
 <script>
 // ==== DESKTOP WALLET SELECTOR (PC) ====
 
+// ← Хелпер СЮДА
+function hideWalletModal() {
+  const m = document.getElementById('walletModal');
+  if (m) m.style.display = 'none';
+}
+
 function getInjectedProviders() {
   const eth = window.ethereum;
   const list = [];
@@ -902,6 +908,8 @@ function providerLabel(p) {
 }
 
 async function useProvider(p) {
+  hideWalletModal(); // ← закрываем модалку сразу
+
   if (window.ethereum !== p) { try { window.ethereum = p; } catch {} }
   if (typeof window.connectWallet === 'function') {
     await window.connectWallet();
@@ -918,6 +926,8 @@ async function useProvider(p) {
 async function connectBinanceExtension() {
   const b = window.BinanceChain || window.binance || null;
   if (!b) return alert('Расширение Binance Wallet не обнаружено.');
+  hideWalletModal(); // ← закрываем модалку сразу
+
   try {
     const accounts = await b.request({ method: 'eth_requestAccounts' });
     const acc = accounts?.[0];
@@ -995,6 +1005,7 @@ function openDesktopWalletModal() {
 
 </body>
 </html>
+
 
 
 
