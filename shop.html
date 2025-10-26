@@ -262,23 +262,17 @@
   Добавить IBITI в кошелёк
 </button>
 
-  <!-- ===== CONNECT WALLET MODAL (новая версия) ===== -->
+  <!-- ===== CONNECT WALLET MODAL (desktop dynamic) ===== -->
 <div id="walletModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;align-items:center;justify-content:center;backdrop-filter:blur(2px)">
   <div class="ibiti-card" style="background:#111;padding:18px;border:1px solid gold;border-radius:10px;max-width:420px;width:92%;color:#ffd700;position:relative;">
     <button type="button" id="closeWalletModal" class="ibiti-close" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer;">✕</button>
-
     <h3 style="margin:0 0 10px;font-size:18px;">Выберите кошелёк</h3>
 
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <button id="btnInjected"
-              style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
-        MetaMask / Trust Wallet
-      </button>
+    <!-- Сюда JS подставит кнопки найденных расширений -->
+    <div id="desktopWalletList" style="display:flex;flex-direction:column;gap:10px"></div>
 
-      <button id="btnCoinbase"
-              style="padding:10px 14px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">
-        Coinbase Wallet
-      </button>
+    <div style="margin-top:8px;font-size:12px;color:#9ca3af">
+      Trust Wallet на ПК не имеет расширения. Используйте мобильное приложение (или WalletConnect — позже добавим).
     </div>
   </div>
 </div>
@@ -889,7 +883,113 @@ async function safeConnectInApp() {
 })();
 </script>
 
+  <script>
+// ==== DESKTOP WALLET SELECTOR (PC) ====
+
+function getInjectedProviders() {
+  const eth = window.ethereum;
+  const list = [];
+  if (!eth) return list;
+  if (Array.isArray(eth.providers)) list.push(...eth.providers);
+  else list.push(eth);
+  return list;
+}
+
+function providerLabel(p) {
+  if (p.isMetaMask) return 'MetaMask';
+  if (p.isCoinbaseWallet) return 'Coinbase Wallet';
+  if (p.isOKXWallet) return 'OKX Wallet';
+  if (p.isBitKeep || p.isBitget) return 'Bitget/BitKeep';
+  return 'Injected Wallet';
+}
+
+async function useProvider(p) {
+  if (window.ethereum !== p) { try { window.ethereum = p; } catch {} }
+  if (typeof window.connectWallet === 'function') {
+    await window.connectWallet();
+  } else {
+    const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const acc = accs?.[0];
+    if (acc) document.getElementById('walletAddress')?.append(acc);
+  }
+}
+
+async function connectBinanceExtension() {
+  const b = window.BinanceChain || window.binance || null;
+  if (!b) return alert('Расширение Binance Wallet не обнаружено.');
+  try {
+    const accounts = await b.request({ method: 'eth_requestAccounts' });
+    const acc = accounts?.[0];
+    if (acc) {
+      if (window.ethereum !== b) { try { window.ethereum = b; } catch {} }
+      if (typeof window.connectWallet === 'function') await window.connectWallet();
+      else document.getElementById('walletAddress')?.append(acc);
+    }
+  } catch (e) {
+    alert('Binance Wallet: ' + (e?.message || e));
+  }
+}
+
+function openDesktopWalletModal() {
+  const modal = document.getElementById('walletModal');
+  const listEl = document.getElementById('desktopWalletList');
+  if (!modal || !listEl) return;
+
+  listEl.innerHTML = '';
+
+  const providers = getInjectedProviders();
+  if (providers.length) {
+    providers.forEach(p => {
+      const btn = document.createElement('button');
+      btn.textContent = providerLabel(p);
+      btn.style.cssText = 'padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;';
+      btn.onclick = () => useProvider(p);
+      listEl.appendChild(btn);
+    });
+  } else {
+    const a = document.createElement('a');
+    a.href = 'https://metamask.io/download/';
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = 'Установить MetaMask';
+    a.style.cssText = 'padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;display:inline-block;text-decoration:none;text-align:center;';
+    listEl.appendChild(a);
+  }
+
+  const bBtn = document.createElement('button');
+  bBtn.textContent = 'Binance Wallet (Extension)';
+  bBtn.style.cssText = 'padding:10px 14px;border:1px solid #f59e0b;border-radius:8px;background:#1f2937;color:#fde68a;cursor:pointer;';
+  bBtn.onclick = connectBinanceExtension;
+  if (!(window.BinanceChain || window.binance)) bBtn.disabled = true;
+  listEl.appendChild(bBtn);
+
+  if (!providers.some(p => p.isCoinbaseWallet)) {
+    const cb = document.createElement('a');
+    cb.href = 'https://www.coinbase.com/wallet';
+    cb.target = '_blank';
+    cb.rel = 'noopener';
+    cb.textContent = 'Установить Coinbase Wallet';
+    cb.style.cssText = 'padding:10px 14px;border:1px solid #3b82f6;border-radius:8px;background:#111827;color:#e5e7eb;display:inline-block;text-decoration:none;text-align:center;';
+    listEl.appendChild(cb);
+  }
+
+  modal.style.display = 'flex';
+  document.getElementById('closeWalletModal')?.addEventListener('click', () => modal.style.display = 'none', { once:true });
+}
+
+// Подменяем десктопную ветку твоего openWalletSelector()
+(function patchDesktopSelector(){
+  const orig = window.openWalletSelector;
+  window.openWalletSelector = function() {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isMobile) return orig ? orig() : null; // мобильная логика остаётся прежней
+    openDesktopWalletModal();                  // ПК → показываем динамический список
+  };
+})();
+</script>
+
 </body>
 </html>
+
 
 
