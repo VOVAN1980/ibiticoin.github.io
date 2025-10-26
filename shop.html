@@ -717,8 +717,155 @@
   </div>
 </div>
 
+  <script>
+/* ===== ПОВТОРЯЕМАЯ МОДАЛКА ПОДКЛЮЧЕНИЯ КОШЕЛЬКА ===== */
+
+(function(){
+  const bscChainId = '0x38'; // BSC mainnet
+  const walletBtn  = document.getElementById('openWalletModal');
+  const modal      = document.getElementById('walletModal');
+  const closeX     = document.getElementById('closeWalletModal');
+  const btnInjected= document.getElementById('btnInjected');
+  const btnCoinbase= document.getElementById('btnCoinbase');
+  const addrBox    = document.getElementById('walletAddress');
+
+  // универсальные open/close (повторно вызываются без проблем)
+  function openWalletModalPersistent(){
+    if (!modal) return;
+    modal.style.display = 'flex';
+  }
+  function closeWalletModal(){
+    if (!modal) return;
+    modal.style.display = 'none';
+  }
+
+  // клик по фоне закрывает модалку
+  if (modal) modal.addEventListener('click', e => {
+    if (e.target === modal) closeWalletModal();
+  });
+
+  // навешиваем обработчики один раз
+  if (walletBtn) walletBtn.addEventListener('click', openWalletModalPersistent);
+  if (closeX)    closeX.addEventListener('click',  closeWalletModal);
+
+  // ===== общие хелперы =====
+  function hasEthereum(){
+    return !!(window.ethereum && typeof window.ethereum.request === 'function');
+  }
+  async function ensureBsc(provider){
+    const current = await provider.request({ method:'eth_chainId' });
+    if (current !== bscChainId){
+      try{
+        await provider.request({ method:'wallet_switchEthereumChain', params:[{ chainId:bscChainId }] });
+      }catch(e){
+        if (e && e.code === 4902){
+          await provider.request({
+            method:'wallet_addEthereumChain',
+            params:[{
+              chainId: bscChainId,
+              chainName:'BNB Smart Chain',
+              nativeCurrency:{ name:'BNB', symbol:'BNB', decimals:18 },
+              rpcUrls:['https://bsc-dataseed1.bnbchain.org'],
+              blockExplorerUrls:['https://bscscan.com']
+            }]
+          });
+        } else {
+          throw e;
+        }
+      }
+    }
+  }
+  function short(addr){
+    return addr ? addr.slice(0,6) + '…' + addr.slice(-4) : '';
+  }
+  function showToast(msg){
+    // используем твой общий тост
+    if (typeof toast === 'function') toast(msg);
+    else alert(msg);
+  }
+
+  // ===== Injected (MetaMask/Trust/Binance) — как addTokenEip747, но для коннекта =====
+  async function connectInjected(){
+    if (!hasEthereum()){
+      if (typeof openInstallMM === 'function') openInstallMM();
+      else alert('Установи MetaMask / Trust / Binance Wallet');
+      return;
+    }
+    try{
+      // 1) переключим на BSC (как в addTokenEip747)
+      await ensureBsc(window.ethereum);
+
+      // 2) запросим аккаунты (повторяемо)
+      const accounts = await window.ethereum.request({ method:'eth_requestAccounts' });
+      const account  = accounts && accounts[0];
+      if (account){
+        // покажем адрес и закроем модалку
+        if (addrBox){
+          addrBox.textContent = 'Адрес: ' + account + ' (' + short(account) + ')';
+          addrBox.style.color = 'gold';
+        }
+        showToast('✅ Кошелёк подключён');
+        closeWalletModal();
+
+        // если где-то дальше нужен провайдер — сохраним
+        window.ibitiProvider = window.ethereum;
+        // при желании: window.dispatchEvent(new CustomEvent('wallet:connected',{detail:{account}}));
+      }
+    }catch(err){
+      if (err && err.code === 4001){
+        // пользователь отказал — просто сообщим; модалка остаётся открытой → можно пробовать снова
+        showToast('ℹ️ Запрос отклонён');
+      }else{
+        console.error('connectInjected error:', err);
+        alert('Не удалось подключиться: ' + (err && err.message ? err.message : 'неизвестная ошибка'));
+      }
+    }
+  }
+
+  // ===== Coinbase Wallet через SDK (повторяемо) =====
+  async function connectCoinbase(){
+    try{
+      if (!window.CoinbaseWalletSDK){
+        alert('Coinbase Wallet SDK не найден');
+        return;
+      }
+      const sdk = new window.CoinbaseWalletSDK({
+        appName:  'IBITIcoin',
+        appLogoUrl: 'https://ibiticoin.com/img/IBITI-512.png',
+        darkMode: true
+      });
+      const cbProvider = sdk.makeWeb3Provider('https://bsc-dataseed1.bnbchain.org', 56); // BSC
+      // запрос аккаунта
+      const accounts = await cbProvider.request({ method:'eth_requestAccounts' });
+      const account  = accounts && accounts[0];
+      if (account){
+        if (addrBox){
+          addrBox.textContent = 'Адрес: ' + account + ' (' + short(account) + ')';
+          addrBox.style.color = 'gold';
+        }
+        showToast('✅ Кошелёк подключён (Coinbase)');
+        closeWalletModal();
+        window.ibitiProvider = cbProvider;
+      }
+    }catch(err){
+      if (err && err.code === 4001){
+        showToast('ℹ️ Запрос отклонён');
+      }else{
+        console.error('connectCoinbase error:', err);
+        alert('Не удалось подключиться (Coinbase): ' + (err && err.message ? err.message : 'неизвестная ошибка'));
+      }
+    }
+  }
+
+  // повесим клики на кнопки модалки (повторно безопасно — но делаем 1 раз)
+  if (btnInjected) btnInjected.addEventListener('click', connectInjected);
+  if (btnCoinbase) btnCoinbase.addEventListener('click', connectCoinbase);
+})();
+</script>
+
 </body>
 </html>
+
 
 
 
