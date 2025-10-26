@@ -767,6 +767,129 @@ function openInWallet(wallet) {
 }
 </script>
 
+  <script>
+// ====== PATCH: корректное подключение внутри MetaMask/Trust на мобиле ======
+
+function isInMetaMask() {
+  return !!(window.ethereum?.isMetaMask) || /MetaMask/i.test(navigator.userAgent);
+}
+function isInTrust() {
+  return /TrustWallet|Trust/i.test(navigator.userAgent);
+}
+function isMobile() {
+  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+/**
+ * Ждём появления window.ethereum (MetaMask иногда отдаёт его с задержкой).
+ */
+function waitForEthereum(maxMs = 2500) {
+  const started = Date.now();
+  return new Promise(resolve => {
+    (function tick() {
+      if (window.ethereum && typeof window.ethereum.request === 'function') return resolve(true);
+      if (Date.now() - started > maxMs) return resolve(false);
+      setTimeout(tick, 100);
+    })();
+  });
+}
+
+/**
+ * Универсальный клик по "Подключить кошелёк".
+ * - Если мы внутри MetaMask/Trust → подключаемся нативно (без диплинков).
+ * - Если обычный мобильный браузер → показываем селектор с диплинками (твоя функция).
+ * - Если десктоп → открываем твою модалку (#walletModal).
+ */
+async function onConnectClick() {
+  const mobile = isMobile();
+  const inMM   = isInMetaMask();
+  const inTW   = isInTrust();
+
+  if (mobile && (inMM || inTW)) {
+    // Мы уже внутри кошелька → НЕ делаем диплинки, просто коннектимся.
+    await safeConnectInApp();
+    return;
+  }
+
+  if (mobile && !inMM && !inTW) {
+    // Обычный мобильный браузер → пусть работает твой селектор с диплинками
+    if (typeof openWalletSelector === 'function') {
+      openWalletSelector();
+    } else {
+      alert('Откройте сайт в MetaMask/Trust или используйте их диплинк.');
+    }
+    return;
+  }
+
+  // Десктоп: показываем твою модалку
+  const modal = document.getElementById('walletModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+/**
+ * Подключение внутри dApp-браузера кошелька без участия wallet.js (чтобы его не трогать).
+ * Если wallet.js уже повесил window.connectWallet — вызовем его.
+ * Если нет — сделаем минимальный прямой eth_requestAccounts.
+ */
+async function safeConnectInApp() {
+  // Имитация "мы внутри кошелька" — ждём ethereum
+  const ok = await waitForEthereum(3000);
+  if (!ok) {
+    alert('Кошелёк не инициализировал Web3. Перезагрузите вкладку внутри MetaMask/Trust.');
+    return;
+  }
+
+  // Если у тебя уже есть глобальный connectWallet из wallet.js — используем его
+  if (typeof window.connectWallet === 'function') {
+    try {
+      await window.connectWallet();
+      return;
+    } catch (e) {
+      console.warn('connectWallet() упал, пробуем прямой вызов:', e);
+      // пойдём в прямой путь
+    }
+  }
+
+  // Прямой минимальный коннект без зависимостей:
+  try {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const acc = accounts?.[0];
+    if (acc) {
+      const addrEl = document.getElementById('walletAddress');
+      if (addrEl) addrEl.textContent = acc;
+      // если wallet.js уже на странице и повесил showIbitiBalance — обновим
+      if (typeof window.showIbitiBalance === 'function') {
+        try { await window.showIbitiBalance(true); } catch {}
+      }
+    } else {
+      alert('Кошелёк не вернул аккаунты.');
+    }
+  } catch (err) {
+    const msg = (err && (err.message || err.shortMessage)) || String(err);
+    alert('Ошибка подключения: ' + msg);
+  }
+}
+
+/**
+ * Патчим твою функцию openInWallet — чтобы она НЕ делала диплинк,
+ * когда пользователь УЖЕ в MetaMask/Trust (это и вызывало тупой прыжок/маркет).
+ */
+(function patchOpenInWallet() {
+  const original = window.openInWallet;
+  if (typeof original !== 'function') return;
+  window.openInWallet = function(wallet) {
+    // Если уже в in-app браузере кошелька — коннектимся нативно, без редиректов
+    if (isInMetaMask() || isInTrust()) {
+      safeConnectInApp();
+      return;
+    }
+    // иначе — как было (диплинки)
+    original(wallet);
+  }
+})();
+</script>
+
 </body>
 </html>
+
 
