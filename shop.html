@@ -848,22 +848,30 @@ function openWalletSelector() {
     showConfirmButton: false,
     html: `
       <div style="display:flex;flex-direction:column;gap:10px">
-        <button onclick="openInWallet('metamask')" class="btn-small">🦊 MetaMask</button>
-        <button onclick="openInWallet('trust')" class="btn-small">🔵 Trust Wallet</button>
-        <button onclick="openInWallet('binance')" class="btn-small">🟡 Binance Wallet</button>
-        <button onclick="openInWallet('coinbase')" class="btn-small">🧢 Coinbase</button>
+        <button id="wl-mm"      class="btn-small">🦊 MetaMask</button>
+        <button id="wl-trust"   class="btn-small">🔵 Trust Wallet</button>
+        <button id="wl-binance" class="btn-small">🟡 Binance Wallet</button>
+        <button id="wl-cb"      class="btn-small">🧢 Coinbase</button>
       </div>
-    `
+    `,
+    didOpen: () => {
+      document.getElementById('wl-mm')     .addEventListener('click', () => openInWallet('metamask'));
+      document.getElementById('wl-trust')  .addEventListener('click', () => openInWallet('trust'));
+      document.getElementById('wl-binance').addEventListener('click', () => openInWallet('binance'));
+      document.getElementById('wl-cb')     .addEventListener('click', () => openInWallet('coinbase'));
+    }
   });
 }
 
+<script>
 function openInWallet(wallet) {
   const appUrl = encodeURIComponent(window.location.href);
-  let deeplink = "";
+  let deeplink = '';
 
-  // 🦊 Если MetaMask уже встроен — добавляем токен сразу, без диплинков
+  // В MetaMask in-app — сразу добавляем токен
   if (wallet === 'metamask' && window.ethereum?.isMetaMask) {
     addTokenEip747();
+    Swal.close(); // закрыть модалку
     return;
   }
 
@@ -884,8 +892,13 @@ function openInWallet(wallet) {
       return;
   }
 
-  // 🚀 Запускаем диплинк только если не MetaMask внутри
-  window.location.href = deeplink;
+  Swal.close();
+  // Навигация как явное действие пользователя
+  try {
+    window.location.assign(deeplink);
+  } catch {
+    window.location.href = deeplink;
+  }
 }
 </script>
 
@@ -1186,6 +1199,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
