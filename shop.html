@@ -252,7 +252,7 @@
   <div id="countdownNotice"></div>
 
   <section class="wallet-section">
-  <button onclick="openWalletSelector('addToken')">Подключить кошелёк</button>
+  <button onclick="onConnectClick()">Подключить кошелёк</button>
   <div id="walletAddress"></div>
   <div id="ibitiBalance"></div>
 </section>
@@ -568,10 +568,8 @@
     <h3 style="margin:0 0 10px;font-size:18px;">Куда добавить токен IBITI?</h3>
 
     <div style="display:flex;flex-direction:column;gap:10px">
-      <button onclick="closeAddTokenModal(); openWalletSelector('addToken')"
-  style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
-  Выбрать кошелёк
-</button>
+      <button onclick="closeAddTokenModal()" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer;">✕</button>
+    <h3 style="margin:0 0 10px;font-size:18px;">Куда добавить токен IBITI?</h3>
 
       <details style="background:#0b0f1a;border:1px solid #333;border-radius:8px;padding:10px;">
         <summary style="cursor:pointer;color:#e5e7eb">Coinbase Wallet (ручное добавление)</summary>
@@ -1206,6 +1204,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
