@@ -252,12 +252,13 @@
   <div id="countdownNotice"></div>
 
   <section class="wallet-section">
-  <button onclick="onConnectClick()">Подключить кошелёк</button>
+  <button onclick="openWalletSelector('addToken')">Подключить кошелёк</button>
   <div id="walletAddress"></div>
   <div id="ibitiBalance"></div>
 </section>
 
  <button onclick="openWalletSelector('addToken')"
+  ...>Добавить IBITI в кошелёк</button>
   style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
   Добавить IBITI в кошелёк
 </button>
@@ -1205,6 +1206,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
