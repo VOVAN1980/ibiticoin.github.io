@@ -257,7 +257,7 @@
   <div id="ibitiBalance"></div>
 </section>
 
- <button onclick="openWalletSelector()"
+ <button onclick="openWalletSelector('addToken')"
   style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
   Добавить IBITI в кошелёк
 </button>
@@ -833,9 +833,9 @@ async function addTokenEip747() {
 </div>
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
 // === Универсальный выбор кошельков ===
-function openWalletSelector() {
+<script>
+function openWalletSelector(mode = 'connect') {
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   if (!isMobile) {
     document.getElementById('walletModal').style.display = 'flex';
@@ -855,25 +855,33 @@ function openWalletSelector() {
       </div>
     `,
     didOpen: () => {
-      document.getElementById('wl-mm')     .addEventListener('click', () => openInWallet('metamask'));
-      document.getElementById('wl-trust')  .addEventListener('click', () => openInWallet('trust'));
-      document.getElementById('wl-binance').addEventListener('click', () => openInWallet('binance'));
-      document.getElementById('wl-cb')     .addEventListener('click', () => openInWallet('coinbase'));
+      document.getElementById('wl-mm')     .addEventListener('click', () => openInWallet('metamask', mode));
+      document.getElementById('wl-trust')  .addEventListener('click', () => openInWallet('trust',    mode));
+      document.getElementById('wl-binance').addEventListener('click', () => openInWallet('binance',  mode));
+      document.getElementById('wl-cb')     .addEventListener('click', () => openInWallet('coinbase', mode));
     }
   });
 }
 
-function openInWallet(wallet) {
+function openInWallet(wallet, mode = 'connect') {
   const appUrl = encodeURIComponent(window.location.href);
   let deeplink = '';
 
-  // В MetaMask in-app — сразу добавляем токен
-  if (wallet === 'metamask' && window.ethereum?.isMetaMask) {
-    addTokenEip747();
-    Swal.close(); // закрыть модалку
-    return;
+  // В MetaMask in-app: либо коннект, либо сразу добавить токен
+  if (window.ethereum?.isMetaMask) {
+    if (mode === 'addToken' && wallet === 'metamask') {
+      Swal.close();
+      addTokenEip747();
+      return;
+    }
+    if (mode === 'connect' && (wallet === 'metamask')) {
+      Swal.close();
+      safeConnectInApp();
+      return;
+    }
   }
 
+  // Диплинки для внешних браузеров / других кошельков
   switch (wallet) {
     case 'metamask':
       deeplink = `https://metamask.app.link/dapp/${location.hostname}${location.pathname}`;
@@ -892,12 +900,7 @@ function openInWallet(wallet) {
   }
 
   Swal.close();
-  // Навигация как явное действие пользователя
-  try {
-    window.location.assign(deeplink);
-  } catch {
-    window.location.href = deeplink;
-  }
+  try { window.location.assign(deeplink); } catch { window.location.href = deeplink; }
 }
 </script>
 
@@ -1009,14 +1012,18 @@ async function safeConnectInApp() {
 (function patchOpenInWallet() {
   const original = window.openInWallet;
   if (typeof original !== 'function') return;
-  window.openInWallet = function(wallet) {
-    // Если уже в in-app браузере кошелька — коннектимся нативно, без редиректов
-    if (isInMetaMask() || isInTrust()) {
-      safeConnectInApp();
-      return;
+  window.openInWallet = function(wallet, mode = 'connect') {
+    // В MetaMask in-app уважаем режим
+    if (isInMetaMask()) {
+      if (mode === 'addToken' && wallet === 'metamask') { addTokenEip747(); return; }
+      if (mode === 'connect'  && wallet === 'metamask') { safeConnectInApp(); return; }
     }
-    // иначе — как было (диплинки)
-    original(wallet);
+    // Trust: всегда только коннект (addToken у них ручной)
+    if (isInTrust()) {
+      if (mode === 'connect') { safeConnectInApp(); return; }
+      // mode === 'addToken' → откроем диплинк/инструкцию через original
+    }
+    original(wallet, mode);
   }
 })();
 </script>
@@ -1198,6 +1205,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
