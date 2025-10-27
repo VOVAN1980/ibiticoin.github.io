@@ -257,9 +257,9 @@
   <div id="ibitiBalance"></div>
 </section>
 
-  <button type="button" onclick="openAddTokenModal()"
-  style="margin-top:10px;background:#0f172a;color:#d1fae5;border:1px solid #10b981;padding:10px 16px;border-radius:10px;cursor:pointer;">
-  Добавить IBITI в кошелёк
+ <button id="addTokenAutoBtn"
+  style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
+  Проверка кошелька…
 </button>
 
   <!-- ===== CONNECT WALLET MODAL (desktop dynamic) ===== -->
@@ -1124,8 +1124,62 @@ function openDesktopWalletModal() {
 })();
 </script>
 
+<script>
+function showManualAdd() {
+  closeAddTokenModal();
+  Swal.fire({
+    icon: 'info',
+    title: 'Добавление токена',
+    html: `
+      <div style="text-align:left">
+      В вашем кошельке автоматическое добавление не поддерживается.<br><br>
+      Откройте: <b>Tokens → “+” → Import/Add Custom Token</b><br>
+      Сеть: <b>BNB Smart Chain (56)</b><br>
+      Contract: <code>${IBITI_TOKEN.address}</code><br>
+      Symbol: <code>${IBITI_TOKEN.symbol}</code><br>
+      Decimals: <code>${IBITI_TOKEN.decimals}</code><br><br>
+      <button id="copyCt" class="swal2-styled">Скопировать адрес</button>
+      <button id="openScan" class="swal2-styled">Открыть в BscScan</button>
+      </div>
+    `,
+    didOpen: () => {
+      document.getElementById('copyCt').onclick = () =>
+        navigator.clipboard.writeText(IBITI_TOKEN.address).then(()=>toast('✅ Адрес скопирован'));
+      document.getElementById('openScan').onclick = () => openBscscan();
+    }
+  });
+}
+
+function setupAddTokenButton() {
+  const btn = document.getElementById('addTokenAutoBtn');
+  if (!btn) return;
+
+  const eth = window.ethereum;
+  const brand = detectProviderBrand(eth); // эта функция у тебя уже есть выше
+
+  if (brand === 'metamask') {
+    btn.textContent = 'MetaMask (авто-добавление)';
+    btn.onclick = addTokenEip747;
+  } else if (brand === 'coinbase') {
+    btn.textContent = 'Coinbase Wallet (ручное добавление)';
+    btn.onclick = showManualAdd;
+  } else if (brand === 'trust' || brand === 'binance' || brand === 'okx' || brand === 'other') {
+    btn.textContent = 'Инструкция для Trust / Binance / OKX';
+    btn.onclick = showManualAdd;
+  } else {
+    btn.textContent = 'Установить кошелёк (MetaMask)';
+    btn.onclick = openInstallMM;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setupAddTokenButton();
+});
+</script>
+
 </body>
 </html>
+
 
 
 
