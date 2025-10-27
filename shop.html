@@ -711,49 +711,77 @@ async function ensureBscStrict(eth) {
   return await waitForChain(BSC, eth);
 }
 
+  // Хелпер: определяем Trust Mobile
+function isTrustWallet(eth = window.ethereum) {
+  return !!(eth?.isTrust) || /TrustWallet|Trust/i.test(navigator.userAgent);
+}
+  
 // === ОБНОВЛЁННАЯ ФУНКЦИЯ === //
-function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
-
 async function addTokenEip747() {
   if (!hasEthereum()) { openInstallMM(); return; }
   const eth = window.ethereum;
   const BSC = '0x38';
 
   try {
-    // 0) Обязательное подключение сайта к кошельку
+    // 0) подключаем сайт к кошельку (нужно для MM)
     await eth.request({ method: 'eth_requestAccounts' });
 
-    // 1) Жёстко переключаемся на BSC и ждём фактической смены
+    // 1) строго переключаемся на BSC
     await ensureBscStrict(eth);
     await waitForChain(BSC, eth, 6000);
-    await sleep(250); // небольшой лаг для MM mobile
 
-    // 2) Проверяем, что по адресу токена реально есть код на этой сети
+    // 2) если это НЕ MetaMask — уходим в ручной сценарий (Trust/OKX/прочие)
+    const isMM = !!eth.isMetaMask;
+    if (!isMM) {
+      closeAddTokenModal();
+      Swal.fire({
+        icon: 'info',
+        title: 'Добавление токена',
+        html: `
+          Похоже, вы в <b>Trust Wallet</b> (или другом кошельке), где автоматическое добавление не поддерживается.<br><br>
+          Откройте: <b>Tokens → “+” → Import/Add Custom Token</b><br>
+          Сеть: <b>BNB Smart Chain (56)</b><br>
+          Contract: <code>${IBITI_TOKEN.address}</code><br>
+          Symbol: <code>${IBITI_TOKEN.symbol}</code><br>
+          Decimals: <code>${IBITI_TOKEN.decimals}</code><br><br>
+          <button id="copyCt" class="swal2-styled">Скопировать адрес</button>
+          <button id="openScan" class="swal2-styled">Открыть в BscScan</button>
+        `,
+        didOpen: () => {
+          document.getElementById('copyCt').onclick = () =>
+            navigator.clipboard.writeText(IBITI_TOKEN.address).then(()=>toast('✅ Адрес скопирован'));
+          document.getElementById('openScan').onclick = () =>
+            openBscscan();
+        }
+      });
+      return;
+    }
+
+    // 3) MetaMask: проверяем, что контракт действительно есть в этой сети
     const code = await eth.request({ method: 'eth_getCode', params: [IBITI_TOKEN.address, 'latest'] });
     if (!code || code === '0x') {
       alert('Похоже, вы не в BNB Smart Chain, либо контракт не найден. Проверьте сеть и попробуйте снова.');
       return;
     }
 
-    // 3) Пытаемся добавить (без image — у MM mobile на это бывало -32603)
-    const watch = async () => eth.request({
+    // 4) Пытаемся добавить в MM (без image — иначе часто -32603 на мобиле)
+    const tryWatch = () => eth.request({
       method: 'wallet_watchAsset',
       params: { type: 'ERC20', options: {
         address: IBITI_TOKEN.address,
         symbol:  IBITI_TOKEN.symbol,
         decimals: IBITI_TOKEN.decimals
-        // image: убрали намеренно
-      }}
+      } }
     });
 
     let added = false;
     try {
-      added = await watch();
+      added = await tryWatch();
     } catch (e) {
-      // повтор через короткую паузу — на мобилке помогает после switch
+      // MetaMask Mobile иногда даёт -32603 сразу после switch — повтор через паузу
       if ((e?.code ?? e?.data?.code) === -32603) {
-        await sleep(700);
-        added = await watch();
+        await new Promise(r=>setTimeout(r, 800));
+        added = await tryWatch();
       } else {
         throw e;
       }
@@ -768,8 +796,10 @@ async function addTokenEip747() {
   } catch (err) {
     const code = err && (err.code ?? err.data?.code);
     if (code === 4001) { toast('ℹ️ Действие отменено пользователем'); return; }
+
+    // Trust чаще всего отдаёт -32603 — уже обработали выше через ветку !isMetaMask
     if (code === -32603) {
-      alert('Не удалось добавить токен автоматически (код -32603). Убедитесь, что сайт подключён к кошельку и сеть — BNB Smart Chain. Попробуйте ещё раз или добавьте вручную.');
+      alert('Не удалось добавить токен автоматически. В MetaMask это работает; в Trust добавьте вручную через Import Token.');
       return;
     }
     console.error('Add IBITI error:', err);
@@ -1096,6 +1126,7 @@ function openDesktopWalletModal() {
 
 </body>
 </html>
+
 
 
 
