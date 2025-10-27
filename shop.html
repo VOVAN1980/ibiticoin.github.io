@@ -637,54 +637,97 @@
     return !!(window.ethereum && typeof window.ethereum.request === 'function');
   }
 
-  // --- Основной UX-поток автодобавления
-  async function addTokenEip747(){
-    if (!hasEthereum()){
-      openInstallMM();
-      return;
-    }
+  <script>
+// Хелперы:
+function detectProviderBrand(eth = window.ethereum) {
+  if (!eth) return 'unknown';
+  if (eth.isMetaMask) return 'metamask';
+  if (eth.isTrust || /Trust/i.test(navigator.userAgent)) return 'trust';
+  if (eth.isCoinbaseWallet) return 'coinbase';
+  if (eth.isOkxWallet || eth.isOKXWallet) return 'okx';
+  if (window.BinanceChain && eth === window.BinanceChain) return 'binance';
+  return 'other';
+}
+
+async function ensureBscIfPossible(eth) {
+  const BSC = '0x38';
+  try {
+    const cur = await eth.request({ method:'eth_chainId' });
+    if (cur === BSC) return;
     try {
-      const bscId = '0x38'; // BSC mainnet
-      const current = await window.ethereum.request({ method:'eth_chainId' });
-      if (current !== bscId){
-        try {
-          await window.ethereum.request({ method:'wallet_switchEthereumChain', params:[{ chainId: bscId }] });
-        } catch(e){
-          if (e.code === 4902){
-            await window.ethereum.request({
-              method:'wallet_addEthereumChain',
-              params:[{
-                chainId: bscId,
-                chainName:'BNB Smart Chain',
-                nativeCurrency:{ name:'BNB', symbol:'BNB', decimals:18 },
-                rpcUrls:['https://bsc-dataseed1.bnbchain.org'],
-                blockExplorerUrls:['https://bscscan.com']
-              }]
-            });
-          } else { throw e; }
+      await eth.request({ method:'wallet_switchEthereumChain', params:[{ chainId: BSC }] });
+    } catch(e) {
+      if (e && e.code === 4902) {
+        await eth.request({
+          method:'wallet_addEthereumChain',
+          params:[{
+            chainId: BSC,
+            chainName:'BNB Smart Chain',
+            nativeCurrency:{ name:'BNB', symbol:'BNB', decimals:18 },
+            rpcUrls:['https://bsc-dataseed1.bnbchain.org'],
+            blockExplorerUrls:['https://bscscan.com']
+          }]
+        });
+      }
+    }
+  } catch(_) {}
+}
+
+// НОВАЯ addTokenEip747 — авто-добавление только для MetaMask
+async function addTokenEip747(){
+  if (!hasEthereum()){
+    openInstallMM();
+    return;
+  }
+  const eth = window.ethereum;
+  const brand = detectProviderBrand(eth);
+
+  if (brand !== 'metamask') {
+    openAddTokenModal();
+    toast('ℹ️ Автодобавление поддерживает только MetaMask. Добавьте токен вручную.');
+    return;
+  }
+
+  try {
+    const checksum = (window.ethers && typeof ethers.getAddress === 'function')
+      ? ethers.getAddress(IBITI_TOKEN.address)
+      : IBITI_TOKEN.address;
+
+    await ensureBscIfPossible(eth);
+
+    const added = await eth.request({
+      method: 'wallet_watchAsset',
+      params: {
+        type: 'ERC20',
+        options: {
+          address: checksum,
+          symbol: IBITI_TOKEN.symbol,
+          decimals: IBITI_TOKEN.decimals,
+          image: IBITI_TOKEN.image
         }
       }
+    });
 
-      const added = await window.ethereum.request({
-        method:'wallet_watchAsset',
-        params:{ type:'ERC20', options: IBITI_TOKEN }
-      });
-
-      if (added) {
-        toast('✅ IBITI добавлен в кошелёк');
-        closeAddTokenModal();
-      } else {
-        toast('ℹ️ Добавление отменено');
-      }
-    } catch(err){
-      if (err && err.code === 4001) {
-        toast('ℹ️ Действие отменено пользователем');
-      } else {
-        console.error('Add IBITI error:', err);
-        alert('Не удалось добавить токен. Проверь, что кошелёк установлен и разблокирован.');
-      }
+    if (added) {
+      toast('✅ IBITI добавлен в MetaMask');
+      closeAddTokenModal();
+    } else {
+      toast('ℹ️ Добавление отменено');
+    }
+  } catch (err) {
+    if (err && err.code === 4001) {
+      toast('ℹ️ Действие отменено пользователем');
+    } else if (err && err.code === -32601) {
+      openAddTokenModal();
+      toast('ℹ️ Провайдер не поддерживает авто-добавление. Добавьте токен вручную.');
+    } else {
+      console.error('watchAsset error:', err);
+      openAddTokenModal();
+      alert('Не удалось добавить токен автоматически. Добавьте вручную по адресу контракта.');
     }
   }
+}
+</script>
 
   // --- Кнопки в Coinbase-блоке
   function copyText(sel){
@@ -1005,6 +1048,7 @@ function openDesktopWalletModal() {
 
 </body>
 </html>
+
 
 
 
