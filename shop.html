@@ -712,25 +712,52 @@ async function ensureBscStrict(eth) {
 }
 
 // === ОБНОВЛЁННАЯ ФУНКЦИЯ === //
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
 async function addTokenEip747() {
   if (!hasEthereum()) { openInstallMM(); return; }
   const eth = window.ethereum;
   const BSC = '0x38';
 
   try {
-    // 1) Явно подключаем сайт к кошельку (обязано быть перед watchAsset в MetaMask Mobile)
+    // 0) Обязательное подключение сайта к кошельку
     await eth.request({ method: 'eth_requestAccounts' });
 
-    // 2) Переключаемся на BSC и ждём подтверждения смены сети
-    await ensureBscStrict(eth);           // твой строгий хелпер
-    await waitForChain(BSC, eth, 6000);   // ждём пока chainId реально станет 0x38
-    await new Promise(r => setTimeout(r, 250)); // крошечный лаг для мобильного MM
+    // 1) Жёстко переключаемся на BSC и ждём фактической смены
+    await ensureBscStrict(eth);
+    await waitForChain(BSC, eth, 6000);
+    await sleep(250); // небольшой лаг для MM mobile
 
-    // 3) Добавляем токен
-    const added = await eth.request({
+    // 2) Проверяем, что по адресу токена реально есть код на этой сети
+    const code = await eth.request({ method: 'eth_getCode', params: [IBITI_TOKEN.address, 'latest'] });
+    if (!code || code === '0x') {
+      alert('Похоже, вы не в BNB Smart Chain, либо контракт не найден. Проверьте сеть и попробуйте снова.');
+      return;
+    }
+
+    // 3) Пытаемся добавить (без image — у MM mobile на это бывало -32603)
+    const watch = async () => eth.request({
       method: 'wallet_watchAsset',
-      params: { type: 'ERC20', options: IBITI_TOKEN }
+      params: { type: 'ERC20', options: {
+        address: IBITI_TOKEN.address,
+        symbol:  IBITI_TOKEN.symbol,
+        decimals: IBITI_TOKEN.decimals
+        // image: убрали намеренно
+      }}
     });
+
+    let added = false;
+    try {
+      added = await watch();
+    } catch (e) {
+      // повтор через короткую паузу — на мобилке помогает после switch
+      if ((e?.code ?? e?.data?.code) === -32603) {
+        await sleep(700);
+        added = await watch();
+      } else {
+        throw e;
+      }
+    }
 
     if (added) {
       toast('✅ IBITI добавлен в кошелёк');
@@ -739,19 +766,14 @@ async function addTokenEip747() {
       toast('ℹ️ Добавление отменено');
     }
   } catch (err) {
-    // нормализованное сообщение
     const code = err && (err.code ?? err.data?.code);
-    if (code === 4001) {
-      toast('ℹ️ Действие отменено пользователем');
-      return;
-    }
+    if (code === 4001) { toast('ℹ️ Действие отменено пользователем'); return; }
     if (code === -32603) {
-      // типичный ответ MM Mobile, когда сеть не успела переключиться/нет коннекта
-      alert('Не удалось добавить токен автоматически (код -32603). Убедитесь, что вы подключили сайт к кошельку и сеть — BNB Smart Chain. Попробуйте ещё раз.');
+      alert('Не удалось добавить токен автоматически (код -32603). Убедитесь, что сайт подключён к кошельку и сеть — BNB Smart Chain. Попробуйте ещё раз или добавьте вручную.');
       return;
     }
     console.error('Add IBITI error:', err);
-    alert('Не удалось добавить токен. Проверьте, что кошелёк установлен, сайт подключён, и сеть — BNB Smart Chain.');
+    alert('Не удалось добавить токен. Проверьте, что кошелёк установлен, сайт подключён и сеть — BNB Smart Chain.');
   }
 }
 
@@ -1074,6 +1096,7 @@ function openDesktopWalletModal() {
 
 </body>
 </html>
+
 
 
 
