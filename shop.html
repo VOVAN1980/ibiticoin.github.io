@@ -257,9 +257,9 @@
   <div id="ibitiBalance"></div>
 </section>
 
- <button id="addTokenAutoBtn"
-  style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
-  Проверка кошелька…
+ <button type="button" onclick="openAddTokenModal()"
+  style="margin-top:10px;background:#0f172a;color:#d1fae5;border:1px solid #10b981;padding:10px 16px;border-radius:10px;cursor:pointer;">
+  Добавить IBITI в кошелёк
 </button>
 
   <!-- ===== CONNECT WALLET MODAL (desktop dynamic) ===== -->
@@ -861,6 +861,12 @@ function openInWallet(wallet) {
   const appUrl = encodeURIComponent(window.location.href);
   let deeplink = "";
 
+  // 🦊 Если MetaMask уже встроен — добавляем токен сразу, без диплинков
+  if (wallet === 'metamask' && window.ethereum?.isMetaMask) {
+    addTokenEip747();
+    return;
+  }
+
   switch (wallet) {
     case 'metamask':
       deeplink = `https://metamask.app.link/dapp/${location.hostname}${location.pathname}`;
@@ -878,6 +884,7 @@ function openInWallet(wallet) {
       return;
   }
 
+  // 🚀 Запускаем диплинк только если не MetaMask внутри
   window.location.href = deeplink;
 }
 </script>
@@ -1179,6 +1186,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </body>
 </html>
+
 
 
 
