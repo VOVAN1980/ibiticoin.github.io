@@ -672,41 +672,81 @@ async function ensureBscIfPossible(eth) {
   } catch(_) {}
 }
 
+// строго ждём нужную сеть
+async function waitForChain(targetId, eth, maxMs = 6000) {
+  const started = Date.now();
+  while (Date.now() - started < maxMs) {
+    const id = await eth.request({ method: 'eth_chainId' });
+    if (id === targetId) return true;
+    await new Promise(r => setTimeout(r, 200));
+  }
+  return false;
+}
+
+// строго переключаем на BSC (или добавляем) и подтверждаем
+async function ensureBscStrict(eth) {
+  const BSC = '0x38';
+  try {
+    const id = await eth.request({ method: 'eth_chainId' });
+    if (id === BSC) return true;
+  } catch {}
+  try {
+    await eth.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: BSC }] });
+  } catch (e) {
+    if (e && e.code === 4902) {
+      await eth.request({
+        method: 'wallet_addEthereumChain',
+        params: [{
+          chainId: BSC,
+          chainName: 'BNB Smart Chain',
+          nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+          rpcUrls: ['https://bsc-dataseed1.bnbchain.org'],
+          blockExplorerUrls: ['https://bscscan.com']
+        }]
+      });
+    } else {
+      throw e;
+    }
+  }
+  return await waitForChain(BSC, eth);
+}
+
+// === ОБНОВЛЁННАЯ ФУНКЦИЯ ===
 async function addTokenEip747() {
   if (!hasEthereum()) { openInstallMM(); return; }
-  const eth   = window.ethereum;
-  const brand = detectProviderBrand(eth);
-
-  // Авто — только MetaMask. Остальным сразу показываем ручной импорт.
-  if (brand !== 'metamask') {
-    openAddTokenModal();
-    toast('ℹ️ Автодобавление поддерживает только MetaMask. Добавьте токен вручную.');
-    return;
-  }
+  const eth = window.ethereum;
 
   try {
-    // 1) Сначала запросим аккаунт (MetaMask Mobile этого хочет)
+    // 1) доступ к аккаунту
     await eth.request({ method: 'eth_requestAccounts' });
 
-    // 2) Переключим/добавим BSC (по возможности)
-    await ensureBscIfPossible(eth);
+    // 2) строго переключаемся на BSC и убеждаемся
+    const onBsc = await ensureBscStrict(eth);
+    if (!onBsc) {
+      alert('Не удалось переключиться на BNB Smart Chain. Попробуйте ещё раз или вручную переключите сеть в MetaMask.');
+      return;
+    }
 
-    // 3) Добавим токен
+    // 3) убеждаемся, что по адресу есть код контракта в этой сети
     const checksum = (window.ethers && typeof ethers.getAddress === 'function')
       ? ethers.getAddress(IBITI_TOKEN.address)
       : IBITI_TOKEN.address;
 
+    const code = await eth.request({ method: 'eth_getCode', params: [checksum, 'latest'] });
+    if (!code || code === '0x') {
+      alert('По этому адресу нет контракта в текущей сети. Проверь адрес и сеть (должна быть BSC).');
+      return;
+    }
+
+    // 4) добавляем токен
     const added = await eth.request({
       method: 'wallet_watchAsset',
-      params: {
-        type: 'ERC20',
-        options: {
-          address: checksum,
-          symbol:  IBITI_TOKEN.symbol,
-          decimals: IBITI_TOKEN.decimals,
-          image:   IBITI_TOKEN.image
-        }
-      }
+      params: { type: 'ERC20', options: {
+        address: checksum,
+        symbol: IBITI_TOKEN.symbol,
+        decimals: IBITI_TOKEN.decimals,
+        image: IBITI_TOKEN.image
+      } }
     });
 
     if (added) {
@@ -716,24 +756,10 @@ async function addTokenEip747() {
       toast('ℹ️ Добавление отменено');
     }
   } catch (err) {
-    // Покажем точную причину (на мобиле это помогает)
-    const code = (err && err.code != null) ? ` [code ${err.code}]` : '';
-    const msg  = err && (err.message || err.shortMessage) ? `: ${(err.message || err.shortMessage)}` : '';
-    console.error('addTokenEip747 error', err);
-
-    if (err && err.code === 4001) {
-      toast('ℹ️ Действие отменено пользователем');
-      return;
-    }
-    if (err && err.code === -32601) {
-      // method not found — старый провайдер
-      openAddTokenModal();
-      toast('ℹ️ Провайдер не поддерживает авто-добавление. Добавьте токен вручную.');
-      return;
-    }
-
-    // общий фоллбек
-    alert(`Не удалось добавить токен автоматически${code}${msg}\nДобавьте вручную по адресу контракта.`);
+    console.error('addTokenEip747 strict error', err);
+    if (err && err.code === 4001) { toast('ℹ️ Действие отменено пользователем'); return; }
+    if (err && err.code === -32601) { toast('ℹ️ Провайдер не поддерживает auto-add. Добавьте вручную.'); openAddTokenModal(); return; }
+    alert(`Не удалось добавить токен автоматически${err.code ? ' [code '+err.code+']' : ''}: ${(err && (err.message||err.shortMessage)) || 'unknown'}\nДобавьте вручную по адресу контракта.`);
     openAddTokenModal();
   }
 }
@@ -1057,6 +1083,7 @@ function openDesktopWalletModal() {
 
 </body>
 </html>
+
 
 
 
