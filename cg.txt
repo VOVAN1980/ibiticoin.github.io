@@ -1,0 +1,3 @@
+IBITIcoin ownership verification for CoinGecko Ticket #115569
+Contract: 0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196
+Website: https://www.ibiticoin.com
