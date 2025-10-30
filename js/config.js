@@ -9,7 +9,7 @@ const config = {
     saleDeployBlock: 51339916,          // 👈 ДОБАВИЛИ ЭТО
     contracts: {
       USDT_TOKEN: "0x55d398326f99059fF775485246999027B3197955",
-      IBITI_TOKEN: "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196",
+      IBITI_TOKEN: "0x5a9afF077690880Ff8A37942bdb2cC521916c7FF",
       PANCAKESWAP_ROUTER: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
       FEE_MANAGER: "0x34770ba3625437742e18C6827DFC893c42Eec956",
       USER_STATUS_MANAGER: "0xa1542720cC6952ec1E528411cCdC58FE60fa7996",
@@ -45,4 +45,5 @@ const config = {
 config.active = config.mainnet;
 
 export default config;
+
 
