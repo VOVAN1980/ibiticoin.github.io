@@ -2,7 +2,7 @@ import { signer, connectWallet } from "./wallet.js";
 import { ibitiTokenAbi }         from "./abis/ibitiTokenAbi.js";
 import { Contract, parseEther }   from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 
-const IBITI_TOKEN_ADDRESS = "0xa83825e09d3bf6ABf64efc70F08AdDF81A7Ba196";
+const IBITI_TOKEN_ADDRESS = "0x5a9afF077690880Ff8A37942bdb2cC521916c7FF";
 let ibitiContract = null;
 
 // Вообще не вызываем connectWallet() автоматически,
@@ -86,3 +86,4 @@ document.addEventListener("DOMContentLoaded", () => {
     console.warn("Кнопка #buyBtn не найдена.");
   }
 });
+
