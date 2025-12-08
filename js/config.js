@@ -1,28 +1,38 @@
-// Унифицированный конфиг без суффиксов _MAINNET / _LOCAL / _ADDRESS
-// config.js — конфиг сетей и адресов
 const config = {
   mainnet: {
     networkName: "BSC Mainnet",
     chainId: 56,
     rpcUrl: "https://rpc.ankr.com/bsc/4dc6f6e684cd1df11bb6f81c742b0597781ed9aee0365faf48669a2bc06d3058",
     explorerUrl: "https://bscscan.com",
-    saleDeployBlock: 51339916,          // 👈 ДОБАВИЛИ ЭТО
+    saleDeployBlock: 51339916,  // если ты уже от этого блока пляшешь – оставляем
+
     contracts: {
-      USDT_TOKEN: "0x55d398326f99059fF775485246999027B3197955",
-      IBITI_TOKEN: "0x5a9afF077690880Ff8A37942bdb2cC521916c7FF",
-      PANCAKESWAP_ROUTER: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
-      FEE_MANAGER: "0x34770ba3625437742e18C6827DFC893c42Eec956",
-      USER_STATUS_MANAGER: "0xa1542720cC6952ec1E528411cCdC58FE60fa7996",
-      BRIDGE_MANAGER: "0x813d2d93a3EfDFe8B09513b09B7CbdE06B239113",
-      NFTDISCOUNT: "0x911f7153AA7554b3f936f2ad05318B8368c14668",
-      IBITI_PRICE_ORACLE: "0x09e28925487841f0400687FD9DC9cf1d14B85aF3",
-      TEAM_VESTING: "0xA8E6a8707EBB386C839881f99391C8af2db3DB5e",
-      STAKING_MODULE: "0xd5D138855C7D8F24CD9eE52B65864bC3929a0aA5",
-      DAO_MODULE: "0xd5D170D80aDb59b189873540cFa25Ca508B336d3",
-      IBITI_NFT_ADDRESS: "0xE14bfBB10180eda4bDC574f02700e0E2BC0A4667",
-      NFTSALEMANAGER: "0xa43D0534E106bB041496E49C549022DdBA725a2E",
-      PHASED_TOKENSALE: "0xa3c4fF5dEf4ef7769Ac76bD1bD3E108Bf696A5a4",
-      BUYBACK_MANAGER: "0xAfDFE70d3531582789D6Ba5Bd56fDCFd43a4AC5E",
+      // базовые токены и инфраструктура
+      USDT_TOKEN:           "0x55d398326f99059fF775485246999027B3197955",
+      IBITI_TOKEN:          "0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb",
+
+      PANCAKESWAP_ROUTER:   "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+
+      FEE_MANAGER:          "0x34770ba3625437742e18C6827DFC893c42Eec956",
+      USER_STATUS_MANAGER:  "0xf1C734156A2Ab62e1018D18f6347425623af611a",
+      BRIDGE_MANAGER:       "0x813d2d93a3EfDFe8B09513b09B7CbdE06B239113",
+      NFTDISCOUNT:          "0x911f7153AA7554b3f936f2ad05318B8368c14668",
+      IBITI_PRICE_ORACLE:   "0x09e28925487841f0400687FD9DC9cf1d14B85aF3",
+
+      // команда и стейкинг
+      TEAM_VESTING:         "0xae6fA65adede487e46ABCE1b3570063D02510d5d",
+      STAKING_MODULE:       "0x9ad8D68F7a6C9f673bd1db8348734f8dA515113c",
+      DAO_MODULE:           "0xc0213d9d331Ea207717E38F5e0e995BA567fbd1F",
+
+      // NFT
+      IBITI_NFT_ADDRESS:    "0xE14bfBB10180eda4bDC574f02700e0E2BC0A4667",
+      NFTSALEMANAGER:       "0x2c702A42966a939b6C5Da4828cd8D67890Db097E",
+
+      // сейл + байбак
+      PHASED_TOKENSALE:     "0x6A6eDc85f4690DBAB98d52CdF656ef849d28148e",
+      BUYBACK_MANAGER:      "0xdE7E16bbDe9076daF23DB25BA4E50d8FEeca5AC9",
+
+      // награда для сейла (IBITI с 8 знаками)
       PHASED_REWARD_AMOUNT: 100000000
     }
   },
@@ -33,18 +43,14 @@ const config = {
     rpcUrl: "http://127.0.0.1:8545",
     explorerUrl: "",
     contracts: {
-      USDT_TOKEN: "0xB6969FA6ecBC9186dF0e36F9eCBdda7Cd6207794",
-      IBITI_TOKEN: "0xDe49559FA3f082BbEF4C3311f0A7Aa745BD30A9f",
-      NFTDISCOUNT: "0x4723A7d9dE6402606634FE2CaFbEC5e240Ea47fe",
-      PHASED_TOKENSALE: "0xeed8260f27BdbBD8e79761541C63a1D82A33518c"
+      USDT_TOKEN:      "0x2aebA8f3e548DAD183107eC481459AB66fAD42b8", // из .env USDT_ADDRESS_LOCAL
+      IBITI_TOKEN:     "0xE3422F1EdE8875470553F9fBBE50F1f4699ae86f", // из .env IBITI_ADDRESS_LOCAL
+      NFTDISCOUNT:     "0x4723A7d9dE6402606634FE2CaFbEC5e240Ea47fe", // совпадает
+      PHASED_TOKENSALE:"0xeed8260f27BdbBD8e79761541C63a1D82A33518c"  // из .env PHASED_SALE_ADDRESS_LOCAL
     }
   }
 };
 
-//Активная сеть:
 config.active = config.mainnet;
 
 export default config;
-
-
-
