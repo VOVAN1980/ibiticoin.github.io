@@ -2,7 +2,7 @@ import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 import { stakingAbi } from "./abis/stakingAbi.js";
 import { provider, signer, showIbitiBalance, selectedAccount } from "./wallet.js";
 
-const STAKING_ADDRESS = "0xC1792854bD81AF5b1Fb326e0880365F76EA279EA";
+const STAKING_ADDRESS = "0x9ad8D68F7a6C9f673bd1db8348734f8dA515113c";
 const DECIMALS = 8;
 
 let stakingContract;
@@ -192,4 +192,5 @@ export {
   stake,
   unstake
 };
+
 
