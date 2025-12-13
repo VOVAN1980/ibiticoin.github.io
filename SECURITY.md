@@ -21,7 +21,7 @@ If you believe you have found a security issue in:
 
 please report it **privately** via:
 
-- Email: `security@ibiticoin.com`  
+- Email:  
 - or, if email fails: `info@ibiticoin.com`
 
 ### Please include
