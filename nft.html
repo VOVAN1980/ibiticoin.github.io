@@ -1,239 +1,425 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>NFT Галерея IBITIcoin</title>
+  <title>IBITIcoin – NFT Gallery</title>
 
-  <!-- Ваш общий стиль -->
+  <!-- Global styles -->
   <link rel="stylesheet" href="css/style.css" />
 
-  <!-- Локальные стили страницы -->
-<style>
-  /* базис */
-  * { box-sizing: border-box; }
-  body { margin:0; background:#000; color:#fff; font-family:'Orbitron',sans-serif; }
+  <!-- Local styles -->
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin:0;
+      background:#000;
+      color:#fff;
+      font-family:'Orbitron',sans-serif;
+    }
 
-  /* заголовок */
-  header { text-align:center; padding:20px; }
-  header h1 { margin:0; color:gold; font-size:2.5rem; }
-  header p  { margin:10px auto 0; color:#ccc; max-width:900px; line-height:1.4; }
+    /* Header */
+    header {
+      text-align:center;
+      padding:20px;
+    }
+    header h1 {
+      margin:0;
+      color:gold;
+      font-size:2.5rem;
+    }
+    header p  {
+      margin:10px auto 0;
+      color:#ccc;
+      max-width:900px;
+      line-height:1.4;
+    }
 
-  /* секция кошелька */
-  .wallet-section { text-align:center; margin:20px auto; }
-  .wallet-section button{
-    appearance:none;-webkit-appearance:none;
-    background:gold;color:#000;border:0;
-    padding:10px 24px;border-radius:6px;font-weight:700;cursor:pointer;
-    transition:background .25s;
-  }
-  .wallet-section button:hover{ background:#c0a000; }
-  #walletAddress{ margin-top:10px;color:gold;font-weight:700;word-break:break-all; }
+    /* Wallet section */
+    .wallet-section {
+      text-align:center;
+      margin:20px auto;
+    }
+    .wallet-section button{
+      appearance:none;
+      -webkit-appearance:none;
+      background:gold;
+      color:#000;
+      border:0;
+      padding:10px 24px;
+      border-radius:6px;
+      font-weight:700;
+      cursor:pointer;
+      transition:background .25s;
+    }
+    .wallet-section button:hover{ background:#c0a000; }
+    #walletAddress{
+      margin-top:10px;
+      color:gold;
+      font-weight:700;
+      word-break:break-all;
+    }
 
-  /* ===== модалка выбора кошелька (свои классы) ===== */
-  .wallet-modal{
-    display:none; position:fixed; inset:0;
-    background:rgba(0,0,0,.6); z-index:3000;
-    align-items:center; justify-content:center; backdrop-filter:blur(2px);
-  }
-  .wallet-card{
-    position:relative; background:#111; color:#ffd700;
-    border:1px solid gold; border-radius:10px; padding:18px;
-    width:92%; max-width:420px; box-shadow:0 8px 24px rgba(0,0,0,.5);
-  }
-  .wallet-title{ margin:0 0 10px; font-size:18px; text-align:center; }
-  .wallet-actions{ display:flex; flex-direction:column; gap:10px; }
-  .btn-injected{
-    padding:10px 14px; border:1px solid #10b981; border-radius:8px;
-    background:#052e2b; color:#d1fae5; cursor:pointer;
-  }
-  .btn-coinbase{
-    padding:10px 14px; border:1px solid #3f3f46; border-radius:8px;
-    background:#111827; color:#e5e7eb; cursor:pointer;
-  }
-  .btn-coinbase:hover{ background:#0f172a; }
+    /* Wallet modal */
+    .wallet-modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.6);
+      z-index:3000;
+      align-items:center;
+      justify-content:center;
+      backdrop-filter:blur(2px);
+    }
+    .wallet-card{
+      position:relative;
+      background:#111;
+      color:#ffd700;
+      border:1px solid gold;
+      border-radius:10px;
+      padding:18px;
+      width:92%;
+      max-width:420px;
+      box-shadow:0 8px 24px rgba(0,0,0,.5);
+    }
+    .wallet-title{
+      margin:0 0 10px;
+      font-size:18px;
+      text-align:center;
+    }
+    .wallet-actions{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .btn-injected{
+      padding:10px 14px;
+      border:1px solid #10b981;
+      border-radius:8px;
+      background:#052e2b;
+      color:#d1fae5;
+      cursor:pointer;
+    }
+    .btn-coinbase{
+      padding:10px 14px;
+      border:1px solid #3f3f46;
+      border-radius:8px;
+      background:#111827;
+      color:#e5e7eb;
+      cursor:pointer;
+    }
+    .btn-coinbase:hover{ background:#0f172a; }
 
-  /* крестик — глушим глобальные button-правила */
-  .wallet-close{
-    all:unset; position:absolute; top:8px; right:10px;
-    color:#fff; font-size:18px; line-height:1; cursor:pointer;
-  }
-  .wallet-close:hover{ opacity:.85;
-  }
-  .nft-gallery{
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-    gap:20px; padding:40px 20px; max-width:1200px; margin:0 auto;
-  }
-  .nft-item{
-    position:relative; background:#111; border:1px solid gold; border-radius:10px;
-    overflow:hidden; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,.5);
-    transition:transform .3s;
-  }
-  .nft-item:hover{ transform:scale(1.02); }
-  .nft-item img{ width:100%; display:block; border-bottom:1px solid gold; }
-  .rarity-label{
-    position:absolute; left:0; right:0; bottom:0;
-    background:rgba(0,0,0,.7); color:gold; font-weight:700; padding:10px;
-  }
-  .buy-button{
-    position:absolute; top:10px; left:50%; transform:translateX(-50%);
-    background:gold; color:#000; padding:8px 18px; border-radius:6px;
-    font-weight:700; border:0; cursor:pointer; transition:background .25s;
-  }
-  .buy-button:hover{ background:#c0a000; }
+    .wallet-close{
+      all:unset;
+      position:absolute;
+      top:8px;
+      right:10px;
+      color:#fff;
+      font-size:18px;
+      line-height:1;
+      cursor:pointer;
+    }
+    .wallet-close:hover{ opacity:.85; }
 
-    /* Модалка покупки NFT */
-    .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:4000; }
-    .modal-content { position:relative; margin:10% auto; width:90%; max-width:500px; background:#111; color:gold; border:2px solid gold; border-radius:10px; padding:20px; text-align:center; }
-    .modal-content .close { position:absolute; right:15px; top:10px; font-size:1.5rem; cursor:pointer; }
-    .modal-content button { background:gold; color:#000; border:0; padding:10px 20px; border-radius:6px; font-weight:700; margin:6px; cursor:pointer; }
+    /* NFT gallery */
+    .nft-gallery{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:20px;
+      padding:40px 20px;
+      max-width:1200px;
+      margin:0 auto;
+    }
+    .nft-item{
+      position:relative;
+      background:#111;
+      border:1px solid gold;
+      border-radius:10px;
+      overflow:hidden;
+      text-align:center;
+      box-shadow:0 4px 10px rgba(0,0,0,.5);
+      transition:transform .3s;
+    }
+    .nft-item:hover{ transform:scale(1.02); }
+    .nft-item img{
+      width:100%;
+      display:block;
+      border-bottom:1px solid gold;
+    }
+    .rarity-label{
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      background:rgba(0,0,0,.7);
+      color:gold;
+      font-weight:700;
+      padding:10px;
+    }
+    .buy-button{
+      position:absolute;
+      top:10px;
+      left:50%;
+      transform:translateX(-50%);
+      background:gold;
+      color:#000;
+      padding:8px 18px;
+      border-radius:6px;
+      font-weight:700;
+      border:0;
+      cursor:pointer;
+      transition:background .25s;
+    }
+    .buy-button:hover{ background:#c0a000; }
+
+    /* Mint modal */
+    .modal {
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.7);
+      z-index:4000;
+    }
+    .modal-content {
+      position:relative;
+      margin:10% auto;
+      width:90%;
+      max-width:500px;
+      background:#111;
+      color:gold;
+      border:2px solid gold;
+      border-radius:10px;
+      padding:20px;
+      text-align:center;
+    }
+    .modal-content .close {
+      position:absolute;
+      right:15px;
+      top:10px;
+      font-size:1.5rem;
+      cursor:pointer;
+    }
+    .modal-content button {
+      background:gold;
+      color:#000;
+      border:0;
+      padding:10px 20px;
+      border-radius:6px;
+      font-weight:700;
+      margin:6px;
+      cursor:pointer;
+    }
     .modal-content button:hover { background:#c0a000; }
-    #mintStatus { margin-top:12px; min-height:20px; color:#ffecb3; white-space:pre-wrap; }
+    #mintStatus {
+      margin-top:12px;
+      min-height:20px;
+      color:#ffecb3;
+      white-space:pre-wrap;
+    }
 
-    .nft-footer-buttons { display:flex; justify-content:center; gap:16px; margin:40px 0 20px; }
-    .nft-footer-buttons .btn-small { background:linear-gradient(135deg,#ffd700,#c0a000); color:#000; font-weight:700; padding:10px 22px; border-radius:6px; text-decoration:none; }
+    .nft-footer-buttons {
+      display:flex;
+      justify-content:center;
+      gap:16px;
+      margin:40px 0 20px;
+    }
+    .nft-footer-buttons .btn-small {
+      background:linear-gradient(135deg,#ffd700,#c0a000);
+      color:#000;
+      font-weight:700;
+      padding:10px 22px;
+      border-radius:6px;
+      text-decoration:none;
+    }
     .nft-footer-buttons .btn-small:hover { background:#c0a000; }
 
-    footer { text-align:center; padding:20px; background:#111; color:gold; border-top:1px solid gold; }
-    footer a { color:gold; text-decoration:none; } footer a:hover { text-decoration:underline; }
+    footer {
+      text-align:center;
+      padding:20px;
+      background:#111;
+      color:gold;
+      border-top:1px solid gold;
+    }
+    footer a {
+      color:gold;
+      text-decoration:none;
+    }
+    footer a:hover { text-decoration:underline; }
 
     @media (max-width:640px){
-      header h1{font-size:1.8rem} header p{font-size:1rem}
-      .wallet-section button{width:80%} .nft-gallery{padding:20px 10px; gap:12px}
+      header h1{font-size:1.8rem}
+      header p{font-size:1rem}
+      .wallet-section button{width:80%}
+      .nft-gallery{padding:20px 10px; gap:12px}
     }
   </style>
 </head>
 <body>
 
-  <!-- Заголовок -->
+  <!-- Header -->
   <header>
-    <h1>NFT Галерея IBITIcoin</h1>
-    <p>Нажмите на любую NFT или кнопку «Купить», чтобы открыть окно с ценой (IBITI/USDT). Перед покупкой подключите кошелёк.</p>
+    <h1>IBITIcoin NFT Gallery</h1>
+    <p>
+      Story-based NFT collection with lifetime discount levels inside the IBITI ecosystem.
+      NFT minting and utility integration are in active development. For now, you can explore the art
+      and discount structure. Public sale will be launched separately and announced on our official channels.
+    </p>
   </header>
 
-  <!-- Подключение кошелька -->
+  <!-- Wallet connect -->
   <section class="wallet-section">
-    <button id="openWalletModal">Подключить кошелёк</button>
-    <div id="walletAddress">Disconnected</div>
+    <button id="openWalletModal">Connect wallet</button>
+    <div id="walletAddress">Wallet: not connected</div>
   </section>
 
-  <!-- Галерея NFT (обрезано до примеров — добавляй остальные по шаблону) -->
+  <!-- NFT Gallery -->
   <section class="nft-gallery">
 
     <div class="nft-item" data-discount="1" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Creation_1">
       <img src="img/Creation.webp" alt="Creation 1%" />
-      <div class="rarity-label">Creation 1%</div>
+      <div class="rarity-label">Creation – 1% discount</div>
       <button type="button" class="buy-button"
-              onclick="openMintModal(1,'Creation 1%','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Creation_1')">Купить</button>
+              onclick="openMintModal(1,'Creation – 1% discount','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Creation_1')">
+        View price
+      </button>
     </div>
 
     <div class="nft-item" data-discount="3" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Awakening_3">
       <img src="img/Awakening_2.webp" alt="Awakening 3%" />
-      <div class="rarity-label">Awakening 3%</div>
+      <div class="rarity-label">Awakening – 3% discount</div>
       <button type="button" class="buy-button"
-              onclick="openMintModal(3,'Awakening 3%','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Awakening_3')">Купить</button>
+              onclick="openMintModal(3,'Awakening – 3% discount','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Awakening_3')">
+        View price
+      </button>
     </div>
 
     <div class="nft-item" data-discount="5" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/First_Gods_5">
       <img src="img/First_Gods_and_Kings_3.webp" alt="The First Gods and Kings 5%" />
-      <div class="rarity-label">The First Gods and Kings 5%</div>
+      <div class="rarity-label">The First Gods and Kings – 5% discount</div>
       <button type="button" class="buy-button"
-              onclick="openMintModal(5,'The First Gods and Kings 5%','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/First_Gods_5')">Купить</button>
+              onclick="openMintModal(5,'The First Gods and Kings – 5% discount','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/First_Gods_5')">
+        View price
+      </button>
     </div>
 
     <div class="nft-item" data-discount="7" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Enlightenment_7">
       <img src="img/Enlightenment_4.webp" alt="Enlightenment 7%" />
-      <div class="rarity-label">Enlightenment 7%</div>
+      <div class="rarity-label">Enlightenment – 7% discount</div>
       <button type="button" class="buy-button"
-              onclick="openMintModal(7,'Enlightenment 7%','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Enlightenment_7')">Купить</button>
+              onclick="openMintModal(7,'Enlightenment – 7% discount','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Enlightenment_7')">
+        View price
+      </button>
     </div>
 
     <div class="nft-item" data-discount="10" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Age_of_Darkness_10">
       <img src="img/The_Age_of_Darkness_and_Faith_5.webp" alt="The Age of Darkness and Faith 10%" />
-      <div class="rarity-label">The Age of Darkness and Faith 10%</div>
+      <div class="rarity-label">The Age of Darkness and Faith – 10% discount</div>
       <button type="button" class="buy-button"
-              onclick="openMintModal(10,'The Age of Darkness and Faith 10%','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Age_of_Darkness_10')">Купить</button>
+              onclick="openMintModal(10,'The Age of Darkness and Faith – 10% discount','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Age_of_Darkness_10')">
+        View price
+      </button>
     </div>
 
     <div class="nft-item" data-discount="15" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Blood_and_Steel_15">
       <img src="img/Blood_and_Steel_6.webp" alt="Blood and Steel 15%" />
-      <div class="rarity-label">Blood and Steel 15%</div>
+      <div class="rarity-label">Blood and Steel – 15% discount</div>
       <button type="button" class="buy-button"
-              onclick="openMintModal(15,'Blood and Steel 15%','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Blood_and_Steel_15')">Купить</button>
+              onclick="openMintModal(15,'Blood and Steel – 15% discount','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Blood_and_Steel_15')">
+        View price
+      </button>
     </div>
 
     <div class="nft-item" data-discount="25" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Digital_Cell_25">
       <img src="img/Digital_Cell_7.webp" alt="Digital Cell 25%" />
-      <div class="rarity-label">Digital Cell 25%</div>
+      <div class="rarity-label">Digital Cell – 25% discount</div>
       <button type="button" class="buy-button"
-              onclick="openMintModal(25,'Digital Cell 25%','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Digital_Cell_25')">Купить</button>
+              onclick="openMintModal(25,'Digital Cell – 25% discount','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Digital_Cell_25')">
+        View price
+      </button>
     </div>
 
     <div class="nft-item" data-discount="50" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Last_Frontier_50">
       <img src="img/The_Last_Frontier_50.webp" alt="The Last Frontier 50%" />
-      <div class="rarity-label">The Last Frontier 50%</div>
+      <div class="rarity-label">The Last Frontier – 50% discount</div>
       <button type="button" class="buy-button"
-              onclick="openMintModal(50,'The Last Frontier 50%','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Last_Frontier_50')">Купить</button>
+              onclick="openMintModal(50,'The Last Frontier – 50% discount','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Last_Frontier_50')">
+        View price
+      </button>
     </div>
 
     <div class="nft-item" data-discount="75" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Quantum_Leap_75">
       <img src="img/Quantum_Leap_75.webp" alt="Quantum Leap 75%" />
-      <div class="rarity-label">Quantum Leap 75%</div>
+      <div class="rarity-label">Quantum Leap – 75% discount</div>
       <button type="button" class="buy-button"
-              onclick="openMintModal(75,'Quantum Leap 75%','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Quantum_Leap_75')">Купить</button>
+              onclick="openMintModal(75,'Quantum Leap – 75% discount','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Quantum_Leap_75')">
+        View price
+      </button>
     </div>
 
     <div class="nft-item" data-discount="100" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/End_or_Rebirth_100">
       <img src="img/End_or_Rebirth_100.webp" alt="End or Rebirth 100%" />
-      <div class="rarity-label">End or Rebirth 100%</div>
+      <div class="rarity-label">End or Rebirth – 100% discount</div>
       <button type="button" class="buy-button"
-              onclick="openMintModal(100,'End or Rebirth 100%','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/End_or_Rebirth_100')">Купить</button>
+              onclick="openMintModal(100,'End or Rebirth – 100% discount','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/End_or_Rebirth_100')">
+        View price
+      </button>
     </div>
 
     <div class="nft-item" data-discount="100" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Pandora_100FUL">
       <img src="img/Pandora_100ful.webp" alt="Pandora 100% FUL" />
-      <div class="rarity-label">Pandora 100% FUL</div>
+      <div class="rarity-label">Pandora – 100% FUL (full discount)</div>
       <button type="button" class="buy-button"
-              onclick="openMintModal(100,'Pandora 100% FUL','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Pandora_100FUL')">Купить</button>
+              onclick="openMintModal(100,'Pandora – 100% FUL','ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Pandora_100FUL')">
+        View price
+      </button>
     </div>
 
   </section>
-<!-- Модалка выбора кошелька (чистые классы, без пересечений) -->
-<div id="walletModal" class="wallet-modal" aria-hidden="true">
-  <div class="wallet-card">
-    <span class="wallet-close" id="closeWalletModal" aria-label="Закрыть">✕</span>
-    <h3 class="wallet-title">Выберите кошелёк</h3>
 
-    <div class="wallet-actions">
-      <button class="btn-injected" id="btnInjected">MetaMask / Trust Wallet</button>
-      <button class="btn-coinbase"  id="btnCoinbase">Coinbase Wallet</button>
+  <!-- Wallet modal -->
+  <div id="walletModal" class="wallet-modal" aria-hidden="true">
+    <div class="wallet-card">
+      <span class="wallet-close" id="closeWalletModal" aria-label="Close">✕</span>
+      <h3 class="wallet-title">Choose a wallet</h3>
+
+      <div class="wallet-actions">
+        <button class="btn-injected" id="btnInjected">MetaMask / Trust Wallet</button>
+        <button class="btn-coinbase"  id="btnCoinbase">Coinbase Wallet</button>
+      </div>
     </div>
   </div>
-</div>
 
- <!-- Модалка покупки NFT -->
+  <!-- NFT mint modal -->
   <div id="mintModal" class="modal" aria-hidden="true">
     <div class="modal-content">
       <span class="close" onclick="closeMintModal()">&times;</span>
-      <h2 id="nftTitle">Покупка NFT</h2>
-      <p>Скидка: <span id="discountPercent">—</span>%</p>
-      <p>Цена: <span id="priceIBITI">—</span> IBITI / <span id="priceUSDT">—</span> USDT</p>
-      <button type="button" onclick="buyWithIBITI()">Купить за IBITI</button>
-      <button type="button" onclick="buyWithUSDT()">Купить за USDT</button>
+      <h2 id="nftTitle">NFT purchase</h2>
+      <p>Discount level: <span id="discountPercent">—</span>%</p>
+      <p>Current indicative price:</p>
+      <p>
+        <span id="priceIBITI">—</span> IBITI /
+        <span id="priceUSDT">—</span> USDT
+      </p>
+      <button type="button" onclick="buyWithIBITI()">Buy with IBITI</button>
+      <button type="button" onclick="buyWithUSDT()">Buy with USDT</button>
       <p id="mintStatus"></p>
     </div>
   </div>
 
-  <!-- Навигация -->
+  <!-- Navigation -->
   <div class="nft-footer-buttons">
-    <a href="index.html" class="btn-small">Главная</a>
-    <a href="shop.html" class="btn-small">Магазин</a>
+    <a href="index.html" class="btn-small">← Home</a>
+    <a href="shop.html" class="btn-small">Shop</a>
   </div>
 
   <!-- Footer -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
-    <p><a href="privacy.html">Политика конфиденциальности</a> | <a href="terms.html">Пользовательское соглашение</a></p>
+    <p>
+      <a href="privacy.html">Privacy Policy</a> |
+      <a href="terms.html">Terms of Use</a>
+    </p>
     <p>
       <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> |
       <a href="https://t.me/IBITIcoin_chat" target="_blank">Telegram</a> |
@@ -243,21 +429,21 @@
     <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
   </footer>
 
-  <!-- UMD библиотеки -->
+  <!-- Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk@4.3.3/dist/CoinbaseWalletSDK.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>AOS.init({ once:true });</script>
 
-  <!-- Наши модули -->
+  <!-- Modules -->
   <script type="module" src="js/config.js"></script>
   <script type="module" src="js/sale.js"></script>
   <script type="module" src="js/wallet.js"></script>
   <script type="module" src="js/nft.js"></script>
   <script type="module" src="js/shop.js"></script>
 
-  <!-- Логика модалки кошелька (как в магазине) -->
+  <!-- Wallet modal logic (same behavior as shop) -->
   <script type="module">
     import { connectWallet, connectViaCoinbase } from "./js/wallet.js";
 
@@ -270,20 +456,26 @@
     openBtn?.addEventListener("click", () => {
       const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       if (isMobile && !window.ethereum) {
-        alert("Откройте сайт во встроенном браузере кошелька (MetaMask/Trust/Coinbase).");
+        Swal.fire({
+          icon: "info",
+          title: "Open in wallet",
+          text: "Please open this page in the built-in browser of MetaMask, Trust Wallet or Coinbase Wallet."
+        });
         return;
       }
       walletMod.style.display = "flex";
     });
 
     closeBtn?.addEventListener("click", () => (walletMod.style.display = "none"));
-    walletMod?.addEventListener("click", (e) => { if (e.target === walletMod) walletMod.style.display = "none"; });
+    walletMod?.addEventListener("click", (e) => {
+      if (e.target === walletMod) walletMod.style.display = "none";
+    });
 
     btnInj?.addEventListener("click", async () => {
       walletMod.style.display = "none";
       await connectWallet();
       const addr = window.selectedAccount;
-      if (addr) document.getElementById("walletAddress").innerText = addr;
+      if (addr) document.getElementById("walletAddress").innerText = `Wallet: ${addr}`;
     });
 
     btnCb?.addEventListener("click", async () => {
@@ -291,20 +483,28 @@
       if (typeof connectViaCoinbase === "function") {
         await connectViaCoinbase();
         const addr = window.selectedAccount;
-        if (addr) document.getElementById("walletAddress").innerText = addr;
+        if (addr) document.getElementById("walletAddress").innerText = `Wallet: ${addr}`;
       } else {
-        alert("Coinbase Wallet временно недоступен.");
+        Swal.fire({
+          icon: "info",
+          title: "Coinbase Wallet",
+          text: "Coinbase Wallet connection is not available yet on this page."
+        });
       }
     });
   </script>
 
-  <!-- Модалка покупки NFT + цены -->
+  <!-- NFT mint modal behaviour -->
   <script type="module">
     import { initNFTModule, handleNFTPurchase } from "./js/nft.js";
 
     window.openMintModal = async function(discount, title, uri) {
       if (!window.selectedAccount) {
-        Swal.fire({ icon:'warning', title:'Кошелёк не подключён', text:'Сначала нажмите «Подключить кошелёк».' });
+        Swal.fire({
+          icon:'warning',
+          title:'Wallet is not connected',
+          text:'Please connect your wallet first.'
+        });
         return;
       }
 
@@ -312,14 +512,19 @@
       if (!ok) return;
 
       document.getElementById("discountPercent").innerText = discount;
+
       try {
         const ibiti = await window.saleManager.getCurrentIBITIPrice(discount);
         document.getElementById("priceIBITI").innerText = (Number(ibiti)/1e8).toFixed(4);
-      } catch { document.getElementById("priceIBITI").innerText = "—"; }
+      } catch {
+        document.getElementById("priceIBITI").innerText = "—";
+      }
       try {
         const usdt = await window.saleManager.getCurrentUSDTPrice(discount);
         document.getElementById("priceUSDT").innerText = (Number(usdt)/1e8).toFixed(4);
-      } catch { document.getElementById("priceUSDT").innerText = "—"; }
+      } catch {
+        document.getElementById("priceUSDT").innerText = "—";
+      }
 
       document.getElementById("nftTitle").innerText = title;
       document.getElementById("mintStatus").innerText = "";
@@ -336,20 +541,22 @@
       window._currentNFTdiscount = null;
     };
 
-    // Закрытие по клику вне и по Esc
     const mintModal = document.getElementById("mintModal");
     mintModal.addEventListener("click", (e)=>{ if(e.target===mintModal) closeMintModal(); });
     document.addEventListener("keydown", (e)=>{ if(e.key==='Escape') closeMintModal(); });
 
     let _buyLock = false;
     window.buyWithIBITI = async function() {
-      if (_buyLock) return; _buyLock = true;
+      if (_buyLock) return;
+      _buyLock = true;
       try {
         document.getElementById("mintStatus").innerText =
-          "❌ Продажа NFT временно недоступна.\nСледите за новостями на сайте и в наших соцсетях.";
-        // Когда включите реальный минт:
+          "❌ NFT sale is temporarily disabled.\n\nThe collection and discount mechanics are in preparation. Please follow our announcements on the website and social media.";
+        // When you enable real mint:
         // await handleNFTPurchase(window._currentNFTdiscount, window._currentNFTuri);
-      } finally { _buyLock = false; }
+      } finally {
+        _buyLock = false;
+      }
     };
     window.buyWithUSDT = window.buyWithIBITI;
   </script>
