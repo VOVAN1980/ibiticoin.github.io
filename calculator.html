@@ -1,101 +1,57 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Калькулятор инвестиций IBITIcoin</title>
+  <title>IBITIcoin Investment Calculator</title>
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- Локальные правки именно для этой страницы -->
+  <!-- Локальные правки только для этой страницы -->
   <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background: #000;          /* чтобы было как на остальных страницах */
-      color: #ffd700;
-      font-family: 'Orbitron', sans-serif;
-    }
-
-    .page-main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;   /* вертикальное центрирование */
-      padding: 40px 20px 80px;
+    .hero-header {
+      margin-top: 20px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      text-align: center;
     }
 
     .hero-header img {
+      width: 180px;          /* логотип больше */
       display: block;
-      margin: 0 auto 10px;
+      margin: 0 auto 10px;   /* чуть прижать к верху */
     }
 
     .hero-header h1 {
-      text-align: center;
-      margin: 0 0 20px;
       font-size: 2rem;
-      letter-spacing: 0.05em;
+      margin: 5px 0 0;
     }
 
     .calculator {
-      background: #111;
-      border: 1px solid #ffd700;
-      border-radius: 12px;
-      padding: 30px 25px 40px;
-      max-width: 460px;
-      width: 100%;
+      max-width: 480px;
+      margin: 40px auto 60px;
       text-align: center;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+      font-size: 1.1rem;
     }
 
     .calculator p {
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     .calculator input,
     .calculator button {
       width: 100%;
-      box-sizing: border-box;
-      padding: 12px 14px;
-      margin-bottom: 14px;
-      border-radius: 6px;
-      border: 1px solid #444;
+      padding: 12px 16px;
+      margin-top: 10px;
       font-size: 1rem;
-      font-weight: 600;
-      outline: none;
-    }
-
-    .calculator input {
-      background: #1a1a1a;
-      color: #ffd700;
-    }
-
-    .calculator button {
-      background: #ffd700;
-      color: #000;
-      border: none;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-    }
-
-    .calculator button:hover {
-      background: #c0a000;
-      transform: translateY(-1px);
-    }
-
-    #result {
-      margin-top: 8px;
-      min-height: 22px;
+      box-sizing: border-box;
     }
   </style>
 </head>
 <body>
 
-  <!-- Кнопки в углах (как были) -->
+  <!-- Corner buttons -->
   <div class="corner-box corner-box-left">
-    <a href="index.html">Главная</a>
+    <a href="index.html">Home</a>
   </div>
   <div class="corner-box corner-box-right">
     <a href="roadmap.html">Roadmap</a> |
@@ -103,27 +59,26 @@
     <a href="?lang=en">EN</a>
   </div>
 
-  <!-- Основной контент: центрируем по экрану -->
-  <main class="page-main">
-    <header class="hero-header">
-      <img src="img/logo.png" alt="IBITIcoin Logo" width="140">
-      <h1>Калькулятор инвестиций</h1>
-    </header>
+  <!-- Header with logo -->
+  <header class="hero-header">
+    <img src="img/logo.png" alt="IBITIcoin Logo">
+    <h1>IBITIcoin Investment Calculator</h1>
+  </header>
 
-    <section class="calculator">
-      <p>Введите сумму для инвестиций (в USD):</p>
-      <input type="number" id="investment" placeholder="Сумма">
-      <button type="button" onclick="calculate()">Рассчитать</button>
-      <p id="result"></p>
-    </section>
-  </main>
+  <!-- Calculator -->
+  <section class="calculator">
+    <p>Enter the investment amount (in USD):</p>
+    <input type="number" id="investment" placeholder="Amount in USD">
+    <button onclick="calculate()">Calculate</button>
+    <p id="result"></p>
+  </section>
 
-  <!-- Футер -->
+  <!-- Footer -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p>
-      <a href="privacy.html">Политика конфиденциальности</a> |
-      <a href="terms.html">Пользовательское соглашение</a>
+      <a href="privacy.html">Privacy Policy</a> |
+      <a href="terms.html">Terms of Use</a>
     </p>
     <p>
       <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> |
@@ -138,17 +93,17 @@
 
   <script>
     function calculate() {
-      const investment = parseFloat(document.getElementById('investment').value);
+      const value = parseFloat(document.getElementById('investment').value);
       const resultEl = document.getElementById('result');
 
-      if (isNaN(investment) || investment <= 0) {
-        resultEl.innerText = "Введите корректную сумму.";
+      if (isNaN(value) || value <= 0) {
+        resultEl.innerText = "Please enter a valid amount greater than 0.";
         return;
       }
 
-      // пример: доходность 10%
-      const profit = investment * 0.10;
-      resultEl.innerText = 'Ожидаемая прибыль: $' + profit.toFixed(2);
+      // Example: 10% expected return
+      const profit = value * 0.10;
+      resultEl.innerText = 'Estimated profit: $' + profit.toFixed(2);
     }
   </script>
 </body>
