@@ -1,58 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>IBITIcoin – Главная</title>
+  <title>IBITIcoin – Home</title>
 
   <!-- SEO -->
-  <meta name="description" content="IBITIcoin – инновационная криптовалюта для быстрой, безопасной и доступной работе в цифровой экономике.">
-  <meta name="keywords" content="IBITIcoin, криптовалюта, инвестиции, блокчейн, DeFi">
+  <meta name="description" content="IBITIcoin is an innovative cryptocurrency on BNB Smart Chain designed for fast, secure and accessible participation in the digital economy.">
+  <meta name="keywords" content="IBITIcoin, cryptocurrency, investment, blockchain, DeFi, BNB Smart Chain">
   <meta name="author" content="IBITIcoin Team">
 
   <!-- Facebook Domain Verification -->
   <meta name="facebook-domain-verification" content="gry2h4kbugyrwzn0qhcuh838y7hj5v" />
 
   <!-- Open Graph (Facebook, Telegram, WhatsApp) -->
-<meta property="og:title" content="IBITIcoin – Будущее цифровых финансов">
-<meta property="og:description" content="Узнайте, как IBITIcoin делает криптовалюту доступной и безопасной для всех.">
-<meta property="og:image" content="https://www.ibiticoin.com/img/og-image.png" />
-<meta property="og:image:type" content="image/png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="IBITIcoin Logo – цифровая валюта нового поколения" />
-<meta property="og:url" content="https://www.ibiticoin.com/">
-<meta property="og:type" content="website">
+  <meta property="og:title" content="IBITIcoin – The Future of Digital Finance">
+  <meta property="og:description" content="Learn how IBITIcoin makes crypto more accessible and secure for everyone.">
+  <meta property="og:image" content="https://www.ibiticoin.com/img/og-image.png" />
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="IBITIcoin Logo – next-generation digital currency" />
+  <meta property="og:url" content="https://www.ibiticoin.com/">
+  <meta property="og:type" content="website">
 
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@ibiticoin">
-<meta name="twitter:title" content="IBITIcoin – Будущее цифровых финансов">
-<meta name="twitter:description" content="Узнайте, как IBITIcoin делает криптовалюту доступной и безопасной для всех.">
-<meta name="twitter:image" content="https://www.ibiticoin.com/img/og-image.png">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@ibiticoin">
+  <meta name="twitter:title" content="IBITIcoin – The Future of Digital Finance">
+  <meta name="twitter:description" content="Learn how IBITIcoin makes crypto more accessible and secure for everyone.">
+  <meta name="twitter:image" content="https://www.ibiticoin.com/img/og-image.png">
   
-  <!-- Подключаем общий CSS -->
+  <!-- Global CSS -->
   <link rel="stylesheet" href="css/style.css">
   
-  <!-- Подключаем AOS для анимаций -->
+  <!-- AOS animations -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
 
-  <!-- i18next, jQuery и плагины для локализации -->
+  <!-- i18next, jQuery and localization plugins (currently disabled) -->
   <!--
-<script src="https://unpkg.com/i18next@21.10.1/i18next.min.js"></script>
-<script src="https://unpkg.com/i18next-http-backend@1.4.1/i18nextHttpBackend.min.js"></script>
-<script src="https://unpkg.com/i18next-browser-languagedetector@6.1.3/i18nextBrowserLanguageDetector.min.js"></script>
-<script src="https://unpkg.com/jquery@3.6.0/dist/jquery.min.js"></script>
-<script src="https://unpkg.com/jquery-i18next@1.2.1/jquery-i18next.min.js"></script>
-<script>
-  i18next
-    .use(i18nextHttpBackend)
-    .use(i18nextBrowserLanguageDetector)
-    .init({}, function(err, t) {
-      jqueryI18next.init(i18next, $, { useOptionsAttr: true });
-      $('body').localize();
-    });
-</script>
+  <script src="https://unpkg.com/i18next@21.10.1/i18next.min.js"></script>
+  <script src="https://unpkg.com/i18next-http-backend@1.4.1/i18nextHttpBackend.min.js"></script>
+  <script src="https://unpkg.com/i18next-browser-languagedetector@6.1.3/i18nextBrowserLanguageDetector.min.js"></script>
+  <script src="https://unpkg.com/jquery@3.6.0/dist/jquery.min.js"></script>
+  <script src="https://unpkg.com/jquery-i18next@1.2.1/jquery-i18next.min.js"></script>
+  <script>
+    i18next
+      .use(i18nextHttpBackend)
+      .use(i18nextBrowserLanguageDetector)
+      .init({}, function(err, t) {
+        jqueryI18next.init(i18next, $, { useOptionsAttr: true });
+        $('body').localize();
+      });
+  </script>
+  -->
 
-  <!-- Google Tag Manager -->
+  <!-- Google Tag Manager / Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-T5DF4BLR5S"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -61,11 +64,11 @@
     gtag('config', 'G-T5DF4BLR5S');
   </script>
   
-  <!-- Виджет Google Translate -->
+  <!-- Google Translate widget -->
   <script type="text/javascript">
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
-        pageLanguage: 'ru',
+        pageLanguage: 'en',
         includedLanguages: 'ru,uk,en,zh-CN,ja,fr,de,pl,es,pt,ko',
         layout: google.translate.TranslateElement.InlineLayout.SIMPLE
       }, 'google_translate_element');
@@ -80,11 +83,8 @@
   <!-- ethers.js v6 (UMD) -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.10.0/dist/ethers.umd.min.js"></script>
   <script>
-    // После загрузки UMD-сборки ethers, делаем его доступным как window.ethers
-    if (window.ethers) {
-      // Ничего дополнительно не нужно: ethers уже в window.ethers
-    } else {
-      console.error('Не удалось загрузить ethers v6');
+    if (!window.ethers) {
+      console.error('Failed to load ethers v6');
     }
   </script>
 
@@ -140,12 +140,12 @@
   </style>
 </head>
 <body>
-  <!-- Верхние угловые кнопки -->
+  <!-- Corner buttons -->
   <div class="corner-box corner-box-left">
-    <a href="/">Главная</a>
+    <a href="/">Home</a>
   </div>
   <div class="corner-box corner-box-left2">
-    <a href="blog.html">Блог</a>
+    <a href="blog.html">Blog</a>
   </div>
   <div class="corner-box corner-box-right">
     <a href="roadmap.html">Roadmap</a>
@@ -154,43 +154,51 @@
     <div id="google_translate_element"></div>
   </div>
   
-  <!-- Шапка сайта -->
+  <!-- Hero header -->
   <header class="hero-header">
     <img src="img/logo.png" alt="IBITIcoin Logo" width="200">
     <h1>IBITIcoin</h1>
     <p>Stability | Innovation | Accessibility</p>
   </header>
 
+  <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <!-- Пример главного контента -->
+  <!-- Main content -->
   <section class="gold-section" data-aos="fade-up">
     <h2>WHY CHOOSE IBITIcoin?</h2>
     <p>
-      IBITIcoin – это инновационная криптовалюта для быстрой, безопасной и доступной работе в цифровой экономике...
+      IBITIcoin is an innovative cryptocurrency on <strong>BNB Smart Chain</strong>, created for fast,
+      secure and accessible work in the digital economy. Trading is live in the official
+      <strong>IBITI / USDT</strong> liquidity pool on PancakeSwap, with on-chain modules for staking,
+      NFTs and DAO governance in development.
     </p>
-    <a class="btn" href="buy.html">Buy IBITIcoin</a>
+    <a class="btn"
+       href="https://pancakeswap.finance/swap?chain=bsc&amp;outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&amp;inputCurrency=0x55d398326f99059fF775485246999027B3197955"
+       target="_blank" rel="noopener noreferrer">
+      Buy IBITIcoin on PancakeSwap
+    </a>
   </section>
   
-  <!-- Дополнительные кнопки -->
+  <!-- Extra navigation buttons -->
   <section class="extra-buttons-section">
-    <a class="btn-small" href="calculator.html">Калькулятор</a>
-    <a class="btn-small" href="video-guides.html">Видео-гайды</a>
-    <a class="btn-small" href="news.html">Новости</a>
-    <a class="btn-small" href="coin-chart.html">График</a>
-    <a class="btn-small" href="nft.html">NFT Галерея</a>
-    <a class="btn-small" href="shop.html">Магазин</a>
-    <a class="btn-small" href="book.html">Книга</a>
-    <a class="btn-small" href="staking.html">Стейкинг</a>
-    <a class="btn-small" id="openShareModal" href="#">Поделиться</a>
+    <a class="btn-small" href="calculator.html">Calculator</a>
+    <a class="btn-small" href="video-guides.html">Video Guides</a>
+    <a class="btn-small" href="news.html">News</a>
+    <a class="btn-small" href="coin-chart.html">Chart</a>
+    <a class="btn-small" href="nft.html">NFT Gallery</a>
+    <a class="btn-small" href="shop.html">Shop</a>
+    <a class="btn-small" href="book.html">Book</a>
+    <a class="btn-small" href="staking.html">Staking</a>
+    <a class="btn-small" id="openShareModal" href="#">Share</a>
   </section>
   
-  <!-- Футер -->
+  <!-- Footer -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p>
-      <a href="privacy.html">Политика конфиденциальности</a> |
-      <a href="terms.html">Пользовательское соглашение</a>
+      <a href="privacy.html">Privacy Policy</a> |
+      <a href="terms.html">Terms of Use</a>
     </p>
     <p>
       <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> |
@@ -201,17 +209,17 @@
     <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
   </footer>
 
-  <!-- Модальное окно шаринга -->
+  <!-- Share modal -->
   <div id="shareModal" class="modal">
     <div class="modal-content">
       <span class="close" id="closeShareModal">&times;</span>
-      <h3>Выберите соцсеть для шаринга</h3>
+      <h3>Select a social network to share</h3>
       <div class="share-options">
         <a id="share-facebook" href="#" target="_blank">Facebook</a>
         <a id="share-twitter" href="#" target="_blank">Twitter</a>
         <a id="share-vk" href="#" target="_blank">VK</a>
         <a id="share-telegram" href="#" target="_blank">Telegram</a>
-        <a id="share-ok" href="#" target="_blank">Одноклассники</a>
+        <a id="share-ok" href="#" target="_blank">OK</a>
         <a id="share-linkedin" href="#" target="_blank">LinkedIn</a>
         <a id="share-weibo" href="#" target="_blank">Weibo</a>
       </div>
@@ -237,78 +245,49 @@
     })();
   </script>
 
-  <!-- Инициализация модалки «Поделиться» -->
-<script>
-  const shareModal = document.getElementById('shareModal');
-  const openBtn    = document.getElementById('openShareModal');
-  const closeBtn   = document.getElementById('closeShareModal');
-  const pageUrl    = encodeURIComponent(window.location.href);
-  const pageTitle  = encodeURIComponent(document.title);
+  <!-- Share modal init -->
+  <script>
+    const shareModal = document.getElementById('shareModal');
+    const openBtn    = document.getElementById('openShareModal');
+    const closeBtn   = document.getElementById('closeShareModal');
+    const pageUrl    = encodeURIComponent(window.location.href);
+    const pageTitle  = encodeURIComponent(document.title);
 
-  document.getElementById('share-facebook').href  = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
-  document.getElementById('share-twitter').href   = `https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageTitle}`;
-  document.getElementById('share-vk').href        = `https://vk.com/share.php?url=${pageUrl}&title=${pageTitle}`;
-  document.getElementById('share-telegram').href  = `https://telegram.me/share/url?url=${pageUrl}&text=${pageTitle}`;
-  document.getElementById('share-ok').href        = `https://connect.ok.ru/offer?url=${pageUrl}`;
-  document.getElementById('share-linkedin').href  = `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`;
-  document.getElementById('share-weibo').href     = `http://service.weibo.com/share/share.php?url=${pageUrl}&title=${pageTitle}`;
+    document.getElementById('share-facebook').href  = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+    document.getElementById('share-twitter').href   = `https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageTitle}`;
+    document.getElementById('share-vk').href        = `https://vk.com/share.php?url=${pageUrl}&title=${pageTitle}`;
+    document.getElementById('share-telegram').href  = `https://telegram.me/share/url?url=${pageUrl}&text=${pageTitle}`;
+    document.getElementById('share-ok').href        = `https://connect.ok.ru/offer?url=${pageUrl}`;
+    document.getElementById('share-linkedin').href  = `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`;
+    document.getElementById('share-weibo').href     = `http://service.weibo.com/share/share.php?url=${pageUrl}&title=${pageTitle}`;
 
-  openBtn.addEventListener('click', ev => {
-    ev.preventDefault();
-    shareModal.style.display = 'block';
-  });
-  closeBtn.addEventListener('click', () => shareModal.style.display = 'none');
-  window.addEventListener('click', ev => {
-    if (ev.target === shareModal) shareModal.style.display = 'none';
-  });
-</script> <!-- ⬅️ ВОТ ЭТОЙ СТРОКИ НЕ ХВАТАЛО -->
+    openBtn.addEventListener('click', ev => {
+      ev.preventDefault();
+      shareModal.style.display = 'block';
+    });
+    closeBtn.addEventListener('click', () => shareModal.style.display = 'none');
+    window.addEventListener('click', ev => {
+      if (ev.target === shareModal) shareModal.style.display = 'none';
+    });
+  </script>
 
-<!-- Отсчёт до начала продаж -->
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const saleStart = new Date("2025-07-01T09:00:00Z");
-    const now = new Date();
-
-    if (now < saleStart) {
-      let timerInterval;
-
+  <!-- Info popup: live trading status -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
       Swal.fire({
         icon: 'info',
-        title: '🚀 Продажа IBITIcoin начнётся',
+        title: 'IBITIcoin is live on PancakeSwap',
         html: `
-          <b>1 июля в 9:00 UTC / 12:00 по Киеву</b><br><br>
-          <div id="swalCountdown" style="font-size:1.2em; font-weight:bold; color:#f8c400;">⏳ ...</div><br>
-          Подготовьте MetaMask заранее!
+          <b>Official trading pair: IBITI / USDT (BNB Smart Chain)</b><br><br>
+          Contract: <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code><br><br>
+          <a href="https://pancakeswap.finance/swap?chain=bsc&outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&inputCurrency=0x55d398326f99059fF775485246999027B3197955"
+             target="_blank" rel="noopener noreferrer">
+            Open IBITI / USDT on PancakeSwap
+          </a>
         `,
-        confirmButtonText: 'Готово',
-        allowOutsideClick: true,
-        didOpen: () => {
-          const el = Swal.getHtmlContainer().querySelector('#swalCountdown');
-
-          function updateCountdown() {
-            const now = new Date();
-            const diff = saleStart - now;
-
-            if (diff <= 0) {
-              el.innerHTML = '🟢 Продажа уже началась!';
-              clearInterval(timerInterval);
-              return;
-            }
-
-            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const m = Math.floor((diff / (1000 * 60)) % 60);
-            const s = Math.floor((diff / 1000) % 60);
-
-            el.innerHTML = `Осталось: ${d}д ${h}ч ${m}м ${s}с`;
-          }
-
-          updateCountdown();
-          timerInterval = setInterval(updateCountdown, 1000);
-        }
+        confirmButtonText: 'Got it'
       });
-    }
-  });
-</script>
+    });
+  </script>
 </body>
 </html>
