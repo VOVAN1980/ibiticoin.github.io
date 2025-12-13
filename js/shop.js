@@ -11,6 +11,16 @@ let currentProductId = null;
 // --- Открытие/закрытие модалки покупки ---
 
 function openPurchaseModal(productId) {
+  // 🔁 Для NFT просто переходим на страницу с галереей
+  if (productId === "NFT") {
+    // в этой же вкладке
+    window.location.href = "nft.html";
+    // если хочешь в новой вкладке:
+    // window.open("nft.html", "_blank");
+    return;
+  }
+
+  // ниже — логика только для IBITIcoin
   currentProductId = productId;
 
   const modal       = document.getElementById("purchaseModal");
@@ -26,8 +36,6 @@ function openPurchaseModal(productId) {
 
   if (productId === "IBITIcoin") {
     titleEl.textContent = "Покупка IBITIcoin через PancakeSwap";
-  } else if (productId === "NFT") {
-    titleEl.textContent = "Покупка NFT (оплата IBITI/USDT через PancakeSwap)";
   } else {
     titleEl.textContent = "Покупка";
   }
@@ -154,3 +162,4 @@ document.addEventListener("DOMContentLoaded", () => {
 // Делаем функции глобальными для inline-обработчиков в HTML
 window.openPurchaseModal = openPurchaseModal;
 window.closePurchaseModal = closePurchaseModal;
+
