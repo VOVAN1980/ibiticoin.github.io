@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Стейкинг IBITI</title>
+  <title>IBITI Staking</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -97,7 +97,7 @@
         align-items: center;
       }
     }
-    /* Модалка шаринга */
+    /* Share modal */
     .modal {
       display: none;
       position: fixed;
@@ -142,22 +142,22 @@
 <body>
 
   <header class="hero-header">
-    <h1>Стейкинг IBITI</h1>
-    <p>Застейкай токены и получай награды</p>
+    <h1>IBITI Staking</h1>
+    <p>Stake your tokens and earn rewards</p>
   </header>
 
   <div class="container">
-    <!-- Левая колонка -->
+    <!-- Left column -->
     <div class="column">
       <div class="staking-box">
-        <h3>🎁 Бонусы за срок</h3>
+        <h3>🎁 Bonuses by lock period</h3>
         <ul style="text-align: left;">
-          <li>3 месяца — NFT бонус</li>
-          <li>6 месяцев — редкий NFT</li>
-          <li>9 месяцев — легендарный NFT</li>
-          <li>12 месяцев — эпический NFT</li>
+          <li>3 months — NFT bonus</li>
+          <li>6 months — rare NFT</li>
+          <li>9 months — legendary NFT</li>
+          <li>12 months — epic NFT</li>
         </ul>
-        <p style="font-size: 0.9em;">NFT награды начисляются при завершении срока стейка.</p>
+        <p style="font-size: 0.9em;">NFT rewards are granted only after the full staking period is completed.</p>
       </div>
       <a href="rules.html" style="
         display:block;
@@ -170,77 +170,77 @@
         border-radius:8px;
         text-decoration:none;
         background:transparent;
-      ">📘 Правила</a>
+      ">📘 Staking rules</a>
     </div>
 
-    <!-- Центральный блок -->
+    <!-- Center column -->
     <div class="column">
       <div class="staking-box">
-        <button id="connectWalletBtn">🔗 Подключить кошелёк</button>
+        <button id="connectWalletBtn">🔗 Connect wallet</button>
         <div id="walletAddress" style="margin-top:10px;"></div>
-        <h3>Ваш стейкинг</h3>
-        <div id="stakeInfo">Ваш стейк: ...</div>
-        <div id="rewardInfo">Награды: ...</div>
-        <div id="unlockInfo">Разблокировка: ...</div>
+        <h3>Your staking</h3>
+        <div id="stakeInfo">Your stake: ...</div>
+        <div id="rewardInfo">Rewards: ...</div>
+        <div id="unlockInfo">Unlock date: ...</div>
 
         <form id="stakeForm">
-          <input type="number" id="stakeAmount" placeholder="Количество IBITI" required min="0" />
+          <input type="number" id="stakeAmount" placeholder="Amount of IBITI" required min="0" />
           <select id="stakeDuration" required>
-            <option value="" disabled selected>Срок (в месяцах)</option>
-            <option value="1">1 месяц</option>
-            <option value="2">2 месяца</option>
-            <option value="3">3 месяца</option>
-            <option value="4">4 месяца</option>
-            <option value="5">5 месяцев</option>
-            <option value="6">6 месяцев</option>
-            <option value="7">7 месяцев</option>
-            <option value="8">8 месяцев</option>
-            <option value="9">9 месяцев</option>
-            <option value="10">10 месяцев</option>
-            <option value="11">11 месяцев</option>
-            <option value="12">12 месяцев</option>
+            <option value="" disabled selected>Lock period (months)</option>
+            <option value="1">1 month</option>
+            <option value="2">2 months</option>
+            <option value="3">3 months</option>
+            <option value="4">4 months</option>
+            <option value="5">5 months</option>
+            <option value="6">6 months</option>
+            <option value="7">7 months</option>
+            <option value="8">8 months</option>
+            <option value="9">9 months</option>
+            <option value="10">10 months</option>
+            <option value="11">11 months</option>
+            <option value="12">12 months</option>
           </select>
-          <button type="submit">⚡ Стейкать</button>
+          <button type="submit">⚡ Stake</button>
         </form>
 
-        <button id="unstakeBtn">↩️ Анстейк</button>
+        <button id="unstakeBtn">↩️ Unstake</button>
       </div>
     </div>
 
-    <!-- Правая колонка -->
+    <!-- Right column -->
     <div class="column">
       <div class="staking-box">
-        <h3>📈 Награды со временем</h3>
+        <h3>📈 Rewards over time</h3>
         <canvas id="rewardChart" style="width:100%; height:150px;"></canvas>
-        <p style="font-size: 0.9em;">График обновляется каждые 10 секунд</p>
+        <p style="font-size: 0.9em;">The chart updates every 10 seconds.</p>
       </div>
     </div>
   </div>
 
-  <!-- Кнопка «Поделиться» + Главная -->
-<div style="text-align:center; margin-bottom: 10px;">
-  <a id="shareButton" class="btn-small" style="margin-bottom: 10px;">Поделиться</a><br>
-  <a href="index.html" class="btn-small">← Главная</a>
-</div>
+  <!-- Share + Home -->
+  <div style="text-align:center; margin-bottom: 10px;">
+    <a id="shareButton" class="btn-small" style="margin-bottom: 10px;">Share</a><br>
+    <a href="index.html" class="btn-small">← Home</a>
+  </div>
 
-  <!-- Модальное окно шаринга -->
+  <!-- Share modal -->
   <div id="shareModal" class="modal">
     <div class="modal-content">
       <span class="close" id="closeShareModal">&times;</span>
-      <h3>Выберите соцсеть</h3>
+      <h3>Choose a social network</h3>
       <div class="share-options">
         <a id="share-facebook" href="#" target="_blank">Facebook</a>
         <a id="share-twitter" href="#" target="_blank">Twitter</a>
         <a id="share-vk" href="#" target="_blank">VK</a>
         <a id="share-telegram" href="#" target="_blank">Telegram</a>
-        <a id="share-ok" href="#" target="_blank">Одноклассники</a>
+        <a id="share-ok" href="#" target="_blank">OK</a>
         <a id="share-linkedin" href="#" target="_blank">LinkedIn</a>
         <a id="share-weibo" href="#" target="_blank">Weibo</a>
       </div>
     </div>
   </div>
 
-  <!-- Инициализация шаринга -->
+  <!-- Share init -->
   <script>
     const shareModal = document.getElementById('shareModal');
     const shareBtn   = document.getElementById('shareButton');
@@ -254,13 +254,13 @@
       `https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageTitle}`;
     document.getElementById('share-vk').href        =
       `https://vk.com/share.php?url=${pageUrl}&title=${pageTitle}`;
-    document.getElementById('share-telegram').href =
+    document.getElementById('share-telegram').href  =
       `https://telegram.me/share/url?url=${pageUrl}&text=${pageTitle}`;
     document.getElementById('share-ok').href        =
       `https://connect.ok.ru/offer?url=${pageUrl}`;
-    document.getElementById('share-linkedin').href =
+    document.getElementById('share-linkedin').href  =
       `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`;
-    document.getElementById('share-weibo').href    =
+    document.getElementById('share-weibo').href     =
       `http://service.weibo.com/share/share.php?url=${pageUrl}&title=${pageTitle}`;
 
     shareBtn.addEventListener('click', e => {
@@ -275,118 +275,118 @@
     });
   </script>
 
-  <!-- Скрипты стейкинга и кошелька -->
+  <!-- Staking + wallet scripts -->
   <script type="module" src="js/staking.js"></script>
   <script type="module" src="js/wallet.js"></script>
-<script>
-  if (window.afterWalletConnected) {
-    window.afterWalletConnected();
-  }
-</script>
-<script src="js/rewardChart.js"></script>
-
-  <!-- Модалка выбора кошелька -->
-<div id="walletModal" style="
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-">
-  <div class="modal-content" style="
-    background: #111;
-    padding: 20px;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 320px;
-    text-align: center;
-    color: gold;
-    position: relative;
-  ">
-    <button class="close-btn" id="closeWalletModal" style="
-      background: transparent;
-      color: #fff;
-      font-size: 1.1rem;
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      border: none;
-      cursor: pointer;
-    ">✕</button>
-    <h2>Выберите кошелёк</h2>
-    <button id="btnInjected" style="
-      background: gold;
-      color: #000;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 4px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-    ">MetaMask / Trust Wallet</button>
-    <button id="btnCoinbase" style="
-      background: #0052ff;
-      color: #fff;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 4px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-    ">Coinbase Wallet</button>
-  </div>
-</div>
-
-<script>
-  const walletModal = document.getElementById("walletModal");
-  const openWalletBtn = document.getElementById("connectWalletBtn");
-  const closeWalletBtn = document.getElementById("closeWalletModal");
-
-  openWalletBtn?.addEventListener("click", e => {
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const hasInjected = Boolean(window.ethereum);
-    if (isMobile && !hasInjected) {
-      e.preventDefault();
-      Swal.fire({
-        icon: "info",
-        title: "Откройте в кошельке",
-        html: "Для подключения используйте встроенный браузер MetaMask / Trust Wallet.",
-        confirmButtonText: "Ок",
-        allowOutsideClick: false
-      });
-      return;
+  <script>
+    if (window.afterWalletConnected) {
+      window.afterWalletConnected();
     }
-    walletModal.style.display = "flex";
-  });
+  </script>
+  <script src="js/rewardChart.js"></script>
 
-  closeWalletBtn?.addEventListener("click", () => {
-    walletModal.style.display = "none";
-  });
+  <!-- Wallet selector modal -->
+  <div id="walletModal" style="
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  ">
+    <div class="modal-content" style="
+      background: #111;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 320px;
+      text-align: center;
+      color: gold;
+      position: relative;
+    ">
+      <button class="close-btn" id="closeWalletModal" style="
+        background: transparent;
+        color: #fff;
+        font-size: 1.1rem;
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        border: none;
+        cursor: pointer;
+      ">✕</button>
+      <h2>Select a wallet</h2>
+      <button id="btnInjected" style="
+        background: gold;
+        color: #000;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        width: 100%;
+      ">MetaMask / Trust Wallet</button>
+      <button id="btnCoinbase" style="
+        background: #0052ff;
+        color: #fff;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        width: 100%;
+      ">Coinbase Wallet</button>
+    </div>
+  </div>
 
-  walletModal?.addEventListener("click", (e) => {
-    if (e.target === walletModal) walletModal.style.display = "none";
-  });
+  <script>
+    const walletModal = document.getElementById("walletModal");
+    const openWalletBtn = document.getElementById("connectWalletBtn");
+    const closeWalletBtn = document.getElementById("closeWalletModal");
 
-  document.getElementById("btnInjected")?.addEventListener("click", () => {
-    walletModal.style.display = "none";
-    window.connectWallet?.();
-  });
+    openWalletBtn?.addEventListener("click", e => {
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const hasInjected = Boolean(window.ethereum);
+      if (isMobile && !hasInjected) {
+        e.preventDefault();
+        Swal.fire({
+          icon: "info",
+          title: "Open inside your wallet",
+          html: "To connect, please open this site in the built-in browser of MetaMask or Trust Wallet.",
+          confirmButtonText: "OK",
+          allowOutsideClick: false
+        });
+        return;
+      }
+      walletModal.style.display = "flex";
+    });
 
-  document.getElementById("btnCoinbase")?.addEventListener("click", () => {
-    walletModal.style.display = "none";
-    window.connectViaCoinbase?.();
-  });
-</script>
+    closeWalletBtn?.addEventListener("click", () => {
+      walletModal.style.display = "none";
+    });
 
-  <!-- Футер -->
+    walletModal?.addEventListener("click", (e) => {
+      if (e.target === walletModal) walletModal.style.display = "none";
+    });
+
+    document.getElementById("btnInjected")?.addEventListener("click", () => {
+      walletModal.style.display = "none";
+      window.connectWallet?.();
+    });
+
+    document.getElementById("btnCoinbase")?.addEventListener("click", () => {
+      walletModal.style.display = "none";
+      window.connectViaCoinbase?.();
+    });
+  </script>
+
+  <!-- Footer -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p>
-      <a href="privacy.html">Политика конфиденциальности</a> |
-      <a href="terms.html">Пользовательское соглашение</a>
+      <a href="privacy.html">Privacy Policy</a> |
+      <a href="terms.html">Terms of Use</a>
     </p>
     <p>
       <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> |
