@@ -66,3 +66,38 @@ PRIVATE_KEY="0x..."
 FOUNDER_WALLET="0x..."
 BSCSCAN_API_KEY="..."
 COINMARKETCAP_API_KEY="..."
+
+Install & build (frontend)
+# clone repo
+git clone https://github.com/VOVAN1980/ibiticoin.github.io.git
+cd ibitcoin.github.io
+
+# static site – just open index.html via local server
+npx serve .
+
+Contracts (example)
+cd contracts
+npm install
+
+# compile
+npx hardhat compile
+
+# run tests
+npx hardhat test
+
+# deploy to BSC testnet (example task)
+npx hardhat run --network bscTestnet scripts/deploy_full.js
+
+Security
+
+See SECURITY.md
+ for vulnerability disclosure and testing guidelines.
+
+License
+
+Code is licensed under the MIT License – see LICENSE
+.
+
+Brand, logo, token symbol and NFTs are governed by
+LICENSE_TECHNOLOGY.md
+ and LICENSE_OVERVIEW.md
