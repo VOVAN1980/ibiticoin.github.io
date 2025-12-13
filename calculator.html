@@ -5,10 +5,95 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Калькулятор инвестиций IBITIcoin</title>
   <link rel="stylesheet" href="css/style.css">
+
+  <!-- Локальные правки именно для этой страницы -->
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #000;          /* чтобы было как на остальных страницах */
+      color: #ffd700;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .page-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;   /* вертикальное центрирование */
+      padding: 40px 20px 80px;
+    }
+
+    .hero-header img {
+      display: block;
+      margin: 0 auto 10px;
+    }
+
+    .hero-header h1 {
+      text-align: center;
+      margin: 0 0 20px;
+      font-size: 2rem;
+      letter-spacing: 0.05em;
+    }
+
+    .calculator {
+      background: #111;
+      border: 1px solid #ffd700;
+      border-radius: 12px;
+      padding: 30px 25px 40px;
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    }
+
+    .calculator p {
+      margin-bottom: 16px;
+    }
+
+    .calculator input,
+    .calculator button {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      font-size: 1rem;
+      font-weight: 600;
+      outline: none;
+    }
+
+    .calculator input {
+      background: #1a1a1a;
+      color: #ffd700;
+    }
+
+    .calculator button {
+      background: #ffd700;
+      color: #000;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .calculator button:hover {
+      background: #c0a000;
+      transform: translateY(-1px);
+    }
+
+    #result {
+      margin-top: 8px;
+      min-height: 22px;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Кнопки в углах -->
+  <!-- Кнопки в углах (как были) -->
   <div class="corner-box corner-box-left">
     <a href="index.html">Главная</a>
   </div>
@@ -18,20 +103,20 @@
     <a href="?lang=en">EN</a>
   </div>
 
-  <!-- Шапка с логотипом и надписью -->
-  <header class="hero-header">
-    <!-- Замените путь к логотипу при необходимости -->
-    <img src="img/logo.png" alt="IBITIcoin Logo" width="120">
-    <h1>Калькулятор инвестиций</h1>
-  </header>
+  <!-- Основной контент: центрируем по экрану -->
+  <main class="page-main">
+    <header class="hero-header">
+      <img src="img/logo.png" alt="IBITIcoin Logo" width="140">
+      <h1>Калькулятор инвестиций</h1>
+    </header>
 
-  <!-- Основной раздел калькулятора -->
-  <section class="calculator">
-    <p>Введите сумму для инвестиций (в USD):</p>
-    <input type="number" id="investment" placeholder="Сумма">
-    <button onclick="calculate()">Рассчитать</button>
-    <p id="result"></p>
-  </section>
+    <section class="calculator">
+      <p>Введите сумму для инвестиций (в USD):</p>
+      <input type="number" id="investment" placeholder="Сумма">
+      <button type="button" onclick="calculate()">Рассчитать</button>
+      <p id="result"></p>
+    </section>
+  </main>
 
   <!-- Футер -->
   <footer>
@@ -54,15 +139,17 @@
   <script>
     function calculate() {
       const investment = parseFloat(document.getElementById('investment').value);
+      const resultEl = document.getElementById('result');
+
       if (isNaN(investment) || investment <= 0) {
-        document.getElementById('result').innerText = "Введите корректную сумму.";
+        resultEl.innerText = "Введите корректную сумму.";
         return;
       }
-      // Пример расчёта: доходность 10%
+
+      // пример: доходность 10%
       const profit = investment * 0.10;
-      document.getElementById('result').innerText = 'Ожидаемая прибыль: $' + profit.toFixed(2);
+      resultEl.innerText = 'Ожидаемая прибыль: $' + profit.toFixed(2);
     }
   </script>
 </body>
 </html>
-
