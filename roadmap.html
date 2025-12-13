@@ -1,102 +1,123 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>IBITIcoin Roadmap</title>
-  <!-- Подключаем основной стиль сайта -->
+  <!-- Main site styles -->
   <link rel="stylesheet" href="css/style.css">
-  <!-- Подключаем стили AOS для анимации -->
+  <!-- AOS for animations -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
 </head>
 <body>
 
-  <!-- Кнопка «Главная» в левом верхнем углу -->
+  <!-- Top-left: Home -->
   <div class="corner-box corner-box-left">
-    <a href="index.html">Главная</a>
+    <a href="index.html">Home</a>
   </div>
 
-  <!-- Шапка -->
+  <!-- Header -->
   <header class="hero-header">
     <img src="img/logo.png" alt="IBITIcoin Logo" width="200">
     <h1>IBITIcoin Roadmap</h1>
     <p>Stability | Innovation | Accessibility</p>
   </header>
 
-  <!-- Раздел Roadmap -->
-  <section class="roadmap" style="margin-bottom: 300px;"> 
-    <!-- margin-bottom: 300px даёт дополнительное пространство, чтобы была прокрутка -->
+  <!-- Roadmap section -->
+  <section class="roadmap" style="margin-bottom: 300px;">
     <h2 data-aos="fade-up">Roadmap</h2>
 
-   <div style="text-align:center; margin: 20px 0;">
-  <a href="launch-info.html" class="btn-small">Подробности запуска</a>
-</div>
+    <div style="text-align:center; margin: 20px 0;">
+      <a href="launch-info.html" class="btn-small">Launch details</a>
+    </div>
 
-  <div class="roadmap-item">
-    <h3>Фаза 1</h3>
-    <p>1 июля 2025, 12:00 (Киев) – 8 июля 2025, 12:00 (Киев)</p>
-    <p>Цена 0.10 USDT + объёмные бонусы</p>
-  </div>
+    <!-- 2025: foundation & launch -->
+    <div class="roadmap-item" data-aos="fade-up">
+      <h3>Q3 2025 – Early tokenomics & internal sale concept (archived)</h3>
+      <p>
+        Initial drafts of phase-based sales and fallback pricing were designed and tested internally.
+        The concept was later replaced by a cleaner, fully on-chain liquidity model via PancakeSwap.
+      </p>
+    </div>
 
-  <div class="roadmap-item">
-    <h3>Фаза 2</h3>
-    <p>8 июля 2025, 12:00 (Киев) – 15 июля 2025, 12:00 (Киев)</p>
-    <p>Цена 0.20 USDT + объёмные бонусы</p>
-  </div>
+    <div class="roadmap-item" data-aos="fade-up">
+      <h3>10.12.2025 – Public launch on PancakeSwap (completed)</h3>
+      <p>
+        IBITIcoin is officially traded on <strong>BNB Smart Chain</strong> in the
+        <strong>IBITI / USDT</strong> pair on PancakeSwap (v2). The first public liquidity pool
+        is live and serves as the primary entry point for new users.
+      </p>
+      <p>
+        Token contract: <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code>
+      </p>
+      <p>
+        <a href="https://pancakeswap.finance/swap?chain=bsc&amp;outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&amp;inputCurrency=0x55d398326f99059fF775485246999027B3197955"
+           class="btn-small" target="_blank" rel="noopener noreferrer">
+          Open IBITI / USDT on PancakeSwap
+        </a>
+      </p>
+    </div>
 
-  <div class="roadmap-item">
-    <h3>Фаза 3</h3>
-    <p>15 июля 2025, 12:00 (Киев) – 22 июля 2025, 12:00 (Киев)</p>
-    <p>Цена 0.30 USDT + объёмные бонусы</p>
-  </div>
+    <!-- 2026: staking, NFTs, DeFi – in development / planned -->
+    <div class="roadmap-item" data-aos="fade-up">
+      <h3>2026 – Staking & on-chain rewards (in development)</h3>
+      <p>
+        Launch of on-chain staking modules for IBITI holders, with flexible reward mechanics
+        and transparent contracts. Goal: provide long-term holders with sustainable, code-driven
+        rewards without hidden emissions.
+      </p>
+    </div>
 
-  <div class="roadmap-item">
-    <h3>Пост-фазовая продажа</h3>
-    <p>С 22 июля 2025, 12:00 (Киев)</p>
-    <p>Продажа по настраиваемой <em>fallback</em> цене</p>
-  </div>
+    <div class="roadmap-item" data-aos="fade-up">
+      <h3>2026 – NFT utilities & discount mechanics (in development)</h3>
+      <p>
+        Activation of the <strong>NFT jackpot</strong> concept and utility NFTs:
+        access perks, fee discounts, and bonus multipliers for active community members.
+        NFTs are designed with limited lifetimes or activations and are burned after use.
+      </p>
+    </div>
 
-  <div class="roadmap-item">
-    <h3>Листинг и мобильное приложение</h3>
-    <p> Декабрь 2025</p>
-    <p>Листинг IBITIcoin на биржах и выпуск мобильного приложения</p>
-  </div>
+    <div class="roadmap-item" data-aos="fade-up">
+      <h3>2026 – DeFi integrations & ecosystem expansion (planned)</h3>
+      <p>
+        Integration of IBITIcoin into broader DeFi infrastructure on BNB Smart Chain and beyond:
+        liquidity incentives, lending/borrowing options, partner protocols and analytics tools.
+        Focus: real usage, not just listings for the sake of listings.
+      </p>
+    </div>
 
-  <div class="roadmap-item">
-    <h3>DeFi-интеграция и стейкинг</h3>
-    <p> Декабрь 2025</p>
-    <p>Интеграция с DeFi-платформами и запуск стейкинг-сервиса</p>
-  </div>
-</section>
+    <div class="roadmap-item" data-aos="fade-up">
+      <h3>2026 – User interfaces & mobile access (planned)</h3>
+      <p>
+        Improving user experience with cleaner web and mobile-friendly interfaces for:
+        trading, staking, NFT utilities and DAO participation. The goal is to make IBITI
+        accessible not only to crypto-native users but also to people entering DeFi for the first time.
+      </p>
+    </div>
+  </section>
 
-  <!-- Футер -->
-<footer>
-  <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
-  <p>
-    <a href="privacy.html">Политика конфиденциальности</a> |
-    <a href="terms.html">Пользовательское соглашение</a>
-  </p>
-  <p>
-    <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> |
-    <a href="https://t.me/IBITIcoin_chat" target="_blank">Telegram</a> |
-    <a href="https://instagram.com/IBITIcoin_official" target="_blank">Instagram</a> |
-    <a href="https://facebook.com/IBITIcoin" target="_blank">Facebook</a>
-  </p>
-  <p>
-    <a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a>
-  </p>
-</footer>
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
+    <p>
+      <a href="privacy.html">Privacy Policy</a> |
+      <a href="terms.html">Terms of Use</a>
+    </p>
+    <p>
+      <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> |
+      <a href="https://t.me/IBITIcoin_chat" target="_blank">Telegram</a> |
+      <a href="https://instagram.com/IBITIcoin_official" target="_blank">Instagram</a> |
+      <a href="https://facebook.com/IBITIcoin" target="_blank">Facebook</a>
+    </p>
+    <p>
+      <a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a>
+    </p>
+  </footer>
 
-  <!-- Подключаем скрипт AOS и инициализацию -->
+  <!-- AOS init -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>
-    AOS.init({
-      once: true  // Анимация срабатывает один раз при загрузке
-    });
+    AOS.init({ once: true });
   </script>
 </body>
 </html>
-
-
-
-
