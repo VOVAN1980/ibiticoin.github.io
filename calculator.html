@@ -6,8 +6,14 @@
   <title>IBITIcoin Investment Calculator</title>
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- Локальные правки только для этой страницы -->
+  <!-- Local styles for this page -->
   <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
     .hero-header {
       margin-top: 20px;
       padding-top: 10px;
@@ -16,19 +22,19 @@
     }
 
     .hero-header img {
-      width: 180px;          /* логотип больше */
+      width: 190px;          /* bigger logo */
       display: block;
-      margin: 0 auto 10px;   /* чуть прижать к верху */
+      margin: 0 auto 6px;
     }
 
     .hero-header h1 {
-      font-size: 2rem;
-      margin: 5px 0 0;
+      font-size: 2.2rem;
+      margin: 4px 0 0;
     }
 
     .calculator {
       max-width: 480px;
-      margin: 40px auto 60px;
+      margin: 30px auto 50px;
       text-align: center;
       font-size: 1.1rem;
     }
@@ -44,6 +50,15 @@
       margin-top: 10px;
       font-size: 1rem;
       box-sizing: border-box;
+    }
+
+    #result {
+      margin-top: 14px;
+      font-weight: 600;
+    }
+
+    footer {
+      margin-top: auto; /* sticks footer to the bottom */
     }
   </style>
 </head>
@@ -67,7 +82,7 @@
 
   <!-- Calculator -->
   <section class="calculator">
-    <p>Enter the investment amount (in USD):</p>
+    <p>Enter the amount you plan to invest (USD):</p>
     <input type="number" id="investment" placeholder="Amount in USD">
     <button onclick="calculate()">Calculate</button>
     <p id="result"></p>
@@ -101,7 +116,7 @@
         return;
       }
 
-      // Example: 10% expected return
+      // Example: 10% projected return
       const profit = value * 0.10;
       resultEl.innerText = 'Estimated profit: $' + profit.toFixed(2);
     }
