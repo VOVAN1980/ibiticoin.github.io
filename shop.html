@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>IBITIcoin Shop</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Магазин IBITIcoin</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
   <style>
@@ -71,7 +71,7 @@
       text-align: center;
       box-shadow: 0 4px 10px rgba(0,0,0,0.5);
       transition: transform 0.3s;
-    }  
+    }
     .shop-item img {
       width: 100%;
       display: block;
@@ -241,479 +241,471 @@
     footer a:hover {
       text-decoration: underline;
     }
-</style>
+  </style>
 </head>
 <body>
   <header class="hero-header">
-    <h1>Магазин IBITIcoin</h1>
-    <p>Приобретайте эксклюзивные товары, связанные с IBITIcoin!</p>
+    <h1>IBITIcoin Shop</h1>
+    <p>Get exclusive items and utilities connected with IBITIcoin.</p>
   </header>
 
   <div id="countdownNotice"></div>
 
   <section class="wallet-section">
-  <button onclick="onConnectClick()">Подключить кошелёк</button>
-  <div id="walletAddress"></div>
-  <div id="ibitiBalance"></div>
-</section>
+    <button onclick="onConnectClick()">Connect wallet</button>
+    <div id="walletAddress"></div>
+    <div id="ibitiBalance"></div>
+  </section>
 
   <button type="button" onclick="openAddTokenModal()"
-  style="margin-top:10px;background:#0f172a;color:#d1fae5;border:1px solid #10b981;padding:10px 16px;border-radius:10px;cursor:pointer;">
-  Добавить IBITI в кошелёк
-</button>
+    style="margin-top:10px;background:#0f172a;color:#d1fae5;border:1px solid #10b981;padding:10px 16px;border-radius:10px;cursor:pointer;">
+    Add IBITI to wallet
+  </button>
 
   <!-- ===== CONNECT WALLET MODAL (desktop dynamic) ===== -->
-<div id="walletModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;align-items:center;justify-content:center;backdrop-filter:blur(2px)">
-  <div class="ibiti-card" style="background:#111;padding:18px;border:1px solid gold;border-radius:10px;max-width:420px;width:92%;color:#ffd700;position:relative;">
-    <button type="button" id="closeWalletModal" class="ibiti-close" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer;">✕</button>
-    <h3 style="margin:0 0 10px;font-size:18px;">Выберите кошелёк</h3>
+  <div id="walletModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;align-items:center;justify-content:center;backdrop-filter:blur(2px)">
+    <div class="ibiti-card" style="background:#111;padding:18px;border:1px solid gold;border-radius:10px;max-width:420px;width:92%;color:#ffd700;position:relative;">
+      <button type="button" id="closeWalletModal" class="ibiti-close" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer;">✕</button>
+      <h3 style="margin:0 0 10px;font-size:18px;">Select a wallet</h3>
 
-    <!-- Сюда JS подставит кнопки найденных расширений -->
-    <div id="desktopWalletList" style="display:flex;flex-direction:column;gap:10px"></div>
+      <!-- JS injects detected desktop wallets here -->
+      <div id="desktopWalletList" style="display:flex;flex-direction:column;gap:10px"></div>
 
-    <div style="margin-top:8px;font-size:12px;color:#9ca3af">
-      Trust Wallet на ПК не имеет расширения. Используйте мобильное приложение (или WalletConnect — позже добавим).
+      <div style="margin-top:8px;font-size:12px;color:#9ca3af">
+        Trust Wallet has no browser extension on desktop. Use mobile app (or WalletConnect – coming later).
+      </div>
     </div>
   </div>
-</div>
 
+  <!-- Example items -->
   <section class="shop-items">
-  <div class="shop-item">
-    <div class="image-wrapper">
-      <img src="img/IBITIcoin.webp" alt="IBITIcoin">
+    <div class="shop-item">
+      <div class="image-wrapper">
+        <img src="img/IBITIcoin.webp" alt="IBITIcoin">
+      </div>
+      <h3>Item 1 (IBITIcoin)</h3>
+      <p>Short description, price and payment conditions.</p>
+      <button class="buy-button" onclick="openPurchaseModal('IBITIcoin')">Buy</button>
     </div>
-    <h3>Название товара 1 (IBITIcoin)</h3>
-    <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-    <button class="buy-button" onclick="openPurchaseModal('IBITIcoin')">Купить</button>
-  </div>
-  <div class="shop-item">
-    <div class="image-wrapper">
-      <img src="img/NFT.webp" alt="NFT">
+    <div class="shop-item">
+      <div class="image-wrapper">
+        <img src="img/NFT.webp" alt="NFT">
+      </div>
+      <h3>Item 2 (NFT)</h3>
+      <p>Short description, price and payment conditions.</p>
+      <button class="buy-button" onclick="openPurchaseModal('NFT')">Buy</button>
     </div>
-    <h3>Название товара 2 (NFT)</h3>
-    <p>Краткое описание товара, цена и условия доставки/оплаты.</p>
-    <button class="buy-button" onclick="openPurchaseModal('NFT')">Купить</button>
-  </div>
-</section>
+  </section>
 
+  <!-- Purchase modal -->
   <div id="purchaseModal" class="modal">
     <div class="modal-content-custom">
       <span class="close" onclick="closePurchaseModal()">&times;</span>
-      <h2 id="purchaseTitle">Покупка</h2>
+      <h2 id="purchaseTitle">Purchase</h2>
       <form id="purchaseForm">
-        <label for="nftAmount">Введите количество:</label>
+        <label for="nftAmount">Enter amount:</label>
         <input type="number" id="nftAmount" name="nftAmount" min="1" required>
-        <label for="paymentToken">Способ оплаты:</label>
+        <label for="paymentToken">Payment method:</label>
         <select id="paymentToken" required>
-          <option value="">-- Выберите --</option>
+          <option value="">-- Select --</option>
           <option value="USDT">USDT</option>
         </select>
         <br><br>
-        <button type="submit" id="confirmBtn" disabled>Подтвердить покупку</button>
-        <button type="button" class="cancel" onclick="closePurchaseModal()">Отмена</button>
+        <button type="submit" id="confirmBtn" disabled>Confirm purchase</button>
+        <button type="button" class="cancel" onclick="closePurchaseModal()">Cancel</button>
       </form>
     </div>
   </div>
 
-  <!-- Статистика токенсейла -->
-<section id="saleStats"
-  data-aos="fade-up"
-  style="
-    margin: 40px auto;
-    max-width: 800px;
-    padding: 24px;
-    background: #111;
-    color: #fff;
-    border: 1px solid gold;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  "
-  onmouseover="this.style.transform='scale(1.015)'; this.style.boxShadow='0 0 25px rgba(255, 215, 0, 0.3)'"
-  onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 20px rgba(255, 215, 0, 0.1)'"
->
-    <!-- Прогресс-бар -->
-  <div class="progress-container">
-    <div id="salesProgress" class="progress-bar"></div>
-  </div>
-  <div style="font-size:0.9em; color:#aaa;">
-    Продано: <span id="soldPercent">0%</span>
-  </div>
-
-  <h3 style="color: gold; font-size: 1.8em; margin-bottom: 16px;">📊 Статистика токенсейла</h3>
-  <ul style="list-style: none; padding-left: 0; color: gold; font-size: 1.1em;">
-    <li>🔹 Всего на контракте:   <strong><span id="cap">—</span></strong> IBI</li>
-    <li>🔹 Резерв рефералов:      <strong><span id="refReserve">—</span></strong> IBI</li>
-    <li>🔹 Основной пул продаж:   <strong><span id="salePool">—</span></strong> IBI</li>
-    <li>🔹 Продано:               <strong><span id="sold">—</span></strong> IBI</li>
-    <li>🔹 Осталось продаж:       <strong><span id="left">—</span></strong> IBI</li>
-    <li>🔹 Пул бонусов (10%):     <strong><span id="bonusPool">—</span></strong> IBI</li>
-  </ul>
-
-  <!-- Новые элементы внутри блока -->
-  <div style="margin-top: 16px; font-size: 0.9em; color: #aaa;">
-    <span id="lastUpdated">Обновлено: —</span>
-    <button id="refreshStats"
-      style="margin-left: 12px; background: gold; color: #000; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
-      🔄 Обновить
-    </button>
-  </div>
-</section>
-
-    <section id="referralInfo"
-  data-aos="fade-up"
-  style="
-    margin: 40px auto;
-    max-width: 800px;
-    padding: 24px;
-    background: #111;
-    color: #fff;
-    border: 1px solid gold;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  "
-  onmouseover="this.style.transform='scale(1.015)'; this.style.boxShadow='0 0 25px rgba(255, 215, 0, 0.3)'"
-  onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 20px rgba(255, 215, 0, 0.1)'"
->
-  <h3 style="color: gold; font-size: 1.8em; margin-bottom: 16px;">🎁 Реферальная программа</h3>
-  <p style="margin: 8px 0;">🔸 Купите <strong>от 10 IBITI</strong> — и получите <strong>1 IBITI бонусом</strong> сразу.</p>
-  <p style="margin: 8px 0;">🔸 После покупки вы получите персональную ссылку для приглашений.</p>
-  <p style="margin: 8px 0;">🔸 Делитесь ею — и за каждого друга, который купит токены, вы получите ещё <strong>+1 IBITI</strong>.</p>
-  <p style="margin-top: 16px;">📌 Всё работает автоматически — никаких регистраций и подтверждений не нужно.</p>
-</section>
-
-<!-- Блок с отображением и копированием реферальной ссылки -->
-<div style="margin: 32px auto 64px; text-align: center;">
-  <input
-    type="text"
-    id="myReferralLink"
-    readonly
-    placeholder="Ссылка появится после первой покупки от 10 IBITI"
+  <!-- Token sale stats (front-end; actual logic in sale.js) -->
+  <section id="saleStats"
+    data-aos="fade-up"
     style="
-      width: 100%;
-      max-width: 500px;
-      padding: 10px;
+      margin: 40px auto;
+      max-width: 800px;
+      padding: 24px;
+      background: #111;
+      color: #fff;
       border: 1px solid gold;
-      border-radius: 6px;
-      background: #000;
-      color: gold;
-      font-weight: bold;
-      margin-bottom: 12px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     "
-  />
-  <br />
-  <button id="copyMyReferralLink" class="btn-small"
-    style="padding: 10px 24px; font-weight: bold;">
-    📋 Скопировать мою ссылку
-  </button>
+    onmouseover="this.style.transform='scale(1.015)'; this.style.boxShadow='0 0 25px rgba(255, 215, 0, 0.3)'"
+    onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 20px rgba(255, 215, 0, 0.1)'"
+  >
+    <div class="progress-container">
+      <div id="salesProgress" class="progress-bar"></div>
+    </div>
+    <div style="font-size:0.9em; color:#aaa;">
+      Sold: <span id="soldPercent">0%</span>
+    </div>
 
-  <!-- Кнопка "Поделиться" -->
-  <button id="openShareModal"
-    style="margin-top: 12px; margin-left: 8px; padding: 10px 24px; font-weight: bold; background: gold; color: #000; border: none; border-radius: 6px; cursor: pointer;">
-    📣 Поделиться ссылкой
-  </button>
+    <h3 style="color: gold; font-size: 1.8em; margin-bottom: 16px;">📊 Token sale statistics</h3>
+    <ul style="list-style: none; padding-left: 0; color: gold; font-size: 1.1em;">
+      <li>🔹 Total on contract:     <strong><span id="cap">—</span></strong> IBI</li>
+      <li>🔹 Referral reserve:       <strong><span id="refReserve">—</span></strong> IBI</li>
+      <li>🔹 Main sale pool:         <strong><span id="salePool">—</span></strong> IBI</li>
+      <li>🔹 Sold:                   <strong><span id="sold">—</span></strong> IBI</li>
+      <li>🔹 Remaining for sale:     <strong><span id="left">—</span></strong> IBI</li>
+      <li>🔹 Bonus pool (10%):       <strong><span id="bonusPool">—</span></strong> IBI</li>
+    </ul>
 
-  <div id="referralStats" style=";display:none">
-  👥 Приведено друзей: <span id="refCount">0</span><br>
-  💰 Получено бонусов: <span id="refReward">0</span> IBITI
-</div>
+    <div style="margin-top: 16px; font-size: 0.9em; color: #aaa;">
+      <span id="lastUpdated">Updated: —</span>
+      <button id="refreshStats"
+        style="margin-left: 12px; background: gold; color: #000; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+        🔄 Refresh
+      </button>
+    </div>
+  </section>
 
-<!-- Модальное окно соцсетей -->
-<div id="shareModal" class="modal" style="
-  display: none;
-  position: fixed;
-  z-index: 3000;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  justify-content: center;
-  align-items: center;
-">
-  <div class="modal-content-custom" style="
-    background: #111;
-    padding: 20px;
-    border: 2px solid gold;
-    border-radius: 10px;
-    color: gold;
-    text-align: center;
-    max-width: 500px;
-    margin: auto;
-    position: relative;
-  ">
-    <span id="closeShareModal" style="position: absolute; top: 10px; right: 15px; font-size: 1.5em; font-weight: bold; cursor: pointer;">&times;</span>
-    <h3 style="margin-bottom: 20px;">Выберите соцсеть для шаринга</h3>
-    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
-      <a id="share-facebook"  target="_blank" class="btn-small">Facebook</a>
-      <a id="share-twitter"   target="_blank" class="btn-small">Twitter</a>
-      <a id="share-vk"        target="_blank" class="btn-small">VK</a>
-      <a id="share-telegram"  target="_blank" class="btn-small">Telegram</a>
-      <a id="share-ok"        target="_blank" class="btn-small">Одноклассники</a>
-      <a id="share-linkedin"  target="_blank" class="btn-small">LinkedIn</a>
-      <a id="share-weibo"     target="_blank" class="btn-small">Weibo</a>
+  <!-- Referral program -->
+  <section id="referralInfo"
+    data-aos="fade-up"
+    style="
+      margin: 40px auto;
+      max-width: 800px;
+      padding: 24px;
+      background: #111;
+      color: #fff;
+      border: 1px solid gold;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    "
+    onmouseover="this.style.transform='scale(1.015)'; this.style.boxShadow='0 0 25px rgba(255, 215, 0, 0.3)'"
+    onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 20px rgba(255, 215, 0, 0.1)'"
+  >
+    <h3 style="color: gold; font-size: 1.8em; margin-bottom: 16px;">🎁 Referral program</h3>
+    <p style="margin: 8px 0;">🔸 Buy at least <strong>10 IBITI</strong> — and get <strong>+1 IBITI</strong> as a bonus.</p>
+    <p style="margin: 8px 0;">🔸 After your first purchase you receive a personal referral link.</p>
+    <p style="margin: 8px 0;">🔸 Share it with friends — for each friend who buys tokens you get an extra <strong>+1 IBITI</strong>.</p>
+    <p style="margin-top: 16px;">📌 Logic is handled automatically by the sale contract once enabled; no registration or manual approval required.</p>
+  </section>
+
+  <!-- Referral link / sharing -->
+  <div style="margin: 32px auto 64px; text-align: center;">
+    <input
+      type="text"
+      id="myReferralLink"
+      readonly
+      placeholder="Your referral link will appear after the first purchase of at least 10 IBITI"
+      style="
+        width: 100%;
+        max-width: 500px;
+        padding: 10px;
+        border: 1px solid gold;
+        border-radius: 6px;
+        background: #000;
+        color: gold;
+        font-weight: bold;
+        margin-bottom: 12px;
+      "
+    />
+    <br />
+    <button id="copyMyReferralLink" class="btn-small"
+      style="padding: 10px 24px; font-weight: bold;">
+      📋 Copy my link
+    </button>
+
+    <button id="openShareModal"
+      style="margin-top: 12px; margin-left: 8px; padding: 10px 24px; font-weight: bold; background: gold; color: #000; border: none; border-radius: 6px; cursor: pointer;">
+      📣 Share link
+    </button>
+
+    <div id="referralStats" style="display:none">
+      👥 Referred friends: <span id="refCount">0</span><br>
+      💰 Earned bonuses: <span id="refReward">0</span> IBITI
     </div>
   </div>
-</div>
 
-<!-- Всплывающее уведомление -->
-<div id="toast" style="
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background: #111;
-  color: gold;
-  border: 1px solid gold;
-  border-radius: 8px;
-  padding: 12px 20px;
-  font-weight: bold;
-  box-shadow: 0 0 10px rgba(255,215,0,0.3);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 9999;
-  transition: opacity 0.3s ease;
-">
-  ✅ Скопировано в буфер
-</div>
-
-<footer>
-  <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
-  <p><a href="index.html">Вернуться на главную</a></p>
-</footer>
-
-<!-- Подключаем библиотеки -->
-<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk@4.3.3/dist/CoinbaseWalletSDK.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script>
-  AOS.init({ once: true });
-</script>
-
-<!-- Модули -->
-<script type="module" src="js/config.js"></script>
-<script type="module" src="js/sale.js"></script>
-<script type="module" src="js/wallet.js"></script>
-<script type="module" src="js/shop.js"></script>
-
-<script type="module">
-  import { getSaleContract } from './js/sale.js';
-  import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const linkInput   = document.getElementById("myReferralLink");
-    const copyBtn     = document.getElementById("copyMyReferralLink");
-    const toast       = document.getElementById("toast");
-    const rewardEl    = document.getElementById("refReward");
-    const countEl     = document.getElementById("refCount");
-    const statsBlock  = document.getElementById("referralStats");
-    const shareModal  = document.getElementById("shareModal");
-    const openBtn     = document.getElementById("openShareModal");
-    const closeBtn    = document.getElementById("closeShareModal");
-    const pageTitle   = encodeURIComponent(document.title);
-
-    // 🔒 По умолчанию — блокировка копирования
-    copyBtn.addEventListener("click", () => {
-      Swal.fire({
-        icon: "info",
-        title: "Недоступно",
-        text: "Сначала купите от 10 IBITI, чтобы получить реферальную ссылку."
-      });
-    });
-
-    // ✅ Активация после покупки
-    window.enableReferralAfterPurchase = async function(account) {
-  const refLink = `${window.location.origin}${window.location.pathname}?ref=${account}`;
-  linkInput.value = refLink;
-
-  // Копирование в буфер
-  copyBtn.onclick = () => {
-    navigator.clipboard.writeText(refLink).then(() => {
-      toast.style.opacity = "1";
-      setTimeout(() => toast.style.opacity = "0", 2500);
-    });
-  };
-
-  // Подставляем урлы для шаринга
-  document.getElementById('share-facebook').href   = `https://www.facebook.com/sharer/sharer.php?u=${refLink}`;
-  document.getElementById('share-twitter').href    = `https://twitter.com/intent/tweet?url=${refLink}&text=${pageTitle}`;
-  document.getElementById('share-vk').href         = `https://vk.com/share.php?url=${refLink}&title=${pageTitle}`;
-  document.getElementById('share-telegram').href   = `https://telegram.me/share/url?url=${refLink}&text=${pageTitle}`;
-  document.getElementById('share-ok').href         = `https://connect.ok.ru/offer?url=${refLink}`;
-  document.getElementById('share-linkedin').href   = `https://www.linkedin.com/sharing/share-offsite/?url=${refLink}`;
-  document.getElementById('share-weibo').href      = `http://service.weibo.com/share/share.php?url=${refLink}&title=${pageTitle}`;
-
-  // Открытие/закрытие модалки шаринга
-  openBtn.onclick = () => shareModal.style.display = 'flex';
-  closeBtn.onclick = () => shareModal.style.display = 'none';
-  window.addEventListener('click', e => {
-    if (e.target === shareModal) shareModal.style.display = 'none';
-  });
-
-  // Убираем лишнюю перезапись stats!
-  // Загружаем актуальную статистику корректно
-  if (typeof loadReferralStats === "function") {
-    await loadReferralStats(account);
-  }
-      statsBlock.style.display = "block";
-};
-}); // ← закрываем document.addEventListener("DOMContentLoaded", …)
-</script>  <!-- ← закрыли module-скрипт -->
-
-<!-- ===== ADD IBITI TOKEN MODAL ===== -->
-<div id="addTokenModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;align-items:center;justify-content:center;">
-  <div style="background:#111;padding:18px 18px 14px;border:1px solid gold;border-radius:10px;max-width:420px;width:92%;color:#ffd700;position:relative;">
-    <button onclick="closeAddTokenModal()" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer;">✕</button>
-    <h3 style="margin:0 0 10px;font-size:18px;">Куда добавить токен IBITI?</h3>
-
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <button onclick="addTokenEip747()" style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
-        MetaMask / Trust Wallet / Binance Wallet (авто)
-      </button>
-
-      <details style="background:#0b0f1a;border:1px solid #333;border-radius:8px;padding:10px;">
-        <summary style="cursor:pointer;color:#e5e7eb">Coinbase Wallet (ручное добавление)</summary>
-        <div style="margin-top:10px;color:#e5e7eb;font-size:14px;line-height:1.4">
-          Открой Coinbase Wallet → <b>Tokens</b> → <b>+</b> → <b>Import Token</b> → вставь:
-          <div style="margin-top:8px">
-            <div>Contract: <code id="ctAddr">0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></div>
-            <div>Symbol: <code>IBITI</code></div>
-            <div>Decimals: <code>8</code></div>
-          </div>
-          <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-            <button onclick="copyText('#ctAddr')" style="padding:6px 10px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">Скопировать адрес</button>
-            <button onclick="openBscscan()" style="padding:6px 10px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">Открыть в BscScan</button>
-          </div>
-        </div>
-      </details>
-
-      <div style="font-size:12px;color:#9ca3af;margin-top:4px">
-        Если у тебя мобильный Trust Wallet, открой сайт в их DApp-браузере и нажми кнопку авто-добавления.
+  <!-- Social share modal -->
+  <div id="shareModal" class="modal" style="
+    display: none;
+    position: fixed;
+    z-index: 3000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+  ">
+    <div class="modal-content-custom" style="
+      background: #111;
+      padding: 20px;
+      border: 2px solid gold;
+      border-radius: 10px;
+      color: gold;
+      text-align: center;
+      max-width: 500px;
+      margin: auto;
+      position: relative;
+    ">
+      <span id="closeShareModal" style="position: absolute; top: 10px; right: 15px; font-size: 1.5em; font-weight: bold; cursor: pointer;">&times;</span>
+      <h3 style="margin-bottom: 20px;">Choose a social network</h3>
+      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
+        <a id="share-facebook"  target="_blank" class="btn-small">Facebook</a>
+        <a id="share-twitter"   target="_blank" class="btn-small">Twitter</a>
+        <a id="share-vk"        target="_blank" class="btn-small">VK</a>
+        <a id="share-telegram"  target="_blank" class="btn-small">Telegram</a>
+        <a id="share-ok"        target="_blank" class="btn-small">OK</a>
+        <a id="share-linkedin"  target="_blank" class="btn-small">LinkedIn</a>
+        <a id="share-weibo"     target="_blank" class="btn-small">Weibo</a>
       </div>
     </div>
   </div>
-</div>
 
-<!-- НЕ module: функции должны быть в window -->
-<script>
-  const IBITI_TOKEN = {
-    address: '0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb',
-    symbol:  'IBITI',
-    decimals: 8,
-    image:   'https://ibiticoin.com/img/IBITI-512.png'
-  };
+  <!-- Toast -->
+  <div id="toast" style="
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #111;
+    color: gold;
+    border: 1px solid gold;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(255,215,0,0.3);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: opacity 0.3s ease;
+  ">
+    ✅ Copied to clipboard
+  </div>
 
-  // --- Модалка выбора кошелька
-  function openAddTokenModal(){
-    const m = document.getElementById('addTokenModal');
-    m.style.display = 'flex';
-    m.onclick = (e)=>{ if (e.target === m) closeAddTokenModal(); };
-  }
-  function closeAddTokenModal(){
-    document.getElementById('addTokenModal').style.display='none';
-  }
+  <footer>
+    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
+    <p><a href="index.html">Back to home</a></p>
+  </footer>
 
-  // --- Модалка "Установите MetaMask"
-  function openInstallMM(){ 
-    const m = document.getElementById('installMM'); 
-    m.style.display='flex'; 
-    m.onclick=(e)=>{ if(e.target===m) closeInstallMM(); }; 
-  }
-  function closeInstallMM(){ 
-    document.getElementById('installMM').style.display='none'; 
-  }
+  <!-- Libs -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk@4.3.3/dist/CoinbaseWalletSDK.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script>
+    AOS.init({ once: true });
+  </script>
 
-  function toast(msg){
-  const el = document.getElementById('toastOK');
-  el.textContent = msg;
-  el.style.opacity = '1';
-  clearTimeout(el._timer);
-  el._timer = setTimeout(()=> el.style.opacity='0', 2600);
-}
+  <!-- App modules -->
+  <script type="module" src="js/config.js"></script>
+  <script type="module" src="js/sale.js"></script>
+  <script type="module" src="js/wallet.js"></script>
+  <script type="module" src="js/shop.js"></script>
 
-  // --- Проверка наличия web3-провайдера
-  function hasEthereum(){
-    return !!(window.ethereum && typeof window.ethereum.request === 'function');
-  }
+  <!-- Referral activation script -->
+  <script type="module">
+    import { getSaleContract } from './js/sale.js';
+    import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
 
-  // --- Основной UX-поток автодобавления
-  async function addTokenEip747(){
-    if (!hasEthereum()){
-      openInstallMM();
-      return;
-    }
-    try {
-      const bscId = '0x38'; // BSC mainnet
-      const current = await window.ethereum.request({ method:'eth_chainId' });
-      if (current !== bscId){
-        try {
-          await window.ethereum.request({ method:'wallet_switchEthereumChain', params:[{ chainId: bscId }] });
-        } catch(e){
-          if (e.code === 4902){
-            await window.ethereum.request({
-              method:'wallet_addEthereumChain',
-              params:[{
-                chainId: bscId,
-                chainName:'BNB Smart Chain',
-                nativeCurrency:{ name:'BNB', symbol:'BNB', decimals:18 },
-                rpcUrls:['https://bsc-dataseed1.bnbchain.org'],
-                blockExplorerUrls:['https://bscscan.com']
-              }]
-            });
-          } else { throw e; }
-        }
-      }
+    document.addEventListener("DOMContentLoaded", () => {
+      const linkInput   = document.getElementById("myReferralLink");
+      const copyBtn     = document.getElementById("copyMyReferralLink");
+      const toast       = document.getElementById("toast");
+      const rewardEl    = document.getElementById("refReward");
+      const countEl     = document.getElementById("refCount");
+      const statsBlock  = document.getElementById("referralStats");
+      const shareModal  = document.getElementById("shareModal");
+      const openBtn     = document.getElementById("openShareModal");
+      const closeBtn    = document.getElementById("closeShareModal");
+      const pageTitle   = encodeURIComponent(document.title);
 
-      const added = await window.ethereum.request({
-        method:'wallet_watchAsset',
-        params:{ type:'ERC20', options: IBITI_TOKEN }
+      // Locked by default
+      copyBtn.addEventListener("click", () => {
+        Swal.fire({
+          icon: "info",
+          title: "Not available",
+          text: "Buy at least 10 IBITI first to receive your referral link."
+        });
       });
 
-      if (added) {
-        toast('✅ IBITI добавлен в кошелёк');
-        closeAddTokenModal();
-      } else {
-        toast('ℹ️ Добавление отменено');
+      // Enable after successful on-chain purchase
+      window.enableReferralAfterPurchase = async function(account) {
+        const refLink = `${window.location.origin}${window.location.pathname}?ref=${account}`;
+        linkInput.value = refLink;
+
+        copyBtn.onclick = () => {
+          navigator.clipboard.writeText(refLink).then(() => {
+            toast.style.opacity = "1";
+            setTimeout(() => toast.style.opacity = "0", 2500);
+          });
+        };
+
+        // Social share URLs
+        document.getElementById('share-facebook').href   = `https://www.facebook.com/sharer/sharer.php?u=${refLink}`;
+        document.getElementById('share-twitter').href    = `https://twitter.com/intent/tweet?url=${refLink}&text=${pageTitle}`;
+        document.getElementById('share-vk').href         = `https://vk.com/share.php?url=${refLink}&title=${pageTitle}`;
+        document.getElementById('share-telegram').href   = `https://telegram.me/share/url?url=${refLink}&text=${pageTitle}`;
+        document.getElementById('share-ok').href         = `https://connect.ok.ru/offer?url=${refLink}`;
+        document.getElementById('share-linkedin').href   = `https://www.linkedin.com/sharing/share-offsite/?url=${refLink}`;
+        document.getElementById('share-weibo').href      = `http://service.weibo.com/share/share.php?url=${refLink}&title=${pageTitle}`;
+
+        // Share modal open/close
+        openBtn.onclick = () => shareModal.style.display = 'flex';
+        closeBtn.onclick = () => shareModal.style.display = 'none';
+        window.addEventListener('click', e => {
+          if (e.target === shareModal) shareModal.style.display = 'none';
+        });
+
+        if (typeof loadReferralStats === "function") {
+          await loadReferralStats(account);
+        }
+        statsBlock.style.display = "block";
+      };
+    });
+  </script>
+
+  <!-- ===== ADD IBITI TOKEN MODAL ===== -->
+  <div id="addTokenModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;align-items:center;justify-content:center;">
+    <div style="background:#111;padding:18px 18px 14px;border:1px solid gold;border-radius:10px;max-width:420px;width:92%;color:#ffd700;position:relative;">
+      <button onclick="closeAddTokenModal()" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer;">✕</button>
+      <h3 style="margin:0 0 10px;font-size:18px;">Where to add IBITI token?</h3>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button onclick="addTokenEip747()" style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
+          MetaMask / Trust Wallet / Binance Wallet (auto)
+        </button>
+
+        <details style="background:#0b0f1a;border:1px solid #333;border-radius:8px;padding:10px;">
+          <summary style="cursor:pointer;color:#e5e7eb">Coinbase Wallet (manual)</summary>
+          <div style="margin-top:10px;color:#e5e7eb;font-size:14px;line-height:1.4">
+            Open Coinbase Wallet → <b>Tokens</b> → <b>+</b> → <b>Import Token</b> → paste:
+            <div style="margin-top:8px">
+              <div>Contract: <code id="ctAddr">0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></div>
+              <div>Symbol: <code>IBITI</code></div>
+              <div>Decimals: <code>8</code></div>
+            </div>
+            <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+              <button onclick="copyText('#ctAddr')" style="padding:6px 10px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">Copy address</button>
+              <button onclick="openBscscan()" style="padding:6px 10px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">Open in BscScan</button>
+            </div>
+          </div>
+        </details>
+
+        <div style="font-size:12px;color:#9ca3af;margin-top:4px">
+          On mobile Trust Wallet, open this site in the DApp browser and press the auto-add button.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const IBITI_TOKEN = {
+      address: '0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb',
+      symbol:  'IBITI',
+      decimals: 8,
+      image:   'https://ibiticoin.com/img/IBITI-512.png'
+    };
+
+    function openAddTokenModal(){
+      const m = document.getElementById('addTokenModal');
+      m.style.display = 'flex';
+      m.onclick = (e)=>{ if (e.target === m) closeAddTokenModal(); };
+    }
+    function closeAddTokenModal(){
+      document.getElementById('addTokenModal').style.display='none';
+    }
+
+    function openInstallMM(){
+      const m = document.getElementById('installMM');
+      m.style.display='flex';
+      m.onclick=(e)=>{ if(e.target===m) closeInstallMM(); };
+    }
+    function closeInstallMM(){
+      document.getElementById('installMM').style.display='none';
+    }
+
+    function toast(msg){
+      const el = document.getElementById('toastOK');
+      el.textContent = msg;
+      el.style.opacity = '1';
+      clearTimeout(el._timer);
+      el._timer = setTimeout(()=> el.style.opacity='0', 2600);
+    }
+
+    function hasEthereum(){
+      return !!(window.ethereum && typeof window.ethereum.request === 'function');
+    }
+
+    async function addTokenEip747(){
+      if (!hasEthereum()){
+        openInstallMM();
+        return;
       }
-    } catch(err){
-      if (err && err.code === 4001) {
-        toast('ℹ️ Действие отменено пользователем');
-      } else {
-        console.error('Add IBITI error:', err);
-        alert('Не удалось добавить токен. Проверь, что кошелёк установлен и разблокирован.');
+      try {
+        const bscId = '0x38'; // BSC mainnet
+        const current = await window.ethereum.request({ method:'eth_chainId' });
+        if (current !== bscId){
+          try {
+            await window.ethereum.request({ method:'wallet_switchEthereumChain', params:[{ chainId: bscId }] });
+          } catch(e){
+            if (e.code === 4902){
+              await window.ethereum.request({
+                method:'wallet_addEthereumChain',
+                params:[{
+                  chainId: bscId,
+                  chainName:'BNB Smart Chain',
+                  nativeCurrency:{ name:'BNB', symbol:'BNB', decimals:18 },
+                  rpcUrls:['https://bsc-dataseed1.bnbchain.org'],
+                  blockExplorerUrls:['https://bscscan.com']
+                }]
+              });
+            } else { throw e; }
+          }
+        }
+
+        const added = await window.ethereum.request({
+          method:'wallet_watchAsset',
+          params:{ type:'ERC20', options: IBITI_TOKEN }
+        });
+
+        if (added) {
+          toast('✅ IBITI added to wallet');
+          closeAddTokenModal();
+        } else {
+          toast('ℹ️ Action cancelled');
+        }
+      } catch(err){
+        if (err && err.code === 4001) {
+          toast('ℹ️ Action cancelled by user');
+        } else {
+          console.error('Add IBITI error:', err);
+          alert('Failed to add token. Make sure your wallet is installed and unlocked.');
+        }
       }
     }
-  }
 
-  // --- Кнопки в Coinbase-блоке
-  function copyText(sel){
-    const text = document.querySelector(sel).textContent.trim();
-    navigator.clipboard.writeText(text).then(()=>toast('✅ Адрес скопирован'));
-  }
-  function openBscscan(){
-    window.open('https://bscscan.com/token/'+IBITI_TOKEN.address,'_blank');
-  }
-</script>
-<!-- ===== /ADD IBITI TOKEN MODAL ===== -->
+    function copyText(sel){
+      const text = document.querySelector(sel).textContent.trim();
+      navigator.clipboard.writeText(text).then(()=>toast('✅ Address copied'));
+    }
+    function openBscscan(){
+      window.open('https://bscscan.com/token/'+IBITI_TOKEN.address,'_blank');
+    }
+  </script>
 
-<!-- Toast -->
-<div id="toastOK" style="position:fixed;right:20px;bottom:24px;background:#0b0f1a;border:1px solid #10b981;color:#d1fae5;padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:4000"></div>
+  <!-- Toast for add-token -->
+  <div id="toastOK" style="position:fixed;right:20px;bottom:24px;background:#0b0f1a;border:1px solid #10b981;color:#d1fae5;padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:4000"></div>
 
-<!-- Install MetaMask modal -->
-<div id="installMM" style="display:none;position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.6);align-items:center;justify-content:center">
-  <div style="background:#111;border:1px solid gold;border-radius:10px;padding:18px;max-width:420px;width:92%;color:#ffd700;position:relative">
-    <button onclick="closeInstallMM()" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer">✕</button>
-    <h3 style="margin:0 0 10px">Установите MetaMask</h3>
-    <p style="color:#e5e7eb;margin:0 0 12px">Чтобы автоматически добавить токен, нужен кошелёк MetaMask (или совместимый).</p>
-    <a href="https://metamask.io/download/" target="_blank" rel="noopener"
-       style="display:inline-block;padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;text-decoration:none">Скачать MetaMask</a>
+  <!-- Install MetaMask modal -->
+  <div id="installMM" style="display:none;position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.6);align-items:center;justify-content:center">
+    <div style="background:#111;border:1px solid gold;border-radius:10px;padding:18px;max-width:420px;width:92%;color:#ffd700;position:relative">
+      <button onclick="closeInstallMM()" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer">✕</button>
+      <h3 style="margin:0 0 10px">Install MetaMask</h3>
+      <p style="color:#e5e7eb;margin:0 0 12px">To add the token automatically, you need MetaMask (or a compatible wallet) installed.</p>
+      <a href="https://metamask.io/download/" target="_blank" rel="noopener"
+        style="display:inline-block;padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;text-decoration:none">Download MetaMask</a>
+    </div>
   </div>
-</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-// === Универсальный выбор кошельков ===
+  <!-- Wallet selection / patches -->
+  <script>
+// === Universal wallet selection ===
 function openWalletSelector() {
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   if (!isMobile) {
@@ -722,7 +714,7 @@ function openWalletSelector() {
   }
 
   Swal.fire({
-    title: 'Выберите кошелёк',
+    title: 'Select a wallet',
     showCancelButton: true,
     showConfirmButton: false,
     html: `
@@ -759,11 +751,9 @@ function openInWallet(wallet) {
 
   window.location.href = deeplink;
 }
-</script>
+  </script>
 
   <script>
-// ====== PATCH: корректное подключение внутри MetaMask/Trust на мобиле ======
-
 function isInMetaMask() {
   return !!(window.ethereum?.isMetaMask) || /MetaMask/i.test(navigator.userAgent);
 }
@@ -774,9 +764,6 @@ function isMobile() {
   return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
 
-/**
- * Ждём появления window.ethereum (MetaMask иногда отдаёт его с задержкой).
- */
 function waitForEthereum(maxMs = 2500) {
   const started = Date.now();
   return new Promise(resolve => {
@@ -788,103 +775,77 @@ function waitForEthereum(maxMs = 2500) {
   });
 }
 
-/**
- * Универсальный клик по "Подключить кошелёк".
- * - Если мы внутри MetaMask/Trust → подключаемся нативно (без диплинков).
- * - Если обычный мобильный браузер → показываем селектор с диплинками (твоя функция).
- * - Если десктоп → открываем твою модалку (#walletModal).
- */
 async function onConnectClick() {
   const mobile = isMobile();
   const inMM   = isInMetaMask();
   const inTW   = isInTrust();
 
   if (mobile && (inMM || inTW)) {
-    // Мы уже внутри кошелька → НЕ делаем диплинки, просто коннектимся.
     await safeConnectInApp();
     return;
   }
 
   if (mobile && !inMM && !inTW) {
-    // Обычный мобильный браузер → пусть работает твой селектор с диплинками
     if (typeof openWalletSelector === 'function') {
       openWalletSelector();
     } else {
-      alert('Откройте сайт в MetaMask/Trust или используйте их диплинк.');
+      alert('Open this site inside MetaMask/Trust wallet or use a deeplink.');
     }
     return;
   }
 
-  // Десктоп: показываем твою модалку
   openDesktopWalletModal();
-  }
-/**
- * Подключение внутри dApp-браузера кошелька без участия wallet.js (чтобы его не трогать).
- * Если wallet.js уже повесил window.connectWallet — вызовем его.
- * Если нет — сделаем минимальный прямой eth_requestAccounts.
- */
+}
+
 async function safeConnectInApp() {
-  // Имитация "мы внутри кошелька" — ждём ethereum
   const ok = await waitForEthereum(3000);
   if (!ok) {
-    alert('Кошелёк не инициализировал Web3. Перезагрузите вкладку внутри MetaMask/Trust.');
+    alert('Wallet did not initialize Web3. Reload the tab inside MetaMask/Trust.');
     return;
   }
 
-  // Если у тебя уже есть глобальный connectWallet из wallet.js — используем его
   if (typeof window.connectWallet === 'function') {
     try {
       await window.connectWallet();
       return;
     } catch (e) {
-      console.warn('connectWallet() упал, пробуем прямой вызов:', e);
-      // пойдём в прямой путь
+      console.warn('connectWallet() failed, falling back:', e);
     }
   }
 
-  // Прямой минимальный коннект без зависимостей:
   try {
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     const acc = accounts?.[0];
     if (acc) {
       const addrEl = document.getElementById('walletAddress');
       if (addrEl) addrEl.textContent = acc;
-      // если wallet.js уже на странице и повесил showIbitiBalance — обновим
       if (typeof window.showIbitiBalance === 'function') {
         try { await window.showIbitiBalance(true); } catch {}
       }
     } else {
-      alert('Кошелёк не вернул аккаунты.');
+      alert('Wallet returned no accounts.');
     }
   } catch (err) {
     const msg = (err && (err.message || err.shortMessage)) || String(err);
-    alert('Ошибка подключения: ' + msg);
+    alert('Connection error: ' + msg);
   }
 }
 
-/**
- * Патчим твою функцию openInWallet — чтобы она НЕ делала диплинк,
- * когда пользователь УЖЕ в MetaMask/Trust (это и вызывало тупой прыжок/маркет).
- */
 (function patchOpenInWallet() {
   const original = window.openInWallet;
   if (typeof original !== 'function') return;
   window.openInWallet = function(wallet) {
-    // Если уже в in-app браузере кошелька — коннектимся нативно, без редиректов
     if (isInMetaMask() || isInTrust()) {
       safeConnectInApp();
       return;
     }
-    // иначе — как было (диплинки)
     original(wallet);
   }
 })();
-</script>
-  
-<script>
-// ==== DESKTOP WALLET SELECTOR (PC) ====
+  </script>
 
-// ← Хелпер СЮДА
+  <script>
+// ==== DESKTOP WALLET SELECTOR (PC) ====
 function hideWalletModal() {
   const m = document.getElementById('walletModal');
   if (m) m.style.display = 'none';
@@ -908,7 +869,7 @@ function providerLabel(p) {
 }
 
 async function useProvider(p) {
-  hideWalletModal(); // ← закрываем модалку сразу
+  hideWalletModal();
 
   if (window.ethereum !== p) { try { window.ethereum = p; } catch {} }
   if (typeof window.connectWallet === 'function') {
@@ -925,8 +886,8 @@ async function useProvider(p) {
 
 async function connectBinanceExtension() {
   const b = window.BinanceChain || window.binance || null;
-  if (!b) return alert('Расширение Binance Wallet не обнаружено.');
-  hideWalletModal(); // ← закрываем модалку сразу
+  if (!b) return alert('Binance Wallet extension not detected.');
+  hideWalletModal();
 
   try {
     const accounts = await b.request({ method: 'eth_requestAccounts' });
@@ -966,7 +927,7 @@ function openDesktopWalletModal() {
     a.href = 'https://metamask.io/download/';
     a.target = '_blank';
     a.rel = 'noopener';
-    a.textContent = 'Установить MetaMask';
+    a.textContent = 'Install MetaMask';
     a.style.cssText = 'padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;display:inline-block;text-decoration:none;text-align:center;';
     listEl.appendChild(a);
   }
@@ -983,7 +944,7 @@ function openDesktopWalletModal() {
     cb.href = 'https://www.coinbase.com/wallet';
     cb.target = '_blank';
     cb.rel = 'noopener';
-    cb.textContent = 'Установить Coinbase Wallet';
+    cb.textContent = 'Install Coinbase Wallet';
     cb.style.cssText = 'padding:10px 14px;border:1px solid #3b82f6;border-radius:8px;background:#111827;color:#e5e7eb;display:inline-block;text-decoration:none;text-align:center;';
     listEl.appendChild(cb);
   }
@@ -992,18 +953,15 @@ function openDesktopWalletModal() {
   document.getElementById('closeWalletModal')?.addEventListener('click', () => modal.style.display = 'none', { once:true });
 }
 
-// Подменяем десктопную ветку твоего openWalletSelector()
 (function patchDesktopSelector(){
   const orig = window.openWalletSelector;
   window.openWalletSelector = function() {
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if (isMobile) return orig ? orig() : null; // мобильная логика остаётся прежней
-    openDesktopWalletModal();                  // ПК → показываем динамический список
+    if (isMobile) return orig ? orig() : null;
+    openDesktopWalletModal();
   };
 })();
-</script>
+  </script>
 
 </body>
 </html>
-
-
