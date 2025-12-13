@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Правила стейкинга IBITI</title>
+  <title>IBITI Staking Rules (Draft)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/style.css">
   <style>
@@ -42,8 +42,9 @@
       text-align: center;
     }
     .alert {
-      color: red;
+      color: #ff4d4d;
       font-weight: bold;
+      text-align: center;
     }
     .tips {
       color: gold;
@@ -63,23 +64,38 @@
       display: flex;
       justify-content: space-between;
       margin-bottom: 30px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .subtitle-draft {
+      text-align: center;
+      font-size: 0.95em;
+      color: #ccc;
+      margin-top: 8px;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="button-row">
-      <a href="index.html" class="back-btn">← Главная</a>
-      <a href="staking.html" class="back-btn">← Назад к стейкингу</a>
+      <a href="index.html" class="back-btn">← Home</a>
+      <a href="staking.html" class="back-btn">← Back to staking</a>
     </div>
 
-    <h1>📘 Правила стейкинга IBITI</h1>
+    <h1>📘 IBITI Staking Rules (Draft)</h1>
+    <p class="subtitle-draft">
+      Staking is planned as part of the 2026 roadmap.  
+      Parameters below are a working draft and may be adjusted before on-chain launch.
+    </p>
 
-    <h2>📅 Сроки и награды</h2>
-    <p>Вы можете застейкать токены на срок от 1 до 12 месяцев. За каждый месяц начисляется процентная награда.</p>
+    <h2>📅 Lock periods and rewards</h2>
+    <p>
+      You will be able to lock IBITI for a period from <b>1 to 12 months</b>.
+      For each lock period, a fixed percentage reward is planned:
+    </p>
 
     <table>
-      <tr><th>Срок (мес)</th><th>Награда</th><th>Штраф при раннем анстейке</th></tr>
+      <tr><th>Lock period (months)</th><th>Planned reward</th><th>Penalty on early unstake</th></tr>
       <tr><td>1</td><td>1%</td><td>1%</td></tr>
       <tr><td>2</td><td>3%</td><td>3%</td></tr>
       <tr><td>3</td><td>5%</td><td>5%</td></tr>
@@ -94,38 +110,49 @@
       <tr><td>12</td><td>30%</td><td>30%</td></tr>
     </table>
 
-    <h2>🎁 NFT за срок</h2>
+    <p class="subtitle-draft">
+      Final APR/APY values and exact formulas will be confirmed in the smart contracts at launch.
+    </p>
+
+    <h2>🎁 NFTs for completed lock periods</h2>
+    <p>For long-term staking, additional NFT rewards are planned:</p>
     <ul>
-      <li>3 месяца — 🎉 обычный NFT</li>
-      <li>6 месяцев — 🟦 редкий NFT</li>
-      <li>9 месяцев — 🟪 легендарный NFT</li>
-      <li>12 месяцев — 🟨 эпический NFT</li>
+      <li>3 months — 🎉 basic NFT</li>
+      <li>6 months — 🟦 rare NFT</li>
+      <li>9 months — 🟪 legendary NFT</li>
+      <li>12 months — 🟨 epic NFT</li>
     </ul>
-    <p>❗ NFT выдаются только если срок был соблюдён полностью.</p>
+    <p>❗ NFTs are issued only if the full lock period is completed without early unstake.</p>
 
-    <h2 class="alert">⚠️ Штрафы при раннем анстейке</h2>
+    <h2 class="alert">⚠ Penalties for early unstake (planned logic)</h2>
     <ul>
-      <li>🔻 <b>Штраф вычитается из вашего основного стейка</b></li>
-      <li>❌ Награды не начисляются</li>
-      <li>❌ NFT не выдаются</li>
+      <li>🔻 <b>The penalty is taken from your staked principal</b> (not only from rewards).</li>
+      <li>❌ No staking rewards are paid for early unstake.</li>
+      <li>❌ No NFTs are issued if you unlock before the end of the chosen period.</li>
     </ul>
 
-    <h2>⏳ Что если не забрать вовремя?</h2>
-    <p>После окончания срока у вас есть <b>180 дней</b>, чтобы забрать IBITI, награды и NFT.</p>
-    <p class="alert">Если не забрали вовремя — всё <b>безвозвратно уходит в казну</b>.</p>
+    <h2>⏳ What if you don’t claim in time?</h2>
+    <p>
+      After the lock period ends, you will have <b>180 days</b> to claim your IBITI,
+      staking rewards and NFTs.
+    </p>
+    <p class="alert">
+      If you do not claim within 180 days, the entire amount (principal, rewards and NFTs)
+      is planned to be transferred <b>irreversibly to the treasury</b> according to the protocol rules.
+    </p>
 
-    <h2>📌 Советы</h2>
+    <h2>📌 Tips for future stakers</h2>
     <ul class="tips">
-      <li>Выбирайте 3, 6, 9 или 12 месяцев, чтобы получить NFT</li>
-      <li>Не анстейкайте раньше срока — вы потеряете и награду, и часть стейка</li>
-      <li>Ставьте напоминание, чтобы не забыть вывести IBITI вовремя</li>
+      <li>Choose 3, 6, 9 or 12 months if you want to receive NFTs in addition to rewards.</li>
+      <li>Avoid early unstake — you will lose both the reward and part of the staked amount.</li>
+      <li>Set a reminder for the end of your lock period plus 180 days to claim in time.</li>
     </ul>
 
     <footer>
       <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
       <p>
-        <a href="privacy.html">Политика конфиденциальности</a> |
-        <a href="terms.html">Пользовательское соглашение</a>
+        <a href="privacy.html">Privacy Policy</a> |
+        <a href="terms.html">Terms of Use</a>
       </p>
       <p>
         <a href="https://twitter.com/IBITIcoin" target="_blank">Twitter</a> |
