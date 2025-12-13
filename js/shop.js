@@ -1,5 +1,5 @@
 // js/shop.js
-// Витрина магазина: продаём красиво, покупка фактически идёт через PancakeSwap
+// Store showcase: visual selling, real purchase happens on PancakeSwap
 
 const PANCAKE_SWAP_URL =
   "https://pancakeswap.finance/swap?chain=bsc&" +
@@ -8,19 +8,17 @@ const PANCAKE_SWAP_URL =
 
 let currentProductId = null;
 
-// --- Открытие/закрытие модалки покупки ---
+// ---------- Open / close purchase modal ----------
 
 function openPurchaseModal(productId) {
-  // 🔁 Для NFT просто переходим на страницу с галереей
+  // For NFT we simply redirect to NFT gallery
   if (productId === "NFT") {
-    // в этой же вкладке
-    window.location.href = "nft.html";
-    // если хочешь в новой вкладке:
-    // window.open("nft.html", "_blank");
+    window.location.href = "nft.html";     // same tab
+    // window.open("nft.html", "_blank");  // or new tab
     return;
   }
 
-  // ниже — логика только для IBITIcoin
+  // Below is logic only for IBITIcoin
   currentProductId = productId;
 
   const modal       = document.getElementById("purchaseModal");
@@ -30,21 +28,20 @@ function openPurchaseModal(productId) {
   const confirmBtn  = document.getElementById("confirmBtn");
 
   if (!modal || !titleEl || !amountInput || !tokenSelect || !confirmBtn) {
-    console.warn("purchase modal elements missing");
+    console.warn("shop.js: purchase modal elements are missing");
     return;
   }
 
   if (productId === "IBITIcoin") {
-    titleEl.textContent = "Покупка IBITIcoin через PancakeSwap";
+    titleEl.textContent = "Buy IBITIcoin via PancakeSwap";
   } else {
-    titleEl.textContent = "Покупка";
+    titleEl.textContent = "Purchase";
   }
 
-  amountInput.value = "";
-  tokenSelect.value = "";
-  confirmBtn.disabled = true;
-
-  modal.style.display = "block";
+  amountInput.value     = "";
+  tokenSelect.value     = "";
+  confirmBtn.disabled   = true;
+  modal.style.display   = "block";
 }
 
 function closePurchaseModal() {
@@ -66,12 +63,10 @@ function updateConfirmButton() {
 
 function handleModalBackgroundClick(e) {
   const modal = document.getElementById("purchaseModal");
-  if (e.target === modal) {
-    closePurchaseModal();
-  }
+  if (e.target === modal) closePurchaseModal();
 }
 
-// --- Основная логика формы покупки ---
+// ---------- Main purchase form logic ----------
 
 document.addEventListener("DOMContentLoaded", () => {
   const modal       = document.getElementById("purchaseModal");
@@ -84,73 +79,67 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  amountInput.addEventListener("input", updateConfirmButton);
+  amountInput.addEventListener("input",  updateConfirmButton);
   tokenSelect.addEventListener("change", updateConfirmButton);
-
   modal.addEventListener("click", handleModalBackgroundClick);
 
   form.addEventListener("submit", (evt) => {
     evt.preventDefault();
 
-    const amount = document.getElementById("nftAmount").value;
-    const token  = document.getElementById("paymentToken").value;
+    const amount = amountInput.value;
+    const token  = tokenSelect.value;
 
     if (!amount || Number(amount) <= 0) {
       if (window.Swal) {
-        Swal.fire("Ошибка", "Введите количество больше нуля.", "error");
+        Swal.fire("Error", "Enter an amount greater than zero.", "error");
       } else {
-        alert("Введите количество больше нуля.");
+        alert("Enter an amount greater than zero.");
       }
       return;
     }
 
     if (!token) {
       if (window.Swal) {
-        Swal.fire("Ошибка", "Выберите способ оплаты.", "error");
+        Swal.fire("Error", "Select a payment method.", "error");
       } else {
-        alert("Выберите способ оплаты.");
+        alert("Select a payment method.");
       }
       return;
     }
 
     if (token !== "USDT") {
+      const msg = "Currently only payment in USDT on PancakeSwap is supported.";
       if (window.Swal) {
-        Swal.fire(
-          "Недоступно",
-          "Сейчас доступна только оплата через USDT на PancakeSwap.",
-          "info"
-        );
+        Swal.fire("Not available", msg, "info");
       } else {
-        alert("Сейчас доступна только оплата через USDT на PancakeSwap.");
+        alert(msg);
       }
       return;
     }
 
     const msgHtml = `
-      <p>Мы не берём средства на сайт. Покупка происходит напрямую в <b>PancakeSwap</b>.</p>
-      <p><b>Что делать дальше:</b></p>
-      <p>1. В открывшейся вкладке подключите свой кошелёк в сети <b>BNB Smart Chain</b>.</p>
-      <p>2. Выберите пару <b>USDT → IBITI</b> (она уже будет подставлена).</p>
-      <p>3. Введите сумму в USDT (например, <b>${amount}</b>) и нажмите <b>Swap</b>.</p>
-      <p>4. Подтвердите транзакцию в кошельке — IBITI появятся у вас на балансе.</p>
+      <p>We never take your funds to this website. The purchase is executed directly on <b>PancakeSwap</b>.</p>
+      <p><b>Next steps:</b></p>
+      <p>1. In the new tab connect your wallet on <b>BNB Smart Chain</b>.</p>
+      <p>2. Make sure the pair <b>USDT → IBITI</b> is selected (it will be pre-filled).</p>
+      <p>3. Enter the amount in USDT (for example, <b>${amount}</b>) and click <b>Swap</b>.</p>
+      <p>4. Confirm the transaction in your wallet — IBITI will appear on your balance.</p>
     `;
 
     if (window.Swal) {
       Swal.fire({
         icon: "info",
-        title: "Покупка через PancakeSwap",
+        title: "Purchase via PancakeSwap",
         html: msgHtml,
-        confirmButtonText: "Открыть PancakeSwap",
+        confirmButtonText: "Open PancakeSwap",
         showCancelButton: true,
-        cancelButtonText: "Отмена"
+        cancelButtonText: "Cancel"
       }).then((res) => {
-        if (res.isConfirmed) {
-          window.open(PANCAKE_SWAP_URL, "_blank");
-        }
+        if (res.isConfirmed) window.open(PANCAKE_SWAP_URL, "_blank");
       });
     } else {
       const ok = confirm(
-        "Покупка IBITI выполняется через PancakeSwap.\n\nОткрыть официальный пул IBITI/USDT?"
+        "IBITI purchase is done on PancakeSwap.\n\nOpen the official IBITI/USDT pool?"
       );
       if (ok) window.open(PANCAKE_SWAP_URL, "_blank");
     }
@@ -159,7 +148,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Делаем функции глобальными для inline-обработчиков в HTML
-window.openPurchaseModal = openPurchaseModal;
+// Make functions global for inline HTML handlers
+window.openPurchaseModal  = openPurchaseModal;
 window.closePurchaseModal = closePurchaseModal;
-
