@@ -333,14 +333,13 @@
     });
   </script>
 
-  <!-- 🎄 Xmas: Garland (wire+sag) + Snow -->
-<script>
+  <script>
 (() => {
   // Включать только в декабре (если хочешь всегда — закомментируй 2 строки ниже)
   const m = new Date().getMonth(); // 0=янв ... 11=дек
   if (m !== 11) return;
 
-  // ===================== GARLAND (wire + bulbs on curve) =====================
+  // ===================== GARLAND (top + chaotic sag) =====================
   const garland = document.getElementById("garland");
 
   function buildGarland() {
@@ -348,38 +347,53 @@
 
     // настройки
     const colors = ["#ff5252","#39d98a","#4dabff","#ffd86a","#c77dff","#ff7a00"];
-    const baseY  = 34;   // высота провода
-    const sag    = 28;   // провес (увеличь до 36 если хочешь сильнее)
-    const step   = 44;   // расстояние между лампами (36 = чаще)
-    const extraW = 1.12; // ширина "за края"
+    const baseY  = 8;     // почти в самый верх
+    const sag    = 24;    // общий прогиб
+    const chaosA = 12;    // хаотичность прогиба (увеличь до 16 если надо)
+    const step   = 40;    // расстояние ламп (меньше = больше ламп)
+    const extraW = 1.12;  // ширина “за края”
 
-    // чистим
+    // очистка
     garland.innerHTML = "";
 
-    // реальные размеры
+    // размеры
     const w = Math.max(window.innerWidth, 900);
     const totalW = w * extraW;
+    const startX = -w * 0.06;
 
-    // ---- SVG wire ----
+    // --- плавный хаотичный шум (без дерганья) ---
+    const knots = Array.from({ length: 9 }, () => (Math.random() * 2 - 1));
+    const smoothstep = (x) => x * x * (3 - 2 * x);
+    const noise1D = (t) => {
+      const n = knots.length - 1;
+      const x = t * n;
+      const i = Math.floor(x);
+      const f = smoothstep(x - i);
+      const a = knots[Math.max(0, Math.min(n, i))];
+      const b = knots[Math.max(0, Math.min(n, i + 1))];
+      return a + (b - a) * f; // ~[-1..1]
+    };
+
+    // --- SVG wire ---
     const svgNS = "http://www.w3.org/2000/svg";
     const svg = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("viewBox", `0 0 ${totalW} 120`);
+    svg.setAttribute("viewBox", `0 0 ${totalW} 110`);
     svg.setAttribute("preserveAspectRatio", "none");
 
     const path = document.createElementNS(svgNS, "path");
     path.setAttribute("class", "wire");
 
-    // строим гладкую дугу + чуть "жизни"
+    // точки провода
     const pts = [];
-    const n = Math.floor(totalW / 40);
-    for (let i = 0; i <= n; i++) {
-      const t = i / n;
+    const nPts = Math.floor(totalW / 40);
+    for (let i = 0; i <= nPts; i++) {
+      const t = i / nPts;
       const x = t * totalW;
-      const y = baseY + Math.sin(t * Math.PI) * sag + (Math.random() * 2 - 1);
+      const y = baseY + Math.sin(t * Math.PI) * sag + noise1D(t) * chaosA;
       pts.push({ x, y });
     }
 
-    // сглаживание Catmull-Rom -> Bezier
+    // Catmull-Rom -> Bezier
     let d = `M ${pts[0].x} ${pts[0].y}`;
     for (let i = 1; i < pts.length - 2; i++) {
       const p0 = pts[i - 1], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2];
@@ -393,45 +407,46 @@
     svg.appendChild(path);
     garland.appendChild(svg);
 
-    // ---- Bulbs ----
+    // --- Bulbs ---
     const bulbsCount = Math.max(18, Math.floor(totalW / step));
-    const startX = -w * 0.06; // из-за left/right:-6vw
-
     for (let i = 0; i < bulbsCount; i++) {
       const t = i / (bulbsCount - 1);
 
-      // позиция по дуге (быстро, без тяжелой математики)
-      const x = startX + t * totalW;            // px относительно окна
-      const wireY = baseY + Math.sin(t * Math.PI) * sag;
+      const x = startX + t * totalW;
+      const wireY = baseY + Math.sin(t * Math.PI) * sag + noise1D(t) * chaosA;
 
-      const b = document.createElement("span");
-      b.className = "bulb";
+      const bulb = document.createElement("span");
+      bulb.className = "bulb";
 
-      // цвет
       const col = colors[i % colors.length];
-      b.style.setProperty("--c", col);
+      bulb.style.setProperty("--c", col);
+      bulb.style.setProperty("--blink", (1.2 + Math.random() * 1.6) + "s");
+      bulb.style.setProperty("--delay", (Math.random() * 1.2) + "s");
 
-      // небольшой рандом размера и "свиса"
-      const sizeJ = (Math.random() * 2 - 1);
-      b.style.width  = (14 + sizeJ) + "px";
-      b.style.height = (22 + sizeJ) + "px";
+      // лампа чуть ниже провода (но высоко, почти у самого верха)
+      bulb.style.left = x + "px";
+      bulb.style.top  = (wireY + 18 + (Math.random() * 2 - 1)) + "px";
 
-      // вешаем лампу чуть ниже провода
-      b.style.left = x + "px";
-      b.style.top  = (wireY + 18 + (Math.random() * 2 - 1)) + "px";
+      // внутрянка: ореол + нитка + колпачок
+      const halo = document.createElement("span");
+      halo.className = "halo";
+      const cord = document.createElement("span");
+      cord.className = "cord";
+      const cap = document.createElement("span");
+      cap.className = "cap";
 
-      // не синхронное мигание
-      b.style.setProperty("--blink", (1.2 + Math.random() * 1.6) + "s");
-      b.style.setProperty("--delay", (Math.random() * 1.2) + "s");
+      bulb.appendChild(halo);
+      bulb.appendChild(cord);
+      bulb.appendChild(cap);
 
-      garland.appendChild(b);
+      garland.appendChild(bulb);
     }
   }
 
   buildGarland();
   window.addEventListener("resize", buildGarland, { passive: true });
 
-  // =============================== SNOW ======================================
+  // =============================== SNOW ===============================
   const canvas = document.getElementById("snowCanvas");
   if (!canvas) return;
 
@@ -439,7 +454,7 @@
   let w = 0, h = 0, dpr = 1;
 
   const flakes = [];
-  const FLAKE_COUNT = 120; // чуть легче/чище чем 140
+  const FLAKE_COUNT = 120; // 80 легче / 160 плотнее
 
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -448,7 +463,6 @@
 
     canvas.width  = Math.floor(w * dpr);
     canvas.height = Math.floor(h * dpr);
-
     canvas.style.width = w + "px";
     canvas.style.height = h + "px";
 
@@ -461,10 +475,10 @@
       y: resetY ? -20 - Math.random() * h : Math.random() * h,
       r: 1 + Math.random() * 2.6,
       vy: 0.8 + Math.random() * 1.6,
-      vx: -0.4 + Math.random() * 0.8,
+      vx: -0.5 + Math.random() * 1.0,
       wobble: Math.random() * Math.PI * 2,
       wobbleSpeed: 0.01 + Math.random() * 0.02,
-      opacity: 0.35 + Math.random() * 0.55
+      opacity: 0.30 + Math.random() * 0.55
     };
   }
 
@@ -485,7 +499,7 @@
       f.x += (f.vx + Math.sin(f.wobble) * 0.25) * (dt / 16);
       f.y += f.vy * (dt / 16);
 
-      if (f.y > h + 10 || f.x < -20 || f.x > w + 20) {
+      if (f.y > h + 10 || f.x < -30 || f.x > w + 30) {
         Object.assign(f, spawnFlake(true));
       }
 
@@ -509,5 +523,6 @@
 </script>
 </body>
 </html>
+
 
 
