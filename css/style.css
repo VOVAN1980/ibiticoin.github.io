@@ -1027,7 +1027,7 @@ html, body {
 }
 
 /* =========================================================
-   🎄 XMAS OVERLAY — ONE CLEAN BLOCK (Garland + Snow + Trees)
+   🎄 XMAS OVERLAY — CLEAN BLOCK (Garland + Snow + Trees)
    Вставить в КОНЕЦ style.css и удалить старые Xmas-блоки
    ========================================================= */
 
@@ -1036,93 +1036,98 @@ html, body {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 900;              /* ниже модалок (у тебя 1000), выше контента */
+  z-index: 900; /* ниже модалок (1000), выше контента */
 }
 
 /* ---------- GARLAND (верхняя гирлянда) ---------- */
 .garland{
   position: fixed;
-  left: -6vw;
-  right: -6vw;
-  top: -26px;                /* максимально вверх */
-  height: 110px;
+  top: 6px;                 /* чуть ниже (не режется краем) */
+  left: 0;
+  right: 0;
+  height: 120px;
+  padding: 0 18px;          /* важно: края не убегают за экран */
+  box-sizing: border-box;
+
   pointer-events: none;
   z-index: 910;
-  overflow: visible;
-  filter: drop-shadow(0 10px 18px rgba(0,0,0,.55));
+
+  overflow: visible;        /* чтобы ореолы не обрезались */
+  filter: none;             /* без “тумана” на всей гирлянде */
 }
 
-/* SVG провод внутри #garland (если ты рисуешь провод через svg) */
+/* SVG провод внутри #garland */
 .garland svg{
-  position:absolute;
-  inset: 0;
-  width: 112vw;
-  height: 110px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+
+  width: 100%;
+  height: 120px;
   overflow: visible;
 }
+
 .garland .wire{
   fill: none;
   stroke: rgba(10,10,10,.92);
   stroke-width: 4;
   stroke-linecap: round;
   stroke-linejoin: round;
-  filter: drop-shadow(0 2px 2px rgba(0,0,0,.7));
+  filter: none;             /* провод должен быть четкий */
 }
 
 /* Лампочка */
 .garland .bulb{
-  --c: #ffd86a;               /* цвет лампы из JS */
+  --c: #ffd86a;
   position: absolute;
-  width: 18px;
-  height: 30px;
+
+  width: 16px;
+  height: 28px;
   transform: translate(-50%, -50%);
   border-radius: 70% 70% 92% 92% / 55% 55% 98% 98%;
-  opacity: .98;
+  opacity: 1;
   z-index: 2;
 
   /* стекло + цвет */
   background:
-    radial-gradient(circle at 35% 25%,
-      rgba(255,255,255,.95) 0 12%,
-      rgba(255,255,255,.35) 13% 24%,
-      rgba(255,255,255,0) 25% 100%),
-    radial-gradient(circle at 60% 80%,
-      rgba(0,0,0,.22) 0 55%,
-      rgba(0,0,0,0) 56% 100%),
+    radial-gradient(circle at 35% 22%,
+      rgba(255,255,255,.95) 0 10%,
+      rgba(255,255,255,.30) 11% 20%,
+      rgba(255,255,255,0) 21% 100%),
     linear-gradient(to bottom,
-      rgba(255,255,255,.16),
-      rgba(0,0,0,.24)),
+      rgba(255,255,255,.14),
+      rgba(0,0,0,.18)),
     var(--c);
 
-  border: 1px solid rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.22);
+
+  /* аккуратная подсветка, без каши */
+  box-shadow:
+    0 0 6px rgba(0,0,0,.25),
+    0 0 12px color-mix(in srgb, var(--c) 60%, transparent);
 
   animation: garlandBlink var(--blink, 1.6s) infinite ease-in-out;
   animation-delay: var(--delay, 0s);
 }
 
-/* Ореол-пятно (как на твоём PNG) */
+/* Ореол-пятно (не туман!) */
 .garland .bulb .halo{
   position: absolute;
   left: 50%;
-  top: 62%;
-  width: 78px;
-  height: 78px;
+  top: 64%;
+  width: 52px;
+  height: 52px;
   transform: translate(-50%, -50%);
   border-radius: 999px;
 
-  background:
-    radial-gradient(circle,
-      rgba(255,255,255,.18) 0 10%,
-      rgba(255,255,255,.08) 11% 18%,
-      rgba(0,0,0,0) 19% 100%),
-    radial-gradient(circle,
-      rgba(0,0,0,0) 0 12%,
-      var(--c) 18% 34%,
-      rgba(0,0,0,0) 66%);
+  background: radial-gradient(circle,
+    color-mix(in srgb, var(--c) 55%, transparent) 0 42%,
+    rgba(0,0,0,0) 72%);
 
-  filter: blur(1.2px);
-  opacity: .95;
-  z-index: -1;               /* под лампой */
+  opacity: .75;
+  filter: none;            /* ключ: не размываем всё в кашу */
+  z-index: -1;
 }
 
 /* Нитка */
@@ -1146,12 +1151,12 @@ html, body {
   height: 8px;
   border-radius: 2px 2px 5px 5px;
   background: rgba(70,70,70,.96);
-  box-shadow: 0 2px 6px rgba(0,0,0,.5);
+  box-shadow: 0 2px 6px rgba(0,0,0,.45);
 }
 
 @keyframes garlandBlink{
-  0%,100%{ filter: brightness(1);   opacity:.98; }
-  50%    { filter: brightness(.60); opacity:.78; }
+  0%,100%{ filter: brightness(1); }
+  50%    { filter: brightness(.70); }
 }
 
 /* ---------- SNOW CANVAS ---------- */
@@ -1161,7 +1166,7 @@ html, body {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 905;              /* ниже гирлянды */
+  z-index: 905; /* ниже гирлянды */
 }
 
 /* ---------- TREES (по бокам) ---------- */
@@ -1172,7 +1177,7 @@ html, body {
   height: auto;
   opacity: .95;
   pointer-events: none;
-  z-index: 908;              /* над снегом, чуть ниже гирлянды */
+  z-index: 908;
   filter: drop-shadow(0 12px 22px rgba(0,0,0,.65));
 }
 
@@ -1188,7 +1193,6 @@ html, body {
   50%    { transform: rotate( 1.2deg); }
 }
 
-/* Цвета SVG-ёлки (чтобы не было чёрных гигантов) */
 .tree-body{ fill: #0b7a3b; }
 .tree-trunk{ fill: #6b3f22; }
 
@@ -1214,10 +1218,16 @@ html, body {
 
 /* ---------- Mobile ---------- */
 @media (max-width: 680px){
-  .garland{ top: -30px; height: 96px; }
-  .garland svg{ height: 96px; }
-  .garland .bulb{ width: 14px; height: 24px; }
-  .garland .bulb .halo{ width: 60px; height: 60px; }
+  .garland{
+    top: 4px;              /* тоже чуть ниже */
+    height: 98px;
+    padding: 0 12px;       /* меньше края на мобиле */
+  }
+  .garland svg{ height: 98px; }
+
+  .garland .bulb{ width: 13px; height: 23px; }
+  .garland .bulb .halo{ width: 40px; height: 40px; opacity:.7; }
+
   .xmas-tree{ display:none; }
 }
 
