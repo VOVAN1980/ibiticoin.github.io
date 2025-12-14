@@ -1026,47 +1026,53 @@ html, body {
   z-index: 2;
 }
 
-/* ===================== 🎄 XMAS OVERLAY ===================== */
+/* =========================================================
+   🎄 XMAS OVERLAY — ONE CLEAN BLOCK (Garland + Snow + Trees)
+   Вставить в КОНЕЦ style.css и удалить старые Xmas-блоки
+   ========================================================= */
+
+/* Общий слой */
 .xmas-overlay{
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 5000;
+  z-index: 900;              /* ниже модалок (у тебя 1000), выше контента */
 }
 
-/* ===================== GARLAND (TOP + CHAOS SAG) ===================== */
+/* ---------- GARLAND (верхняя гирлянда) ---------- */
 .garland{
   position: fixed;
   left: -6vw;
   right: -6vw;
-  top: -24px;          /* максимально вверх */
+  top: -26px;                /* максимально вверх */
   height: 110px;
   pointer-events: none;
-  z-index: 5200;
+  z-index: 910;
   overflow: visible;
-  filter: drop-shadow(0 8px 16px rgba(0,0,0,.55));
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.55));
 }
 
-/* SVG провод */
+/* SVG провод внутри #garland (если ты рисуешь провод через svg) */
 .garland svg{
   position:absolute;
-  inset:0;
-  width:112vw;
-  height:110px;
+  inset: 0;
+  width: 112vw;
+  height: 110px;
   overflow: visible;
 }
 .garland .wire{
   fill: none;
-  stroke: rgba(12,12,12,.95);
+  stroke: rgba(10,10,10,.92);
   stroke-width: 4;
   stroke-linecap: round;
   stroke-linejoin: round;
   filter: drop-shadow(0 2px 2px rgba(0,0,0,.7));
 }
 
-/* Лампочка (контейнер) */
+/* Лампочка */
 .garland .bulb{
-  position:absolute;
+  --c: #ffd86a;               /* цвет лампы из JS */
+  position: absolute;
   width: 18px;
   height: 30px;
   transform: translate(-50%, -50%);
@@ -1084,9 +1090,9 @@ html, body {
       rgba(0,0,0,.22) 0 55%,
       rgba(0,0,0,0) 56% 100%),
     linear-gradient(to bottom,
-      rgba(255,255,255,.18),
-      rgba(0,0,0,.22)),
-    var(--c, #ffd86a);
+      rgba(255,255,255,.16),
+      rgba(0,0,0,.24)),
+    var(--c);
 
   border: 1px solid rgba(255,255,255,.18);
 
@@ -1094,33 +1100,36 @@ html, body {
   animation-delay: var(--delay, 0s);
 }
 
-/* Ореол-пятно (главная магия “как на картинке”) */
+/* Ореол-пятно (как на твоём PNG) */
 .garland .bulb .halo{
-  position:absolute;
-  left:50%;
-  top:62%;
-  width: 74px;
-  height: 74px;
+  position: absolute;
+  left: 50%;
+  top: 62%;
+  width: 78px;
+  height: 78px;
   transform: translate(-50%, -50%);
   border-radius: 999px;
+
   background:
     radial-gradient(circle,
-      rgba(255,255,255,.16) 0 10%,
+      rgba(255,255,255,.18) 0 10%,
       rgba(255,255,255,.08) 11% 18%,
       rgba(0,0,0,0) 19% 100%),
     radial-gradient(circle,
-      var(--c, #ffd86a) 0 32%,
+      rgba(0,0,0,0) 0 12%,
+      var(--c) 18% 34%,
       rgba(0,0,0,0) 66%);
-  filter: blur(1.1px);
+
+  filter: blur(1.2px);
   opacity: .95;
-  z-index: -1; /* под лампой */
+  z-index: -1;               /* под лампой */
 }
 
 /* Нитка */
 .garland .bulb .cord{
-  position:absolute;
-  left:50%;
-  top:-18px;
+  position: absolute;
+  left: 50%;
+  top: -18px;
   width: 2px;
   height: 10px;
   transform: translateX(-50%);
@@ -1130,8 +1139,10 @@ html, body {
 
 /* Колпачок */
 .garland .bulb .cap{
-  position:absolute;
-  top:-8px; left:2px; right:2px;
+  position: absolute;
+  top: -8px;
+  left: 2px;
+  right: 2px;
   height: 8px;
   border-radius: 2px 2px 5px 5px;
   background: rgba(70,70,70,.96);
@@ -1139,31 +1150,81 @@ html, body {
 }
 
 @keyframes garlandBlink{
-  0%,100%{ filter: brightness(1); opacity:.98; }
-  50%    { filter: brightness(.6); opacity:.78; }
+  0%,100%{ filter: brightness(1);   opacity:.98; }
+  50%    { filter: brightness(.60); opacity:.78; }
 }
 
-/* ===================== SNOW CANVAS ===================== */
+/* ---------- SNOW CANVAS ---------- */
 #snowCanvas{
   position: fixed;
   inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 5050;
+  pointer-events: none;
+  z-index: 905;              /* ниже гирлянды */
 }
 
-/* Mobile */
+/* ---------- TREES (по бокам) ---------- */
+.xmas-tree{
+  position: fixed;
+  bottom: 16px;
+  width: 160px;
+  height: auto;
+  opacity: .95;
+  pointer-events: none;
+  z-index: 908;              /* над снегом, чуть ниже гирлянды */
+  filter: drop-shadow(0 12px 22px rgba(0,0,0,.65));
+}
+
+.tree-left{ left: 10px; }
+.tree-right{ right: 10px; transform: scaleX(-1); }
+
+.tree-sway{
+  transform-origin: 50% 100%;
+  animation: sway 3.6s ease-in-out infinite;
+}
+@keyframes sway{
+  0%,100%{ transform: rotate(-1.2deg); }
+  50%    { transform: rotate( 1.2deg); }
+}
+
+/* Цвета SVG-ёлки (чтобы не было чёрных гигантов) */
+.tree-body{ fill: #0b7a3b; }
+.tree-trunk{ fill: #6b3f22; }
+
+.tree-star{
+  fill: #ffd86a;
+  animation: starPulse 1.8s ease-in-out infinite;
+}
+@keyframes starPulse{
+  0%,100%{ filter: brightness(1); opacity: .95; }
+  50%    { filter: brightness(1.7); opacity: 1; }
+}
+
+.tree-light{ opacity: .95; }
+.tree-light.l1{ fill:#ff5252; animation: tw 1.2s infinite; }
+.tree-light.l2{ fill:#39d98a; animation: tw 1.4s infinite; }
+.tree-light.l3{ fill:#4dabff; animation: tw 1.6s infinite; }
+.tree-light.l4{ fill:#c77dff; animation: tw 1.8s infinite; }
+
+@keyframes tw{
+  0%,100%{ filter: brightness(.8); opacity: .7; }
+  50%    { filter: brightness(1.8); opacity: 1; }
+}
+
+/* ---------- Mobile ---------- */
 @media (max-width: 680px){
-  .garland{
-    top: -28px;
-    height: 96px;
-  }
+  .garland{ top: -30px; height: 96px; }
   .garland svg{ height: 96px; }
   .garland .bulb{ width: 14px; height: 24px; }
   .garland .bulb .halo{ width: 60px; height: 60px; }
+  .xmas-tree{ display:none; }
 }
 
-/* Reduced motion */
+/* ---------- Accessibility ---------- */
 @media (prefers-reduced-motion: reduce){
-  .garland .bulb{ animation: none !important; }
+  .garland .bulb,
+  .tree-sway,
+  .tree-star,
+  .tree-light{ animation: none !important; }
 }
