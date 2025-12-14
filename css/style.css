@@ -1195,7 +1195,3 @@ html, body {
 @media (prefers-reduced-motion: reduce){
   .tree-sway, .tree-star, .tree-light, .garland .bulb{ animation: none !important; }
 }
-
-
-
-
