@@ -335,31 +335,39 @@
 
   <script>
 (() => {
-  // Включать только в декабре (если хочешь всегда — закомментируй 2 строки ниже)
+  // Только декабрь (хочешь всегда — закомментируй 2 строки ниже)
   const m = new Date().getMonth(); // 0=янв ... 11=дек
   if (m !== 11) return;
 
-  // ===================== GARLAND (top + chaotic sag) =====================
+  // ===================== GARLAND (raised center + smooth chaos) =====================
   const garland = document.getElementById("garland");
+
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
 
   function buildGarland() {
     if (!garland) return;
 
     // настройки
     const colors = ["#ff5252","#39d98a","#4dabff","#ffd86a","#c77dff","#ff7a00"];
-    const baseY  = 8;     // почти в самый верх
-    const sag    = 24;    // общий прогиб
-    const chaosA = 12;    // хаотичность прогиба (увеличь до 16 если надо)
-    const step   = 40;    // расстояние ламп (меньше = больше ламп)
-    const extraW = 1.12;  // ширина “за края”
+
+    const wireBaseY   = 14;    // базовая высота провода (чуть ниже верхнего края)
+    const edgeDrop    = 10;    // края ниже (держится “за край”)
+    const sagUp       = -18;   // !!! центр ВВЕРХ: отрицательное значение (подними: -24 / -30)
+    const chaosA      = 10;    // хаотичность (8-14 норм)
+    const bulbDrop    = 18;    // лампа ниже провода
+    const minGap      = 34;    // расстояние между лампами (меньше = больше ламп)
 
     // очистка
     garland.innerHTML = "";
 
-    // размеры
-    const w = Math.max(window.innerWidth, 900);
-    const totalW = w * extraW;
-    const startX = -w * 0.06;
+    // размеры именно контейнера с padding
+    const cs   = getComputedStyle(garland);
+    const padL = parseFloat(cs.paddingLeft)  || 0;
+    const padR = parseFloat(cs.paddingRight) || 0;
+
+    const rect = garland.getBoundingClientRect();
+    const innerW = Math.max(320, rect.width - padL - padR);
+    const H = 120; // высота SVG/зоны гирлянды (под твой CSS)
 
     // --- плавный хаотичный шум (без дерганья) ---
     const knots = Array.from({ length: 9 }, () => (Math.random() * 2 - 1));
@@ -369,28 +377,33 @@
       const x = t * n;
       const i = Math.floor(x);
       const f = smoothstep(x - i);
-      const a = knots[Math.max(0, Math.min(n, i))];
-      const b = knots[Math.max(0, Math.min(n, i + 1))];
+      const a = knots[clamp(i, 0, n)];
+      const b = knots[clamp(i + 1, 0, n)];
       return a + (b - a) * f; // ~[-1..1]
     };
 
     // --- SVG wire ---
     const svgNS = "http://www.w3.org/2000/svg";
     const svg = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("viewBox", `0 0 ${totalW} 110`);
+    svg.setAttribute("viewBox", `0 0 ${innerW} ${H}`);
     svg.setAttribute("preserveAspectRatio", "none");
 
     const path = document.createElementNS(svgNS, "path");
     path.setAttribute("class", "wire");
 
-    // точки провода
     const pts = [];
-    const nPts = Math.floor(totalW / 40);
+    const nPts = Math.floor(innerW / 40);
     for (let i = 0; i <= nPts; i++) {
       const t = i / nPts;
-      const x = t * totalW;
-      const y = baseY + Math.sin(t * Math.PI) * sag + noise1D(t) * chaosA;
-      pts.push({ x, y });
+      const x = t * innerW;
+
+      // ВАЖНО: центр вверх -> sagUp отрицательный
+      const y = wireBaseY
+              + edgeDrop
+              + Math.sin(t * Math.PI) * sagUp
+              + noise1D(t) * chaosA;
+
+      pts.push({ x, y: clamp(y, 6, H - 40) });
     }
 
     // Catmull-Rom -> Bezier
@@ -404,40 +417,37 @@
       d += ` C ${c1x} ${c1y}, ${c2x} ${c2y}, ${p2.x} ${p2.y}`;
     }
     path.setAttribute("d", d);
+
     svg.appendChild(path);
     garland.appendChild(svg);
 
     // --- Bulbs ---
-    const bulbsCount = Math.max(18, Math.floor(totalW / step));
+    const bulbsCount = Math.max(18, Math.floor(innerW / minGap));
     for (let i = 0; i < bulbsCount; i++) {
-      const t = i / (bulbsCount - 1);
+      const t = (bulbsCount === 1) ? 0.5 : i / (bulbsCount - 1);
 
-      const x = startX + t * totalW;
-      const wireY = baseY + Math.sin(t * Math.PI) * sag + noise1D(t) * chaosA;
+      const x = padL + t * innerW;
+      const wireY = wireBaseY
+                  + edgeDrop
+                  + Math.sin(t * Math.PI) * sagUp
+                  + noise1D(t) * chaosA;
 
       const bulb = document.createElement("span");
       bulb.className = "bulb";
 
       const col = colors[i % colors.length];
       bulb.style.setProperty("--c", col);
-      bulb.style.setProperty("--blink", (1.2 + Math.random() * 1.6) + "s");
+      bulb.style.setProperty("--blink", (1.0 + Math.random() * 1.4) + "s");
       bulb.style.setProperty("--delay", (Math.random() * 1.2) + "s");
 
-      // лампа чуть ниже провода (но высоко, почти у самого верха)
       bulb.style.left = x + "px";
-      bulb.style.top  = (wireY + 18 + (Math.random() * 2 - 1)) + "px";
+      bulb.style.top  = (clamp(wireY, 6, H - 60) + bulbDrop + (Math.random() * 2 - 1)) + "px";
 
-      // внутрянка: ореол + нитка + колпачок
-      const halo = document.createElement("span");
-      halo.className = "halo";
-      const cord = document.createElement("span");
-      cord.className = "cord";
-      const cap = document.createElement("span");
-      cap.className = "cap";
-
-      bulb.appendChild(halo);
-      bulb.appendChild(cord);
-      bulb.appendChild(cap);
+      // внутрянка
+      const halo = document.createElement("span"); halo.className = "halo";
+      const cord = document.createElement("span"); cord.className = "cord";
+      const cap  = document.createElement("span"); cap.className  = "cap";
+      bulb.append(halo, cord, cap);
 
       garland.appendChild(bulb);
     }
@@ -456,7 +466,7 @@
   const flakes = [];
   const FLAKE_COUNT = 120; // 80 легче / 160 плотнее
 
-  function resize() {
+  function resizeSnow() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
     w = Math.floor(window.innerWidth);
     h = Math.floor(window.innerHeight);
@@ -482,7 +492,7 @@
     };
   }
 
-  function init() {
+  function initSnow() {
     flakes.length = 0;
     for (let i = 0; i < FLAKE_COUNT; i++) flakes.push(spawnFlake(false));
   }
@@ -514,15 +524,10 @@
     requestAnimationFrame(tick);
   }
 
-  resize();
-  init();
+  resizeSnow();
+  initSnow();
   requestAnimationFrame(tick);
 
-  window.addEventListener("resize", () => { resize(); init(); }, { passive: true });
+  window.addEventListener("resize", () => { resizeSnow(); initSnow(); }, { passive: true });
 })();
 </script>
-</body>
-</html>
-
-
-
