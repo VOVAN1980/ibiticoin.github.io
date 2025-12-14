@@ -408,7 +408,8 @@
       b.className = "bulb";
 
       // цвет
-      b.style.color = colors[i % colors.length];
+      const col = colors[i % colors.length];
+      b.style.setProperty("--c", col);
 
       // небольшой рандом размера и "свиса"
       const sizeJ = (Math.random() * 2 - 1);
@@ -508,4 +509,5 @@
 </script>
 </body>
 </html>
+
 
