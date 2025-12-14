@@ -138,18 +138,23 @@ footer a:hover{text-decoration:underline}
    Они не дублируются и работают корректно.                                   */
 
 /* ---------- 10. MOBILE ≤ 640 PX --------------------------------------- */
-    /* Немного меньше “WHY CHOOSE” */
-    .hero-header h1{font-size:1.9rem}
-    .hero-header p {font-size:1rem}
+@media (max-width:640px){
 
-    /* Галерея нижних кнопок – 2 в ряд, на совсем узких – 1 */
-    .extra-buttons-section{gap:6px;padding:20px 0}
-    .extra-buttons-section .btn-small{flex:1 0 calc(50% - 12px)}
-    @media(max-width:380px){
-        .extra-buttons-section .btn-small{flex:1 0 100%}
-    }
+  /* Немного меньше “WHY CHOOSE” */
+  .hero-header h1{font-size:1.9rem}
+  .hero-header p {font-size:1rem}
 
-    /* --- (необязательно) дублируем верхние ссылки внизу ---
+  /* Галерея нижних кнопок – 2 в ряд */
+  .extra-buttons-section{gap:6px;padding:20px 0}
+  .extra-buttons-section .btn-small{flex:1 0 calc(50% - 12px)}
+}
+
+/* совсем узкие – 1 в ряд */
+@media (max-width:380px){
+  .extra-buttons-section .btn-small{flex:1 0 100%}
+}
+
+ /* --- (необязательно) дублируем верхние ссылки внизу ---
        <div class="mobile-nav">
             <a class="btn-small" href="index.html">Главная</a>
             <a class="btn-small" href="blog.html">Блог</a>
@@ -1133,4 +1138,5 @@ html, body {
 @media (prefers-reduced-motion: reduce){
   .tree-sway, .garland .bulb, .tree-star, .tree-light{ animation: none !important; }
 }
+
 
