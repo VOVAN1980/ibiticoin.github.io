@@ -331,8 +331,102 @@
         confirmButtonText: 'Got it'
       });
     });
-  </script>
+  <script>
+(() => {
+  // Включать только в декабре (убери этот блок если хочешь всегда)
+  const m = new Date().getMonth(); // 0=янв ... 11=дек
+  if (m !== 11) return;
+
+  // ---- Garland bulbs ----
+  const garland = document.getElementById("garland");
+  if (garland) {
+    const colors = ["#ff5252","#39d98a","#4dabff","#ffd86a","#c77dff"];
+    const bulbs = 34;
+    for (let i = 0; i < bulbs; i++) {
+      const b = document.createElement("span");
+      b.className = "bulb";
+      b.style.color = colors[i % colors.length];
+      const t = i / (bulbs - 1);
+      const curve = Math.sin(t * Math.PI) * 18;
+      const jitter = (Math.random() * 6 - 3);
+      b.style.setProperty("--drop", (curve + jitter) + "px");
+      b.style.setProperty("--blink", (1.0 + Math.random() * 1.2) + "s");
+      garland.appendChild(b);
+    }
+  }
+
+  // ---- Snow canvas ----
+  const canvas = document.getElementById("snowCanvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d", { alpha: true });
+
+  let w = 0, h = 0, dpr = 1;
+  const flakes = [];
+  const FLAKE_COUNT = 140; // 80 легче, 220 жирнее
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = Math.floor(window.innerWidth);
+    h = Math.floor(window.innerHeight);
+    canvas.width  = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+    canvas.style.width = w + "px";
+    canvas.style.height = h + "px";
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function spawnFlake(resetY = false) {
+    return {
+      x: Math.random() * w,
+      y: resetY ? -20 - Math.random() * h : Math.random() * h,
+      r: 1 + Math.random() * 2.6,
+      vy: 0.8 + Math.random() * 1.6,
+      vx: -0.4 + Math.random() * 0.8,
+      wobble: Math.random() * Math.PI * 2,
+      wobbleSpeed: 0.01 + Math.random() * 0.02,
+      opacity: 0.35 + Math.random() * 0.55
+    };
+  }
+
+  function init() {
+    flakes.length = 0;
+    for (let i = 0; i < FLAKE_COUNT; i++) flakes.push(spawnFlake(false));
+  }
+
+  let last = performance.now();
+  function tick(now) {
+    const dt = Math.min(33, now - last);
+    last = now;
+
+    ctx.clearRect(0, 0, w, h);
+
+    for (const f of flakes) {
+      f.wobble += f.wobbleSpeed * dt;
+      f.x += (f.vx + Math.sin(f.wobble) * 0.25) * (dt / 16);
+      f.y += f.vy * (dt / 16);
+
+      if (f.y > h + 10 || f.x < -20 || f.x > w + 20) {
+        Object.assign(f, spawnFlake(true));
+      }
+
+      ctx.globalAlpha = f.opacity;
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(tick);
+  }
+
+  resize();
+  init();
+  requestAnimationFrame(tick);
+  window.addEventListener("resize", () => { resize(); init(); }, { passive: true });
+})();
+</script>
 </body>
 </html>
+
 
 
