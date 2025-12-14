@@ -1021,3 +1021,116 @@ html, body {
   z-index: 2;
 }
 
+/* 🎄 Christmas overlay */
+.xmas-overlay{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999; /* у тебя modal 1000 — модалка будет выше, всё ок */
+}
+
+/* Garland */
+.garland{
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 78px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+  padding-top: 10px;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,.55));
+}
+.garland::before{
+  content:"";
+  position:absolute;
+  left: -5%;
+  right: -5%;
+  top: 30px;
+  height: 60px;
+  border-top: 3px solid rgba(255,210,90,.55);
+  border-radius: 0 0 80% 80%;
+  transform: rotate(-1deg);
+}
+.garland .bulb{
+  width: 12px;
+  height: 18px;
+  border-radius: 999px;
+  position: relative;
+  margin-top: 26px;
+  transform: translateY(calc(var(--drop, 0px)));
+  box-shadow: 0 0 12px currentColor;
+  animation: blink var(--blink, 1.4s) infinite steps(2, end);
+  opacity: .95;
+}
+.garland .bulb::before{
+  content:"";
+  position:absolute;
+  top: -6px; left: 2px; right: 2px;
+  height: 6px;
+  border-radius: 2px;
+  background: rgba(180,180,180,.9);
+  box-shadow: 0 2px 6px rgba(0,0,0,.35);
+}
+@keyframes blink{
+  0%, 100% { filter: brightness(1); opacity: .95; }
+  50%      { filter: brightness(.45); opacity: .55; }
+}
+
+/* Trees */
+.xmas-tree{
+  position: absolute;
+  bottom: 16px;
+  width: 160px;
+  height: auto;
+  filter: drop-shadow(0 12px 22px rgba(0,0,0,.65));
+  opacity: .95;
+}
+.tree-left{ left: 10px; }
+.tree-right{ right: 10px; transform: scaleX(-1); }
+
+.tree-sway{
+  transform-origin: 50% 100%;
+  animation: sway 3.6s ease-in-out infinite;
+}
+@keyframes sway{
+  0%,100%{ transform: rotate(-1.2deg); }
+  50%    { transform: rotate( 1.2deg); }
+}
+.tree-body{ fill: #0b7a3b; }
+.tree-trunk{ fill: #6b3f22; }
+.tree-star{
+  fill: #ffd86a;
+  animation: starPulse 1.8s ease-in-out infinite;
+}
+@keyframes starPulse{
+  0%,100%{ filter: brightness(1); opacity: .95; }
+  50%    { filter: brightness(1.7); opacity: 1; }
+}
+.tree-light{ opacity: .95; }
+.tree-light.l1{ fill:#ff5252; animation: tw 1.2s infinite; }
+.tree-light.l2{ fill:#39d98a; animation: tw 1.4s infinite; }
+.tree-light.l3{ fill:#4dabff; animation: tw 1.6s infinite; }
+.tree-light.l4{ fill:#c77dff; animation: tw 1.8s infinite; }
+@keyframes tw{
+  0%,100%{ filter: brightness(.8); opacity: .7; }
+  50%    { filter: brightness(1.8); opacity: 1; }
+}
+
+/* Snow */
+#snowCanvas{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 680px){
+  .xmas-tree{ display:none; }
+  .garland{ height: 64px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .tree-sway, .garland .bulb, .tree-star, .tree-light{ animation: none !important; }
+}
+
