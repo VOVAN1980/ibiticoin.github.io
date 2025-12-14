@@ -140,6 +140,45 @@
   </style>
 </head>
 <body>
+  <!-- 🎄 Christmas overlay -->
+<div id="xmasOverlay" class="xmas-overlay" aria-hidden="true">
+  <div id="garland" class="garland"></div>
+
+  <svg class="xmas-tree tree-left" viewBox="0 0 160 260" role="img">
+    <g class="tree-sway">
+      <polygon points="80,20 25,95 55,95 15,155 55,155 30,205 130,205 105,155 145,155 105,95 135,95"
+               class="tree-body"/>
+      <rect x="70" y="205" width="20" height="30" rx="4" class="tree-trunk"/>
+      <circle cx="55" cy="105" r="5" class="tree-light l1"/>
+      <circle cx="95" cy="115" r="5" class="tree-light l2"/>
+      <circle cx="70" cy="145" r="5" class="tree-light l3"/>
+      <circle cx="110" cy="155" r="5" class="tree-light l4"/>
+      <circle cx="60" cy="180" r="5" class="tree-light l2"/>
+      <circle cx="100" cy="185" r="5" class="tree-light l1"/>
+      <polygon points="80,10 86,24 101,25 89,35 93,49 80,41 67,49 71,35 59,25 74,24"
+               class="tree-star"/>
+    </g>
+  </svg>
+
+  <svg class="xmas-tree tree-right" viewBox="0 0 160 260" role="img">
+    <g class="tree-sway">
+      <polygon points="80,20 25,95 55,95 15,155 55,155 30,205 130,205 105,155 145,155 105,95 135,95"
+               class="tree-body"/>
+      <rect x="70" y="205" width="20" height="30" rx="4" class="tree-trunk"/>
+      <circle cx="55" cy="105" r="5" class="tree-light l3"/>
+      <circle cx="95" cy="115" r="5" class="tree-light l1"/>
+      <circle cx="70" cy="145" r="5" class="tree-light l4"/>
+      <circle cx="110" cy="155" r="5" class="tree-light l2"/>
+      <circle cx="60" cy="180" r="5" class="tree-light l1"/>
+      <circle cx="100" cy="185" r="5" class="tree-light l3"/>
+      <polygon points="80,10 86,24 101,25 89,35 93,49 80,41 67,49 71,35 59,25 74,24"
+               class="tree-star"/>
+    </g>
+  </svg>
+
+  <canvas id="snowCanvas"></canvas>
+</div>
+  
   <!-- Corner buttons -->
   <div class="corner-box corner-box-left">
     <a href="/">Home</a>
@@ -295,4 +334,5 @@
   </script>
 </body>
 </html>
+
 
