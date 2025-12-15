@@ -1241,3 +1241,39 @@ html, body {
   .tree-star,
   .tree-light{ animation: none !important; }
 }
+
+  #about, #team {
+  max-width: 900px;
+  margin: 0 auto 40px auto;
+  text-align: center;
+}
+
+#team .team-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+#team .team-card {
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  border-radius: 12px;
+  padding: 20px 24px;
+  background: rgba(0, 0, 0, 0.6);
+  max-width: 520px;
+}
+
+#team .role {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #ffd86a;
+}
+
+#team .bio {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+#team .links a {
+  color: #ffd86a;
+  text-decoration: underline;
+}
