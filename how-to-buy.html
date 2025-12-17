@@ -6,13 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
-      --bg: #041018;
-      --panel: #06251f;
-      --accent: #25d6a2;
-      --accent2: #f6c453;
-      --text-main: #f5f7ff;
-      --text-muted: #c2d2d2;
-      --border: #1b4a3e;
+      --bg: #050505;
+      --panel: #08150c;
+      --accent: #ffd800;
+      --accent2: #ffe27a;
+      --text-main: #f8f8f8;
+      --text-muted: #c4d4c4;
+      --border: #2e4b2f;
     }
     * { box-sizing: border-box; }
 
@@ -20,9 +20,15 @@
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
         sans-serif;
-      background: linear-gradient(180deg, #041018 0, #02060a 70%);
+      background: radial-gradient(circle at top, #151515 0, #050505 60%);
       color: var(--text-main);
     }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    a:hover { text-decoration: underline; }
 
     header {
       text-align: center;
@@ -45,8 +51,8 @@
       margin-top: 6px;
       padding: 4px 10px;
       border-radius: 999px;
-      background: rgba(37,214,162,0.1);
-      border: 1px solid rgba(37,214,162,0.4);
+      background: rgba(255,216,0,0.12);
+      border: 1px solid rgba(255,216,0,0.6);
       font-size: 0.8rem;
       color: var(--accent);
     }
@@ -62,7 +68,7 @@
       border-radius: 22px;
       border: 1px solid var(--border);
       padding: 22px 18px 20px;
-      box-shadow: 0 16px 30px rgba(0,0,0,0.6);
+      box-shadow: 0 16px 30px rgba(0,0,0,0.7);
     }
 
     h2 {
@@ -98,7 +104,7 @@
       height: 22px;
       border-radius: 50%;
       background: var(--accent);
-      color: #02140f;
+      color: #030303;
       text-align: center;
       line-height: 22px;
       font-size: 0.85rem;
@@ -107,19 +113,20 @@
     }
 
     code {
-      background: rgba(0,0,0,0.4);
+      background: rgba(0,0,0,0.5);
       padding: 2px 4px;
       border-radius: 4px;
       font-size: 0.86rem;
+      color: #ffeaa0;
     }
 
     .warning {
       margin-top: 14px;
       padding: 10px 12px;
       border-radius: 12px;
-      border: 1px dashed rgba(246,196,83,0.8);
-      color: #ffe7a4;
-      background: rgba(82,57,12,0.6);
+      border: 1px dashed rgba(255,240,150,0.9);
+      color: #fff6bf;
+      background: rgba(82,57,12,0.8);
       font-size: 0.9rem;
     }
 
@@ -127,14 +134,12 @@
       margin-top: 14px;
       padding: 10px 12px;
       border-radius: 14px;
-      background: rgba(0,0,0,0.35);
-      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.15);
       font-size: 0.9rem;
     }
 
     .token-box div { margin-bottom: 4px; }
-
-    .highlight { color: var(--accent2); }
 
     .btn-row {
       margin-top: 16px;
@@ -146,20 +151,26 @@
 
     .btn {
       display: inline-block;
-      padding: 9px 16px;
+      padding: 9px 18px;
       border-radius: 999px;
-      border: 1px solid var(--accent);
-      background: linear-gradient(135deg, #25d6a2, #32b7ff);
-      color: #02140f;
+      border: 1px solid #000;
+      background: var(--accent);
+      color: #000;
       font-size: 0.9rem;
-      font-weight: 600;
+      font-weight: 700;
       text-decoration: none;
-      box-shadow: 0 0 16px rgba(37,214,162,0.4);
+      box-shadow: 0 0 16px rgba(255,216,0,0.5);
+    }
+
+    .btn:hover {
+      filter: brightness(1.05);
+      text-decoration: none;
     }
 
     .btn-outline {
       background: transparent;
       color: var(--accent);
+      border-color: var(--accent);
       box-shadow: none;
     }
 
@@ -167,7 +178,7 @@
       text-align: center;
       padding: 16px 0 24px;
       font-size: 0.8rem;
-      color: var(--text-muted);
+      color: #9aa3d0;
     }
     footer a {
       color: var(--accent);
@@ -291,7 +302,9 @@
     </div>
 
     <div class="btn-row">
-      <a class="btn" href="https://pancakeswap.finance/swap?outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb" target="_blank">
+      <a class="btn"
+         href="https://pancakeswap.finance/swap?outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb"
+         target="_blank">
         Open PancakeSwap with IBITI
       </a>
       <a class="btn btn-outline" href="whitepaper.html">
