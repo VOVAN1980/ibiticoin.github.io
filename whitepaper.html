@@ -627,21 +627,51 @@
         </p>
       </article>
 
-      <!-- 9. Security -->
+            <!-- 9. Security -->
       <article class="card">
         <h2>9. Security considerations</h2>
+        <p class="muted">
+          IBITIcoin is built on top of widely used, battle-tested OpenZeppelin
+          libraries (ERC-20, ERC-721, Ownable, Pausable, ReentrancyGuard and others).
+          The goal is not to reinvent low-level primitives, but to combine standard
+          building blocks into a transparent, modular system.
+        </p>
         <ul class="muted">
-          <li>Contracts are built on top of OpenZeppelin audited primitives
-              (ERC-20, ERC-721, Ownable, Pausable, ReentrancyGuard, etc.).</li>
-          <li>Critical modules such as FeeManager, treasury and DAO are pausable
-              for emergency response.</li>
-          <li>There are no upgradeable proxies with arbitrary implementation
-              changes; where upgradeability is needed it is done via explicit
-              module replacement and configuration.</li>
-          <li>Users always retain control of their wallets. There are no
-              custodial deposits controlled by the team.</li>
-          <li>Key operational wallets use hardware-wallet setups.</li>
+          <li>
+            Critical modules such as the FeeManager, treasury- and DAO-related
+            contracts can be paused by the owner (and in the future, by DAO-controlled
+            processes) in case of clear abuse or technical incidents.
+          </li>
+          <li>
+            There are no hidden upgradeable proxy contracts with arbitrary implementation
+            changes. Where upgrades are needed, they are done by deploying a new module
+            and updating its address via explicit setter functions. These rights are
+            visible in the source code and on-chain.
+          </li>
+          <li>
+            Most modules interact with the core IBITI token through well-defined
+            interfaces. This allows individual components to be replaced (for example,
+            a new FeeManager version) without touching user balances or the token
+            contract itself.
+          </li>
+          <li>
+            Users always keep control over their own wallets. The team does not hold
+            custodial deposits on behalf of users; interaction with the protocol is
+            done directly from non-custodial wallets.
+          </li>
+          <li>
+            Operational wallets that can change protocol parameters or move treasury
+            funds are intended to be used with hardware-wallet setups and strict
+            internal procedures.
+          </li>
         </ul>
+        <p class="muted">
+          As with any smart-contract system, some level of technical and market risk
+          will always remain. IBITIcoin should be treated as an experimental DeFi
+          project, and each participant should size positions according to their own
+          risk tolerance and independent research.
+        </p>
+          </li>
         <p class="danger">
           Despite these measures, smart-contract risk cannot be eliminated.
           Users should treat IBITIcoin as an experimental DeFi project and
