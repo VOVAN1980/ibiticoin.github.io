@@ -1277,3 +1277,22 @@ html, body {
   color: #ffd86a;
   text-decoration: underline;
 }
+
+/* Разделительная полоса для блока Whitepaper */
+.action-band {
+  width: 100%;
+  background: transparent; /* НЕТ серой заливки, только линии */
+  border-top: 1px solid rgba(255, 215, 0, 0.5);    /* верхняя полоса до краёв */
+  border-bottom: 1px solid rgba(255, 215, 0, 0.5); /* нижняя полоса до краёв */
+  padding: 18px 0;     /* место под кнопку */
+  margin: 24px 0;      /* отступ сверху/снизу от ABOUT и TEAM */
+}
+
+.action-band__inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  justify-content: center; /* кнопка по центру */
+}
+
