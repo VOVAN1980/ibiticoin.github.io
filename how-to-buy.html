@@ -4,369 +4,442 @@
   <meta charset="UTF-8" />
   <title>How to Buy IBITIcoin (IBITI)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+        content="Step-by-step guide to buying IBITIcoin (IBITI) on BNB Smart Chain using PancakeSwap." />
   <style>
     :root {
       --bg: #050505;
-      --panel: #08150c;
+      --bg-card: #101010;
+      --bg-soft: #151515;
       --accent: #ffd800;
-      --accent2: #ffe27a;
+      --accent-soft: rgba(255, 216, 0, 0.14);
       --text-main: #f8f8f8;
-      --text-muted: #c4d4c4;
-      --border: #2e4b2f;
+      --text-muted: #b7b7b7;
+      --border-soft: #3a3a3a;
     }
+
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
         sans-serif;
-      background: radial-gradient(circle at top, #151515 0, #050505 60%);
+      background: radial-gradient(circle at top, #151515 0, #050505 55%);
       color: var(--text-main);
+      line-height: 1.6;
     }
 
     a {
       color: var(--accent);
       text-decoration: none;
     }
+
     a:hover { text-decoration: underline; }
 
-    /* ---- TOP BAR (Home + Whitepaper) ---- */
-    .topbar {
-      max-width: 900px;
-      margin: 0 auto 4px;
-      padding: 10px 12px 0;
+    header {
+      border-bottom: 1px solid var(--border-soft);
+      background: rgba(5, 5, 5, 0.97);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .nav {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 10px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 0.9rem;
     }
-    .topbar-left {
-      font-weight: 700;
-      letter-spacing: 0.06em;
-    }
-    .topbar-left span:first-child { color: #ffffff; }
-    .topbar-left span:last-child  { color: var(--accent); }
 
-    .topbar-nav {
-      display: flex;
-      gap: 8px;
+    .logo {
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.06em;
+      color: #ffffff;
     }
-    .topbar-nav a {
+
+    .logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-links a.active {
+      color: #000;
+      background: var(--accent);
       padding: 6px 14px;
+      border-radius: 999px;
+      font-weight: 600;
+      box-shadow: 0 0 14px rgba(255, 216, 0, 0.45);
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 8px 18px;
       border-radius: 999px;
       border: 1px solid #000;
       background: var(--accent);
       color: #000;
       font-weight: 700;
+      font-size: 0.9rem;
       text-decoration: none;
+      box-shadow: 0 0 14px rgba(255, 216, 0, 0.45);
     }
-    .topbar-nav a.secondary {
-      background: transparent;
-      border-color: var(--accent);
-      color: var(--accent);
-      font-weight: 600;
-    }
-    .topbar-nav a:hover {
-      text-decoration: none;
+
+    .btn-primary:hover {
       filter: brightness(1.05);
+      text-decoration: none;
     }
 
-    header {
+    main {
+      max-width: 1100px;
+      margin: 26px auto 40px;
+      padding: 0 20px 40px;
+    }
+
+    .hero {
+      background: radial-gradient(circle at top left, #202020 0, #101010 55%);
+      border-radius: 24px;
+      border: 1px solid var(--border-soft);
+      padding: 26px 24px 22px;
+      margin-bottom: 26px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.65);
       text-align: center;
-      padding: 6px 12px 10px;
     }
 
-    header h1 {
-      margin: 8px 0 6px;
+    .hero h1 {
+      margin: 0 0 8px;
       font-size: 1.9rem;
     }
 
-    header p {
-      margin: 0;
+    .hero-subtitle {
+      margin: 0 0 16px;
       color: var(--text-muted);
-      font-size: 0.95rem;
+      font-size: 0.96rem;
     }
 
-    .pill {
+    .hero-badge {
       display: inline-block;
-      margin-top: 6px;
-      padding: 4px 10px;
+      padding: 6px 14px;
       border-radius: 999px;
-      background: rgba(255,216,0,0.12);
-      border: 1px solid rgba(255,216,0,0.6);
-      font-size: 0.8rem;
-      color: var(--accent);
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 0 auto 40px;
-      padding: 0 12px 28px;
-    }
-
-    .panel {
-      background: var(--panel);
-      border-radius: 22px;
-      border: 1px solid var(--border);
-      padding: 22px 18px 20px;
-      box-shadow: 0 16px 30px rgba(0,0,0,0.7);
-    }
-
-    h2 {
-      margin: 0 0 12px;
-      text-align: center;
-      font-size: 1.4rem;
-    }
-
-    h3 {
-      margin: 18px 0 6px;
-      font-size: 1.05rem;
-      color: var(--accent2);
-    }
-
-    p {
-      margin: 4px 0 8px;
-      font-size: 0.95rem;
+      background: var(--bg-soft);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       color: var(--text-muted);
+      font-size: 0.84rem;
+      margin-bottom: 12px;
     }
+
+    .steps {
+      display: grid;
+      grid-template-columns: 2fr 1.1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .steps { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: 20px;
+      border: 1px solid var(--border-soft);
+      padding: 18px 18px 16px;
+      margin-bottom: 16px;
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 1.15rem;
+    }
+
+    .card h3 {
+      margin: 12px 0 6px;
+      font-size: 0.98rem;
+    }
+
+    p { margin: 0 0 8px; font-size: 0.95rem; }
 
     ul {
-      margin: 4px 0 10px 20px;
+      margin: 6px 0 10px 18px;
       padding: 0;
       color: var(--text-muted);
-      font-size: 0.93rem;
+      font-size: 0.92rem;
     }
 
     li { margin-bottom: 4px; }
 
-    .step-number {
-      display: inline-block;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: #030303;
-      text-align: center;
-      line-height: 22px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      margin-right: 6px;
+    ol {
+      margin: 6px 0 10px 18px;
+      color: var(--text-muted);
+      font-size: 0.92rem;
     }
 
     code {
-      background: rgba(0,0,0,0.5);
+      font-family: ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.86rem;
+      background: #1b1b1b;
       padding: 2px 4px;
       border-radius: 4px;
-      font-size: 0.86rem;
-      color: #ffeaa0;
     }
 
-    .warning {
-      margin-top: 14px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px dashed rgba(255,240,150,0.9);
-      color: #fff6bf;
-      background: rgba(82,57,12,0.8);
-      font-size: 0.9rem;
-    }
+    .muted { color: var(--text-muted); }
 
     .token-box {
-      margin-top: 14px;
-      padding: 10px 12px;
+      background: var(--bg-soft);
       border-radius: 14px;
-      background: rgba(0,0,0,0.4);
-      border: 1px solid rgba(255,255,255,0.15);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 10px 12px;
       font-size: 0.9rem;
     }
 
-    .token-box div { margin-bottom: 4px; }
-
-    .btn-row {
-      margin-top: 16px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-    }
-
-    .btn {
-      display: inline-block;
-      padding: 9px 18px;
-      border-radius: 999px;
-      border: 1px solid #000;
-      background: var(--accent);
-      color: #000;
+    .important {
+      border-left: 3px solid var(--accent);
+      padding-left: 10px;
+      margin-top: 10px;
       font-size: 0.9rem;
-      font-weight: 700;
-      text-decoration: none;
-      box-shadow: 0 0 16px rgba(255,216,0,0.5);
-    }
-
-    .btn:hover {
-      filter: brightness(1.05);
-      text-decoration: none;
-    }
-
-    .btn-outline {
-      background: transparent;
-      color: var(--accent);
-      border-color: var(--accent);
-      box-shadow: none;
+      color: var(--text-muted);
     }
 
     footer {
+      border-top: 1px solid var(--border-soft);
+      padding: 14px 0 24px;
       text-align: center;
-      padding: 16px 0 24px;
-      font-size: 0.8rem;
-      color: #9aa3d0;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      background: #050505;
     }
+
     footer a {
-      color: var(--accent);
-      text-decoration: none;
+      color: var(--text-muted);
     }
-    footer a:hover { text-decoration: underline; }
+
+    footer a:hover { color: var(--accent); }
   </style>
 </head>
 <body>
-
 <header>
-  <!-- TOP BAR -->
-  <div class="topbar">
-    <div class="topbar-left">
-      <span>IBITI</span><span>coin</span>
-    </div>
-    <nav class="topbar-nav">
+  <div class="nav">
+    <div class="logo">IBITI<span>coin</span></div>
+    <div class="nav-links">
       <a href="index.html">Home</a>
-      <a href="whitepaper.html" class="secondary">Whitepaper</a>
-    </nav>
-  </div>
-
-  <!-- PAGE TITLE -->
-  <h1>How to Buy IBITIcoin (IBITI)</h1>
-  <p>Step-by-step guide to buying IBITI on BNB Smart Chain using PancakeSwap.</p>
-  <div class="pill">Network: BNB Smart Chain • DEX: PancakeSwap v2 • Pair: IBITI / USDT</div>
-</header>
-
-<div class="container">
-  <div class="panel">
-    <h2>Quick Steps</h2>
-
-    <h3><span class="step-number">1</span>Prepare a Web3 wallet</h3>
-    <p>
-      Install a non-custodial wallet that supports BNB Smart Chain (BSC):
-    </p>
-    <ul>
-      <li>MetaMask (browser &amp; mobile)</li>
-      <li>Trust Wallet</li>
-      <li>Binance Web3 Wallet or any WalletConnect compatible wallet</li>
-    </ul>
-    <p>
-      Create a new wallet or import your existing one and save your seed phrase securely.
-      Nobody from IBITI will ever ask for your seed phrase.
-    </p>
-
-    <h3><span class="step-number">2</span>Switch to BNB Smart Chain</h3>
-    <p>
-      In your wallet, select the <strong>BNB Smart Chain / BSC</strong> network.
-      If you use MetaMask and don’t have BSC yet, you can add it via “Add network”
-      or through a helper like Chainlist.
-    </p>
-
-    <h3><span class="step-number">3</span>Fund your wallet (USDT + BNB for gas)</h3>
-    <p>
-      To buy IBITI you need:
-    </p>
-    <ul>
-      <li><strong>USDT (BEP-20)</strong> – the token you swap into IBITI.</li>
-      <li><strong>BNB</strong> – a small amount to pay gas fees on BSC.</li>
-    </ul>
-    <p>
-      You can withdraw USDT and BNB from a centralized exchange (Binance, etc.)
-      to your wallet address using the <strong>BNB Smart Chain / BEP-20</strong> network.
-    </p>
-
-    <h3><span class="step-number">4</span>Open PancakeSwap and connect wallet</h3>
-    <p>
-      Go to the official PancakeSwap website:
-      <a href="https://pancakeswap.finance/swap" target="_blank">pancakeswap.finance</a>
-      and click <strong>Connect Wallet</strong>. Choose your wallet (MetaMask, WalletConnect, etc.).
-    </p>
-
-    <h3><span class="step-number">5</span>Import the IBITI token</h3>
-    <p>
-      In the swap interface:
-    </p>
-    <ul>
-      <li>In the bottom token field click on the token selector.</li>
-      <li>Paste the IBITI contract address:<br>
-        <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code>
-      </li>
-      <li>Confirm the import. Always double-check the address.</li>
-    </ul>
-
-    <div class="token-box">
-      <div><strong>Official IBITI token details:</strong></div>
-      <div>Network: BNB Smart Chain (BEP-20)</div>
-      <div>Name: IBITIcoin</div>
-      <div>Symbol: IBITI</div>
-      <div>Decimals: 8</div>
-      <div>Contract: <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></div>
-    </div>
-
-    <h3><span class="step-number">6</span>Swap USDT to IBITI</h3>
-    <p>
-      Now you can swap:
-    </p>
-    <ul>
-      <li>Top token: <strong>USDT</strong></li>
-      <li>Bottom token: <strong>IBITI</strong></li>
-    </ul>
-    <p>
-      Enter the amount of USDT you want to spend. Start small for your first trade
-      (for example 1–5 USDT) to test everything.
-    </p>
-    <p>
-      If PancakeSwap shows price impact warnings, reduce the trade size
-      or wait for more liquidity.
-    </p>
-
-    <h3><span class="step-number">7</span>Confirm the transaction in your wallet</h3>
-    <p>
-      Click <strong>Swap</strong>, then confirm in your wallet (MetaMask, Trust Wallet, etc.).
-      Once the transaction is confirmed on BSC, you will receive IBITI in your wallet.
-    </p>
-
-    <h3><span class="step-number">8</span>Add IBITI to your wallet view</h3>
-    <p>
-      If you don’t see IBITI in the token list, add it manually:
-    </p>
-    <ul>
-      <li>Token contract: <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></li>
-      <li>Name: <code>IBITIcoin</code></li>
-      <li>Symbol: <code>IBITI</code></li>
-      <li>Decimals: <code>8</code></li>
-    </ul>
-
-    <div class="warning">
-      <strong>Important:</strong><br>
-      Always verify you are on the official PancakeSwap website and that the IBITI
-      contract address exactly matches the one above. There may be fake tokens with
-      a similar name.
-    </div>
-
-    <div class="btn-row">
-      <a class="btn"
-   href="https://pancakeswap.finance/swap?outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb"
-   target="_blank">
-  Open PancakeSwap with IBITI
-    </a>
-      <a class="btn btn-outline" href="whitepaper.html">
-        Read IBITI Whitepaper
+      <a href="how-to-buy.html" class="active">How to Buy</a>
+      <a href="whitepaper.html">Whitepaper</a>
+      <a href="mailto:info@ibiticoin.com">Contact</a>
+      <a
+        href="https://pancakeswap.finance/swap?chain=bsc&outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&inputCurrency=0x55d398326f99059fF775485246999027B3197955"
+        target="_blank"
+        class="btn-primary"
+      >
+        Buy on PancakeSwap
       </a>
     </div>
   </div>
-</div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-badge">
+      Network: BNB Smart Chain (BEP-20) · Pair: IBITI / USDT on PancakeSwap V2
+    </div>
+    <h1>How to Buy IBITIcoin (IBITI)</h1>
+    <p class="hero-subtitle">
+      Simple step-by-step guide to buying IBITI on BNB Smart Chain using
+      PancakeSwap. No presale, no airdrops – only on-chain trading via the
+      official IBITI / USDT pool.
+    </p>
+  </section>
+
+  <section class="steps">
+    <div>
+      <article class="card">
+        <h2>Quick steps</h2>
+        <ol>
+          <li>Install a Web3 wallet (MetaMask / Trust Wallet / Binance Web3 Wallet).</li>
+          <li>Switch your wallet to <strong>BNB Smart Chain / BSC</strong>.</li>
+          <li>Top up your wallet with <strong>USDT (BEP-20)</strong> and a small amount of <strong>BNB</strong> for gas.</li>
+          <li>Open PancakeSwap and connect your wallet.</li>
+          <li>Import the official IBITI token using the contract address.</li>
+          <li>Swap USDT &rarr; IBITI and confirm the transaction.</li>
+          <li>Add IBITI to your wallet view (if it is not shown automatically).</li>
+        </ol>
+      </article>
+
+      <article class="card">
+        <h2>1. Prepare a Web3 wallet</h2>
+        <p class="muted">
+          Use a non-custodial wallet that supports BNB Smart Chain:
+        </p>
+        <ul>
+          <li>MetaMask (browser &amp; mobile)</li>
+          <li>Trust Wallet</li>
+          <li>Binance Web3 Wallet or any WalletConnect-compatible wallet</li>
+        </ul>
+        <p class="muted">
+          Create a new wallet or import an existing one and store your seed phrase
+          securely. Nobody from the IBITI team will ever ask for your seed phrase
+          or private keys.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>2. Switch to BNB Smart Chain</h2>
+        <p class="muted">
+          In your wallet, select the <strong>BNB Smart Chain / BSC</strong> network.
+          If you use MetaMask and do not have BSC in the list, you can add it via
+          the official BNB Chain documentation or helper tools like Chainlist.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>3. Fund your wallet (USDT + BNB)</h2>
+        <p class="muted">
+          To buy IBITI you need:
+        </p>
+        <ul>
+          <li><strong>USDT (BEP-20)</strong> – the token you will swap into IBITI;</li>
+          <li><strong>BNB</strong> – a small amount to pay gas fees on BSC.</li>
+        </ul>
+        <p class="muted">
+          You can withdraw USDT and BNB from centralized exchanges (for example,
+          Binance) directly to your wallet address on the BNB Smart Chain network.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>4. Open PancakeSwap and connect wallet</h2>
+        <p class="muted">
+          Go to the official PancakeSwap website:
+          <a href="https://pancakeswap.finance" target="_blank">pancakeswap.finance</a>.
+          In the top menu open <strong>Trade → Swap</strong> and click
+          <strong>Connect Wallet</strong>. Choose your wallet (MetaMask, Trust Wallet,
+          WalletConnect, etc.) and confirm the connection.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>5. Import the IBITI token</h2>
+        <p class="muted">
+          In the swap interface:
+        </p>
+        <ul>
+          <li>In the bottom token field click on the token selector.</li>
+          <li>Paste the IBITI contract address:<br>
+            <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code>
+          </li>
+          <li>Confirm the import. Always double-check the address.</li>
+        </ul>
+
+        <div class="token-box">
+          <strong>Official IBITI token details:</strong><br />
+          Network: BNB Smart Chain (BEP-20)<br />
+          Name: IBITIcoin<br />
+          Symbol: IBITI<br />
+          Decimals: 8<br />
+          Contract: <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>6. Swap USDT to IBITI</h2>
+        <p class="muted">
+          Now you can swap:
+        </p>
+        <ul>
+          <li>Top token: <strong>USDT</strong></li>
+          <li>Bottom token: <strong>IBITI</strong></li>
+        </ul>
+        <p class="muted">
+          Enter the amount of USDT you want to spend. For the first trade it is
+          reasonable to test a small amount and then increase the size once you
+          are comfortable with the process.
+        </p>
+        <p class="muted">
+          If PancakeSwap shows price impact warnings, reduce the trade size or
+          wait for more liquidity.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>7. Confirm the transaction</h2>
+        <p class="muted">
+          Click <strong>Swap</strong> in PancakeSwap and confirm the transaction
+          in your wallet (MetaMask, Trust Wallet, etc.). Once the transaction is
+          confirmed on BSC, you will receive IBITI in your wallet.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>8. Add IBITI to your wallet view</h2>
+        <p class="muted">
+          If you do not see IBITI in the token list, add it manually:
+        </p>
+        <ul class="muted">
+          <li>Token contract: <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></li>
+          <li>Name: IBITIcoin</li>
+          <li>Symbol: IBITI</li>
+          <li>Decimals: 8</li>
+        </ul>
+
+        <div class="important">
+          Always verify you are on the official PancakeSwap website and that
+          the IBITI contract address exactly matches the one above. There may be
+          fake tokens with similar names.
+        </div>
+      </article>
+    </div>
+
+    <aside>
+      <article class="card">
+        <h2>Direct link to IBITI / USDT pool</h2>
+        <p class="muted">
+          You can open the pool directly with this link:
+        </p>
+        <p>
+          <a
+            href="https://pancakeswap.finance/swap?chain=bsc&outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&inputCurrency=0x55d398326f99059fF775485246999027B3197955"
+            target="_blank"
+          >
+            Open PancakeSwap with IBITI pre-selected
+          </a>
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Token recap</h2>
+        <div class="token-box">
+          <strong>Network:</strong> BNB Smart Chain (BEP-20)<br />
+          <strong>Token:</strong> IBITIcoin (IBITI)<br />
+          <strong>Decimals:</strong> 8<br />
+          <strong>Max supply:</strong> 100,000,000 IBITI<br />
+          <strong>Main pair:</strong> IBITI / USDT (PancakeSwap V2)
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Basic safety tips</h2>
+        <ul class="muted">
+          <li>Never share your seed phrase or private keys.</li>
+          <li>Always double-check URLs and contract addresses.</li>
+          <li>Start with a small test trade before moving larger amounts.</li>
+          <li>Keep some BNB for future gas fees.</li>
+        </ul>
+      </article>
+    </aside>
+  </section>
+</main>
 
 <footer>
   © 2025 IBITIcoin. All rights reserved.
@@ -375,6 +448,5 @@
   &nbsp;|&nbsp;
   <a href="terms.html">Terms of Use</a>
 </footer>
-
 </body>
 </html>
