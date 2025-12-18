@@ -317,22 +317,29 @@
     </div>
   </div>
 
-  <!-- внутри блока Referral program -->
-<div class="promo-wrapper">
-  <div class="promo-controls">
-    <label for="promoUsdtAmount">New Year promo — amount (USDT):</label>
-    <input id="promoUsdtAmount" type="number" min="10" step="1" value="10">
-  </div>
+  <section class="items-section">
+  <div class="container">
+    <!-- две карточки Item 1 / Item 2 -->
 
-  <button id="promoBuyButton" class="gift-button">
-    <div class="gift">
-      <div class="gift-lid"></div>
-      <div class="gift-box"></div>
-      <div class="gift-ribbon"></div>
+    <!-- 🔥 промо-блок ПЕРЕНОСИМ СЮДА -->
+    <div class="promo-wrapper">
+      <div class="promo-controls">
+        <label for="promoUsdtAmount">New Year promo — amount (USDT):</label>
+        <input id="promoUsdtAmount" type="number" min="10" step="1" value="10">
+      </div>
+
+      <button id="promoBuyButton" class="gift-button">
+        <div class="gift">
+          <div class="gift-lid"></div>
+          <div class="gift-box"></div>
+          <div class="gift-ribbon"></div>
+        </div>
+        <span class="gift-text">Buy IBITI +10% bonus</span>
+      </button>
     </div>
-    <span class="gift-text">Buy IBITI +10% bonus</span>
-  </button>
-</div>
+    <!-- 🔥 конец промо-блока -->
+  </div>
+</section>
 
 <script type="module">
   import { initPromoButton } from "./js/referralSwap.js";
@@ -987,4 +994,5 @@ function openDesktopWalletModal() {
 
 </body>
 </html>
+
 
