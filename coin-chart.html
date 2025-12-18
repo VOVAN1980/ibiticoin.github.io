@@ -3,56 +3,73 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>График курса IBITIcoin</title>
+  <title>График курса IBITIcoin (IBITI / USDT)</title>
+
+  <!-- Общие стили сайта -->
   <link rel="stylesheet" href="css/style.css">
+
   <style>
-    /* Дополнительные стили для TradingView виджета */
-    .tradingview-widget-container {
-      margin: 40px auto;
+    /* Контейнер под iframe графика */
+    .chart-wrapper {
       max-width: 1000px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-      border: 2px solid gold;
+      margin: 40px auto 60px;
+      border: 2px solid #f0c419;
       border-radius: 10px;
+      background: #111;
       overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
     }
-    
-    /* Стили для кнопок в футере (дополнительная кнопка «Поделиться») */
+
+    .chart-wrapper iframe {
+      width: 100%;
+      height: 520px;
+      display: block;
+      border: none;
+    }
+
+    .chart-note {
+      max-width: 1000px;
+      margin: 0 auto 40px;
+      color: #ccc;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    /* Кнопки в футере */
     .footer-buttons {
       margin-top: 20px;
+      text-align: center;
     }
+
     .footer-buttons a {
       margin: 0 10px;
+      display: inline-block;
     }
   </style>
 </head>
 <body>
   <header class="hero-header">
     <h1>График курса IBITIcoin</h1>
+    <p>Онлайн-график торгов пары IBITI / USDT на BNB Smart Chain</p>
   </header>
 
-  <!-- Контейнер TradingView Widget -->
-  <div class="tradingview-widget-container">
-    <div id="tradingview_widget"></div>
-    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-    <script type="text/javascript">
-      new TradingView.widget(
-      {
-        "width": "100%",
-        "height": 500,
-        "symbol": "BINANCE:BTCUSDT", // Замените на реальный символ вашей монеты, если есть
-        "interval": "D",
-        "timezone": "Etc/UTC",
-        "theme": "dark",
-        "style": "1",
-        "locale": "ru",
-        "toolbar_bg": "#f1f3f6",
-        "enable_publishing": false,
-        "allow_symbol_change": true,
-        "container_id": "tradingview_widget"
-      }
-      );
-    </script>
-  </div>
+  <main>
+    <!-- Живой график Dexscreener -->
+    <div class="chart-wrapper">
+      <iframe
+        src="https://dexscreener.com/bsc/0xadfb9f0f810311e9c01c27b380909a5ffc104be0?embed=1&theme=dark&trades=0&info=0"
+        loading="lazy"
+        allowtransparency="true"
+      ></iframe>
+    </div>
+
+    <div class="chart-note">
+      Данные предоставляются сервисом Dexscreener и отображают он-чейн торги пары
+      <strong>IBITI / USDT</strong> на PancakeSwap V2 (BSC).  
+      Торговая активность и цена обновляются в режиме реального времени.
+    </div>
+  </main>
 
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
@@ -64,17 +81,18 @@
 
   <script>
     function shareChart() {
+      const shareData = {
+        title: 'График курса IBITIcoin (IBITI / USDT)',
+        text: 'Посмотрите актуальный график IBITIcoin на BNB Smart Chain.',
+        url: window.location.href
+      };
+
       if (navigator.share) {
-        navigator.share({
-          title: 'График курса IBITIcoin',
-          text: 'Посмотрите график курса IBITIcoin!',
-          url: window.location.href
-        })
-        .then(() => console.log('Успешный шаринг'))
-        .catch((error) => console.log('Ошибка при шаринге', error));
+        navigator.share(shareData)
+          .catch((error) => console.log('Ошибка при шаринге', error));
       } else {
-        // Если браузер не поддерживает navigator.share, можно показать модальное окно или просто скопировать URL
-        alert('Ваш браузер не поддерживает нативный шаринг.');
+        // Запасной вариант: просто показываем ссылку
+        alert('Ваш браузер не поддерживает встроенный шаринг.\nСкопируйте ссылку:\n' + window.location.href);
       }
     }
   </script>
