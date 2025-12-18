@@ -1,849 +1,1390 @@
-/* Подключаем шрифт Orbitron */
+/* ---------- 1. БАЗА ----------------------------------------------------- */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
-/* ===== Глобальные стили ===== */
-body {
-  margin: 0;
-  font-family: 'Orbitron', sans-serif;
-  background: linear-gradient(135deg, #000000, #333333);
-  color: #fff;
-  text-align: center;
+:root{
+    --gold:#ffd700;
+    --gold-dark:#c0a000;
+    --bg-grad:linear-gradient(135deg,#000,#333);
+    --font:'Orbitron',sans-serif;
 }
 
-/* ===== Окошки в углах (corner-box) ===== */
-.corner-box {
-  position: absolute;
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid gold;
-  border-radius: 5px;
-  padding: 5px 10px;
-  z-index: 999;
-}
-.corner-box-left {
-  top: 20px;
-  left: 15px;
-}
-.corner-box-left2 {
-  top: 60px;
-  left: 15px;
+*{box-sizing:border-box;scroll-behavior:smooth}
+body{
+    margin:0;
+    font-family:var(--font);
+    background:var(--bg-grad);
+    color:#fff;
+    text-align:center;
 }
 
-/* Правый угол: Roadmap */
-.corner-box-right {
-  top: 20px;
-  right: 15px;
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid gold;
-  border-radius: 5px;
-  padding: 5px 10px;
-  z-index: 999;
-}
-.corner-box-right a {
-  color: gold;
-  text-decoration: none;
-  font-weight: bold;
-  margin: 0 5px;
-}
-.corner-box-right a:hover {
-  text-decoration: underline;
-}
-
-/* Правый угол: Языки */
-.corner-box-right-langs {
-  top: 60px;
-  right: 15px;
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid gold;
-  border-radius: 5px;
-  padding: 5px 10px;
-  z-index: 999;
-}
-.corner-box-right-langs a {
-  color: gold;
-  text-decoration: none;
-  font-weight: bold;
-  margin: 0 5px;
-}
-.corner-box-right-langs a:hover {
-  text-decoration: underline;
-}
-
-/* Стили для ссылок внутри corner-box (если не переопределены) */
-.corner-box a {
-  color: gold;
-  text-decoration: none;
-  font-weight: bold;
-  margin: 0 5px;
-}
-.corner-box a:hover {
-  text-decoration: underline;
-}
-
-/* Мобильная адаптация правых углов */
-@media (max-width: 600px) {
-  .corner-box-right {
-    top: 10px;
-    right: 10px;
-  }
-  .corner-box-right-langs {
-    top: 60px;
-    right: 10px;
-  }
-
-/* ===== Кнопки (btn) ===== */
-/* По умолчанию компактные кнопки (inline-block) для главной страницы */
-.btn {
-  display: inline-block;
-  background: linear-gradient(135deg, gold, #c0a000);
-  color: #000;
-  padding: 15px 30px;
-  text-decoration: none;
-  font-weight: bold;
-  border-radius: 5px;
-  text-align: center;
-  transition: transform 0.3s ease, background 0.3s ease;
-}
-.btn:hover {
-  transform: scale(1.1);
-  background: #c0a000;
-}
-
-/* В блоге (внутри .blog-layout) делаем кнопки блочными, центрированными и с ограниченной шириной */
-.blog-layout .btn {
-  display: block;
-  margin: 20px auto;
-  max-width: 220px;
-}
-
-/* ===== Стили для секции подключения кошелька ===== */
-.wallet-section {
-  text-align: center;
-  margin: 20px auto;
-}
-.wallet-section button {
-  background: gold;
-  color: #000;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-.wallet-section button:hover {
-  background: #c0a000;
-}
-.wallet-section #walletAddress {
-  margin-top: 10px;
-  font-weight: bold;
-  color: gold;
-}
-
-/* ===== Шапка (hero-header) ===== */
-.hero-header {
-  padding: 15px 20px;
-}
-.hero-header img {
-  margin-bottom: 20px;
-}
-.hero-header h1 {
-  margin: 0;
-  font-size: 3em;
-  letter-spacing: 2px;
-  color: gold;
-}
-.hero-header p {
-  margin: 10px 0 0;
-  font-size: 1.5em;
-  color: #fff;
-}
-
-/* ===== Золотой блок (gold-section) ===== */
-.gold-section {
-  background: #111;
-  border-top: 2px solid gold;
-  border-bottom: 2px solid gold;
-  padding: 60px 20px;
-}
-.gold-section h2 {
-  font-size: 2.5em;
-  margin-bottom: 20px;
-  color: gold;
-  text-transform: uppercase;
-}
-.gold-section p {
-  font-size: 1.2em;
-  line-height: 1.6;
-  max-width: 800px;
-  margin: 0 auto 20px;
-  text-align: center;
-}
-
-/* ===== Футер ===== */
-footer {
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.8);
-  border-top: 2px solid gold;
-  font-size: 0.9em;
-  text-align: center;
-}
-footer p, footer a {
-  color: gold;
-  text-decoration: none;
-}
-footer a:hover {
-  text-decoration: underline;
-}
-
-/* ===== Roadmap ===== */
-.roadmap {
-  background: #111;
-  padding: 40px 20px;
-  color: gold;
-  text-align: center;
-  margin-top: 40px;
-}
-.roadmap h2 {
-  font-size: 2.5em;
-  margin-bottom: 20px;
-}
-.roadmap-item {
-  margin: 20px auto;
-  max-width: 800px;
-  padding: 20px;
-  border: 1px solid gold;
-  border-radius: 10px;
-}
-
-/* ===== Блог ===== */
-.blog {
-  background: #222;
-  padding: 40px 20px;
-  color: gold;
-  text-align: center;
-}
-.blog h2 {
-  font-size: 2.5em;
-  margin-bottom: 20px;
-}
-.blog-post {
-  background: #111;
-  border: 1px solid gold;
-  border-radius: 10px;
-  padding: 20px;
-  margin: 20px auto;
-  max-width: 800px;
-  text-align: left;
-}
-.blog-post h3 {
-  margin-top: 0;
-  color: gold;
-}
-
-/* ===== Стили для списка шагов ===== */
-.buy-steps {
-  list-style: decimal;
-  display: inline-block;
-  margin: 0 auto;
-  text-align: left;
-  padding-left: 30px;
-}
-.buy-steps li {
-  margin-bottom: 10px;
-}
-
-/* ===== Видео ===== */
-iframe {
-  display: block;
-  margin: 30px auto;
-}
-
-/* ===== Dropdown ===== */
-.dropdown {
-  position: relative;
-}
-.dropdown-toggle {
-  color: gold;
-  text-decoration: none;
-  font-weight: bold;
-  display: inline-block;
-  transition: color 0.3s;
-}
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: rgba(0, 0, 0, 0.9);
-  border: 2px solid gold;
-  border-radius: 5px;
-  padding: 10px;
-  min-width: 120px;
+ /* В начало style.css */
+.progress-container {
+  width: 100%;
+  height: 8px;
+  background: #333;
+  border-radius: 4px;
   overflow: hidden;
-  max-height: 0;
-  transition: max-height 0.3s ease, opacity 0.3s ease;
-  opacity: 0;
-  pointer-events: none;
-}
-.dropdown-menu a {
-  display: block;
-  color: gold;
-  text-decoration: none;
-  margin: 5px 0;
-  font-weight: normal;
-  transition: color 0.3s;
-}
-.dropdown-menu a:hover {
-  color: #c0a000;
-}
-.dropdown:hover .dropdown-menu {
-  max-height: 500px;
-  opacity: 1;
-  pointer-events: auto;
+  margin: 16px 0;
 }
 
-/* ===== Social Feed ===== */
-.social-feed {
-  background: #111;
-  padding: 40px 20px;
-  color: gold;
-  text-align: center;
-  margin-top: 40px;
-}
-.social-feed h2 {
-  font-size: 2.5em;
-  margin-bottom: 20px;
-}
-
-/* ===== Subscribe ===== */
-.subscribe {
-  background: #222;
-  padding: 40px 20px;
-  color: gold;
-  text-align: center;
-  margin-top: 40px;
-}
-.subscribe h2 {
-  font-size: 2.5em;
-  margin-bottom: 20px;
-}
-.subscribe input[type="email"] {
-  padding: 10px;
-  width: 250px;
-  border: 1px solid gold;
-  border-radius: 5px;
-  margin-right: 10px;
-}
-.subscribe button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
+.progress-bar {
+  width: 0%;
+  height: 100%;
   background: gold;
-  color: #000;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-.subscribe button:hover {
-  background: #c0a000;
+  transition: width 0.5s ease;
 }
 
-/* ===== Calculator ===== */
-.calculator {
-  background: #222;
-  padding: 40px 20px;
-  color: gold;
-  text-align: center;
-  margin-top: 40px;
+/* ---------- 2. КНОПКИ --------------------------------------------------- */
+.btn,
+.btn-small{
+    display:inline-block;
+    background:linear-gradient(135deg,var(--gold),var(--gold-dark));
+    color:#000;
+    font-weight:700;
+    text-decoration:none;
+    border-radius:5px;
+    transition:background .3s,transform .25s;
 }
-.calculator h2 {
-  font-size: 2.5em;
-  margin-bottom: 20px;
+.btn{padding:13px 28px;font-size:1rem}
+.btn-small{padding:7px 14px;font-size:.9rem;margin:4px 6px}
+
+.btn:hover,
+.btn-small:hover{background:var(--gold-dark);transform:scale(1.06)}
+
+/* ---------- 3. УГЛОВЫЕ КНОПКИ (DESKTOP) -------------------------------- */
+.corner-box{
+    position:absolute;
+    background:rgba(0,0,0,.82);
+    border:2px solid var(--gold);
+    border-radius:4px;
+    padding:4px 10px;
+    z-index:999;
+    font-size:.9rem;           /* меньше, чем было */
+    line-height:1;
 }
-.calculator input[type="number"] {
-  padding: 10px;
-  width: 200px;
-  border: 1px solid gold;
-  border-radius: 5px;
-  margin-right: 10px;
+.corner-box a{color:var(--gold);text-decoration:none;font-weight:700}
+.corner-box a:hover{text-decoration:underline}
+
+.corner-box-left   {top:12px;left:12px}
+.corner-box-left2  {top:52px;left:12px}
+.corner-box-right  {top:12px;right:12px}
+.corner-box-right-langs{top:52px;right:12px}
+
+/* ---------- 4. HERO ----------------------------------------------------- */
+.hero-header{padding:15px 20px}
+.hero-header img{margin-bottom:22px}
+.hero-header h1{margin:0;font-size:3rem;color:var(--gold)}
+.hero-header p {margin:8px 0 0;font-size:1.4rem}
+
+/* ---------- 5. GOLD SECTION / GENERIC BLOCKS --------------------------- */
+.gold-section{
+    background:#111;
+    border-top:2px solid var(--gold);
+    border-bottom:2px solid var(--gold);
+    padding:56px 18px;
 }
-.calculator button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  background: gold;
-  color: #000;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s;
+.gold-section h2{font-size:2.4rem;margin-bottom:18px;color:var(--gold);text-transform:uppercase}
+.gold-section p {font-size:1.15rem;max-width:800px;margin:0 auto 20px;line-height:1.55}
+
+/* ---------- 6. FOOTER --------------------------------------------------- */
+footer{
+    padding:18px 10px;
+    background:rgba(0,0,0,.8);
+    border-top:2px solid var(--gold);
+    font-size:.9rem;
 }
-.calculator button:hover {
-  background: #c0a000;
+footer a{color:var(--gold);text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+/* ---------- 7. GOOGLE-TRANSLATE MINI-ЛОГО ------------------------------ */
+
+/* 0) Базово прячем подпись Powered by Google и ограничиваем размер иконки */
+#google_translate_element .goog-logo-link img {width:22px!important;height:auto!important;}
+#google_translate_element .goog-logo-link span {display:none!important;}
+
+/* ── Мобильная версия — показываем только иконку ─────────────────────── */
+@media (max-width:640px){                 /* ≤640px — смартфоны  */
+  .corner-box-right-langs{
+      padding:3px;
+      width:28px; height:28px;            /* квадрат под иконку  */
+      display:flex; align-items:center; justify-content:center;
+      position:relative;                  /* якорь для select    */
+  }
+
+  /* 1. делаем combo-box прозрачным, но «живым»                   */
+  #google_translate_element .goog-te-combo{
+      position:absolute;
+      top:0; left:0;
+      width:28px; height:28px;
+      opacity:0;                          /* невидим, кликает    */
+      cursor:pointer;
+  }
+
+  /* 2. отображаем только иконку-логотип Google                   */
+  #google_translate_element .goog-logo-link{
+      display:block!important;
+  }
 }
 
-/* ===== Video Guides ===== */
-.video-guides {
-  background: #111;
-  padding: 40px 20px;
-  color: gold;
-  text-align: center;
-  margin-top: 40px;
+/* ---------- 8. EXTRA BUTTON GRID (НИЖНИЙ «ПУЛЬТ») ---------------------- */
+.extra-buttons-section{
+    padding:36px 0 42px;
+    display:flex;flex-wrap:wrap;justify-content:center;gap:8px;
 }
-.video-guides h2 {
-  font-size: 2.5em;
-  margin-bottom: 20px;
-}
-.video-item {
-  margin: 30px auto;
-  max-width: 800px;
-}
-.video-item h3 {
-  margin-bottom: 10px;
+.extra-buttons-section .btn-small{flex:1 1 calc(50% - 16px);max-width:140px;white-space:nowrap}
+
+/* ---------- 9. БЛОГ / РОАДМАП / ПРОЧЕЕ (оставил без изменений) --------- */
+/* ...оставляем ваши существующие правила blog-layout, roadmap, и т.д.
+   Они не дублируются и работают корректно.                                   */
+
+/* ---------- 10. MOBILE ≤ 640 PX --------------------------------------- */
+@media (max-width:640px){
+
+  /* Немного меньше “WHY CHOOSE” */
+  .hero-header h1{font-size:1.9rem}
+  .hero-header p {font-size:1rem}
+
+  /* Галерея нижних кнопок – 2 в ряд */
+  .extra-buttons-section{gap:6px;padding:20px 0}
+  .extra-buttons-section .btn-small{flex:1 0 calc(50% - 12px)}
 }
 
-/* ===== Дополнительные кнопки в нижнем углу ===== */
-.corner-box-bottom {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid gold;
-  border-radius: 5px;
-  padding: 5px 10px;
-  z-index: 999;
-}
-.corner-box-bottom a {
-  color: gold;
-  text-decoration: none;
-  font-weight: bold;
-  margin: 0 5px;
-  font-size: 0.9em;
-}
-.corner-box-bottom a:hover {
-  text-decoration: underline;
+/* совсем узкие – 1 в ряд */
+@media (max-width:380px){
+  .extra-buttons-section .btn-small{flex:1 0 100%}
 }
 
-/* ===== Extra Buttons Section ===== */
-.extra-buttons-section {
-  background: transparent;
-  padding: 40px 0;
-  text-align: center;
+ /* --- (необязательно) дублируем верхние ссылки внизу ---
+       <div class="mobile-nav">
+            <a class="btn-small" href="index.html">Главная</a>
+            <a class="btn-small" href="blog.html">Блог</a>
+            <a class="btn-small" href="roadmap.html">Roadmap</a>
+       </div>
+       .mobile-nav стилизуется так же, как extra-buttons-section.
+    --------------------------------------------------------- */
 }
+
+  /* ====  A) компактнее нижний «пульт» на desktop  ======================== */
+.extra-buttons-section           {gap:4px;padding:32px 0}
+.extra-buttons-section .btn-small{
+    padding:6px 12px;              /* меньше “мяса”   */
+    font-size:.8rem;               /* чуть мельче текст */
+    letter-spacing:-.2px;
+}
+
+/* ====  B) та же сетка на мобильных  ==================================== */
+@media(max-width:640px){
+    .extra-buttons-section        {gap:4px;padding:18px 0}
+    .extra-buttons-section .btn-small{
+        flex:1 1 calc(50% - 8px);  /* ближе друг к другу */
+        max-width:130px;
+        padding:6px 8px;
+        font-size:.78rem;
+    }
+    @media(max-width:380px){
+        .extra-buttons-section .btn-small{
+            flex:1 0 100%;
+            max-width:none;
+        }
+    }
+}
+
+/* ====  C) шапка NFT-галереи (моб.)  ===================================== */
+/*  Две верхние кнопки “← Главная” и “Магазин” не должны закрывать заголовок */
+@media(max-width:640px){
+    .nft-top-btn{                 /* добавьте этот класс двум ссылкам  */
+        display:inline-block;
+        width:48%;
+        margin:0 1% 8px;
+        font-size:.75rem;
+        padding:6px 0;
+        white-space:nowrap;
+    }
+}
+/*  пример в nft.html
+    <a href="index.html" class="btn-small nft-top-btn">Главная</a>
+    <a href="shop.html"  class="btn-small nft-top-btn">Магазин</a>          */
+
+/* ====  D) необязательно: скрыть языковой селектор на desktop = компактнее */
+@media(min-width:641px){
+    #google_translate_element .goog-te-gadget .goog-te-combo{
+        width:110px!important;
+        font-size:.8rem!important;
+    }
+}
+
+  /* ------------------------------------------------------------------ */
+/*  MOBILE TOP-BAR: 4 compact corner-buttons (<= 640 px)              */
+/* ------------------------------------------------------------------ */
+@media (max-width:640px){
+
+  /* общий вид «окошек» */
+  .corner-box{
+    display:block;               /* снова показываем */
+    position:fixed;              /* фиксируем к вьюпорту */
+    background:rgba(0,0,0,.75);
+    border:1px solid gold;
+    border-radius:4px;
+    padding:4px 6px;
+    font-size:.75rem;
+    line-height:1;
+    z-index:999;
+  }
+  /* позиционирование */
+  .corner-box-left  {top:10px; left:10px;}       /* Главная   */
+  .corner-box-left2 {top:46px; left:10px;}       /* Блог      */
+  .corner-box-right {top:10px; right:10px;}      /* Roadmap   */
+  .corner-box-right-langs{top:46px; right:10px;} /* Язык      */
+
+  /* ссылки внутри – убираем лишние отступы */
+  .corner-box a{
+    color:gold;
+    text-decoration:none;
+    font-weight:700;
+  }
+
+  /* ───────── мини-дропдаун Google ───────── */
+  #google_translate_element .goog-te-gadget{
+    font-size:0;                 /* прячем “Powered by …” */
+  }
+  #google_translate_element .goog-te-combo{
+    display:block!important;
+    width:90px!important;
+    padding:2px 4px !important;
+    background:#111!important;
+    color:gold!important;
+    border:1px solid gold!important;
+    border-radius:3px!important;
+    font-size:.72rem!important;
+  }
+}
+
+ /* ---------- BUY-STEPS (How-to-buy page) --------------------------- */
+.buy-steps{
+  list-style:none;          /* прячем 1 2 3 4 */
+  margin:0 auto 24px;       /* центр + отступ снизу */
+  padding:0;
+  max-width:420px;
+  text-align:left;          /* читается аккуратней */
+}
+.buy-steps li{
+  margin:0 0 8px 0;
+  position:relative;
+  padding-left:22px;        /* место под маркер */
+}
+
+/* галочка-маркер вместо цифры  */
+.buy-steps li::before{
+  content:"✓";
+  position:absolute;
+  left:0; top:0;
+  color:var(--gold);
+  font-weight:700;
+}
+
+/* -------------------------------------------------------------------
+   Общие стили для btn-small (копируем из основной темы)
+   ------------------------------------------------------------------- */
 .btn-small {
   display: inline-block;
-  background: gold;
+  background: linear-gradient(135deg, #ffd700, #c0a000);
   color: #000;
-  padding: 8px 16px;
-  border-radius: 5px;
+  font-weight: 700;
   text-decoration: none;
-  margin: 0 5px;
-  font-weight: bold;
-  font-size: 0.9em;
-  transition: background 0.3s, color 0.3s;
+  border-radius: 5px;
+  transition: background .3s, transform .25s;
+  padding: 7px 14px;
+  font-size: .9rem;
+  margin: 4px 6px;
 }
 .btn-small:hover {
   background: #c0a000;
-  color: #000;
-}
-.btn-small:visited {
-  color: #000;
+  transform: scale(1.05);
 }
 
-/* ===== Трёхколоночная верстка блога ===== */
-.blog-layout {
+/* -------------------------------------------------------------------
+   Навигация только для мобильных внизу NFT-галереи
+   ------------------------------------------------------------------- */
+/* по умолчанию скрываем на десктопе */
+.nft-mobile-nav {
+  display: none;
+  text-align: center;
+  margin: 24px 0 12px;
+}
+/* кнопки внутри */
+.nft-mobile-nav .btn-small {
+  width: 46%;
+  margin: 4px 2%;
+  padding: 6px 0;
+  font-size: .8rem;
+}
+
+ /* в конце style.css */
+.nft-footer-nav {
   display: flex;
-  justify-content: space-between;
-  max-width: 1400px;
-  margin: 40px auto;
-  padding: 0 20px;
-  min-height: 800px;
+  justify-content: center;
+  gap: 12px;
+  margin: 24px 0;
+}
+.nft-footer-nav .btn-small {
+  padding: 8px 16px;
+  font-size: 0.9rem;
 }
 
-/* ===== Левая боковая панель (контактная форма) ===== */
-.blog-sidebar-left {
-  width: 30%;
-  background: #222;
-  color: gold;
-  padding: 20px;
-  margin-right: 20px;
-  border: 1px solid gold;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-}
-
-/* ===== Центр (новости) ===== */
-.blog-content {
-  width: 40%;
-  background: #111;
-  color: gold;
-  padding: 20px;
-  border: 1px solid gold;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-}
-
-/* ===== Правая боковая панель (комментарии) ===== */
-.blog-sidebar-right {
-  width: 30%;
-  background: #222;
-  color: gold;
-  padding: 20px;
-  margin-left: 20px;
-  border: 1px solid gold;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  min-height: 800px;
-}
-
-/* ===== Формы в левой панели ===== */
-.blog-sidebar-left form {
+/* ---------- КНОПКИ ПОД ГАЛЕРЕЕЙ NFT ------------------- */
+.nft-footer-buttons {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 40px 0 20px;
 }
-.blog-sidebar-left form label {
-  width: 80%;
-  margin-bottom: 10px;
-  text-align: left;
-}
-.blog-sidebar-left form input,
-.blog-sidebar-left form textarea {
-  width: 80%;
-  margin-bottom: 10px;
-  padding: 10px;
-  border: 1px solid gold;
-  border-radius: 5px;
-  background: #111;
-  color: gold;
-}
-.blog-sidebar-left form button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  background: gold;
+
+.nft-footer-buttons .btn-small {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
   color: #000;
   font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-.blog-sidebar-left form button:hover {
-  background: #c0a000;
-}
-
-/* ===== Настройки для статей ===== */
-.blog-post {
-  background: #222;
-  padding: 20px;
-  margin-bottom: 20px;
-  border: 1px solid gold;
-  border-radius: 10px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.3s, transform 0.25s;
 }
 
-/* ===== Адаптивность ===== */
-@media (max-width: 900px) {
-  .blog-layout {
-    flex-direction: column;
-    align-items: center;
-    min-height: auto;
+.nft-footer-buttons .btn-small:hover {
+  background: var(--gold-dark);
+  transform: scale(1.05);
+}
+
+/* ---------- 11. SHOP GRID (пример – без правок) ------------------------ */
+
+/* .shop-items, .shop-item … оставил, т.к. ошибок не было; при желании сделайте
+   grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); чтобы плитки были
+   адаптивными. */                                           
+
+@media (max-width:640px) {
+  .corner-box-right-langs {
+    padding: 0;
+    width: 25px;
+    height: 25px;
+    overflow: hidden;
+    right: 10px;
+    top: 46px;
   }
+
+  #google_translate_element {
+    width: 100%;
+    height: 100%;
+  }
+
+  #google_translate_element .goog-logo-link {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #google_translate_element .goog-logo-link img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+  }
+
+  #google_translate_element .goog-te-combo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+  }
+}
+
+ .blog-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.blog-sidebar-left,
+.blog-content,
+.blog-sidebar-right {
+  background: #0d0d0d; /* ближе к оригинальному скрину */
+  border: 1px solid #ffd700;
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Левая и правая колонка фиксированной ширины */
+.blog-sidebar-left,
+.blog-sidebar-right {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+/* Центральная колонка тянется */
+.blog-content {
+  flex: 1;
+}
+
+/* Новости */
+.blog-post {
+  background: #111;
+  border: 1px solid #ffd700;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+/* Заголовки внутри */
+.blog-post h3 {
+  color: #ffd700;
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+
+/* Дата */
+.blog-post p:first-of-type {
+  color: #ccc;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+/* Кнопка "Читать далее" */
+.blog-btn {
+  background: linear-gradient(135deg, #ffd700, #c0a000);
+  color: #000;
+  font-weight: bold;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background 0.3s, transform 0.25s;
+}
+
+.blog-btn:hover {
+  background: #c0a000;
+  transform: scale(1.05);
+}
+
+/* Центрирование кнопки в карточке */
+.btn-wrapper {
+  text-align: center;
+  margin-top: 15px;
+}
+
+/* Форма обратной связи */
+.blog-sidebar-left label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-align: left;
+  color: #ffd700;
+}
+
+.blog-sidebar-left input,
+.blog-sidebar-left textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  background: #000;
+  border: 1px solid #ffd700;
+  border-radius: 4px;
+  color: #fff;
+  font-family: var(--font);
+}
+
+/* Комментарии и Disqus */
+.blog-sidebar-right h2 {
+  color: #ffd700;
+  font-size: 1.2rem;
+  margin-top: 0;
+}
+
+#disqus_thread {
+  margin-top: 20px;
+  min-height: 320px;
+}
+
+@media (max-width: 768px) {
+  .blog-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px;
+    gap: 20px;
+  }
+
   .blog-sidebar-left,
   .blog-sidebar-right,
   .blog-content {
-    width: 90%;
-    margin: 10px 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: none !important;
+    margin: 0 auto;
+    padding: 16px;
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    background: #0d0d0d;
+  }
+
+  .blog-post {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    background: #111;
+  }
+
+  .blog-post h3 {
+    font-size: 1rem;
+  }
+
+  .blog-btn {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
+
+  .btn-wrapper {
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  #disqus_thread {
+    min-height: 280px;
+  }
+
+  .blog-sidebar-left input,
+  .blog-sidebar-left textarea {
+    font-size: 0.9rem;
+  }
+
+  .blog-sidebar-left label {
+    font-size: 0.9rem;
   }
 }
 
-/* ===== Ссылки внутри .policy-section ===== */
-.policy-section a:link,
-.policy-section a:visited {
-  color: gold;
-  text-decoration: underline;
-  transition: color 0.3s;
-}
-.policy-section a:hover {
-  color: #c0a000;
-  text-decoration: underline;
-}
-.policy-section a:active {
-  color: #c0a000;
-}
-
-/* ===== Пример стилей для .policy-section ===== */
-.policy-section {
-  background: #111;
-  color: #fff;
-  padding: 40px 20px;
-  max-width: 800px;
-  margin: 40px auto;
-  text-align: left;
-  border: 1px solid gold;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-}
-
-/* ===== Стили для Google Translate ===== */
-
-/* Скрываем только текст "Powered by Google", оставляя логотип */
-.goog-logo-link {
-  display: inline-block !important;
-}
-.goog-logo-link > span {
-  display: none !important;
-}
-
-/* Скрываем верхнюю панель автоперевода */
-.goog-te-banner-frame.skiptranslate {
-  display: none !important;
-}
-body {
-  top: 0px !important;
-}
-
-/* Стили для выпадающего списка */
-#google_translate_element .goog-te-gadget .goog-te-combo {
-  margin: 0 !important;
-  padding: 5px 8px !important;
-  width: 130px !important;
-  background: #111 !important;
-  color: gold !important;
-  border: 1px solid gold !important;
-  border-radius: 5px !important;
-  font-family: 'Orbitron', sans-serif !important;
-  font-size: 14px !important;
-  outline: none !important;
-  appearance: none !important;
-  -moz-appearance: none !important;
-  -webkit-appearance: none !important;
-  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg width%3D%226%22 height%3D%224%22 viewBox%3D%220 0 6 4%22 xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath d%3D%22M3%200l3%203H0z%22 fill%3D%22gold%22/%3E%3C/svg%3E') !important;
-  background-repeat: no-repeat !important;
-  background-position: calc(100% - 5px) center !important;
-  background-size: 6px 4px !important;
-  padding-right: 20px !important;
-}
-
-/* Ховер-эффект для выпадающего списка */
-#google_translate_element .goog-te-gadget .goog-te-combo:hover {
-  background: #333 !important;
-  cursor: pointer !important;
-}
-
-/* ===== Стили для кнопки "Купить" в NFT-галерее (маленькая кнопка сверху по центру) ===== */
-.nft-item .buy-button {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.8em;
-  padding: 5px 10px;
-  border-radius: 5px;
-  z-index: 10;
-  background: gold;
-  color: #000;
-  text-decoration: none;
-  font-weight: bold;
-  transition: background 0.3s;
-}
-.nft-item .buy-button:hover {
-  background: #c0a000;
-}
-
- /* Сетка для видео и ликвидности */
-.buy-content-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 24px;
-  align-items: start;
-  margin: 40px auto;
-  max-width: 1000px;
+/* === ROADMAP СЕКЦИЯ === */
+.roadmap {
+  max-width: 900px;
+  margin: 60px auto 80px;
   padding: 0 20px;
-}
-
-/* Видео */
-.buy-video iframe {
-  width: 100%;
-  height: 360px;
-  border-radius: 8px;
-}
-
-.video-caption {
-  margin-top: 12px;
-  color: #ddd;
-  font-size: 0.95em;
   text-align: center;
 }
 
-/* Блок ликвидности */
-.buy-liquidity {
-  background: rgba(0,0,0,0.6);
-  border-radius: 8px;
-  padding: 20px;
-  color: #fff;
+.roadmap h2 {
+  color: var(--gold);
+  font-size: 2.4rem;
+  margin-bottom: 40px;
 }
 
-.buy-liquidity h3 {
-  margin-top: 0;
-  margin-bottom: 16px;
-  color: gold;
-  font-size: 1.2em;
+.roadmap-item {
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  background: #0d0d0d;
+  padding: 20px 30px;
+  margin-bottom: 24px;
+  transition: transform 0.2s ease;
 }
 
-.buy-liquidity dl {
-  margin: 0 0 20px;
+.roadmap-item:hover {
+  transform: scale(1.02);
 }
 
-.buy-liquidity dt {
-  font-weight: bold;
-  font-size: 0.95em;
+.roadmap-item h3 {
+  color: var(--gold);
+  font-size: 1.4rem;
+  margin-bottom: 10px;
 }
 
-.buy-liquidity dd {
-  margin: 4px 0 12px 0;
-  font-size: 1.1em;
+.roadmap-item p {
+  margin: 5px 0;
+  font-size: 1.05rem;
+  color: #ccc;
 }
 
-/* Кнопка обновить */
-.buy-liquidity button {
-  background: gold;
-  color: #000;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.buy-liquidity button:hover {
-  background: #c0a000;
-}
-
-/* Мобильная адаптация */
 @media (max-width: 768px) {
-  .buy-content-grid {
-    grid-template-columns: 1fr;
-  }
-  .buy-video iframe {
-    height: 240px;
-  }
+  .roadmap h2 { font-size: 1.8rem; }
+  .roadmap-item { padding: 16px 20px; }
+  .roadmap-item h3 { font-size: 1.2rem; }
+  .roadmap-item p { font-size: 1rem; }
+} /* ← ЭТОЙ скобки сейчас не хватает */
 
-  /* 1) Навигация в шапке — сделаем её адаптивной */
-.corner-box {
-  display: inline-block;
-  margin: 4px;
-}
-
-/* 2) Блок кнопок-ссылок внизу страницы */
-.extra-buttons-section {
-  display: flex;
-  flex-wrap: wrap;
+  /* В css/style.css: */
+#walletModal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.5);
   justify-content: center;
-  gap: 8px;
-  padding: 10px;
+  align-items: center;
+  z-index: 1000;
 }
-/* Размер “плиток”-кнопок */
-.extra-buttons-section .btn-small {
-  flex: 1 1 calc(50% - 16px); /* две плитки в ряд */
-  max-width: 140px;
-  text-align: center;
-  margin: 4px 0;
-  white-space: nowrap;
+#walletModal .modal-content {
+  background: #111;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 320px;
+  color: gold;
+  position: relative;
 }
-/* На очень узких экранах — одна в ряд */
-@media (max-width: 380px) {
-  .extra-buttons-section .btn-small {
-    flex: 1 1 100%;
-    max-width: none;
+/* Мобильные дополнения: */
+@media (max-width: 480px) { 
+  #walletModal .modal-content {
+    width: 95%;
+    padding: 16px;
   }
-}
-
-/* 3) Шапка “WHY CHOOSE...” уменьшаем шрифт на смартфоне */
-.hero-header h1 {
-  font-size: 2.5em;
-}
-@media (max-width: 480px) {
-  .hero-header h1 {
-    font-size: 1.8em;
-  }
-  .hero-header p {
-    font-size: 1em;
-  }
-
-/* 4) Общие отступы для мобильных */
-body {
-  padding: 25px 10px;
-}
-section, .shop-items {
-  padding: 0 10px;
+  #walletModal h2 { font-size: 1rem; }
+  #walletModal button { font-size: 0.9rem; }
  }
 
- /* Базовый стиль для иконок в углах */
-.corner-btn {
-  position: absolute;
-  width: 32px; height: 32px;
-  background: rgba(0,0,0,0.6);
-  border: 1px solid gold;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  color: gold;
-  z-index: 100;
+  /* 1) Отключаем горизонтальную прокрутку всей страницы */
+html, body {
+  overflow-x: hidden;
 }
-.corner-btn a {
-  color: inherit;
+
+/* 2) Заставляем адрес разбиваться по строкам и не вылазить за пределы */
+.wallet-section #walletAddress {
+  width: 100%;
+  word-break: break-all;      /* разбивает длинное слово (адрес) */
+  overflow-wrap: anywhere;    /* вариант для любых браузеров */
+  text-align: center;         /* по центру */
+  margin: 0 auto;
+ }
+
+  /* ---------- 12. LEGAL PAGES (terms.html, privacy.html, comment-policy.html) --------- */
+.legal-section {
+  max-width: 880px;
+  margin: 40px auto;
+  padding: 20px 30px;
+  background: #0d0d0d;
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  font-size: 1rem;
+  line-height: 1.7;
+  text-align: left;
+}
+.legal-section h2 {
+  color: var(--gold);
+  font-size: 1.4rem;
+  margin-top: 32px;
+}
+.legal-section p,
+.legal-section li {
+  margin-bottom: 16px;
+  color: #eaeaea;
+}
+.legal-section a {
+  color: var(--gold);
+  text-decoration: underline;
+}
+.legal-section a:hover {
+  color: var(--gold-dark);
+}
+
+.legal-footer {
+  background: #111;
+  text-align: center;
+  padding: 24px 12px;
+  font-size: 0.9rem;
+  color: #aaa;
+  border-top: 1px solid var(--gold);
+}
+.legal-footer a {
+  color: var(--gold);
   text-decoration: none;
 }
-
-/* Размещаем их в углах */
-.corner-btn-home    { top: 8px; left: 8px; }
-.corner-btn-blog    { top: 48px; left: 8px; }
-.corner-btn-roadmap { top: 8px; right: 8px; }
-.corner-btn-lang    { top: 30px; right: 8px; }
-
-/* Подгон для переводчика внутри блока */
-.corner-btn-lang #google_translate_element {
-  transform: scale(0.7);
-  transform-origin: top right;
+.legal-footer a:hover {
+  text-decoration: underline;
 }
 
-/* На десктопе можно чуть увеличить */
-@media (min-width: 601px) {
-  .corner-btn { width: 40px; height: 40px; font-size: 20px; }
-}
-
-@media (max-width: 600px) {
-  .corner-box-left {
-    top: 8px;    /* Главная */
-    left: 8px;
+/* Анимация появления модалки */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
   }
-  .corner-box-left2 {
-    top: 48px;   /* Блог */
-    left: 8px;
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
-
-  .corner-box-right {
-    top: 8px;    /* Roadmap */
-    right: 8px;
-  }
-  .corner-box-right-langs {
-    top: 48px;   /* Языки */
-    right: 8px;
-  }
-
-  /* Скрываем выпадающий список языков */
-.goog-te-gadget .goog-te-combo {
-  display: none !important;
+}
+#addTokenModal[style*="display: flex"] > div {
+  animation: fadeInScale 0.25s ease-out;
 }
 
-/* Оставляем только логотип Google (иконку) */
-.goog-logo-link {
-  display: inline-block !important;
-  padding: 0 !important;
-  margin: 0 !important;
+/* Плавное появление/скрытие тоста */
+#toastOK {
+  transition: opacity 0.4s ease;
 }
-.goog-logo-link > img {
-  width: 24px !important;
-  height: auto !important;
+
+/* === Modern touch для модалки выбора кошелька ====================== */
+#walletModal {
+  /* мягкое затемнение + лёгкий blur фона */
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
 }
+
+#walletModal .modal-content {
+  background: rgba(17,17,17,0.85);
+  border: 1px solid rgba(255,215,0,0.35);
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+  transform-origin: center;
+  animation: fadeInScale .25s ease-out;
+}
+
+/* ховер на кнопках внутри модалки */
+#walletModal button {
+  transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+#walletModal button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(255,215,0,0.35);
+}
+
+/* если модалка раскрывается через display:flex|block — тоже анимируем */
+#walletModal[style*="display:"] .modal-content {
+  animation: fadeInScale .25s ease-out;
+}
+
+/* уже есть, но на всякий: плавная анимация масштаб+появление */
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* === Крестик закрытия модалки (в правом верхнем углу) === */
+#walletModal .close-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #ffd700;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  line-height: 1;
+}
+#walletModal .close-btn:hover {
+  color: #fff;
+}
+
+/* === Выбор кошелька — стиль как у Add IBITI === */
+#walletModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 3000;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Контейнер */
+#walletModal .modal-content {
+  position: relative;
+  background: rgba(17, 17, 17, 0.9);
+  border: 1px solid gold;
+  border-radius: 12px;
+  padding: 20px 24px 16px;
+  width: 92%;
+  max-width: 420px;
+  color: #ffd700;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.6),
+    0 0 12px rgba(255, 215, 0, 0.1) inset;
+  animation: fadeInScale 0.25s ease-out;
+}
+
+/* Заголовок */
+#walletModal h2 {
+  font-size: 1.15rem;
+  margin: 0 0 12px;
+  color: #ffd700;
+  text-align: center;
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.4);
+}
+
+/* Крестик */
+#walletModal .close-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+#walletModal .close-btn:hover {
+  transform: scale(1.15);
+  color: #ffd700;
+}
+
+/* Кнопки */
+#walletModal button {
+  display: block;
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid #3f3f46;
+  margin: 8px 0;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* Первая — золотая (MetaMask / Trust / Binance) */
+#walletModal button:first-of-type {
+  background: linear-gradient(135deg, #0b2e1f, #052e2b);
+  border-color: #10b981;
+  color: #d1fae5;
+}
+#walletModal button:first-of-type:hover {
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Вторая — синяя (Coinbase) */
+#walletModal button:last-of-type {
+  background: #0b0f1a;
+  color: #e5e7eb;
+}
+#walletModal button:last-of-type:hover {
+  background: #111827;
+  border-color: #2563eb;
+  box-shadow: 0 0 15px rgba(37, 99, 235, 0.3);
+  transform: translateY(-1px);
+}
+
+/* === CONNECT WALLET MODAL — стиль как у Add IBITI === */
+#walletModal .ibiti-card {
+  position: relative; /* важно для крестика */
+  background: #111;
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 18px;
+  width: 92%;
+  max-width: 420px;
+  color: #ffd700;
+  animation: fadeInScale 0.25s ease-out;
+}
+
+#walletModal .ibiti-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: transparent;
+  border: 0;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  transition: color 0.25s, transform 0.25s;
+}
+
+#walletModal .ibiti-close:hover {
+  color: var(--gold);
+  transform: scale(1.2);
+}
+
+/* --- фикс крестика для модалки подключения --- */
+#walletModal .ibiti-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+  width: auto;
+  height: auto;
+  padding: 0;
+  z-index: 10;        /* поверх всего, но не перекрывает кнопки */
+}
+
+/* Карточка модалки подключения */
+#walletModal .ibiti-card{
+  position: relative;
+  background:#111;
+  border:1px solid gold;
+  border-radius:10px;
+  max-width:420px;
+  width:92%;
+  color:#ffd700;
+  padding:20px 18px 16px; /* важное: есть верхний отступ под крестик+заголовок */
+}
+
+/* Заголовок и место справа под крестик */
+#walletModal .ibiti-card h3{
+  margin:0 0 12px;
+  font-size:18px;
+  padding-right:26px; /* чтобы текст не уезжал под крестик */
+  color:#ffd700;
+}
+
+/* Кнопка-крестик — как раньше фиксили */
+#walletModal .ibiti-close{
+  position:absolute; top:8px; right:10px;
+  background:transparent; border:0; color:#fff;
+  font-size:18px; line-height:1; width:auto; height:auto; padding:0;
+  cursor:pointer; z-index:10;
+}
+
+/* Карточка: всё внутри, ничего не вылезает за золотую рамку */
+.shop-item{
+  position: relative;
+  overflow: hidden;           /* обрезаем всё, что пытается выйти */
+  border: 1px solid gold;
+  border-radius: 10px;
+  background: #0d0d0d;
+}
+
+.shop-item {
+  position: relative;
+  border: 1px solid gold;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+}
+
+.shop-item img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: middle;
+  transform: none !important;
+  object-fit: contain;
+  background: #000;
+}
+
+/* карточка — ничего не торчит */
+.shop-item{
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+/* добавляем равномерный внутренний зазор у изображения */
+.shop-item img{
+  display: block;
+  width: 100%;
+  height: auto;
+  box-sizing: border-box;
+  padding: 12px;          /* зазор от рамки со всех сторон */
+  background: #111;       /* цвет под «полями» */
+  border-radius: 8px;     /* чтобы углы совпали с рамкой */
+}
+
+.image-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #000;
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+.image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.shop-item {
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.shop-item:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(255, 215, 0, 0.25);
+  z-index: 2;
+}
+
+/* =========================================================
+   🎄 XMAS OVERLAY — CLEAN BLOCK (Garland + Snow + Trees)
+   Вставить в КОНЕЦ style.css и удалить старые Xmas-блоки
+   ========================================================= */
+
+/* Общий слой */
+.xmas-overlay{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 900; /* ниже модалок (1000), выше контента */
+}
+
+/* ---------- GARLAND (верхняя гирлянда) ---------- */
+/* Важно: гирлянда НЕ выходит за экран: padding + box-sizing */
+.garland{
+  position: fixed;
+  top: 6px;                 /* чуть ниже, чтобы не резалось */
+  left: 0;
+  right: 0;
+
+  height: 120px;
+  padding: 0 18px;          /* держим края внутри экрана */
+  box-sizing: border-box;
+
+  pointer-events: none;
+  z-index: 910;
+  overflow: visible;        /* ореолы не обрезаются */
+  filter: none;             /* никаких общих blur/туманов */
+}
+
+/* SVG провод внутри #garland */
+.garland svg{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 120px;
+  overflow: visible;
+}
+
+/* Провод — чёткий, с лёгкой тенью */
+.garland .wire{
+  fill: none;
+  stroke: rgba(15,15,15,.92);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,.55));
+}
+
+/* Лампочка */
+.garland .bulb{
+  --c: #ffd86a;
+
+  position: absolute;
+  width: 16px;
+  height: 28px;
+
+  transform: translate(-50%, -50%);
+  border-radius: 70% 70% 92% 92% / 55% 55% 98% 98%;
+  opacity: 1;
+  z-index: 2;
+
+  /* стекло + цвет */
+  background:
+    radial-gradient(circle at 35% 22%,
+      rgba(255,255,255,.95) 0 10%,
+      rgba(255,255,255,.30) 11% 20%,
+      rgba(255,255,255,0) 21% 100%),
+    radial-gradient(circle at 60% 85%,
+      rgba(0,0,0,.20) 0 55%,
+      rgba(0,0,0,0) 56% 100%),
+    linear-gradient(to bottom,
+      rgba(255,255,255,.14),
+      rgba(0,0,0,.18)),
+    var(--c);
+
+  border: 1px solid rgba(255,255,255,.22);
+
+  /* мягкая подсветка, но без “каши” */
+  box-shadow:
+    0 2px 6px rgba(0,0,0,.28),
+    0 0 12px color-mix(in srgb, var(--c) 60%, transparent);
+
+  animation: garlandBlink var(--blink, 1.6s) infinite ease-in-out;
+  animation-delay: var(--delay, 0s);
+}
+
+/* Ореол (не туман — компактный и читаемый) */
+.garland .bulb .halo{
+  position: absolute;
+  left: 50%;
+  top: 64%;
+  width: 52px;
+  height: 52px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+
+  background: radial-gradient(circle,
+    color-mix(in srgb, var(--c) 55%, transparent) 0 42%,
+    rgba(0,0,0,0) 74%);
+
+  opacity: .75;
+  filter: none;
+  z-index: -1;
+}
+
+/* Нитка */
+.garland .bulb .cord{
+  position: absolute;
+  left: 50%;
+  top: -18px;
+  width: 2px;
+  height: 10px;
+  transform: translateX(-50%);
+  background: rgba(10,10,10,.85);
+  border-radius: 2px;
+}
+
+/* Колпачок */
+.garland .bulb .cap{
+  position: absolute;
+  top: -8px;
+  left: 2px;
+  right: 2px;
+  height: 8px;
+  border-radius: 2px 2px 5px 5px;
+  background: rgba(80,80,80,.96);
+  box-shadow: 0 2px 6px rgba(0,0,0,.45);
+}
+
+@keyframes garlandBlink{
+  0%,100%{ filter: brightness(1); opacity: 1; }
+  50%    { filter: brightness(.78); opacity: .92; }
+}
+
+/* ---------- SNOW CANVAS ---------- */
+#snowCanvas{
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 905; /* ниже гирлянды */
+}
+
+/* ---------- TREES (по бокам) ---------- */
+.xmas-tree{
+  position: fixed;
+  bottom: 16px;
+  width: 160px;
+  height: auto;
+  opacity: .95;
+  pointer-events: none;
+  z-index: 908;
+  filter: drop-shadow(0 12px 22px rgba(0,0,0,.65));
+}
+
+.tree-left{ left: 10px; }
+.tree-right{ right: 10px; transform: scaleX(-1); }
+
+.tree-sway{
+  transform-origin: 50% 100%;
+  animation: sway 3.6s ease-in-out infinite;
+}
+@keyframes sway{
+  0%,100%{ transform: rotate(-1.2deg); }
+  50%    { transform: rotate( 1.2deg); }
+}
+
+.tree-body{ fill: #0b7a3b; }
+.tree-trunk{ fill: #6b3f22; }
+
+.tree-star{
+  fill: #ffd86a;
+  animation: starPulse 1.8s ease-in-out infinite;
+}
+@keyframes starPulse{
+  0%,100%{ filter: brightness(1); opacity: .95; }
+  50%    { filter: brightness(1.7); opacity: 1; }
+}
+
+.tree-light{ opacity: .95; }
+.tree-light.l1{ fill:#ff5252; animation: tw 1.2s infinite; }
+.tree-light.l2{ fill:#39d98a; animation: tw 1.4s infinite; }
+.tree-light.l3{ fill:#4dabff; animation: tw 1.6s infinite; }
+.tree-light.l4{ fill:#c77dff; animation: tw 1.8s infinite; }
+
+@keyframes tw{
+  0%,100%{ filter: brightness(.85); opacity: .75; }
+  50%    { filter: brightness(1.8); opacity: 1; }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 680px){
+  .garland{
+    top: 4px;
+    height: 98px;
+    padding: 0 12px;
+  }
+  .garland svg{ height: 98px; }
+  .garland .bulb{ width: 13px; height: 23px; }
+  .garland .bulb .halo{ width: 40px; height: 40px; opacity:.7; }
+
+  .xmas-tree{ display:none; }
+}
+
+/* ---------- Accessibility ---------- */
+@media (prefers-reduced-motion: reduce){
+  .garland .bulb,
+  .tree-sway,
+  .tree-star,
+  .tree-light{ animation: none !important; }
+}
+
+  #about, #team {
+  max-width: 900px;
+  margin: 0 auto 40px auto;
+  text-align: center;
+}
+
+#team .team-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+#team .team-card {
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  border-radius: 12px;
+  padding: 20px 24px;
+  background: rgba(0, 0, 0, 0.6);
+  max-width: 520px;
+}
+
+#team .role {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #ffd86a;
+}
+
+#team .bio {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+#team .links a {
+  color: #ffd86a;
+  text-decoration: underline;
+}
+
+/* Разделительная полоса для блока Whitepaper */
+.action-band {
+  width: 100%;
+  background: transparent; /* НЕТ серой заливки, только линии */
+  border-top: 1px solid rgba(255, 215, 0, 0.5);    /* верхняя полоса до краёв */
+  border-bottom: 1px solid rgba(255, 215, 0, 0.5); /* нижняя полоса до краёв */
+  padding: 18px 0;     /* место под кнопку */
+  margin: 24px 0;      /* отступ сверху/снизу от ABOUT и TEAM */
+}
+
+.action-band__inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  justify-content: center; /* кнопка по центру */
+}
+
+.promo-wrapper {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.promo-controls label {
+  display: block;
+  font-size: 14px;
+  color: #ffde4d;
+  margin-bottom: 4px;
+}
+
+#promoUsdtAmount {
+  background: #111;
+  border: 1px solid #ffde4d;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  width: 100px;
+}
+
+.gift-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #ffde4d;
+  background: #222;
+  cursor: pointer;
+  color: #ffde4d;
+  font-weight: 600;
+  transition: box-shadow 0.2s, transform 0.1s, background 0.2s;
+}
+
+.gift-button:hover {
+  background: #333;
+  box-shadow: 0 0 15px rgba(255, 222, 77, 0.7);
+  transform: translateY(-1px);
+}
+
+.gift {
+  position: relative;
+  width: 32px;
+  height: 32px;
+}
+
+.gift-box {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60%;
+  background: #ffde4d;
+  border-radius: 6px;
+}
+
+.gift-lid {
+  position: absolute;
+  top: 0;
+  left: -3px;
+  width: calc(100% + 6px);
+  height: 40%;
+  background: #ff5555;
+  border-radius: 6px;
+  transform-origin: bottom center;
+  animation: gift-lid-bounce 1.4s infinite;
+}
+
+.gift-ribbon {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 4px;
+  height: 100%;
+  background: #222;
+  transform: translateX(-50%);
+}
+
+@keyframes gift-lid-bounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  40%      { transform: translateY(-5px) rotate(-4deg); }
+  60%      { transform: translateY(-2px) rotate(3deg); }
+}
+
+.gift-text {
+  white-space: nowrap;
+}
+
