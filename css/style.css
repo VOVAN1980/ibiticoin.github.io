@@ -1,1078 +1,849 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>IBITIcoin Shop</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
-  <style>
-    .hero-header {
-      padding: 15px 20px;
-      text-align: center;
-    }
-    .hero-header h1 {
-      font-size: 3em;
-      color: gold;
-      margin: 0;
-    }
-    .hero-header p {
-      font-size: 1.5em;
-      color: #fff;
-    }
-    #countdownNotice {
-      text-align: center;
-      font-weight: bold;
-      color: gold;
-      font-size: 1.2em;
-      margin-bottom: 10px;
-    }
-    .wallet-section {
-      text-align: center;
-      margin: 20px auto;
-    }
-    .wallet-section button {
-      background: gold;
-      color: #000;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background 0.3s;
-    }
-    .wallet-section button:hover {
-      background: #c0a000;
-    }
-    .wallet-section #walletAddress {
-      margin-top: 10px;
-      font-weight: bold;
-      color: gold;
-    }
-    .wallet-section #ibitiBalance {
-      color: gold;
-      font-weight: bold;
-      margin-top: 10px;
-    }
-    .shop-items {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      max-width: 1200px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-    .shop-item {
-      background: #111;
-      border: 1px solid gold;
-      border-radius: 10px;
-      overflow: hidden;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-      transition: transform 0.3s;
-    }
-    .shop-item img {
-      width: 100%;
-      display: block;
-    }
-    .shop-item h3 {
-      margin: 10px 0;
-      color: gold;
-      font-size: 1.3em;
-    }
-    .shop-item p {
-      color: gold;
-      margin: 0 10px 10px;
-    }
-    .shop-item button {
-      background: gold;
-      color: #000;
-      border: none;
-      padding: 10px;
-      width: 100%;
-      font-weight: bold;
-      cursor: pointer;
-      border-radius: 0 0 10px 10px;
-      transition: background 0.3s;
-    }
-    .shop-item button:hover {
-      background: #c0a000;
-    }
-    #walletModal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    #walletModal .modal-content {
-      background: #111;
-      padding: 20px;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 320px;
-      text-align: center;
-      color: gold;
-      position: relative;
-    }
-    #walletModal h2 {
-      margin-top: 0;
-      font-size: 1.25rem;
-    }
-    #walletModal button {
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px 0;
-      border: none;
-      border-radius: 4px;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    #walletModal .close-btn {
-      background: transparent;
-      color: #fff;
-      font-size: 1.1rem;
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      border: none;
-    }
-    #walletModal .btn-injected {
-      background: gold;
-      color: #000;
-    }
-    #walletModal .btn-coinbase {
-      background: #0052ff;
-      color: #fff;
-    }
-    #walletModal .btn-coinbase:hover {
-      background: #003bb5;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 2000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background: rgba(0,0,0,0.7);
-    }
-    .modal-content-custom {
-      background: #111;
-      margin: 10% auto;
-      padding: 20px;
-      border: 2px solid gold;
-      width: 90%;
-      max-width: 500px;
-      border-radius: 10px;
-      color: gold;
-      text-align: center;
-      position: relative;
-    }
-    .modal-content-custom .close {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 1.5em;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .modal-content-custom label {
-      display: block;
-      margin-bottom: 10px;
-      font-weight: bold;
-    }
-    .modal-content-custom input[type="number"] {
-      padding: 10px;
-      width: 80%;
-      border: 1px solid gold;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      background: #000;
-      color: gold;
-    }
-    .modal-content-custom select {
-      padding: 10px;
-      width: 85%;
-      border: 1px solid gold;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      background: #000;
-      color: gold;
-      font-weight: bold;
-    }
-    .modal-content-custom select option {
-      background: #000;
-      color: gold;
-    }
-    .modal-content-custom button[type="submit"],
-    .modal-content-custom button.cancel {
-      background: gold;
-      color: #000;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
-      margin: 0 5px;
-    }
-    .modal-content-custom button[type="submit"]:hover,
-    .modal-content-custom button.cancel:hover {
-      background: #c0a000;
-    }
-    footer {
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.8);
-      border-top: 2px solid gold;
-      text-align: center;
-      color: gold;
-    }
-    footer p, footer a {
-      color: gold;
-      text-decoration: none;
-    }
-    footer a:hover {
-      text-decoration: underline;
-    }
+/* Подключаем шрифт Orbitron */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
-    /* ===== New Year promo styles ===== */
-    .promo-section {
-      max-width: 1200px;
-      margin: 10px auto 30px;
-      padding: 0 20px;
-    }
-    .promo-wrapper {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 16px;
-    }
-    .promo-controls label {
-      display: block;
-      font-size: 14px;
-      color: #ffde4d;
-      margin-bottom: 4px;
-    }
-    #promoUsdtAmount {
-      background: #111;
-      border: 1px solid #ffde4d;
-      color: #fff;
-      padding: 6px 10px;
-      border-radius: 6px;
-      width: 110px;
-    }
-    .gift-button {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      border: 1px solid #ffde4d;
-      background: #222;
-      cursor: pointer;
-      color: #ffde4d;
-      font-weight: 600;
-      transition: box-shadow 0.2s, transform 0.1s, background 0.2s;
-    }
-    .gift-button:hover {
-      background: #333;
-      box-shadow: 0 0 15px rgba(255, 222, 77, 0.7);
-      transform: translateY(-1px);
-    }
-    .gift {
-      position: relative;
-      width: 32px;
-      height: 32px;
-    }
-    .gift-box {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 60%;
-      background: #ffde4d;
-      border-radius: 6px;
-    }
-    .gift-lid {
-      position: absolute;
-      top: 0;
-      left: -3px;
-      width: calc(100% + 6px);
-      height: 40%;
-      background: #ff5555;
-      border-radius: 6px;
-      transform-origin: bottom center;
-      animation: gift-lid-bounce 1.4s infinite;
-    }
-    .gift-ribbon {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      width: 4px;
-      height: 100%;
-      background: #222;
-      transform: translateX(-50%);
-    }
-    .gift-text {
-      white-space: nowrap;
-    }
-    @keyframes gift-lid-bounce {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      40%      { transform: translateY(-5px) rotate(-4deg); }
-      60%      { transform: translateY(-2px) rotate(3deg); }
-    }
-  </style>
-</head>
-<body>
-  <header class="hero-header">
-    <h1>IBITIcoin Shop</h1>
-    <p>Get exclusive items and utilities connected with IBITIcoin.</p>
-  </header>
+/* ===== Глобальные стили ===== */
+body {
+  margin: 0;
+  font-family: 'Orbitron', sans-serif;
+  background: linear-gradient(135deg, #000000, #333333);
+  color: #fff;
+  text-align: center;
+}
 
-  <div id="countdownNotice"></div>
+/* ===== Окошки в углах (corner-box) ===== */
+.corner-box {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid gold;
+  border-radius: 5px;
+  padding: 5px 10px;
+  z-index: 999;
+}
+.corner-box-left {
+  top: 20px;
+  left: 15px;
+}
+.corner-box-left2 {
+  top: 60px;
+  left: 15px;
+}
 
-  <section class="wallet-section">
-    <button onclick="onConnectClick()">Connect wallet</button>
-    <div id="walletAddress"></div>
-    <div id="ibitiBalance"></div>
-  </section>
+/* Правый угол: Roadmap */
+.corner-box-right {
+  top: 20px;
+  right: 15px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid gold;
+  border-radius: 5px;
+  padding: 5px 10px;
+  z-index: 999;
+}
+.corner-box-right a {
+  color: gold;
+  text-decoration: none;
+  font-weight: bold;
+  margin: 0 5px;
+}
+.corner-box-right a:hover {
+  text-decoration: underline;
+}
 
-  <button type="button" onclick="openAddTokenModal()"
-    style="margin-top:10px;background:#0f172a;color:#d1fae5;border:1px solid #10b981;padding:10px 16px;border-radius:10px;cursor:pointer;">
-    Add IBITI to wallet
-  </button>
+/* Правый угол: Языки */
+.corner-box-right-langs {
+  top: 60px;
+  right: 15px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid gold;
+  border-radius: 5px;
+  padding: 5px 10px;
+  z-index: 999;
+}
+.corner-box-right-langs a {
+  color: gold;
+  text-decoration: none;
+  font-weight: bold;
+  margin: 0 5px;
+}
+.corner-box-right-langs a:hover {
+  text-decoration: underline;
+}
 
-  <!-- ===== CONNECT WALLET MODAL (desktop dynamic) ===== -->
-  <div id="walletModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;align-items:center;justify-content:center;backdrop-filter:blur(2px)">
-    <div class="ibiti-card" style="background:#111;padding:18px;border:1px solid gold;border-radius:10px;max-width:420px;width:92%;color:#ffd700;position:relative;">
-      <button type="button" id="closeWalletModal" class="ibiti-close" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer;">✕</button>
-      <h3 style="margin:0 0 10px;font-size:18px;">Select a wallet</h3>
+/* Стили для ссылок внутри corner-box (если не переопределены) */
+.corner-box a {
+  color: gold;
+  text-decoration: none;
+  font-weight: bold;
+  margin: 0 5px;
+}
+.corner-box a:hover {
+  text-decoration: underline;
+}
 
-      <!-- JS injects detected desktop wallets here -->
-      <div id="desktopWalletList" style="display:flex;flex-direction:column;gap:10px"></div>
+/* Мобильная адаптация правых углов */
+@media (max-width: 600px) {
+  .corner-box-right {
+    top: 10px;
+    right: 10px;
+  }
+  .corner-box-right-langs {
+    top: 60px;
+    right: 10px;
+  }
 
-      <div style="margin-top:8px;font-size:12px;color:#9ca3af">
-        Trust Wallet has no browser extension on desktop. Use mobile app (or WalletConnect – coming later).
-      </div>
-    </div>
-  </div>
+/* ===== Кнопки (btn) ===== */
+/* По умолчанию компактные кнопки (inline-block) для главной страницы */
+.btn {
+  display: inline-block;
+  background: linear-gradient(135deg, gold, #c0a000);
+  color: #000;
+  padding: 15px 30px;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 5px;
+  text-align: center;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+.btn:hover {
+  transform: scale(1.1);
+  background: #c0a000;
+}
 
-  <!-- Example items -->
-  <section class="shop-items">
-    <div class="shop-item">
-      <div class="image-wrapper">
-        <img src="img/IBITIcoin.webp" alt="IBITIcoin">
-      </div>
-      <h3>Item 1 (IBITIcoin)</h3>
-      <p>Short description, price and payment conditions.</p>
-      <button class="buy-button" onclick="openPurchaseModal('IBITIcoin')">Buy</button>
-    </div>
-    <div class="shop-item">
-      <div class="image-wrapper">
-        <img src="img/NFT.webp" alt="NFT">
-      </div>
-      <h3>Item 2 (NFT)</h3>
-      <p>Short description, price and payment conditions.</p>
-      <button class="buy-button" onclick="openPurchaseModal('NFT')">Buy</button>
-    </div>
-  </section>
+/* В блоге (внутри .blog-layout) делаем кнопки блочными, центрированными и с ограниченной шириной */
+.blog-layout .btn {
+  display: block;
+  margin: 20px auto;
+  max-width: 220px;
+}
 
-  <!-- Purchase modal -->
-  <div id="purchaseModal" class="modal">
-    <div class="modal-content-custom">
-      <span class="close" onclick="closePurchaseModal()">&times;</span>
-      <h2 id="purchaseTitle">Purchase</h2>
-      <form id="purchaseForm">
-        <label for="nftAmount">Enter amount:</label>
-        <input type="number" id="nftAmount" name="nftAmount" min="1" required>
-        <label for="paymentToken">Payment method:</label>
-        <select id="paymentToken" required>
-          <option value="">-- Select --</option>
-          <option value="USDT">USDT</option>
-        </select>
-        <br><br>
-        <button type="submit" id="confirmBtn" disabled>Confirm purchase</button>
-        <button type="button" class="cancel" onclick="closePurchaseModal()">Cancel</button>
-      </form>
-    </div>
-  </div>
+/* ===== Стили для секции подключения кошелька ===== */
+.wallet-section {
+  text-align: center;
+  margin: 20px auto;
+}
+.wallet-section button {
+  background: gold;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.wallet-section button:hover {
+  background: #c0a000;
+}
+.wallet-section #walletAddress {
+  margin-top: 10px;
+  font-weight: bold;
+  color: gold;
+}
 
-  <!-- 🔥 New Year promo (swap via new contract) -->
-  <section class="promo-section">
-    <div class="promo-wrapper">
-      <div class="promo-controls">
-        <label for="promoUsdtAmount">New Year promo — amount (USDT):</label>
-        <input id="promoUsdtAmount" type="number" min="10" step="1" value="10">
-      </div>
+/* ===== Шапка (hero-header) ===== */
+.hero-header {
+  padding: 15px 20px;
+}
+.hero-header img {
+  margin-bottom: 20px;
+}
+.hero-header h1 {
+  margin: 0;
+  font-size: 3em;
+  letter-spacing: 2px;
+  color: gold;
+}
+.hero-header p {
+  margin: 10px 0 0;
+  font-size: 1.5em;
+  color: #fff;
+}
 
-      <button id="promoBuyButton" class="gift-button">
-        <div class="gift">
-          <div class="gift-lid"></div>
-          <div class="gift-box"></div>
-          <div class="gift-ribbon"></div>
-        </div>
-        <span class="gift-text">Buy IBITI +10% bonus</span>
-      </button>
-    </div>
-  </section>
+/* ===== Золотой блок (gold-section) ===== */
+.gold-section {
+  background: #111;
+  border-top: 2px solid gold;
+  border-bottom: 2px solid gold;
+  padding: 60px 20px;
+}
+.gold-section h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  color: gold;
+  text-transform: uppercase;
+}
+.gold-section p {
+  font-size: 1.2em;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto 20px;
+  text-align: center;
+}
 
-  <script type="module">
-    import { initPromoButton } from "./js/referralSwap.js";
-    initPromoButton();
-  </script>
+/* ===== Футер ===== */
+footer {
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  border-top: 2px solid gold;
+  font-size: 0.9em;
+  text-align: center;
+}
+footer p, footer a {
+  color: gold;
+  text-decoration: none;
+}
+footer a:hover {
+  text-decoration: underline;
+}
 
-  <!-- Token sale stats -->
-  <section id="saleStats"
-    data-aos="fade-up"
-    style="
-      margin: 40px auto;
-      max-width: 800px;
-      padding: 24px;
-      background: #111;
-      color: #fff;
-      border: 1px solid gold;
-      border-radius: 10px;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    "
-    onmouseover="this.style.transform='scale(1.015)'; this.style.boxShadow='0 0 25px rgba(255, 215, 0, 0.3)'"
-    onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 20px rgba(255, 215, 0, 0.1)'"
-  >
-    <div class="progress-container">
-      <div id="salesProgress" class="progress-bar"></div>
-    </div>
-    <div style="font-size:0.9em; color:#aaa;">
-      Sold: <span id="soldPercent">0%</span>
-    </div>
+/* ===== Roadmap ===== */
+.roadmap {
+  background: #111;
+  padding: 40px 20px;
+  color: gold;
+  text-align: center;
+  margin-top: 40px;
+}
+.roadmap h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+.roadmap-item {
+  margin: 20px auto;
+  max-width: 800px;
+  padding: 20px;
+  border: 1px solid gold;
+  border-radius: 10px;
+}
 
-    <h3 style="color: gold; font-size: 1.8em; margin-bottom: 16px;">📊 Token sale statistics</h3>
-    <ul style="list-style: none; padding-left: 0; color: gold; font-size: 1.1em;">
-      <li>🔹 Total on contract:     <strong><span id="cap">—</span></strong> IBI</li>
-      <li>🔹 Referral reserve:       <strong><span id="refReserve">—</span></strong> IBI</li>
-      <li>🔹 Main sale pool:         <strong><span id="salePool">—</span></strong> IBI</li>
-      <li>🔹 Sold:                   <strong><span id="sold">—</span></strong> IBI</li>
-      <li>🔹 Remaining for sale:     <strong><span id="left">—</span></strong> IBI</li>
-      <li>🔹 Bonus pool (10%):       <strong><span id="bonusPool">—</span></strong> IBI</li>
-    </ul>
+/* ===== Блог ===== */
+.blog {
+  background: #222;
+  padding: 40px 20px;
+  color: gold;
+  text-align: center;
+}
+.blog h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+.blog-post {
+  background: #111;
+  border: 1px solid gold;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 800px;
+  text-align: left;
+}
+.blog-post h3 {
+  margin-top: 0;
+  color: gold;
+}
 
-    <div style="margin-top: 16px; font-size: 0.9em; color: #aaa;">
-      <span id="lastUpdated">Updated: —</span>
-      <button id="refreshStats"
-        style="margin-left: 12px; background: gold; color: #000; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
-        🔄 Refresh
-      </button>
-    </div>
-  </section>
+/* ===== Стили для списка шагов ===== */
+.buy-steps {
+  list-style: decimal;
+  display: inline-block;
+  margin: 0 auto;
+  text-align: left;
+  padding-left: 30px;
+}
+.buy-steps li {
+  margin-bottom: 10px;
+}
 
-  <!-- Referral program -->
-  <section id="referralInfo"
-    data-aos="fade-up"
-    style="
-      margin: 40px auto;
-      max-width: 800px;
-      padding: 24px;
-      background: #111;
-      color: #fff;
-      border: 1px solid gold;
-      border-radius: 10px;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    "
-    onmouseover="this.style.transform='scale(1.015)'; this.style.boxShadow='0 0 25px rgba(255, 215, 0, 0.3)'"
-    onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 20px rgba(255, 215, 0, 0.1)'"
-  >
-    <h3 style="color: gold; font-size: 1.8em; margin-bottom: 16px;">🎁 Referral program</h3>
-    <p style="margin: 8px 0;">🔸 Buy at least <strong>10 IBITI</strong> — and get <strong>+1 IBITI</strong> as a bonus.</p>
-    <p style="margin: 8px 0;">🔸 After your first purchase you receive a personal referral link.</p>
-    <p style="margin: 8px 0;">🔸 Share it with friends — for each friend who buys tokens you get an extra <strong>+1 IBITI</strong>.</p>
-    <p style="margin-top: 16px;">📌 Logic is handled automatically by the sale contract once enabled; no registration or manual approval required.</p>
-  </section>
+/* ===== Видео ===== */
+iframe {
+  display: block;
+  margin: 30px auto;
+}
 
-  <!-- Referral link / sharing -->
-  <div style="margin: 32px auto 64px; text-align: center;">
-    <input
-      type="text"
-      id="myReferralLink"
-      readonly
-      placeholder="Your referral link will appear after the first purchase of at least 10 IBITI"
-      style="
-        width: 100%;
-        max-width: 500px;
-        padding: 10px;
-        border: 1px solid gold;
-        border-radius: 6px;
-        background: #000;
-        color: gold;
-        font-weight: bold;
-        margin-bottom: 12px;
-      "
-    />
-    <br />
-    <button id="copyMyReferralLink" class="btn-small"
-      style="padding: 10px 24px; font-weight: bold;">
-      📋 Copy my link
-    </button>
+/* ===== Dropdown ===== */
+.dropdown {
+  position: relative;
+}
+.dropdown-toggle {
+  color: gold;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  transition: color 0.3s;
+}
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(0, 0, 0, 0.9);
+  border: 2px solid gold;
+  border-radius: 5px;
+  padding: 10px;
+  min-width: 120px;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+.dropdown-menu a {
+  display: block;
+  color: gold;
+  text-decoration: none;
+  margin: 5px 0;
+  font-weight: normal;
+  transition: color 0.3s;
+}
+.dropdown-menu a:hover {
+  color: #c0a000;
+}
+.dropdown:hover .dropdown-menu {
+  max-height: 500px;
+  opacity: 1;
+  pointer-events: auto;
+}
 
-    <button id="openShareModal"
-      style="margin-top: 12px; margin-left: 8px; padding: 10px 24px; font-weight: bold; background: gold; color: #000; border: none; border-radius: 6px; cursor: pointer;">
-      📣 Share link
-    </button>
+/* ===== Social Feed ===== */
+.social-feed {
+  background: #111;
+  padding: 40px 20px;
+  color: gold;
+  text-align: center;
+  margin-top: 40px;
+}
+.social-feed h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
 
-    <div id="referralStats" style="display:none">
-      👥 Referred friends: <span id="refCount">0</span><br>
-      💰 Earned bonuses: <span id="refReward">0</span> IBITI
-    </div>
-  </div>
+/* ===== Subscribe ===== */
+.subscribe {
+  background: #222;
+  padding: 40px 20px;
+  color: gold;
+  text-align: center;
+  margin-top: 40px;
+}
+.subscribe h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+.subscribe input[type="email"] {
+  padding: 10px;
+  width: 250px;
+  border: 1px solid gold;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+.subscribe button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background: gold;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.subscribe button:hover {
+  background: #c0a000;
+}
 
-  <!-- Social share modal -->
-  <div id="shareModal" class="modal" style="
-    display: none;
-    position: fixed;
-    z-index: 3000;
-    left: 0; top: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    justify-content: center;
+/* ===== Calculator ===== */
+.calculator {
+  background: #222;
+  padding: 40px 20px;
+  color: gold;
+  text-align: center;
+  margin-top: 40px;
+}
+.calculator h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+.calculator input[type="number"] {
+  padding: 10px;
+  width: 200px;
+  border: 1px solid gold;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+.calculator button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background: gold;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.calculator button:hover {
+  background: #c0a000;
+}
+
+/* ===== Video Guides ===== */
+.video-guides {
+  background: #111;
+  padding: 40px 20px;
+  color: gold;
+  text-align: center;
+  margin-top: 40px;
+}
+.video-guides h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+.video-item {
+  margin: 30px auto;
+  max-width: 800px;
+}
+.video-item h3 {
+  margin-bottom: 10px;
+}
+
+/* ===== Дополнительные кнопки в нижнем углу ===== */
+.corner-box-bottom {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid gold;
+  border-radius: 5px;
+  padding: 5px 10px;
+  z-index: 999;
+}
+.corner-box-bottom a {
+  color: gold;
+  text-decoration: none;
+  font-weight: bold;
+  margin: 0 5px;
+  font-size: 0.9em;
+}
+.corner-box-bottom a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Extra Buttons Section ===== */
+.extra-buttons-section {
+  background: transparent;
+  padding: 40px 0;
+  text-align: center;
+}
+.btn-small {
+  display: inline-block;
+  background: gold;
+  color: #000;
+  padding: 8px 16px;
+  border-radius: 5px;
+  text-decoration: none;
+  margin: 0 5px;
+  font-weight: bold;
+  font-size: 0.9em;
+  transition: background 0.3s, color 0.3s;
+}
+.btn-small:hover {
+  background: #c0a000;
+  color: #000;
+}
+.btn-small:visited {
+  color: #000;
+}
+
+/* ===== Трёхколоночная верстка блога ===== */
+.blog-layout {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 20px;
+  min-height: 800px;
+}
+
+/* ===== Левая боковая панель (контактная форма) ===== */
+.blog-sidebar-left {
+  width: 30%;
+  background: #222;
+  color: gold;
+  padding: 20px;
+  margin-right: 20px;
+  border: 1px solid gold;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== Центр (новости) ===== */
+.blog-content {
+  width: 40%;
+  background: #111;
+  color: gold;
+  padding: 20px;
+  border: 1px solid gold;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== Правая боковая панель (комментарии) ===== */
+.blog-sidebar-right {
+  width: 30%;
+  background: #222;
+  color: gold;
+  padding: 20px;
+  margin-left: 20px;
+  border: 1px solid gold;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  min-height: 800px;
+}
+
+/* ===== Формы в левой панели ===== */
+.blog-sidebar-left form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.blog-sidebar-left form label {
+  width: 80%;
+  margin-bottom: 10px;
+  text-align: left;
+}
+.blog-sidebar-left form input,
+.blog-sidebar-left form textarea {
+  width: 80%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid gold;
+  border-radius: 5px;
+  background: #111;
+  color: gold;
+}
+.blog-sidebar-left form button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background: gold;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.blog-sidebar-left form button:hover {
+  background: #c0a000;
+}
+
+/* ===== Настройки для статей ===== */
+.blog-post {
+  background: #222;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid gold;
+  border-radius: 10px;
+}
+
+/* ===== Адаптивность ===== */
+@media (max-width: 900px) {
+  .blog-layout {
+    flex-direction: column;
     align-items: center;
-  ">
-    <div class="modal-content-custom" style="
-      background: #111;
-      padding: 20px;
-      border: 2px solid gold;
-      border-radius: 10px;
-      color: gold;
-      text-align: center;
-      max-width: 500px;
-      margin: auto;
-      position: relative;
-    ">
-      <span id="closeShareModal" style="position: absolute; top: 10px; right: 15px; font-size: 1.5em; font-weight: bold; cursor: pointer;">&times;</span>
-      <h3 style="margin-bottom: 20px;">Choose a social network</h3>
-      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
-        <a id="share-facebook"  target="_blank" class="btn-small">Facebook</a>
-        <a id="share-twitter"   target="_blank" class="btn-small">Twitter</a>
-        <a id="share-vk"        target="_blank" class="btn-small">VK</a>
-        <a id="share-telegram"  target="_blank" class="btn-small">Telegram</a>
-        <a id="share-ok"        target="_blank" class="btn-small">OK</a>
-        <a id="share-linkedin"  target="_blank" class="btn-small">LinkedIn</a>
-        <a id="share-weibo"     target="_blank" class="btn-small">Weibo</a>
-      </div>
-    </div>
-  </div>
+    min-height: auto;
+  }
+  .blog-sidebar-left,
+  .blog-sidebar-right,
+  .blog-content {
+    width: 90%;
+    margin: 10px 0;
+  }
+}
 
-  <!-- Toast -->
-  <div id="toast" style="
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background: #111;
-    color: gold;
-    border: 1px solid gold;
-    border-radius: 8px;
-    padding: 12px 20px;
-    font-weight: bold;
-    box-shadow: 0 0 10px rgba(255,215,0,0.3);
-    opacity: 0;
-    pointer-events: none;
-    z-index: 9999;
-    transition: opacity 0.3s ease;
-  ">
-    ✅ Copied to clipboard
-  </div>
+/* ===== Ссылки внутри .policy-section ===== */
+.policy-section a:link,
+.policy-section a:visited {
+  color: gold;
+  text-decoration: underline;
+  transition: color 0.3s;
+}
+.policy-section a:hover {
+  color: #c0a000;
+  text-decoration: underline;
+}
+.policy-section a:active {
+  color: #c0a000;
+}
 
-  <footer>
-    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
-    <p><a href="index.html">Back to home</a></p>
-  </footer>
+/* ===== Пример стилей для .policy-section ===== */
+.policy-section {
+  background: #111;
+  color: #fff;
+  padding: 40px 20px;
+  max-width: 800px;
+  margin: 40px auto;
+  text-align: left;
+  border: 1px solid gold;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
 
-  <!-- Libs -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk@4.3.3/dist/CoinbaseWalletSDK.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-  <script>
-    AOS.init({ once: true });
-  </script>
+/* ===== Стили для Google Translate ===== */
 
-  <!-- App modules -->
-  <script type="module" src="js/config.js"></script>
-  <script type="module" src="js/sale.js"></script>
-  <script type="module" src="js/wallet.js"></script>
-  <script type="module" src="js/shop.js"></script>
+/* Скрываем только текст "Powered by Google", оставляя логотип */
+.goog-logo-link {
+  display: inline-block !important;
+}
+.goog-logo-link > span {
+  display: none !important;
+}
 
-  <!-- Referral activation script -->
-  <script type="module">
-    import { getSaleContract } from './js/sale.js';
-    import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
+/* Скрываем верхнюю панель автоперевода */
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+body {
+  top: 0px !important;
+}
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const linkInput   = document.getElementById("myReferralLink");
-      const copyBtn     = document.getElementById("copyMyReferralLink");
-      const toast       = document.getElementById("toast");
-      const rewardEl    = document.getElementById("refReward");
-      const countEl     = document.getElementById("refCount");
-      const statsBlock  = document.getElementById("referralStats");
-      const shareModal  = document.getElementById("shareModal");
-      const openBtn     = document.getElementById("openShareModal");
-      const closeBtn    = document.getElementById("closeShareModal");
-      const pageTitle   = encodeURIComponent(document.title);
+/* Стили для выпадающего списка */
+#google_translate_element .goog-te-gadget .goog-te-combo {
+  margin: 0 !important;
+  padding: 5px 8px !important;
+  width: 130px !important;
+  background: #111 !important;
+  color: gold !important;
+  border: 1px solid gold !important;
+  border-radius: 5px !important;
+  font-family: 'Orbitron', sans-serif !important;
+  font-size: 14px !important;
+  outline: none !important;
+  appearance: none !important;
+  -moz-appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg width%3D%226%22 height%3D%224%22 viewBox%3D%220 0 6 4%22 xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath d%3D%22M3%200l3%203H0z%22 fill%3D%22gold%22/%3E%3C/svg%3E') !important;
+  background-repeat: no-repeat !important;
+  background-position: calc(100% - 5px) center !important;
+  background-size: 6px 4px !important;
+  padding-right: 20px !important;
+}
 
-      // Locked by default
-      copyBtn.addEventListener("click", () => {
-        Swal.fire({
-          icon: "info",
-          title: "Not available",
-          text: "Buy at least 10 IBITI first to receive your referral link."
-        });
-      });
+/* Ховер-эффект для выпадающего списка */
+#google_translate_element .goog-te-gadget .goog-te-combo:hover {
+  background: #333 !important;
+  cursor: pointer !important;
+}
 
-      // Enable after successful on-chain purchase
-      window.enableReferralAfterPurchase = async function(account) {
-        const refLink = `${window.location.origin}${window.location.pathname}?ref=${account}`;
-        linkInput.value = refLink;
+/* ===== Стили для кнопки "Купить" в NFT-галерее (маленькая кнопка сверху по центру) ===== */
+.nft-item .buy-button {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.8em;
+  padding: 5px 10px;
+  border-radius: 5px;
+  z-index: 10;
+  background: gold;
+  color: #000;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+.nft-item .buy-button:hover {
+  background: #c0a000;
+}
 
-        copyBtn.onclick = () => {
-          navigator.clipboard.writeText(refLink).then(() => {
-            toast.style.opacity = "1";
-            setTimeout(() => toast.style.opacity = "0", 2500);
-          });
-        };
+ /* Сетка для видео и ликвидности */
+.buy-content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  align-items: start;
+  margin: 40px auto;
+  max-width: 1000px;
+  padding: 0 20px;
+}
 
-        // Social share URLs
-        document.getElementById('share-facebook').href   = `https://www.facebook.com/sharer/sharer.php?u=${refLink}`;
-        document.getElementById('share-twitter').href    = `https://twitter.com/intent/tweet?url=${refLink}&text=${pageTitle}`;
-        document.getElementById('share-vk').href         = `https://vk.com/share.php?url=${refLink}&title=${pageTitle}`;
-        document.getElementById('share-telegram').href   = `https://telegram.me/share/url?url=${refLink}&text=${pageTitle}`;
-        document.getElementById('share-ok').href         = `https://connect.ok.ru/offer?url=${refLink}`;
-        document.getElementById('share-linkedin').href   = `https://www.linkedin.com/sharing/share-offsite/?url=${refLink}`;
-        document.getElementById('share-weibo').href      = `http://service.weibo.com/share/share.php?url=${refLink}&title=${pageTitle}`;
+/* Видео */
+.buy-video iframe {
+  width: 100%;
+  height: 360px;
+  border-radius: 8px;
+}
 
-        // Share modal open/close
-        openBtn.onclick = () => shareModal.style.display = 'flex';
-        closeBtn.onclick = () => shareModal.style.display = 'none';
-        window.addEventListener('click', e => {
-          if (e.target === shareModal) shareModal.style.display = 'none';
-        });
+.video-caption {
+  margin-top: 12px;
+  color: #ddd;
+  font-size: 0.95em;
+  text-align: center;
+}
 
-        if (typeof loadReferralStats === "function") {
-          await loadReferralStats(account);
-        }
-        statsBlock.style.display = "block";
-      };
-    });
-  </script>
+/* Блок ликвидности */
+.buy-liquidity {
+  background: rgba(0,0,0,0.6);
+  border-radius: 8px;
+  padding: 20px;
+  color: #fff;
+}
 
-  <!-- ===== ADD IBITI TOKEN MODAL ===== -->
-  <div id="addTokenModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;align-items:center;justify-content:center;">
-    <div style="background:#111;padding:18px 18px 14px;border:1px solid gold;border-radius:10px;max-width:420px;width:92%;color:#ffd700;position:relative;">
-      <button onclick="closeAddTokenModal()" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer;">✕</button>
-      <h3 style="margin:0 0 10px;font-size:18px;">Where to add IBITI token?</h3>
+.buy-liquidity h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: gold;
+  font-size: 1.2em;
+}
 
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <button onclick="addTokenEip747()" style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
-          MetaMask / Trust Wallet / Binance Wallet (auto)
-        </button>
+.buy-liquidity dl {
+  margin: 0 0 20px;
+}
 
-        <details style="background:#0b0f1a;border:1px solid #333;border-radius:8px;padding:10px;">
-          <summary style="cursor:pointer;color:#e5e7eb">Coinbase Wallet (manual)</summary>
-          <div style="margin-top:10px;color:#e5e7eb;font-size:14px;line-height:1.4">
-            Open Coinbase Wallet → <b>Tokens</b> → <b>+</b> → <b>Import Token</b> → paste:
-            <div style="margin-top:8px">
-              <div>Contract: <code id="ctAddr">0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></div>
-              <div>Symbol: <code>IBITI</code></div>
-              <div>Decimals: <code>8</code></div>
-            </div>
-            <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-              <button onclick="copyText('#ctAddr')" style="padding:6px 10px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">Copy address</button>
-              <button onclick="openBscscan()" style="padding:6px 10px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">Open in BscScan</button>
-            </div>
-          </div>
-        </details>
+.buy-liquidity dt {
+  font-weight: bold;
+  font-size: 0.95em;
+}
 
-        <div style="font-size:12px;color:#9ca3af;margin-top:4px">
-          On mobile Trust Wallet, open this site in the DApp browser and press the auto-add button.
-        </div>
-      </div>
-    </div>
-  </div>
+.buy-liquidity dd {
+  margin: 4px 0 12px 0;
+  font-size: 1.1em;
+}
 
-  <script>
-    const IBITI_TOKEN = {
-      address: '0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb',
-      symbol:  'IBITI',
-      decimals: 8,
-      image:   'https://ibiticoin.com/img/IBITI-512.png'
-    };
+/* Кнопка обновить */
+.buy-liquidity button {
+  background: gold;
+  color: #000;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
 
-    function openAddTokenModal(){
-      const m = document.getElementById('addTokenModal');
-      m.style.display = 'flex';
-      m.onclick = (e)=>{ if (e.target === m) closeAddTokenModal(); };
-    }
-    function closeAddTokenModal(){
-      document.getElementById('addTokenModal').style.display='none';
-    }
+.buy-liquidity button:hover {
+  background: #c0a000;
+}
 
-    function openInstallMM(){
-      const m = document.getElementById('installMM');
-      m.style.display='flex';
-      m.onclick=(e)=>{ if(e.target===m) closeInstallMM(); };
-    }
-    function closeInstallMM(){
-      document.getElementById('installMM').style.display='none';
-    }
-
-    function toast(msg){
-      const el = document.getElementById('toastOK');
-      el.textContent = msg;
-      el.style.opacity = '1';
-      clearTimeout(el._timer);
-      el._timer = setTimeout(()=> el.style.opacity='0', 2600);
-    }
-
-    function hasEthereum(){
-      return !!(window.ethereum && typeof window.ethereum.request === 'function');
-    }
-
-    async function addTokenEip747(){
-      if (!hasEthereum()){
-        openInstallMM();
-        return;
-      }
-      try {
-        const bscId = '0x38'; // BSC mainnet
-        const current = await window.ethereum.request({ method:'eth_chainId' });
-        if (current !== bscId){
-          try {
-            await window.ethereum.request({ method:'wallet_switchEthereumChain', params:[{ chainId: bscId }] });
-          } catch(e){
-            if (e.code === 4902){
-              await window.ethereum.request({
-                method:'wallet_addEthereumChain',
-                params:[{
-                  chainId: bscId,
-                  chainName:'BNB Smart Chain',
-                  nativeCurrency:{ name:'BNB', symbol:'BNB', decimals:18 },
-                  rpcUrls:['https://bsc-dataseed1.bnbchain.org'],
-                  blockExplorerUrls:['https://bscscan.com']
-                }]
-              });
-            } else { throw e; }
-          }
-        }
-
-        const added = await window.ethereum.request({
-          method:'wallet_watchAsset',
-          params:{ type:'ERC20', options: IBITI_TOKEN }
-        });
-
-        if (added) {
-          toast('✅ IBITI added to wallet');
-          closeAddTokenModal();
-        } else {
-          toast('ℹ️ Action cancelled');
-        }
-      } catch(err){
-        if (err && err.code === 4001) {
-          toast('ℹ️ Action cancelled by user');
-        } else {
-          console.error('Add IBITI error:', err);
-          alert('Failed to add token. Make sure your wallet is installed and unlocked.');
-        }
-      }
-    }
-
-    function copyText(sel){
-      const text = document.querySelector(sel).textContent.trim();
-      navigator.clipboard.writeText(text).then(()=>toast('✅ Address copied'));
-    }
-    function openBscscan(){
-      window.open('https://bscscan.com/token/'+IBITI_TOKEN.address,'_blank');
-    }
-  </script>
-
-  <!-- Toast for add-token -->
-  <div id="toastOK" style="position:fixed;right:20px;bottom:24px;background:#0b0f1a;border:1px solid #10b981;color:#d1fae5;padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:4000"></div>
-
-  <!-- Install MetaMask modal -->
-  <div id="installMM" style="display:none;position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.6);align-items:center;justify-content:center">
-    <div style="background:#111;border:1px solid gold;border-radius:10px;padding:18px;max-width:420px;width:92%;color:#ffd700;position:relative">
-      <button onclick="closeInstallMM()" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer">✕</button>
-      <h3 style="margin:0 0 10px">Install MetaMask</h3>
-      <p style="color:#e5e7eb;margin:0 0 12px">To add the token automatically, you need MetaMask (or a compatible wallet) installed.</p>
-      <a href="https://metamask.io/download/" target="_blank" rel="noopener"
-        style="display:inline-block;padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;text-decoration:none">Download MetaMask</a>
-    </div>
-  </div>
-
-  <!-- Wallet selection / patches -->
-  <script>
-  // === Universal wallet selection ===
-  function openWalletSelector() {
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if (!isMobile) {
-      document.getElementById('walletModal').style.display = 'flex';
-      return;
-    }
-
-    Swal.fire({
-      title: 'Select a wallet',
-      showCancelButton: true,
-      showConfirmButton: false,
-      html: `
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <button onclick="openInWallet('metamask')" class="btn-small">🦊 MetaMask</button>
-        <button onclick="openInWallet('trust')" class="btn-small">🔵 Trust Wallet</button>
-        <button onclick="openInWallet('binance')" class="btn-small">🟡 Binance Wallet</button>
-        <button onclick="openInWallet('coinbase')" class="btn-small">🧢 Coinbase</button>
-      </div>
-      `
-    });
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .buy-content-grid {
+    grid-template-columns: 1fr;
+  }
+  .buy-video iframe {
+    height: 240px;
   }
 
-  function openInWallet(wallet) {
-    const appUrl = encodeURIComponent(window.location.href);
-    let deeplink = "";
+  /* 1) Навигация в шапке — сделаем её адаптивной */
+.corner-box {
+  display: inline-block;
+  margin: 4px;
+}
 
-    switch (wallet) {
-      case 'metamask':
-        deeplink = `https://metamask.app.link/dapp/${location.hostname}${location.pathname}`;
-        break;
-      case 'trust':
-        deeplink = `https://link.trustwallet.com/open_url?coin_id=60&url=${appUrl}`;
-        break;
-      case 'binance':
-        deeplink = `https://dapp.bnbchain.org/#/dapp/${appUrl}`;
-        break;
-      case 'coinbase':
-        deeplink = `https://go.cb-w.com/dapp?cb_url=${appUrl}`;
-        break;
-      default:
-        return;
-    }
+/* 2) Блок кнопок-ссылок внизу страницы */
+.extra-buttons-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+}
+/* Размер “плиток”-кнопок */
+.extra-buttons-section .btn-small {
+  flex: 1 1 calc(50% - 16px); /* две плитки в ряд */
+  max-width: 140px;
+  text-align: center;
+  margin: 4px 0;
+  white-space: nowrap;
+}
+/* На очень узких экранах — одна в ряд */
+@media (max-width: 380px) {
+  .extra-buttons-section .btn-small {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+}
 
-    window.location.href = deeplink;
+/* 3) Шапка “WHY CHOOSE...” уменьшаем шрифт на смартфоне */
+.hero-header h1 {
+  font-size: 2.5em;
+}
+@media (max-width: 480px) {
+  .hero-header h1 {
+    font-size: 1.8em;
   }
-  </script>
-
-  <script>
-  function isInMetaMask() {
-    return !!(window.ethereum?.isMetaMask) || /MetaMask/i.test(navigator.userAgent);
-  }
-  function isInTrust() {
-    return /TrustWallet|Trust/i.test(navigator.userAgent);
-  }
-  function isMobile() {
-    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  }
-
-  function waitForEthereum(maxMs = 2500) {
-    const started = Date.now();
-    return new Promise(resolve => {
-      (function tick() {
-        if (window.ethereum && typeof window.ethereum.request === 'function') return resolve(true);
-        if (Date.now() - started > maxMs) return resolve(false);
-        setTimeout(tick, 100);
-      })();
-    });
+  .hero-header p {
+    font-size: 1em;
   }
 
-  async function onConnectClick() {
-    const mobile = isMobile();
-    const inMM   = isInMetaMask();
-    const inTW   = isInTrust();
+/* 4) Общие отступы для мобильных */
+body {
+  padding: 25px 10px;
+}
+section, .shop-items {
+  padding: 0 10px;
+ }
 
-    if (mobile && (inMM || inTW)) {
-      await safeConnectInApp();
-      return;
-    }
+ /* Базовый стиль для иконок в углах */
+.corner-btn {
+  position: absolute;
+  width: 32px; height: 32px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid gold;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: gold;
+  z-index: 100;
+}
+.corner-btn a {
+  color: inherit;
+  text-decoration: none;
+}
 
-    if (mobile && !inMM && !inTW) {
-      if (typeof openWalletSelector === 'function') {
-        openWalletSelector();
-      } else {
-        alert('Open this site inside MetaMask/Trust wallet or use a deeplink.');
-      }
-      return;
-    }
+/* Размещаем их в углах */
+.corner-btn-home    { top: 8px; left: 8px; }
+.corner-btn-blog    { top: 48px; left: 8px; }
+.corner-btn-roadmap { top: 8px; right: 8px; }
+.corner-btn-lang    { top: 30px; right: 8px; }
 
-    openDesktopWalletModal();
+/* Подгон для переводчика внутри блока */
+.corner-btn-lang #google_translate_element {
+  transform: scale(0.7);
+  transform-origin: top right;
+}
+
+/* На десктопе можно чуть увеличить */
+@media (min-width: 601px) {
+  .corner-btn { width: 40px; height: 40px; font-size: 20px; }
+}
+
+@media (max-width: 600px) {
+  .corner-box-left {
+    top: 8px;    /* Главная */
+    left: 8px;
+  }
+  .corner-box-left2 {
+    top: 48px;   /* Блог */
+    left: 8px;
   }
 
-  async function safeConnectInApp() {
-    const ok = await waitForEthereum(3000);
-    if (!ok) {
-      alert('Wallet did not initialize Web3. Reload the tab inside MetaMask/Trust.');
-      return;
-    }
-
-    if (typeof window.connectWallet === 'function') {
-      try {
-        await window.connectWallet();
-        return;
-      } catch (e) {
-        console.warn('connectWallet() failed, falling back:', e);
-      }
-    }
-
-    try {
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const acc = accounts?.[0];
-      if (acc) {
-        const addrEl = document.getElementById('walletAddress');
-        if (addrEl) addrEl.textContent = acc;
-        if (typeof window.showIbitiBalance === 'function') {
-          try { await window.showIbitiBalance(true); } catch {}
-        }
-      } else {
-        alert('Wallet returned no accounts.');
-      }
-    } catch (err) {
-      const msg = (err && (err.message || err.shortMessage)) || String(err);
-      alert('Connection error: ' + msg);
-    }
+  .corner-box-right {
+    top: 8px;    /* Roadmap */
+    right: 8px;
+  }
+  .corner-box-right-langs {
+    top: 48px;   /* Языки */
+    right: 8px;
   }
 
-  (function patchOpenInWallet() {
-    const original = window.openInWallet;
-    if (typeof original !== 'function') return;
-    window.openInWallet = function(wallet) {
-      if (isInMetaMask() || isInTrust()) {
-        safeConnectInApp();
-        return;
-      }
-      original(wallet);
-    }
-  })();
-  </script>
+  /* Скрываем выпадающий список языков */
+.goog-te-gadget .goog-te-combo {
+  display: none !important;
+}
 
-  <script>
-  // ==== DESKTOP WALLET SELECTOR (PC) ====
-  function hideWalletModal() {
-    const m = document.getElementById('walletModal');
-    if (m) m.style.display = 'none';
-  }
-
-  function getInjectedProviders() {
-    const eth = window.ethereum;
-    const list = [];
-    if (!eth) return list;
-    if (Array.isArray(eth.providers)) list.push(...eth.providers);
-    else list.push(eth);
-    return list;
-  }
-
-  function providerLabel(p) {
-    if (p.isMetaMask) return 'MetaMask';
-    if (p.isCoinbaseWallet) return 'Coinbase Wallet';
-    if (p.isOKXWallet) return 'OKX Wallet';
-    if (p.isBitKeep || p.isBitget) return 'Bitget/BitKeep';
-    return 'Injected Wallet';
-  }
-
-  async function useProvider(p) {
-    hideWalletModal();
-
-    if (window.ethereum !== p) { try { window.ethereum = p; } catch {} }
-    if (typeof window.connectWallet === 'function') {
-      await window.connectWallet();
-    } else {
-      const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const acc = accs?.[0];
-      if (acc) {
-        const wa = document.getElementById('walletAddress');
-        if (wa) wa.textContent = acc;
-      }
-    }
-  }
-
-  async function connectBinanceExtension() {
-    const b = window.BinanceChain || window.binance || null;
-    if (!b) return alert('Binance Wallet extension not detected.');
-    hideWalletModal();
-
-    try {
-      const accounts = await b.request({ method: 'eth_requestAccounts' });
-      const acc = accounts?.[0];
-      if (acc) {
-        if (window.ethereum !== b) { try { window.ethereum = b; } catch {} }
-        if (typeof window.connectWallet === 'function') {
-          await window.connectWallet();
-        } else {
-          const wa = document.getElementById('walletAddress');
-          if (wa) wa.textContent = acc;
-        }
-      }
-    } catch (e) {
-      alert('Binance Wallet: ' + (e?.message || e));
-    }
-  }
-
-  function openDesktopWalletModal() {
-    const modal = document.getElementById('walletModal');
-    const listEl = document.getElementById('desktopWalletList');
-    if (!modal || !listEl) return;
-
-    listEl.innerHTML = '';
-
-    const providers = getInjectedProviders();
-    if (providers.length) {
-      providers.forEach(p => {
-        const btn = document.createElement('button');
-        btn.textContent = providerLabel(p);
-        btn.style.cssText = 'padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;';
-        btn.onclick = () => useProvider(p);
-        listEl.appendChild(btn);
-      });
-    } else {
-      const a = document.createElement('a');
-      a.href = 'https://metamask.io/download/';
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.textContent = 'Install MetaMask';
-      a.style.cssText = 'padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;display:inline-block;text-decoration:none;text-align:center;';
-      listEl.appendChild(a);
-    }
-
-    const bBtn = document.createElement('button');
-    bBtn.textContent = 'Binance Wallet (Extension)';
-    bBtn.style.cssText = 'padding:10px 14px;border:1px solid #f59e0b;border-radius:8px;background:#1f2937;color:#fde68a;cursor:pointer;';
-    bBtn.onclick = connectBinanceExtension;
-    if (!(window.BinanceChain || window.binance)) bBtn.disabled = true;
-    listEl.appendChild(bBtn);
-
-    if (!providers.some(p => p.isCoinbaseWallet)) {
-      const cb = document.createElement('a');
-      cb.href = 'https://www.coinbase.com/wallet';
-      cb.target = '_blank';
-      cb.rel = 'noopener';
-      cb.textContent = 'Install Coinbase Wallet';
-      cb.style.cssText = 'padding:10px 14px;border:1px solid #3b82f6;border-radius:8px;background:#111827;color:#e5e7eb;display:inline-block;text-decoration:none;text-align:center;';
-      listEl.appendChild(cb);
-    }
-
-    modal.style.display = 'flex';
-    document.getElementById('closeWalletModal')?.addEventListener('click', () => modal.style.display = 'none', { once:true });
-  }
-
-  (function patchDesktopSelector(){
-    const orig = window.openWalletSelector;
-    window.openWalletSelector = function() {
-      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-      if (isMobile) return orig ? orig() : null;
-      openDesktopWalletModal();
-    };
-  })();
-  </script>
-
-</body>
-</html>
+/* Оставляем только логотип Google (иконку) */
+.goog-logo-link {
+  display: inline-block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.goog-logo-link > img {
+  width: 24px !important;
+  height: auto !important;
+}
