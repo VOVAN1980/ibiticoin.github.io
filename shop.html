@@ -297,7 +297,7 @@
     </div>
   </section>
 
-  <!-- Purchase modal -->
+    <!-- Purchase modal -->
   <div id="purchaseModal" class="modal">
     <div class="modal-content-custom">
       <span class="close" onclick="closePurchaseModal()">&times;</span>
@@ -317,7 +317,8 @@
     </div>
   </div>
 
-    <!-- 🔥 промо-блок ПЕРЕНОСИМ СЮДА -->
+  <!-- 🔥 New Year promo (своп через новый контракт) -->
+  <section class="promo-section">
     <div class="promo-wrapper">
       <div class="promo-controls">
         <label for="promoUsdtAmount">New Year promo — amount (USDT):</label>
@@ -333,14 +334,12 @@
         <span class="gift-text">Buy IBITI +10% bonus</span>
       </button>
     </div>
-    <!-- 🔥 конец промо-блока -->
-  </div>
-</section>
+  </section>
 
-<script type="module">
-  import { initPromoButton } from "./js/referralSwap.js";
-  initPromoButton();
-</script>
+  <script type="module">
+    import { initPromoButton } from "./js/referralSwap.js";
+    initPromoButton();
+  </script>
 
   <!-- Token sale stats (front-end; actual logic in sale.js) -->
   <section id="saleStats"
@@ -990,6 +989,7 @@ function openDesktopWalletModal() {
 
 </body>
 </html>
+
 
 
 
