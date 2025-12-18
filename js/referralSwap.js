@@ -2,12 +2,15 @@
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
 import config     from "./config.js";
 
-const USDT  = config.active.contracts.USDT_TOKEN;
-const IBITI = config.active.contracts.IBITI_TOKEN;
-const SWAP  = config.active.contracts.REFERRAL_SWAP_ROUTER;
+// адреса из конфига
+const USDT           = config.active.contracts.USDT_TOKEN;
+const IBITI          = config.active.contracts.IBITI_TOKEN;
+const SWAP           = config.active.contracts.REFERRAL_SWAP_ROUTER;
 const PANCAKE_ROUTER = config.active.contracts.PANCAKESWAP_ROUTER;
 
+// ABI промо-контракта и роутера
 const SWAP_ABI = [
+  "function promoActive() view returns (bool)",
   "function buyWithReferral(uint256 usdtAmountIn,uint256 minIbitiOut,address referrer,uint256 deadline) external"
 ];
 
@@ -15,6 +18,7 @@ const ROUTER_ABI = [
   "function getAmountsOut(uint256 amountIn,address[] calldata path) external view returns (uint256[] memory amounts)"
 ];
 
+// рефка из URL (?ref=0x...)
 function getRefFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const ref = params.get("ref");
@@ -33,11 +37,16 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
     return;
   }
 
+  if (!SWAP) {
+    alert("Промо-контракт ещё не настроен. Попробуй позже или купи через PancakeSwap.");
+    return;
+  }
+
   const signer   = window.signer;
   const userAddr = window.selectedAccount;
   const provider = signer.provider;
 
-  // 1) минимум 10 USDT
+  // минимум 10 USDT
   const amount = Number(usdtAmountHuman);
   if (!amount || amount < 10) {
     alert("Минимальная покупка по акции — 10 USDT.");
@@ -46,25 +55,9 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
 
   const usdtAmountIn = ethers.parseUnits(amount.toString(), 18); // BSC USDT: 18 знаков
 
-  // 2) считаем minOut через Pancake (с 3% запасом)
+  // инстансы контрактов
   const router = new ethers.Contract(PANCAKE_ROUTER, ROUTER_ABI, provider);
-  const path   = [USDT, IBITI];
-  const amounts = await router.getAmountsOut(usdtAmountIn, path);
-  const expectedIbiti = amounts[amounts.length - 1];
-  const minIbitiOut   = (expectedIbiti * 97n) / 100n; // 3% slippage
-
-  const deadline = BigInt(Math.floor(Date.now() / 1000) + 10 * 60); // +10 минут
-
-  // 3) реферер из URL, запрет self-ref
-  let referrer = getRefFromUrl();
-  try {
-    if (ethers.getAddress(referrer) === ethers.getAddress(userAddr)) {
-      referrer = ethers.ZeroAddress;
-    }
-  } catch {
-    referrer = ethers.ZeroAddress;
-  }
-
+  const swapView = new ethers.Contract(SWAP, SWAP_ABI, provider);
   const usdt = new ethers.Contract(
     USDT,
     ["function approve(address spender,uint256 amount) external returns (bool)"],
@@ -72,21 +65,75 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
   );
   const swap = new ethers.Contract(SWAP, SWAP_ABI, signer);
 
-  // 4) approve USDT -> наш роутер
-  const txApprove = await usdt.approve(SWAP, usdtAmountIn);
-  await txApprove.wait();
+  try {
+    // 0) проверяем, что акция ещё активна
+    const active = await swapView.promoActive();
+    if (!active) {
+      alert("Новогодняя акция IBITI завершена.\nДальнейшая покупка — напрямую через PancakeSwap.");
+      return;
+    }
 
-  // 5) своп + бонус + рефералка
-  const tx = await swap.buyWithReferral(usdtAmountIn, minIbitiOut, referrer, deadline);
-  console.log("Promo buy tx:", tx.hash);
-  await tx.wait();
+    // 1) считаем minOut через Pancake (3% slippage)
+    const path   = [USDT, IBITI];
+    const amounts = await router.getAmountsOut(usdtAmountIn, path);
+    const expectedIbiti = amounts[amounts.length - 1];
+    const minIbitiOut   = (expectedIbiti * 97n) / 100n; // -3% запас
 
-  // 6) включаем показ реф-ссылки теми же окнами, что и сейл
-  if (typeof window.enableReferralAfterPurchase === "function") {
-    window.enableReferralAfterPurchase(userAddr);
+    const deadline = BigInt(Math.floor(Date.now() / 1000) + 10 * 60); // +10 минут
+
+    // 2) реферер из URL, запрет self-ref
+    let referrer = getRefFromUrl();
+    try {
+      if (ethers.getAddress(referrer) === ethers.getAddress(userAddr)) {
+        referrer = ethers.ZeroAddress;
+      }
+    } catch {
+      referrer = ethers.ZeroAddress;
+    }
+
+    // 3) approve USDT -> наш промо-контракт
+    const txApprove = await usdt.approve(SWAP, usdtAmountIn);
+    await txApprove.wait();
+
+    // 4) своп + бонус + рефералка
+    const tx = await swap.buyWithReferral(usdtAmountIn, minIbitiOut, referrer, deadline);
+    console.log("Promo buy tx:", tx.hash);
+    await tx.wait();
+
+    // 5) включаем показ реф-ссылки тем же окном, что и обычный сейл
+    if (typeof window.enableReferralAfterPurchase === "function") {
+      window.enableReferralAfterPurchase(userAddr);
+    }
+
+    alert("Готово! Покупка с новогодним бонусом проведена.");
+  } catch (e) {
+    console.error(e);
+    const raw = e?.message || "";
+
+    const msg = raw.toLowerCase();
+
+    if (msg.includes("promo off") || msg.includes("promoactive")) {
+      alert("Новогодняя акция IBITI завершена.\nДальнейшая покупка — напрямую через PancakeSwap.");
+      return;
+    }
+
+    if (msg.includes("not enough ibiti pool")) {
+      alert("Бонусный пул IBITI по акции исчерпан.\nПокупка доступна напрямую через PancakeSwap.");
+      return;
+    }
+
+    if (msg.includes("amount < min")) {
+      alert("Сумма меньше минимальной для акции (10 USDT).");
+      return;
+    }
+
+    if (msg.includes("deadline")) {
+      alert("Транзакция просрочена. Попробуй ещё раз.");
+      return;
+    }
+
+    alert(raw || "Ошибка при покупке по акции.");
   }
-
-  alert("Готово! Покупка с новогодним бонусом проведена.");
 }
 
 // инициализируем кнопку на странице
