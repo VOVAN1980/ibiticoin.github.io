@@ -137,6 +137,7 @@
       gap: 10px;
       font-size: 0.84rem;
       color: var(--text-muted);
+      margin-bottom: 14px;
     }
 
     .hero-pill {
@@ -147,7 +148,7 @@
     }
 
     .hero-actions {
-      margin-top: 16px;
+      margin-top: 8px;
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
@@ -214,17 +215,6 @@
       margin-bottom: 4px;
     }
 
-    .tag {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent);
-      font-size: 0.78rem;
-      margin-right: 6px;
-      margin-bottom: 4px;
-    }
-
     .token-meta {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -245,8 +235,7 @@
     }
 
     code {
-      font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas,
-        "Liberation Mono", "Courier New", monospace;
+      font-family: ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size: 0.86rem;
       background: #1b1b1b;
       padding: 2px 4px;
@@ -285,7 +274,7 @@
       <a href="how-to-buy.html">How to Buy</a>
       <a href="whitepaper.html">Whitepaper</a>
       <a href="mailto:info@ibiticoin.com">Contact</a>
-      <!-- PDF-файл должен реально лежать рядом: /IBITIcoin_whitepaper_EN.pdf -->
+      <!-- PDF-файл лежит рядом: /IBITIcoin_whitepaper_EN.pdf -->
       <a href="IBITIcoin_whitepaper_EN.pdf" class="btn-primary" download>
         Download PDF
       </a>
@@ -310,13 +299,14 @@
       <div class="hero-pill">Token contract: 0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</div>
       <div class="hero-pill">Primary pool: IBITI / USDT on PancakeSwap V2</div>
     </div>
-    <a
-  href="https://pancakeswap.finance/swap?chain=bsc&outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&inputCurrency=0x55d398326f99059fF775485246999027B3197955"
-  target="_blank"
-  class="btn-outline"
->
-  Open PancakeSwap (IBITI / USDT)
-</a>
+    <div class="hero-actions">
+      <a
+        href="https://pancakeswap.finance/swap?chain=bsc&outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&inputCurrency=0x55d398326f99059fF775485246999027B3197955"
+        target="_blank"
+        class="btn-outline"
+      >
+        Open PancakeSwap (IBITI / USDT)
+      </a>
     </div>
   </section>
 
@@ -392,7 +382,7 @@
         <p class="muted">
           IBITIcoin is implemented as a suite of Solidity contracts, each with a single,
           explicit responsibility. Only the most important modules are summarized here;
-          the full list and source code are available in the public repository. :contentReference[oaicite:0]{index=0}
+          the full list and source code are available in the public repository.
         </p>
 
         <h3>3.1 Core token</h3>
@@ -483,8 +473,8 @@
         </p>
 
         <p class="muted">
-          Additional modules include a phased token sale contract, team vesting,
-          mocks for testing and other utilities. :contentReference[oaicite:1]{index=1}
+          Additional modules include team vesting contracts, mocks for testing and
+          other utilities.
         </p>
       </article>
 
@@ -593,7 +583,7 @@
           categories such as treasury, liquidity, community incentives, team
           and early contributors. The exact schedule and allocations are defined
           in the separate “Token Schedule &amp; Vesting” document and enforced
-          by on-chain vesting contracts where applicable. :contentReference[oaicite:2]{index=2}
+          by on-chain vesting contracts where applicable.
         </p>
         <p class="muted">
           Team and advisor allocations are subject to multi-year vesting with
@@ -621,7 +611,7 @@
           Liquidity is seeded and periodically reinforced from the reserve
           wallet using scripted Hardhat operations. Allowances to the router
           are set only for the exact amount needed for each liquidity operation
-          and then reset back to zero to reduce risk. :contentReference[oaicite:3]{index=3}
+          and then reset back to zero to reduce risk.
         </p>
         <p class="muted">
           There is no automatic “tax to liquidity” mechanism. All liquidity
@@ -629,7 +619,7 @@
         </p>
       </article>
 
-            <!-- 9. Security -->
+      <!-- 9. Security -->
       <article class="card">
         <h2>9. Security considerations</h2>
         <p class="muted">
@@ -673,7 +663,6 @@
           project, and each participant should size positions according to their own
           risk tolerance and independent research.
         </p>
-        </ul>
         <p class="danger">
           Despite these measures, smart-contract risk cannot be eliminated.
           Users should treat IBITIcoin as an experimental DeFi project and
