@@ -242,8 +242,9 @@
       text-decoration: underline;
     }
 
-      .promo-hero {
-  margin-top: 20px;
+    /* ВЕРХНИЙ НОВОГОДНИЙ СУНДУК */
+.promo-hero {
+  margin-top: 24px;
   display: flex;
   justify-content: center;
 }
@@ -251,78 +252,121 @@
 .promo-hero-button {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
   padding: 14px 22px;
-  border-radius: 999px;
-  border: 1px solid gold;
-  background: radial-gradient(circle at top, #333 0, #111 60%);
+  border-radius: 18px;
+  border: 1px solid #ffde4d;
+  background: radial-gradient(circle at top, #252525 0, #0a0a0a 55%);
   cursor: pointer;
-  box-shadow: 0 0 18px rgba(255, 222, 77, 0.5);
+  box-shadow: 0 0 22px rgba(255, 222, 77, 0.45);
   transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
 }
 
 .promo-hero-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 28px rgba(255, 222, 77, 0.8);
-  background: radial-gradient(circle at top, #444 0, #151515 60%);
+  box-shadow: 0 0 30px rgba(255, 222, 77, 0.85);
+  background: radial-gradient(circle at top, #303030 0, #101010 55%);
 }
 
 .promo-chest {
   position: relative;
-  width: 72px;
+  width: 80px;
   height: 64px;
 }
 
+/* коробка сундука — тёмное золото */
 .promo-chest-box {
   position: absolute;
   bottom: 0;
   width: 100%;
   height: 65%;
-  background: linear-gradient(to top, #b8860b, #ffd54a);
+  background: linear-gradient(to top, #3b2815, #8a5b1a);
   border-radius: 10px 10px 8px 8px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.6);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
 }
 
+/* крышка — более светлое золото, с анимацией */
 .promo-chest-lid {
   position: absolute;
-  top: 0;
+  top: -2px;
   left: -6px;
   width: calc(100% + 12px);
-  height: 40%;
-  background: linear-gradient(to bottom, #ffd54a, #ffb300);
+  height: 38%;
+  background: linear-gradient(to bottom, #ffdf7e, #d1941c);
   border-radius: 12px;
   transform-origin: center bottom;
-  animation: chest-lid-bounce 1.5s infinite;
+  animation: chest-lid-bounce 1.6s infinite;
 }
 
+/* подсветка изнутри */
 .promo-chest-light {
   position: absolute;
-  top: 6px;
+  top: 10px;
   left: 50%;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
+  width: 52px;
+  height: 40px;
   transform: translateX(-50%);
-  background: radial-gradient(circle, rgba(255,255,255,0.8), rgba(255,222,77,0.05));
-  filter: blur(1px);
-  opacity: 0.7;
-  animation: chest-light-pulse 1.5s infinite;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(255, 222, 77, 0.0));
+  filter: blur(2px);
+  opacity: 0.8;
   pointer-events: none;
+}
+
+/* лёгкий снег / искры */
+.promo-hero-button::before,
+.promo-hero-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.6) 0, transparent 40%),
+    radial-gradient(circle, rgba(255,222,77,0.6) 0, transparent 40%);
+  background-size: 4px 4px, 3px 3px;
+  background-position: 10% 20%, 80% 60%;
+  mix-blend-mode: screen;
+  opacity: 0.25;
+  animation: promo-sparkles 4s infinite linear;
+}
+
+.promo-hero-button::after {
+  background-position: 30% 70%, 60% 15%;
+  animation-duration: 5.5s;
 }
 
 @keyframes chest-lid-bounce {
   0%, 100% { transform: translateY(0) rotate(0deg); }
-  30%      { transform: translateY(-5px) rotate(-5deg); }
-  50%      { transform: translateY(-2px) rotate(3deg); }
+  30%      { transform: translateY(-6px) rotate(-6deg); }
+  55%      { transform: translateY(-2px) rotate(4deg); }
 }
 
-@keyframes chest-light-pulse {
-  0%, 100% { opacity: 0.4; transform: translateX(-50%) scale(0.95); }
-  40%      { opacity: 0.9; transform: translateX(-50%) scale(1.05); }
+@keyframes promo-sparkles {
+  0%   { background-position-y: 0%, 100%; }
+  100% { background-position-y: 40%, 140%; }
 }
 
+.promo-hero-text {
+  text-align: left;
+  color: #ffde4d;
+  max-width: 420px;
+}
+
+.promo-hero-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.promo-hero-sub {
+  font-size: 13px;
+  color: #f5f5f5;
+}
+
+/* НИЖНИЙ БЛОК С СУММОЙ И КНОПКОЙ ОСТАВЛЯЕМ, НО ЧУТЬ ПРИБИРАЕМ */
 .promo-wrapper {
-  margin: 30px auto 0;
+  margin: 26px auto 0;
   max-width: 420px;
   display: flex;
   align-items: center;
@@ -1131,6 +1175,7 @@ function openDesktopWalletModal() {
 
 </body>
 </html>
+
 
 
 
