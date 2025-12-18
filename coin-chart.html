@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>График курса IBITIcoin (IBITI / USDT)</title>
+  <title>IBITIcoin Price Chart (IBITI / USDT)</title>
 
-  <!-- Общие стили сайта -->
+  <!-- Main site styles -->
   <link rel="stylesheet" href="css/style.css">
 
   <style>
-    /* Контейнер под iframe графика */
+    /* Chart container */
     .chart-wrapper {
       max-width: 1000px;
-      margin: 40px auto 60px;
+      margin: 40px auto 30px;
       border: 2px solid #f0c419;
       border-radius: 10px;
       background: #111;
@@ -29,33 +29,55 @@
 
     .chart-note {
       max-width: 1000px;
-      margin: 0 auto 40px;
+      margin: 0 auto 30px;
       color: #ccc;
       font-size: 0.9rem;
       line-height: 1.5;
       text-align: center;
     }
 
-    /* Кнопки в футере */
+    /* Buttons under the chart */
+    .chart-actions {
+      max-width: 1000px;
+      margin: 0 auto 50px;
+      text-align: center;
+    }
+
+    .chart-actions a {
+      margin: 0 10px 10px;
+      display: inline-block;
+    }
+
+    /* Footer buttons */
     .footer-buttons {
-      margin-top: 20px;
+      margin-top: 15px;
       text-align: center;
     }
 
     .footer-buttons a {
-      margin: 0 10px;
+      margin: 0 8px;
       display: inline-block;
+    }
+
+    footer {
+      margin-top: 40px;
+      padding: 20px 10px 30px;
+      text-align: center;
+      color: #ccc;
+      background: transparent;
+      border-top: 1px solid #333;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
   <header class="hero-header">
-    <h1>График курса IBITIcoin</h1>
-    <p>Онлайн-график торгов пары IBITI / USDT на BNB Smart Chain</p>
+    <h1>IBITIcoin Price Chart</h1>
+    <p>Live on-chain chart for the IBITI / USDT pair on BNB Smart Chain</p>
   </header>
 
   <main>
-    <!-- Живой график Dexscreener -->
+    <!-- Dexscreener live chart -->
     <div class="chart-wrapper">
       <iframe
         src="https://dexscreener.com/bsc/0xadfb9f0f810311e9c01c27b380909a5ffc104be0?embed=1&theme=dark&trades=0&info=0"
@@ -65,34 +87,53 @@
     </div>
 
     <div class="chart-note">
-      Данные предоставляются сервисом Dexscreener и отображают он-чейн торги пары
-      <strong>IBITI / USDT</strong> на PancakeSwap V2 (BSC).  
-      Торговая активность и цена обновляются в режиме реального времени.
+      Price and volume data are provided by <strong>Dexscreener</strong> and reflect
+      on-chain trading activity for the <strong>IBITI / USDT</strong> pair on PancakeSwap V2
+      (BNB Smart Chain). Values update in real time.
     </div>
+
+    <!-- Action buttons: trade + shop + home -->
+    <section class="chart-actions">
+      <a
+        class="btn-small"
+        href="https://pancakeswap.finance/swap?chain=bsc&outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&inputCurrency=0x55d398326f99059fF775485246999027B3197955"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Buy IBITI on PancakeSwap
+      </a>
+
+      <a class="btn-small" href="shop.html">
+        Visit IBITI Shop
+      </a>
+
+      <a class="btn-small" href="index.html">
+        Back to Home
+      </a>
+    </section>
   </main>
 
   <footer>
-    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
+    <p>© 2025 IBITIcoin. All rights reserved.</p>
     <div class="footer-buttons">
-      <a class="btn-small" href="index.html">Вернуться на главную</a>
-      <a class="btn-small" href="#" onclick="shareChart()">Поделиться</a>
+      <a class="btn-small" href="index.html">Home</a>
+      <a class="btn-small" href="#" onclick="shareChart()">Share</a>
     </div>
   </footer>
 
   <script>
     function shareChart() {
       const shareData = {
-        title: 'График курса IBITIcoin (IBITI / USDT)',
-        text: 'Посмотрите актуальный график IBITIcoin на BNB Smart Chain.',
+        title: 'IBITIcoin Price Chart (IBITI / USDT)',
+        text: 'Check the live IBITI / USDT chart on BNB Smart Chain.',
         url: window.location.href
       };
 
       if (navigator.share) {
         navigator.share(shareData)
-          .catch((error) => console.log('Ошибка при шаринге', error));
+          .catch((error) => console.log('Share error:', error));
       } else {
-        // Запасной вариант: просто показываем ссылку
-        alert('Ваш браузер не поддерживает встроенный шаринг.\nСкопируйте ссылку:\n' + window.location.href);
+        alert('Your browser does not support native sharing.\nCopy this link:\n' + window.location.href);
       }
     }
   </script>
