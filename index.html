@@ -295,42 +295,80 @@
     </p>
   </footer>
 
-      <!-- Cookie banner START -->
-  <div id="cookie-banner" style="
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 9999;
-    background: #111;
-    border-top: 1px solid #444;
-    color: #f5f5f5;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-size: 13px;
-    line-height: 1.4;
-    padding: 10px 16px;
-    display: none;
-  ">
-    <div style="max-width: 960px; margin: 0 auto; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-      <div style="flex: 1 1 auto; min-width: 220px;">
-        We use cookies to provide basic site functionality, analytics (Google Analytics)
-        and live chat (Tawk.to). See our
-        <a href="privacy.html" style="color:#ffd800; text-decoration:underline;">Privacy Policy</a>.
+       <!-- Cookie banner START -->
+  <style>
+    #cookie-banner {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 9999;
+      background: #111;
+      border-top: 1px solid #444;
+      color: #f5f5f5;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      line-height: 1.4;
+      padding: 10px 16px;
+      display: none;               /* изначально полностью скрыт */
+      transform: translateY(100%); /* за краем экрана */
+      opacity: 0;
+      transition: transform 0.35s ease-out, opacity 0.35s ease-out;
+    }
+    #cookie-banner.cookie-visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    #cookie-banner .cookie-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between; /* текст слева, кнопка справа */
+      flex-wrap: wrap;
+    }
+    #cookie-banner .cookie-text {
+      flex: 1 1 auto;
+      min-width: 220px;
+    }
+    #cookie-banner .cookie-actions {
+      flex: 0 0 auto;
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      min-width: 140px;
+    }
+    #cookie-banner a {
+      color: #ffd800;
+      text-decoration: underline;
+    }
+    #cookie-accept {
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid #000;
+      background: #ffd800;
+      color: #000;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 14px rgba(255,216,0,0.6);
+      white-space: nowrap;
+    }
+    #cookie-accept:hover {
+      filter: brightness(1.05);
+    }
+  </style>
+
+  <div id="cookie-banner">
+    <div class="cookie-inner">
+      <div class="cookie-text">
+        We use cookies and similar technologies to provide basic site functionality,
+        analytics and live chat. For details, see our
+        <a href="privacy.html">Privacy Policy</a>.
       </div>
-      <button id="cookie-accept" style="
-        flex: 0 0 auto;
-        padding: 8px 18px;
-        border-radius: 999px;
-        border: 1px solid #000;
-        background: #ffd800;
-        color: #000;
-        font-weight: 700;
-        cursor: pointer;
-        box-shadow: 0 0 14px rgba(255,216,0,0.6);
-        white-space: nowrap;
-      ">
-        Got it
-      </button>
+      <div class="cookie-actions">
+        <button id="cookie-accept">Accept</button>
+      </div>
     </div>
   </div>
 
@@ -342,20 +380,34 @@
 
       if (!banner || !btn) return;
 
-      // показываем только если ещё не принимали
+      var showBanner = function () {
+        banner.style.display = 'block';
+        // маленькая задержка, чтобы анимация сработала
+        setTimeout(function () {
+          banner.classList.add('cookie-visible');
+        }, 10);
+      };
+
+      var hideBanner = function () {
+        banner.classList.remove('cookie-visible');
+        setTimeout(function () {
+          banner.style.display = 'none';
+        }, 350);
+      };
+
       try {
         if (!localStorage.getItem(KEY)) {
-          banner.style.display = 'block';
+          showBanner();
         }
       } catch (e) {
-        banner.style.display = 'block';
+        showBanner();
       }
 
       btn.addEventListener('click', function () {
         try {
-          localStorage.setItem(KEY, '1');
+          localStorage.setItem(KEY, 'accepted');
         } catch (e) {}
-        banner.style.display = 'none';
+        hideBanner();
       });
     });
   </script>
@@ -640,6 +692,7 @@
   window.addEventListener("resize", () => { resizeSnow(); initSnow(); }, { passive: true });
 })();
 </script>
+
 
 
 
