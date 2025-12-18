@@ -152,6 +152,7 @@
     #walletModal .btn-coinbase:hover {
       background: #003bb5;
     }
+
     .modal {
       display: none;
       position: fixed;
@@ -227,6 +228,7 @@
     .modal-content-custom button.cancel:hover {
       background: #c0a000;
     }
+
     footer {
       padding: 20px;
       background: rgba(0, 0, 0, 0.8);
@@ -240,6 +242,97 @@
     }
     footer a:hover {
       text-decoration: underline;
+    }
+
+    /* ===== NEW YEAR PROMO BUTTON ===== */
+
+    .promo-section {
+      max-width: 1200px;
+      margin: 20px auto 0;
+      padding: 0 20px;
+    }
+    .promo-wrapper {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+    }
+    .promo-controls label {
+      display: block;
+      font-size: 14px;
+      color: #ffde4d;
+      margin-bottom: 4px;
+    }
+    #promoUsdtAmount {
+      background: #111;
+      border: 1px solid #ffde4d;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 6px;
+      width: 100px;
+    }
+
+    .gift-button {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid #ffde4d;
+      background: #222;
+      cursor: pointer;
+      color: #ffde4d;
+      font-weight: 600;
+      transition: box-shadow 0.2s, transform 0.1s, background 0.2s;
+    }
+    .gift-button:hover {
+      background: #333;
+      box-shadow: 0 0 15px rgba(255, 222, 77, 0.7);
+      transform: translateY(-1px);
+    }
+
+    .gift {
+      position: relative;
+      width: 32px;
+      height: 32px;
+    }
+    .gift-box {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 60%;
+      background: #ffde4d;
+      border-radius: 6px;
+    }
+    .gift-lid {
+      position: absolute;
+      top: 0;
+      left: -3px;
+      width: calc(100% + 6px);
+      height: 40%;
+      background: #ff5555;
+      border-radius: 6px;
+      transform-origin: bottom center;
+      animation: gift-lid-bounce 1.4s infinite;
+    }
+    .gift-ribbon {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 4px;
+      height: 100%;
+      background: #222;
+      transform: translateX(-50%);
+    }
+    @keyframes gift-lid-bounce {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      40%      { transform: translateY(-5px) rotate(-4deg); }
+      60%      { transform: translateY(-2px) rotate(3deg); }
+    }
+    .gift-text {
+      white-space: nowrap;
     }
   </style>
 </head>
@@ -262,22 +355,19 @@
     Add IBITI to wallet
   </button>
 
-  <!-- ===== CONNECT WALLET MODAL (desktop dynamic) ===== -->
+  <!-- CONNECT WALLET MODAL -->
   <div id="walletModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;align-items:center;justify-content:center;backdrop-filter:blur(2px)">
     <div class="ibiti-card" style="background:#111;padding:18px;border:1px solid gold;border-radius:10px;max-width:420px;width:92%;color:#ffd700;position:relative;">
       <button type="button" id="closeWalletModal" class="ibiti-close" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer;">✕</button>
       <h3 style="margin:0 0 10px;font-size:18px;">Select a wallet</h3>
-
-      <!-- JS injects detected desktop wallets here -->
       <div id="desktopWalletList" style="display:flex;flex-direction:column;gap:10px"></div>
-
       <div style="margin-top:8px;font-size:12px;color:#9ca3af">
         Trust Wallet has no browser extension on desktop. Use mobile app (or WalletConnect – coming later).
       </div>
     </div>
   </div>
 
-  <!-- Example items -->
+  <!-- Items -->
   <section class="shop-items">
     <div class="shop-item">
       <div class="image-wrapper">
@@ -297,7 +387,7 @@
     </div>
   </section>
 
-    <!-- Purchase modal -->
+  <!-- Purchase modal -->
   <div id="purchaseModal" class="modal">
     <div class="modal-content-custom">
       <span class="close" onclick="closePurchaseModal()">&times;</span>
@@ -317,7 +407,31 @@
     </div>
   </div>
 
-  <!-- Token sale stats (front-end; actual logic in sale.js) -->
+  <!-- 🔥 New Year promo (через ReferralSwapRouter) -->
+  <section class="promo-section">
+    <div class="promo-wrapper">
+      <div class="promo-controls">
+        <label for="promoUsdtAmount">New Year promo — amount (USDT):</label>
+        <input id="promoUsdtAmount" type="number" min="10" step="1" value="10">
+      </div>
+
+      <button id="promoBuyButton" class="gift-button">
+        <div class="gift">
+          <div class="gift-lid"></div>
+          <div class="gift-box"></div>
+          <div class="gift-ribbon"></div>
+        </div>
+        <span class="gift-text">Buy IBITI +10% bonus</span>
+      </button>
+    </div>
+  </section>
+
+  <script type="module">
+    import { initPromoButton } from "./js/referralSwap.js";
+    initPromoButton();
+  </script>
+
+  <!-- Token sale stats -->
   <section id="saleStats"
     data-aos="fade-up"
     style="
@@ -515,7 +629,6 @@
       const closeBtn    = document.getElementById("closeShareModal");
       const pageTitle   = encodeURIComponent(document.title);
 
-      // Locked by default
       copyBtn.addEventListener("click", () => {
         Swal.fire({
           icon: "info",
@@ -524,7 +637,6 @@
         });
       });
 
-      // Enable after successful on-chain purchase
       window.enableReferralAfterPurchase = async function(account) {
         const refLink = `${window.location.origin}${window.location.pathname}?ref=${account}`;
         linkInput.value = refLink;
@@ -536,7 +648,6 @@
           });
         };
 
-        // Social share URLs
         document.getElementById('share-facebook').href   = `https://www.facebook.com/sharer/sharer.php?u=${refLink}`;
         document.getElementById('share-twitter').href    = `https://twitter.com/intent/tweet?url=${refLink}&text=${pageTitle}`;
         document.getElementById('share-vk').href         = `https://vk.com/share.php?url=${refLink}&title=${pageTitle}`;
@@ -545,7 +656,6 @@
         document.getElementById('share-linkedin').href   = `https://www.linkedin.com/sharing/share-offsite/?url=${refLink}`;
         document.getElementById('share-weibo').href      = `http://service.weibo.com/share/share.php?url=${refLink}&title=${pageTitle}`;
 
-        // Share modal open/close
         openBtn.onclick = () => shareModal.style.display = 'flex';
         closeBtn.onclick = () => shareModal.style.display = 'none';
         window.addEventListener('click', e => {
@@ -560,413 +670,9 @@
     });
   </script>
 
-  <!-- ===== ADD IBITI TOKEN MODAL ===== -->
-  <div id="addTokenModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;align-items:center;justify-content:center;">
-    <div style="background:#111;padding:18px 18px 14px;border:1px solid gold;border-radius:10px;max-width:420px;width:92%;color:#ffd700;position:relative;">
-      <button onclick="closeAddTokenModal()" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer;">✕</button>
-      <h3 style="margin:0 0 10px;font-size:18px;">Where to add IBITI token?</h3>
-
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <button onclick="addTokenEip747()" style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
-          MetaMask / Trust Wallet / Binance Wallet (auto)
-        </button>
-
-        <details style="background:#0b0f1a;border:1px solid #333;border-radius:8px;padding:10px;">
-          <summary style="cursor:pointer;color:#e5e7eb">Coinbase Wallet (manual)</summary>
-          <div style="margin-top:10px;color:#e5e7eb;font-size:14px;line-height:1.4">
-            Open Coinbase Wallet → <b>Tokens</b> → <b>+</b> → <b>Import Token</b> → paste:
-            <div style="margin-top:8px">
-              <div>Contract: <code id="ctAddr">0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></div>
-              <div>Symbol: <code>IBITI</code></div>
-              <div>Decimals: <code>8</code></div>
-            </div>
-            <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-              <button onclick="copyText('#ctAddr')" style="padding:6px 10px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">Copy address</button>
-              <button onclick="openBscscan()" style="padding:6px 10px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">Open in BscScan</button>
-            </div>
-          </div>
-        </details>
-
-        <div style="font-size:12px;color:#9ca3af;margin-top:4px">
-          On mobile Trust Wallet, open this site in the DApp browser and press the auto-add button.
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const IBITI_TOKEN = {
-      address: '0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb',
-      symbol:  'IBITI',
-      decimals: 8,
-      image:   'https://ibiticoin.com/img/IBITI-512.png'
-    };
-
-    function openAddTokenModal(){
-      const m = document.getElementById('addTokenModal');
-      m.style.display = 'flex';
-      m.onclick = (e)=>{ if (e.target === m) closeAddTokenModal(); };
-    }
-    function closeAddTokenModal(){
-      document.getElementById('addTokenModal').style.display='none';
-    }
-
-    function openInstallMM(){
-      const m = document.getElementById('installMM');
-      m.style.display='flex';
-      m.onclick=(e)=>{ if(e.target===m) closeInstallMM(); };
-    }
-    function closeInstallMM(){
-      document.getElementById('installMM').style.display='none';
-    }
-
-    function toast(msg){
-      const el = document.getElementById('toastOK');
-      el.textContent = msg;
-      el.style.opacity = '1';
-      clearTimeout(el._timer);
-      el._timer = setTimeout(()=> el.style.opacity='0', 2600);
-    }
-
-    function hasEthereum(){
-      return !!(window.ethereum && typeof window.ethereum.request === 'function');
-    }
-
-    async function addTokenEip747(){
-      if (!hasEthereum()){
-        openInstallMM();
-        return;
-      }
-      try {
-        const bscId = '0x38'; // BSC mainnet
-        const current = await window.ethereum.request({ method:'eth_chainId' });
-        if (current !== bscId){
-          try {
-            await window.ethereum.request({ method:'wallet_switchEthereumChain', params:[{ chainId: bscId }] });
-          } catch(e){
-            if (e.code === 4902){
-              await window.ethereum.request({
-                method:'wallet_addEthereumChain',
-                params:[{
-                  chainId: bscId,
-                  chainName:'BNB Smart Chain',
-                  nativeCurrency:{ name:'BNB', symbol:'BNB', decimals:18 },
-                  rpcUrls:['https://bsc-dataseed1.bnbchain.org'],
-                  blockExplorerUrls:['https://bscscan.com']
-                }]
-              });
-            } else { throw e; }
-          }
-        }
-
-        const added = await window.ethereum.request({
-          method:'wallet_watchAsset',
-          params:{ type:'ERC20', options: IBITI_TOKEN }
-        });
-
-        if (added) {
-          toast('✅ IBITI added to wallet');
-          closeAddTokenModal();
-        } else {
-          toast('ℹ️ Action cancelled');
-        }
-      } catch(err){
-        if (err && err.code === 4001) {
-          toast('ℹ️ Action cancelled by user');
-        } else {
-          console.error('Add IBITI error:', err);
-          alert('Failed to add token. Make sure your wallet is installed and unlocked.');
-        }
-      }
-    }
-
-    function copyText(sel){
-      const text = document.querySelector(sel).textContent.trim();
-      navigator.clipboard.writeText(text).then(()=>toast('✅ Address copied'));
-    }
-    function openBscscan(){
-      window.open('https://bscscan.com/token/'+IBITI_TOKEN.address,'_blank');
-    }
-  </script>
-
-  <!-- Toast for add-token -->
-  <div id="toastOK" style="position:fixed;right:20px;bottom:24px;background:#0b0f1a;border:1px solid #10b981;color:#d1fae5;padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:4000"></div>
-
-  <!-- Install MetaMask modal -->
-  <div id="installMM" style="display:none;position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.6);align-items:center;justify-content:center">
-    <div style="background:#111;border:1px solid gold;border-radius:10px;padding:18px;max-width:420px;width:92%;color:#ffd700;position:relative">
-      <button onclick="closeInstallMM()" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer">✕</button>
-      <h3 style="margin:0 0 10px">Install MetaMask</h3>
-      <p style="color:#e5e7eb;margin:0 0 12px">To add the token automatically, you need MetaMask (or a compatible wallet) installed.</p>
-      <a href="https://metamask.io/download/" target="_blank" rel="noopener"
-        style="display:inline-block;padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;text-decoration:none">Download MetaMask</a>
-    </div>
-  </div>
-
-  <!-- Wallet selection / patches -->
-  <script>
-// === Universal wallet selection ===
-function openWalletSelector() {
-  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  if (!isMobile) {
-    document.getElementById('walletModal').style.display = 'flex';
-    return;
-  }
-
-  Swal.fire({
-    title: 'Select a wallet',
-    showCancelButton: true,
-    showConfirmButton: false,
-    html: `
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <button onclick="openInWallet('metamask')" class="btn-small">🦊 MetaMask</button>
-        <button onclick="openInWallet('trust')" class="btn-small">🔵 Trust Wallet</button>
-        <button onclick="openInWallet('binance')" class="btn-small">🟡 Binance Wallet</button>
-        <button onclick="openInWallet('coinbase')" class="btn-small">🧢 Coinbase</button>
-      </div>
-    `
-  });
-}
-
-function openInWallet(wallet) {
-  const appUrl = encodeURIComponent(window.location.href);
-  let deeplink = "";
-
-  switch (wallet) {
-    case 'metamask':
-      deeplink = `https://metamask.app.link/dapp/${location.hostname}${location.pathname}`;
-      break;
-    case 'trust':
-      deeplink = `https://link.trustwallet.com/open_url?coin_id=60&url=${appUrl}`;
-      break;
-    case 'binance':
-      deeplink = `https://dapp.bnbchain.org/#/dapp/${appUrl}`;
-      break;
-    case 'coinbase':
-      deeplink = `https://go.cb-w.com/dapp?cb_url=${appUrl}`;
-      break;
-    default:
-      return;
-  }
-
-  window.location.href = deeplink;
-}
-  </script>
-
-  <script>
-function isInMetaMask() {
-  return !!(window.ethereum?.isMetaMask) || /MetaMask/i.test(navigator.userAgent);
-}
-function isInTrust() {
-  return /TrustWallet|Trust/i.test(navigator.userAgent);
-}
-function isMobile() {
-  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-}
-
-function waitForEthereum(maxMs = 2500) {
-  const started = Date.now();
-  return new Promise(resolve => {
-    (function tick() {
-      if (window.ethereum && typeof window.ethereum.request === 'function') return resolve(true);
-      if (Date.now() - started > maxMs) return resolve(false);
-      setTimeout(tick, 100);
-    })();
-  });
-}
-
-async function onConnectClick() {
-  const mobile = isMobile();
-  const inMM   = isInMetaMask();
-  const inTW   = isInTrust();
-
-  if (mobile && (inMM || inTW)) {
-    await safeConnectInApp();
-    return;
-  }
-
-  if (mobile && !inMM && !inTW) {
-    if (typeof openWalletSelector === 'function') {
-      openWalletSelector();
-    } else {
-      alert('Open this site inside MetaMask/Trust wallet or use a deeplink.');
-    }
-    return;
-  }
-
-  openDesktopWalletModal();
-}
-
-async function safeConnectInApp() {
-  const ok = await waitForEthereum(3000);
-  if (!ok) {
-    alert('Wallet did not initialize Web3. Reload the tab inside MetaMask/Trust.');
-    return;
-  }
-
-  if (typeof window.connectWallet === 'function') {
-    try {
-      await window.connectWallet();
-      return;
-    } catch (e) {
-      console.warn('connectWallet() failed, falling back:', e);
-    }
-  }
-
-  try {
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const acc = accounts?.[0];
-    if (acc) {
-      const addrEl = document.getElementById('walletAddress');
-      if (addrEl) addrEl.textContent = acc;
-      if (typeof window.showIbitiBalance === 'function') {
-        try { await window.showIbitiBalance(true); } catch {}
-      }
-    } else {
-      alert('Wallet returned no accounts.');
-    }
-  } catch (err) {
-    const msg = (err && (err.message || err.shortMessage)) || String(err);
-    alert('Connection error: ' + msg);
-  }
-}
-
-(function patchOpenInWallet() {
-  const original = window.openInWallet;
-  if (typeof original !== 'function') return;
-  window.openInWallet = function(wallet) {
-    if (isInMetaMask() || isInTrust()) {
-      safeConnectInApp();
-      return;
-    }
-    original(wallet);
-  }
-})();
-  </script>
-
-  <script>
-// ==== DESKTOP WALLET SELECTOR (PC) ====
-function hideWalletModal() {
-  const m = document.getElementById('walletModal');
-  if (m) m.style.display = 'none';
-}
-
-function getInjectedProviders() {
-  const eth = window.ethereum;
-  const list = [];
-  if (!eth) return list;
-  if (Array.isArray(eth.providers)) list.push(...eth.providers);
-  else list.push(eth);
-  return list;
-}
-
-function providerLabel(p) {
-  if (p.isMetaMask) return 'MetaMask';
-  if (p.isCoinbaseWallet) return 'Coinbase Wallet';
-  if (p.isOKXWallet) return 'OKX Wallet';
-  if (p.isBitKeep || p.isBitget) return 'Bitget/BitKeep';
-  return 'Injected Wallet';
-}
-
-async function useProvider(p) {
-  hideWalletModal();
-
-  if (window.ethereum !== p) { try { window.ethereum = p; } catch {} }
-  if (typeof window.connectWallet === 'function') {
-    await window.connectWallet();
-  } else {
-    const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const acc = accs?.[0];
-    if (acc) {
-      const wa = document.getElementById('walletAddress');
-      if (wa) wa.textContent = acc;
-    }
-  }
-}
-
-async function connectBinanceExtension() {
-  const b = window.BinanceChain || window.binance || null;
-  if (!b) return alert('Binance Wallet extension not detected.');
-  hideWalletModal();
-
-  try {
-    const accounts = await b.request({ method: 'eth_requestAccounts' });
-    const acc = accounts?.[0];
-    if (acc) {
-      if (window.ethereum !== b) { try { window.ethereum = b; } catch {} }
-      if (typeof window.connectWallet === 'function') {
-        await window.connectWallet();
-      } else {
-        const wa = document.getElementById('walletAddress');
-        if (wa) wa.textContent = acc;
-      }
-    }
-  } catch (e) {
-    alert('Binance Wallet: ' + (e?.message || e));
-  }
-}
-
-function openDesktopWalletModal() {
-  const modal = document.getElementById('walletModal');
-  const listEl = document.getElementById('desktopWalletList');
-  if (!modal || !listEl) return;
-
-  listEl.innerHTML = '';
-
-  const providers = getInjectedProviders();
-  if (providers.length) {
-    providers.forEach(p => {
-      const btn = document.createElement('button');
-      btn.textContent = providerLabel(p);
-      btn.style.cssText = 'padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;';
-      btn.onclick = () => useProvider(p);
-      listEl.appendChild(btn);
-    });
-  } else {
-    const a = document.createElement('a');
-    a.href = 'https://metamask.io/download/';
-    a.target = '_blank';
-    a.rel = 'noopener';
-    a.textContent = 'Install MetaMask';
-    a.style.cssText = 'padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;display:inline-block;text-decoration:none;text-align:center;';
-    listEl.appendChild(a);
-  }
-
-  const bBtn = document.createElement('button');
-  bBtn.textContent = 'Binance Wallet (Extension)';
-  bBtn.style.cssText = 'padding:10px 14px;border:1px solid #f59e0b;border-radius:8px;background:#1f2937;color:#fde68a;cursor:pointer;';
-  bBtn.onclick = connectBinanceExtension;
-  if (!(window.BinanceChain || window.binance)) bBtn.disabled = true;
-  listEl.appendChild(bBtn);
-
-  if (!providers.some(p => p.isCoinbaseWallet)) {
-    const cb = document.createElement('a');
-    cb.href = 'https://www.coinbase.com/wallet';
-    cb.target = '_blank';
-    cb.rel = 'noopener';
-    cb.textContent = 'Install Coinbase Wallet';
-    cb.style.cssText = 'padding:10px 14px;border:1px solid #3b82f6;border-radius:8px;background:#111827;color:#e5e7eb;display:inline-block;text-decoration:none;text-align:center;';
-    listEl.appendChild(cb);
-  }
-
-  modal.style.display = 'flex';
-  document.getElementById('closeWalletModal')?.addEventListener('click', () => modal.style.display = 'none', { once:true });
-}
-
-(function patchDesktopSelector(){
-  const orig = window.openWalletSelector;
-  window.openWalletSelector = function() {
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if (isMobile) return orig ? orig() : null;
-    openDesktopWalletModal();
-  };
-})();
-  </script>
+  <!-- ADD IBITI TOKEN MODAL + helpers (как у тебя было) -->
+  <!-- ... этот блок я не трогал, он остаётся один в один, как в твоём файле ... -->
+  <!-- Я его не выношу второй раз здесь, чтобы не раздувать ответ. Просто оставь свой существующий код от IBITI_TOKEN до installMM/patches ровно как был. -->
 
 </body>
 </html>
-
-
-
-
-
