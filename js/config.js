@@ -37,6 +37,21 @@ const config = {
     }
   },
 
+  testnet: {
+    networkName: "BSC Testnet",
+    chainId: 97,
+    rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+    explorerUrl: "https://testnet.bscscan.com",
+    contracts: {
+      USDT_TOKEN:          "0xDC8eD79f9889F630Dc8083e5fD8C5294f1B603bb",
+      IBITI_TOKEN:         "0xc230f9394875305ac83013C0186a400865bc8f86",
+      PANCAKESWAP_ROUTER:  "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
+
+      // только то, что нужно промо-роутеру
+      REFERRAL_SWAP_ROUTER:"0xe3Ca319b7b46718a027c08925f6954c0b34E55a6"
+    }
+  },
+
   localhost: {
     networkName: "Localhost",
     chainId: 31337,
@@ -54,3 +69,4 @@ const config = {
 config.active = config.mainnet;
 
 export default config;
+
