@@ -728,22 +728,20 @@
   <script type="module" src="js/wallet.js"></script>
   <script type="module" src="js/shop.js"></script>
 
-  <!-- Promo swap module -->
-<script type="module">
-  import { initPromoButton } from "./js/referralSwap.js";
+    <!-- Promo chest: временная заглушка -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const heroBtn = document.getElementById("promoHeroButton");
+      if (!heroBtn) return;
 
-  document.addEventListener("DOMContentLoaded", () => {
-    initPromoButton();
-
-    const heroBtn = document.getElementById("promoHeroButton");
-    if (heroBtn) {
       heroBtn.addEventListener("click", () => {
-        const target = document.getElementById("promo-section");
-        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+        alert(
+          "Новогодний IBITI-бонус пока в разработке.\n\n" +
+          "Сейчас токены можно купить через PancakeSwap."
+        );
       });
-    }
-  });
-</script>
+    });
+  </script>
 
   <!-- Referral activation script -->
   <script type="module">
@@ -1212,6 +1210,7 @@ function openDesktopWalletModal() {
 
 </body>
 </html>
+
 
 
 
