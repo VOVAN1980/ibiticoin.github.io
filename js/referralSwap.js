@@ -10,7 +10,6 @@ const PANCAKE_ROUTER = config.active.contracts.PANCAKESWAP_ROUTER;
 
 // ABI промо-контракта и роутера
 const SWAP_ABI = [
-  "function promoActive() view returns (bool)",
   "function buyWithReferral(uint256 usdtAmountIn,uint256 minIbitiOut,address referrer,uint256 deadline) external"
 ];
 
