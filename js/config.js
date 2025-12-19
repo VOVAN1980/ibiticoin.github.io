@@ -18,9 +18,10 @@ const config = {
       PANCAKESWAP_ROUTER:  "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
 
       // твой ReferralSwapRouter на testnet
-      REFERRAL_SWAP_ROUTER:"0xe3Ca319b7b46718a027c08925f6954c0b34E55a6",
+      REFERRAL_SWAP_ROUTER:"0x3c2E3B388BA1c387eEfa58816f00A81D2921A1Fa",
     }
   }
 };
 
 export default config;
+
