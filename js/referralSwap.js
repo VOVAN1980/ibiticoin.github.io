@@ -2,25 +2,30 @@
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
 import config     from "./config.js";
 
-// адреса из конфига
+// -------------------------------------------------------
+// Адреса из конфига
+// -------------------------------------------------------
 const USDT           = config.active.contracts.USDT_TOKEN;
 const IBITI          = config.active.contracts.IBITI_TOKEN;
 const SWAP           = config.active.contracts.REFERRAL_SWAP_ROUTER;
 const PANCAKE_ROUTER = config.active.contracts.PANCAKESWAP_ROUTER;
 
-const IS_TESTNET = config.active.chainId === 97;
+// мы на тестнете, если chainId = 97
+const IS_TESTNET = (config.active.chainId === 97);
 
 // ABI промо-контракта и роутера
 const SWAP_ABI = [
-  "function promoActive() view returns (bool)",
-  "function buyWithReferral(uint256 usdtAmountIn,uint256 minIbitiOut,address referrer,uint256 deadline) external"
+  "function buyWithReferral(uint256 usdtAmountIn,uint256 minIbitiOut,address referrer,uint256 deadline) external",
+  "function promoActive() view returns (bool)" // есть в боевом контракте, на тестнете игнорируем
 ];
 
 const ROUTER_ABI = [
   "function getAmountsOut(uint256 amountIn,address[] calldata path) external view returns (uint256[] memory amounts)"
 ];
 
-// рефка из URL (?ref=0x...)
+// -------------------------------------------------------
+// Рефка из URL (?ref=0x...)
+// -------------------------------------------------------
 function getRefFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const ref = params.get("ref");
@@ -32,7 +37,9 @@ function getRefFromUrl() {
   }
 }
 
-// основная покупка по акции
+// -------------------------------------------------------
+// Основная покупка по акции
+// -------------------------------------------------------
 export async function buyPromoWithBonus(usdtAmountHuman) {
   if (!window.signer || !window.selectedAccount) {
     alert("Сначала подключи кошелёк.");
@@ -58,46 +65,54 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
   const usdtAmountIn = ethers.parseUnits(amount.toString(), 18); // BSC USDT: 18 знаков
 
   // инстансы контрактов
+  const router   = new ethers.Contract(PANCAKE_ROUTER, ROUTER_ABI, provider);
   const swapView = new ethers.Contract(SWAP, SWAP_ABI, provider);
-  const usdt = new ethers.Contract(
+  const usdt     = new ethers.Contract(
     USDT,
     ["function approve(address spender,uint256 amount) external returns (bool)"],
     signer
   );
-  const swap = new ethers.Contract(SWAP, SWAP_ABI, signer);
+  const swap     = new ethers.Contract(SWAP, SWAP_ABI, signer);
 
   try {
-    // 0) проверяем, что акция ещё активна
-    const active = await swapView.promoActive();
-    if (!active) {
-      alert("Новогодняя акция IBITI завершена.\nДальнейшая покупка — напрямую через PancakeSwap.");
-      return;
+    // ---------------------------------------------------
+    // 0) Проверяем, что акция активна
+    //    НА ТЕСТНЕТЕ promoActive() НЕ ВЫЗЫВАЕМ ВООБЩЕ.
+    // ---------------------------------------------------
+    if (!IS_TESTNET) {
+      try {
+        const active = await swapView.promoActive();
+        if (!active) {
+          alert("Новогодняя акция IBITI завершена.\nДальнейшая покупка — напрямую через PancakeSwap.");
+          return;
+        }
+      } catch (e) {
+        console.warn("⚠ promoActive() check failed, продолжаем как будто акция включена", e);
+        // не роняем покупку, просто идём дальше
+      }
     }
 
-    // 1) считаем minOut
+    // ---------------------------------------------------
+    // 1) Считаем minOut через Pancake (3% slippage)
+    //    Если на тестнете нет пула — ставим minOut = 0.
+    // ---------------------------------------------------
     let minIbitiOut = 0n;
 
-    if (!IS_TESTNET) {
-      // на МАЙННЕТЕ пытаемся взять цену с Pancake
-      const router = new ethers.Contract(PANCAKE_ROUTER, ROUTER_ABI, provider);
-      try {
-        const path    = [USDT, IBITI];
-        const amounts = await router.getAmountsOut(usdtAmountIn, path);
-        const expectedIbiti = amounts[amounts.length - 1];
-        minIbitiOut   = (expectedIbiti * 97n) / 100n; // -3% запас
-      } catch (e) {
-        console.warn("⚠ getAmountsOut failed on mainnet, падаем на minOut=0:", e);
-        minIbitiOut = 0n;
-      }
-    } else {
-      // на TESTNET у тебя нет пула IBITI/USDT, поэтому сразу minOut=0
-      console.warn("⚠ TESTNET: пула IBITI/USDT нет, используем minOut = 0");
+    try {
+      const path    = [USDT, IBITI];
+      const amounts = await router.getAmountsOut(usdtAmountIn, path);
+      const expectedIbiti = amounts[amounts.length - 1];
+      minIbitiOut         = (expectedIbiti * 97n) / 100n; // -3% запас
+    } catch (e) {
+      console.warn("⚠ getAmountsOut failed, используем minOut = 0 (тестнет, нет пула IBITI/USDT?):", e);
       minIbitiOut = 0n;
     }
 
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 10 * 60); // +10 минут
 
+    // ---------------------------------------------------
     // 2) реферер из URL, запрет self-ref
+    // ---------------------------------------------------
     let referrer = getRefFromUrl();
     try {
       if (ethers.getAddress(referrer) === ethers.getAddress(userAddr)) {
@@ -107,16 +122,22 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
       referrer = ethers.ZeroAddress;
     }
 
+    // ---------------------------------------------------
     // 3) approve USDT -> наш промо-контракт
+    // ---------------------------------------------------
     const txApprove = await usdt.approve(SWAP, usdtAmountIn);
     await txApprove.wait();
 
+    // ---------------------------------------------------
     // 4) своп + бонус + рефералка
+    // ---------------------------------------------------
     const tx = await swap.buyWithReferral(usdtAmountIn, minIbitiOut, referrer, deadline);
     console.log("Promo buy tx:", tx.hash);
     await tx.wait();
 
+    // ---------------------------------------------------
     // 5) включаем показ реф-ссылки тем же окном, что и обычный сейл
+    // ---------------------------------------------------
     if (typeof window.enableReferralAfterPurchase === "function") {
       window.enableReferralAfterPurchase(userAddr);
     }
@@ -127,7 +148,7 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
     const raw = e?.message || "";
     const msg = raw.toLowerCase();
 
-    if (msg.includes("promo") && msg.includes("off")) {
+    if (msg.includes("promo off") || msg.includes("promoactive")) {
       alert("Новогодняя акция IBITI завершена.\nДальнейшая покупка — напрямую через PancakeSwap.");
       return;
     }
@@ -151,7 +172,9 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
   }
 }
 
-// инициализируем кнопку на странице
+// -------------------------------------------------------
+// Инициализация кнопки на странице
+// -------------------------------------------------------
 export function initPromoButton() {
   const btn   = document.getElementById("promoBuyButton");
   const input = document.getElementById("promoUsdtAmount");
