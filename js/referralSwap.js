@@ -8,8 +8,11 @@ const IBITI          = config.active.contracts.IBITI_TOKEN;
 const SWAP           = config.active.contracts.REFERRAL_SWAP_ROUTER;
 const PANCAKE_ROUTER = config.active.contracts.PANCAKESWAP_ROUTER;
 
+const IS_TESTNET = config.active.chainId === 97;
+
 // ABI промо-контракта и роутера
 const SWAP_ABI = [
+  "function promoActive() view returns (bool)",
   "function buyWithReferral(uint256 usdtAmountIn,uint256 minIbitiOut,address referrer,uint256 deadline) external"
 ];
 
@@ -55,7 +58,7 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
   const usdtAmountIn = ethers.parseUnits(amount.toString(), 18); // BSC USDT: 18 знаков
 
   // инстансы контрактов
-  const router = new ethers.Contract(PANCAKE_ROUTER, ROUTER_ABI, provider);
+  const swapView = new ethers.Contract(SWAP, SWAP_ABI, provider);
   const usdt = new ethers.Contract(
     USDT,
     ["function approve(address spender,uint256 amount) external returns (bool)"],
@@ -64,17 +67,32 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
   const swap = new ethers.Contract(SWAP, SWAP_ABI, signer);
 
   try {
-        // 1) считаем minOut через Pancake (3% slippage)
+    // 0) проверяем, что акция ещё активна
+    const active = await swapView.promoActive();
+    if (!active) {
+      alert("Новогодняя акция IBITI завершена.\nДальнейшая покупка — напрямую через PancakeSwap.");
+      return;
+    }
+
+    // 1) считаем minOut
     let minIbitiOut = 0n;
 
-    try {
-      const path    = [USDT, IBITI];
-      const amounts = await router.getAmountsOut(usdtAmountIn, path);
-      const expectedIbiti = amounts[amounts.length - 1];
-      minIbitiOut   = (expectedIbiti * 97n) / 100n; // -3% запас
-    } catch (priceErr) {
-      console.warn("⚠ getAmountsOut failed, using minOut = 0 (testnet, нет пула IBITI/USDT):", priceErr);
-      minIbitiOut = 0n; // на тестнете допускаем, в бою пул будет и ошибка пропадёт
+    if (!IS_TESTNET) {
+      // на МАЙННЕТЕ пытаемся взять цену с Pancake
+      const router = new ethers.Contract(PANCAKE_ROUTER, ROUTER_ABI, provider);
+      try {
+        const path    = [USDT, IBITI];
+        const amounts = await router.getAmountsOut(usdtAmountIn, path);
+        const expectedIbiti = amounts[amounts.length - 1];
+        minIbitiOut   = (expectedIbiti * 97n) / 100n; // -3% запас
+      } catch (e) {
+        console.warn("⚠ getAmountsOut failed on mainnet, падаем на minOut=0:", e);
+        minIbitiOut = 0n;
+      }
+    } else {
+      // на TESTNET у тебя нет пула IBITI/USDT, поэтому сразу minOut=0
+      console.warn("⚠ TESTNET: пула IBITI/USDT нет, используем minOut = 0");
+      minIbitiOut = 0n;
     }
 
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 10 * 60); // +10 минут
@@ -109,7 +127,7 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
     const raw = e?.message || "";
     const msg = raw.toLowerCase();
 
-    if (msg.includes("promo off")) {
+    if (msg.includes("promo") && msg.includes("off")) {
       alert("Новогодняя акция IBITI завершена.\nДальнейшая покупка — напрямую через PancakeSwap.");
       return;
     }
