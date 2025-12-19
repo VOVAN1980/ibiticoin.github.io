@@ -64,11 +64,18 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
   const swap = new ethers.Contract(SWAP, SWAP_ABI, signer);
 
   try {
-    // 1) считаем minOut через Pancake (3% slippage)
-    const path    = [USDT, IBITI];
-    const amounts = await router.getAmountsOut(usdtAmountIn, path);
-    const expectedIbiti = amounts[amounts.length - 1];
-    const minIbitiOut   = (expectedIbiti * 97n) / 100n; // -3% запас
+        // 1) считаем minOut через Pancake (3% slippage)
+    let minIbitiOut = 0n;
+
+    try {
+      const path    = [USDT, IBITI];
+      const amounts = await router.getAmountsOut(usdtAmountIn, path);
+      const expectedIbiti = amounts[amounts.length - 1];
+      minIbitiOut   = (expectedIbiti * 97n) / 100n; // -3% запас
+    } catch (priceErr) {
+      console.warn("⚠ getAmountsOut failed, using minOut = 0 (testnet, нет пула IBITI/USDT):", priceErr);
+      minIbitiOut = 0n; // на тестнете допускаем, в бою пул будет и ошибка пропадёт
+    }
 
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 10 * 60); // +10 минут
 
