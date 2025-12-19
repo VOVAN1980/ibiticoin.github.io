@@ -56,7 +56,6 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
 
   // инстансы контрактов
   const router = new ethers.Contract(PANCAKE_ROUTER, ROUTER_ABI, provider);
-  const swapView = new ethers.Contract(SWAP, SWAP_ABI, provider);
   const usdt = new ethers.Contract(
     USDT,
     ["function approve(address spender,uint256 amount) external returns (bool)"],
@@ -65,15 +64,8 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
   const swap = new ethers.Contract(SWAP, SWAP_ABI, signer);
 
   try {
-    // 0) проверяем, что акция ещё активна
-    const active = await swapView.promoActive();
-    if (!active) {
-      alert("Новогодняя акция IBITI завершена.\nДальнейшая покупка — напрямую через PancakeSwap.");
-      return;
-    }
-
     // 1) считаем minOut через Pancake (3% slippage)
-    const path   = [USDT, IBITI];
+    const path    = [USDT, IBITI];
     const amounts = await router.getAmountsOut(usdtAmountIn, path);
     const expectedIbiti = amounts[amounts.length - 1];
     const minIbitiOut   = (expectedIbiti * 97n) / 100n; // -3% запас
@@ -108,10 +100,9 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
   } catch (e) {
     console.error(e);
     const raw = e?.message || "";
-
     const msg = raw.toLowerCase();
 
-    if (msg.includes("promo off") || msg.includes("promoactive")) {
+    if (msg.includes("promo off")) {
       alert("Новогодняя акция IBITI завершена.\nДальнейшая покупка — напрямую через PancakeSwap.");
       return;
     }
