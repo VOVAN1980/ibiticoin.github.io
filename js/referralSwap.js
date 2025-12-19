@@ -72,7 +72,9 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
     return;
   }
 
-  const usdtAmountIn = ethers.parseUnits(amount.toString(), 6);  // mUSDT testnet: 6 знаков
+  // Для тестнета: mUSDT с 8 знаками
+const USDT_DECIMALS = 8;
+const usdtAmountIn = ethers.parseUnits(amount.toString(), USDT_DECIMALS);
 
   // инстансы контрактов
   const router = new ethers.Contract(PANCAKE_ROUTER, ROUTER_ABI, provider);
