@@ -6,7 +6,7 @@ const config = {
     explorerUrl: "https://testnet.bscscan.com",
     contracts: {
       // из .env
-      USDT_TOKEN:          "0x1133CfB59D870B927ca204bc5567b48B448329Fc", // USDT_TOKEN_ADDRESS_TESTNET
+      USDT_TOKEN:          "0x3ECc84DaEc5cA5973398C8AcA6FE5F40558aec84", // USDT_TOKEN_ADDRESS_TESTNET
       IBITI_TOKEN:         "0xc230f9394875305ac83013C0186a400865bc8f86", // IBITI_TOKEN_ADDRESS
       PANCAKESWAP_ROUTER:  "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3", // PANCAKESWAP_ROUTER_ADDRESS
       REFERRAL_SWAP_ROUTER:"0xF0cBFFC1a3F761771D2270d93A76124b4d1F1124", // REFERRAL_SWAP_ROUTER_ADDRESS_TESTNET
@@ -18,4 +18,5 @@ const config = {
 config.active = config.testnet;
 
 export default config;
+
 
