@@ -103,7 +103,7 @@ const usdtAmountIn = ethers.parseUnits(amount.toString(), USDT_DECIMALS);
       minIbitiOut = 0n;
     }
 
-    const deadline = BigInt(Math.floor(Date.now() / 1000) + 10 * 60); // +10 минут
+    const usdtAmountIn = ethers.parseUnits(amount.toString(), 18); // testnet USDT: 18 знаков
 
     // 2) реферер из URL, запрет self-ref
     let referrer = getRefFromUrl();
