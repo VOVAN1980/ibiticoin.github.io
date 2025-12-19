@@ -728,18 +728,12 @@
   <script type="module" src="js/wallet.js"></script>
   <script type="module" src="js/shop.js"></script>
 
-    <!-- Promo chest: temporary placeholder -->
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const heroBtn = document.getElementById("promoHeroButton");
-    if (!heroBtn) return;
+    <!-- Promo swap module -->
+<script type="module">
+  import { initPromoButton } from "./js/referralSwap.js";
 
-    heroBtn.addEventListener("click", () => {
-      alert(
-        "New Year IBITI Bonus is still under development.\n\n" +
-        "For now, you can buy IBITI directly on PancakeSwap."
-      );
-    });
+  document.addEventListener("DOMContentLoaded", () => {
+    initPromoButton();
   });
 </script>
 
@@ -1210,6 +1204,7 @@ function openDesktopWalletModal() {
 
 </body>
 </html>
+
 
 
 
