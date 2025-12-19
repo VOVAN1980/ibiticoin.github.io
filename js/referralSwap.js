@@ -2,18 +2,18 @@
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
 import config     from "./config.js";
 
-// --- адреса из конфига (testnet) ---
+// адреса из конфига
 const USDT           = config.active.contracts.USDT_TOKEN;
 const IBITI          = config.active.contracts.IBITI_TOKEN;
 const SWAP           = config.active.contracts.REFERRAL_SWAP_ROUTER;
 const PANCAKE_ROUTER = config.active.contracts.PANCAKESWAP_ROUTER;
+const USDT_DECIMALS  = config.active.usdtDecimals ?? 18;
 
 // chainId BSC Testnet
 const REQUIRED_CHAIN_ID = 97;
 
 // ABI промо-контракта и роутера
 const SWAP_ABI = [
-  // только функция покупки, БЕЗ promoActive()
   "function buyWithReferral(uint256 usdtAmountIn,uint256 minIbitiOut,address referrer,uint256 deadline) external"
 ];
 
@@ -35,15 +35,11 @@ function getRefFromUrl() {
 
 // проверяем, что кошелёк реально в testnet (chainId 97)
 async function ensureTestnet(signer) {
-  try {
-    const net = await signer.provider.getNetwork();
-    const cid = Number(net.chainId);
-    if (cid !== REQUIRED_CHAIN_ID) {
-      alert(`Сейчас сеть кошелька = chainId ${cid}. Нужна BSC Testnet (chainId 97).`);
-      throw new Error("Wrong network");
-    }
-  } catch (e) {
-    console.warn("ensureTestnet error:", e);
+  const net = await signer.provider.getNetwork();
+  const cid = Number(net.chainId);
+  if (cid !== REQUIRED_CHAIN_ID) {
+    alert(`В кошельке выбрана сеть chainId ${cid}. Нужна BSC Testnet (97).`);
+    throw new Error("Wrong network");
   }
 }
 
@@ -72,9 +68,9 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
     return;
   }
 
+  // учитываем реальные decimals USDT (testnet: 18)
   const usdtAmountIn = ethers.parseUnits(amount.toString(), USDT_DECIMALS);
 
-  // инстансы контрактов
   const router = new ethers.Contract(PANCAKE_ROUTER, ROUTER_ABI, provider);
   const usdt   = new ethers.Contract(
     USDT,
@@ -84,24 +80,22 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
   const swap = new ethers.Contract(SWAP, SWAP_ABI, signer);
 
   try {
-    // 1) считаем minOut через Pancake (3% slippage)
+    // 1) считаем minOut через Pancake (3% slippage), если есть пул
     let minIbitiOut = 0n;
-
     try {
       const path    = [USDT, IBITI];
       const amounts = await router.getAmountsOut(usdtAmountIn, path);
       const expectedIbiti = amounts[amounts.length - 1];
-      minIbitiOut        = (expectedIbiti * 97n) / 100n; // -3% запас
+      minIbitiOut         = (expectedIbiti * 97n) / 100n;
     } catch (e) {
       console.warn(
-        "⚠ getAmountsOut не сработал (скорее всего, на testnet нет пула IBITI/USDT). " +
-        "Идём с minOut = 0.",
+        "⚠ getAmountsOut не сработал (возможно, на testnet нет пула USDT/IBITI). Идём с minOut = 0.",
         e
       );
       minIbitiOut = 0n;
     }
 
-    const usdtAmountIn = ethers.parseUnits(amount.toString(), 18); // testnet USDT: 18 знаков
+    const deadline = BigInt(Math.floor(Date.now() / 1000) + 10 * 60); // +10 минут
 
     // 2) реферер из URL, запрет self-ref
     let referrer = getRefFromUrl();
@@ -133,18 +127,13 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
     const raw = e?.message || "";
     const msg = raw.toLowerCase();
 
-    if (msg.includes("promo off") || msg.includes("promoactive")) {
-      alert("Новогодняя акция IBITI завершена.\nДальнейшая покупка — напрямую через PancakeSwap.");
+    if (msg.includes("amount < min")) {
+      alert("Сумма меньше минимальной для акции (10 USDT).");
       return;
     }
 
     if (msg.includes("not enough ibiti pool")) {
-      alert("Бонусный пул IBITI по акции исчерпан.\nПокупка доступна напрямую через PancakeSwap.");
-      return;
-    }
-
-    if (msg.includes("amount < min")) {
-      alert("Сумма меньше минимальной для акции (10 USDT).");
+      alert("Бонусный пул IBITI по акции исчерпан или не настроен.\nПокупка доступна напрямую через PancakeSwap.");
       return;
     }
 
