@@ -2,30 +2,26 @@
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
 import config     from "./config.js";
 
-// -------------------------------------------------------
-// Адреса из конфига
-// -------------------------------------------------------
+// --- адреса из конфига (testnet) ---
 const USDT           = config.active.contracts.USDT_TOKEN;
 const IBITI          = config.active.contracts.IBITI_TOKEN;
 const SWAP           = config.active.contracts.REFERRAL_SWAP_ROUTER;
 const PANCAKE_ROUTER = config.active.contracts.PANCAKESWAP_ROUTER;
 
-// мы на тестнете, если chainId = 97
-const IS_TESTNET = (config.active.chainId === 97);
+// chainId BSC Testnet
+const REQUIRED_CHAIN_ID = 97;
 
 // ABI промо-контракта и роутера
 const SWAP_ABI = [
-  "function buyWithReferral(uint256 usdtAmountIn,uint256 minIbitiOut,address referrer,uint256 deadline) external",
-  "function promoActive() view returns (bool)" // есть в боевом контракте, на тестнете игнорируем
+  // только функция покупки, БЕЗ promoActive()
+  "function buyWithReferral(uint256 usdtAmountIn,uint256 minIbitiOut,address referrer,uint256 deadline) external"
 ];
 
 const ROUTER_ABI = [
   "function getAmountsOut(uint256 amountIn,address[] calldata path) external view returns (uint256[] memory amounts)"
 ];
 
-// -------------------------------------------------------
-// Рефка из URL (?ref=0x...)
-// -------------------------------------------------------
+// рефка из URL (?ref=0x...)
 function getRefFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const ref = params.get("ref");
@@ -37,9 +33,21 @@ function getRefFromUrl() {
   }
 }
 
-// -------------------------------------------------------
-// Основная покупка по акции
-// -------------------------------------------------------
+// проверяем, что кошелёк реально в testnet (chainId 97)
+async function ensureTestnet(signer) {
+  try {
+    const net = await signer.provider.getNetwork();
+    const cid = Number(net.chainId);
+    if (cid !== REQUIRED_CHAIN_ID) {
+      alert(`Сейчас сеть кошелька = chainId ${cid}. Нужна BSC Testnet (chainId 97).`);
+      throw new Error("Wrong network");
+    }
+  } catch (e) {
+    console.warn("ensureTestnet error:", e);
+  }
+}
+
+// основная покупка по акции
 export async function buyPromoWithBonus(usdtAmountHuman) {
   if (!window.signer || !window.selectedAccount) {
     alert("Сначала подключи кошелёк.");
@@ -55,6 +63,8 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
   const userAddr = window.selectedAccount;
   const provider = signer.provider;
 
+  await ensureTestnet(signer);
+
   // минимум 10 USDT
   const amount = Number(usdtAmountHuman);
   if (!amount || amount < 10) {
@@ -62,57 +72,38 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
     return;
   }
 
-  const usdtAmountIn = ethers.parseUnits(amount.toString(), 18); // BSC USDT: 18 знаков
+  const usdtAmountIn = ethers.parseUnits(amount.toString(), 18); // testnet USDT: 18 знаков
 
   // инстансы контрактов
-  const router   = new ethers.Contract(PANCAKE_ROUTER, ROUTER_ABI, provider);
-  const swapView = new ethers.Contract(SWAP, SWAP_ABI, provider);
-  const usdt     = new ethers.Contract(
+  const router = new ethers.Contract(PANCAKE_ROUTER, ROUTER_ABI, provider);
+  const usdt   = new ethers.Contract(
     USDT,
     ["function approve(address spender,uint256 amount) external returns (bool)"],
     signer
   );
-  const swap     = new ethers.Contract(SWAP, SWAP_ABI, signer);
+  const swap = new ethers.Contract(SWAP, SWAP_ABI, signer);
 
   try {
-    // ---------------------------------------------------
-    // 0) Проверяем, что акция активна
-    //    НА ТЕСТНЕТЕ promoActive() НЕ ВЫЗЫВАЕМ ВООБЩЕ.
-    // ---------------------------------------------------
-    if (!IS_TESTNET) {
-      try {
-        const active = await swapView.promoActive();
-        if (!active) {
-          alert("Новогодняя акция IBITI завершена.\nДальнейшая покупка — напрямую через PancakeSwap.");
-          return;
-        }
-      } catch (e) {
-        console.warn("⚠ promoActive() check failed, продолжаем как будто акция включена", e);
-        // не роняем покупку, просто идём дальше
-      }
-    }
-
-    // ---------------------------------------------------
-    // 1) Считаем minOut через Pancake (3% slippage)
-    //    Если на тестнете нет пула — ставим minOut = 0.
-    // ---------------------------------------------------
+    // 1) считаем minOut через Pancake (3% slippage)
     let minIbitiOut = 0n;
 
     try {
       const path    = [USDT, IBITI];
       const amounts = await router.getAmountsOut(usdtAmountIn, path);
       const expectedIbiti = amounts[amounts.length - 1];
-      minIbitiOut         = (expectedIbiti * 97n) / 100n; // -3% запас
+      minIbitiOut        = (expectedIbiti * 97n) / 100n; // -3% запас
     } catch (e) {
-      console.warn("⚠ getAmountsOut failed, используем minOut = 0 (тестнет, нет пула IBITI/USDT?):", e);
+      console.warn(
+        "⚠ getAmountsOut не сработал (скорее всего, на testnet нет пула IBITI/USDT). " +
+        "Идём с minOut = 0.",
+        e
+      );
       minIbitiOut = 0n;
     }
 
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 10 * 60); // +10 минут
 
-    // ---------------------------------------------------
     // 2) реферер из URL, запрет self-ref
-    // ---------------------------------------------------
     let referrer = getRefFromUrl();
     try {
       if (ethers.getAddress(referrer) === ethers.getAddress(userAddr)) {
@@ -122,22 +113,16 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
       referrer = ethers.ZeroAddress;
     }
 
-    // ---------------------------------------------------
     // 3) approve USDT -> наш промо-контракт
-    // ---------------------------------------------------
     const txApprove = await usdt.approve(SWAP, usdtAmountIn);
     await txApprove.wait();
 
-    // ---------------------------------------------------
     // 4) своп + бонус + рефералка
-    // ---------------------------------------------------
     const tx = await swap.buyWithReferral(usdtAmountIn, minIbitiOut, referrer, deadline);
     console.log("Promo buy tx:", tx.hash);
     await tx.wait();
 
-    // ---------------------------------------------------
     // 5) включаем показ реф-ссылки тем же окном, что и обычный сейл
-    // ---------------------------------------------------
     if (typeof window.enableReferralAfterPurchase === "function") {
       window.enableReferralAfterPurchase(userAddr);
     }
@@ -172,9 +157,7 @@ export async function buyPromoWithBonus(usdtAmountHuman) {
   }
 }
 
-// -------------------------------------------------------
-// Инициализация кнопки на странице
-// -------------------------------------------------------
+// инициализируем кнопку на странице
 export function initPromoButton() {
   const btn   = document.getElementById("promoBuyButton");
   const input = document.getElementById("promoUsdtAmount");
