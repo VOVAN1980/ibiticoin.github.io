@@ -1,192 +1,241 @@
+// js/sale.js
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
 import config from "./config.js";
-import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 
-console.log("✅ sale.js загружен");
+console.log("✅ sale.js (clean) загружен");
 
-const ZERO_ADDRESS = ethers.ZeroAddress;
-
-// ===== helpers =====
-const $ = (id) => document.getElementById(id);
-
-function setStatsEmpty(note = "—") {
-  ["cap","refReserve","salePool","sold","left","bonusPool","soldPercent"].forEach(id => {
-    const el = $(id);
-    if (el) el.textContent = note;
-  });
-  if ($("salesProgress")) $("salesProgress").style.width = "0%";
-  if ($("lastUpdated")) $("lastUpdated").textContent = "Updated: " + note;
-}
-
-function fmt8(x) {
-  try { return ethers.formatUnits(x, 8); } catch { return "0"; }
-}
-function fmt18(x) {
-  try { return ethers.formatUnits(x, 18); } catch { return "0"; }
-}
-
-async function getProviderAndChain() {
-  // если есть кошелёк — читаем сеть из него
-  if (window.ethereum) {
-    const p = new ethers.BrowserProvider(window.ethereum);
-    const net = await p.getNetwork();
-    return { provider: p, chainId: Number(net.chainId) };
-  }
-  // fallback — берём RPC активной сети из config
-  const rpc = config?.active?.rpcUrl || "https://bsc-dataseed.binance.org/";
-  const p = new ethers.JsonRpcProvider(rpc);
-  const net = await p.getNetwork();
-  return { provider: p, chainId: Number(net.chainId) };
-}
-
-// ===== PHASED SALE (опционально) =====
-export async function initSaleContract() {
-  if (!window.signer) {
-    console.warn("🚨 signer не готов, пропускаем initSaleContract()");
-    return;
-  }
-  if (window.phasedSale) return;
-
-  const address = config?.active?.contracts?.PHASED_TOKENSALE;
-
-  // ✅ главное: на testnet/promo может не быть phasedSale — это нормально
-  if (!address) {
-    console.warn("ℹ️ PHASED_TOKENSALE не задан — phased sale отключён (норм для promo/testnet)");
-    return;
-  }
-
-  try {
-    window.phasedSale = new ethers.Contract(address, PhasedTokenSaleAbi, window.signer);
-    console.log("✓ window.phasedSale инициализирован:", address);
-  } catch (error) {
-    console.error("✖ Ошибка инициализации window.phasedSale:", error);
-  }
-}
-
-export async function buyIBITI(amount, referrer = ZERO_ADDRESS) {
-  await initSaleContract();
-
-  if (!window.phasedSale) {
-    throw new Error("Контракт продажи (PHASED_TOKENSALE) не настроен для этой сети");
-  }
-
-  try {
-    const tx = await window.phasedSale.buy(amount, referrer);
-    console.log("✓ Транзакция отправлена:", tx.hash);
-    return tx;
-  } catch (error) {
-    const reason =
-      error?.revert?.args?.[0] ||
-      error?.shortMessage ||
-      error?.data?.message ||
-      error?.message ||
-      "Неизвестная ошибка при покупке";
-
-    console.warn("🔁 Ошибка внутри buyIBITI:", reason);
-    throw new Error(reason);
-  }
-}
-
+// Для совместимости с тем, что у тебя уже импортится в shop.html
 export function getSaleContract() {
-  return window.phasedSale || null;
+  return null; // phasedSale больше не используется
 }
 
-// ===== PROMO STATS (ReferralSwapRouter) =====
-// ABI только для getPromoStats (1 eth_call, без логов)
-const PROMO_ROUTER_STATS_ABI = [
-  "function getPromoStats() view returns (uint256 buys,uint256 usdtIn,uint256 ibitiToBuyers,uint256 bonusPaid,uint256 refPaid,uint256 ibitiOnContract,uint256 ibitiWithdrawn,uint256 usdtWithdrawn)"
+const IBITI_DECIMALS = 8;
+const QUALIFY_IBITI_MIN = 10n * 10n ** 8n; // 10 IBITI (8 decimals)
+
+// --- ABIs ---
+const ERC20_ABI = [
+  "function balanceOf(address) view returns (uint256)",
+  "function decimals() view returns (uint8)",
 ];
 
-function getPromoRouterAddress(chainId) {
-  // берём из config активной сети (самое надёжное)
-  const addr = config?.active?.contracts?.REFERRAL_SWAP_ROUTER
-           || config?.active?.contracts?.REFERRAL_SWAP_ROUTER_ADDRESS
-           || config?.active?.contracts?.REFERRAL_SWAP_ROUTER_ADDRESS_TESTNET
-           || config?.active?.contracts?.REFERRAL_SWAP_ROUTER_ADDRESS_MAINNET;
+const PROMO_ROUTER_ABI = [
+  "function promoActive() view returns (bool)",
+  "function bonusPercent() view returns (uint256)",
+  "function minUsdtAmount() view returns (uint256)",
+  "function referrerRewardIBITI() view returns (uint256)",
+  "function getPromoStats() view returns (uint256 buys,uint256 usdtIn,uint256 ibitiToBuyers,uint256 bonusPaid,uint256 refPaid,uint256 ibitiOnContract,uint256 ibitiWithdrawn,uint256 usdtWithdrawn)",
+];
 
-  // если config.active = testnet/mainnet — chainId совпадёт
-  if (addr && ethers.isAddress(addr)) return addr;
+// --- helpers ---
+const $ = (id) => document.getElementById(id);
+const fmt8 = (x) => ethers.formatUnits(x, IBITI_DECIMALS);
+const nowStamp = () => new Date().toLocaleString();
 
-  // fallback — если кто-то где-то держит window.PROMO_STATS (старый вариант)
-  const cfg = window.PROMO_STATS?.[chainId];
-  if (cfg?.router && ethers.isAddress(cfg.router)) return cfg.router;
+function safeGetAddress(addr) {
+  try { return ethers.getAddress(addr); } catch { return null; }
+}
 
-  return "";
+function buildRefLink(account) {
+  const base = `${window.location.origin}${window.location.pathname}`;
+  return `${base}?ref=${account}`;
+}
+
+async function getReadProvider() {
+  // читаем из кошелька, если он есть (чтобы stats были по текущей сети)
+  if (window.ethereum) {
+    return new ethers.BrowserProvider(window.ethereum);
+  }
+  // иначе fallback на rpc из активного конфига
+  return new ethers.JsonRpcProvider(config.active.rpcUrl);
+}
+
+async function getWalletProvider() {
+  if (!window.ethereum) return null;
+  return new ethers.BrowserProvider(window.ethereum);
+}
+
+// --- Promo Stats (ReferralSwapRouter.getPromoStats) ---
+async function setStatsEmpty() {
+  const ids = ["cap","refReserve","salePool","sold","left","bonusPool","soldPercent","lastUpdated"];
+  ids.forEach((id) => { if ($(id)) $(id).textContent = "—"; });
+  if ($("salesProgress")) $("salesProgress").style.width = "0%";
 }
 
 async function loadPromoStats() {
   try {
-    const { provider, chainId } = await getProviderAndChain();
+    const routerAddr = config.active?.contracts?.REFERRAL_SWAP_ROUTER;
+    const ibitiAddr  = config.active?.contracts?.IBITI_TOKEN;
 
-    const routerAddr = getPromoRouterAddress(chainId);
+    const routerOk = safeGetAddress(routerAddr);
+    const ibitiOk  = safeGetAddress(ibitiAddr);
 
-    // если промо-роутер не задан (например mainnet до деплоя) — просто показываем пусто
-    if (!routerAddr) {
-      setStatsEmpty("—");
+    if (!routerOk || !ibitiOk) {
+      await setStatsEmpty();
       return;
     }
 
-    const router = new ethers.Contract(routerAddr, PROMO_ROUTER_STATS_ABI, provider);
+    const provider = await getReadProvider();
+    const promo = new ethers.Contract(routerOk, PROMO_ROUTER_ABI, provider);
+    const ibiti = new ethers.Contract(ibitiOk, ERC20_ABI, provider);
 
-    // если у роутера нет getPromoStats — будет revert/ошибка, ловим и просто показываем —
-    const s = await router.getPromoStats();
+    // (не обязательно, но полезно для контроля)
+    try {
+      const dec = await ibiti.decimals();
+      if (Number(dec) !== IBITI_DECIMALS) {
+        console.warn("⚠ IBITI decimals != 8, got:", dec);
+      }
+    } catch {}
 
-    // распаковка (ethers v6 возвращает объект с именами)
-    const buys            = s.buys;
-    const usdtIn          = s.usdtIn;          // 18
-    const ibitiToBuyers   = s.ibitiToBuyers;   // 8
-    const bonusPaid       = s.bonusPaid;       // 8
-    const refPaid         = s.refPaid;         // 8
-    const ibitiOnContract = s.ibitiOnContract; // 8
+    const [
+      promoActive,
+      bonusPercent,
+      minUsdtAmount,
+      refReward,
+      stats
+    ] = await Promise.all([
+      promo.promoActive(),
+      promo.bonusPercent(),
+      promo.minUsdtAmount(),
+      promo.referrerRewardIBITI(),
+      promo.getPromoStats(),
+    ]);
 
-    // sold = всё, что ушло покупателям (received+bonus) + рефы
+    const buys             = BigInt(stats[0]);
+    const usdtIn           = BigInt(stats[1]);
+    const ibitiToBuyers    = BigInt(stats[2]); // already includes бонус (received+bonus)
+    const bonusPaid        = BigInt(stats[3]);
+    const refPaid          = BigInt(stats[4]);
+    const ibitiOnContract  = BigInt(stats[5]);
+    const ibitiWithdrawn   = BigInt(stats[6]);
+    // const usdtWithdrawn  = BigInt(stats[7]); // сейчас не выводим на UI
+
+    // Считаем "сколько всего IBITI было выделено под промо" (примерно)
+    // initial ≈ current + sentToBuyers + sentToRef + withdrawnByOwner
+    const cap = ibitiOnContract + ibitiToBuyers + refPaid + ibitiWithdrawn;
+
+    // Что считать "sold": токены, ушедшие пользователям + рефералам
     const sold = ibitiToBuyers + refPaid;
 
-    // "cap" в твоём UI = total allocated (sold + осталось на контракте)
-    const cap = sold + ibitiOnContract;
+    const left = ibitiOnContract;
 
-    const soldPct = cap > 0n ? Number((sold * 10000n) / cap) / 100 : 0;
+    const soldPct = cap > 0n ? Number((sold * 10000n) / cap) / 100 : 0; // 2 знака
 
-    // UI mapping под твой блок
+    // --- UI mapping ---
+    // Эти названия у тебя исторически “кривые”, но главное — цифры честные и стабильные:
     if ($("cap"))        $("cap").textContent        = fmt8(cap);
-    if ($("refReserve")) $("refReserve").textContent = fmt8(refPaid);
-    if ($("salePool"))   $("salePool").textContent   = fmt8(cap); // если хочешь иначе — скажи
+    if ($("salePool"))   $("salePool").textContent   = fmt8(cap);
     if ($("sold"))       $("sold").textContent       = fmt8(sold);
-    if ($("left"))       $("left").textContent       = fmt8(ibitiOnContract);
+    if ($("left"))       $("left").textContent       = fmt8(left);
+
+    // покажем отдельно сколько выплачено по рефералке и бонусам
+    if ($("refReserve")) $("refReserve").textContent = fmt8(refPaid);
     if ($("bonusPool"))  $("bonusPool").textContent  = fmt8(bonusPaid);
 
-    if ($("soldPercent")) $("soldPercent").textContent = soldPct.toFixed(2) + "%";
-    if ($("salesProgress")) $("salesProgress").style.width = Math.min(100, soldPct) + "%";
+    if ($("soldPercent")) $("soldPercent").textContent = `${soldPct.toFixed(2)}%`;
+    if ($("salesProgress")) $("salesProgress").style.width = `${Math.min(100, Math.max(0, soldPct))}%`;
 
     if ($("lastUpdated")) {
-      $("lastUpdated").textContent = "Updated: " + new Date().toLocaleString();
+      $("lastUpdated").textContent = `Updated: ${nowStamp()} | promoActive=${promoActive} | bonus=${bonusPercent}% | minUSDT=${ethers.formatUnits(minUsdtAmount, 18)} | refReward=${fmt8(refReward)}`;
     }
 
-    // можно логнуть, чтобы видеть что реально читается
+    // в консоль — чтобы ты видел, что происходит
     console.log("📊 PromoStats:", {
-      chainId,
-      router: routerAddr,
-      buys: buys.toString(),
-      usdtIn: fmt18(usdtIn),
-      soldIBITI: fmt8(sold),
-      leftIBITI: fmt8(ibitiOnContract),
-      bonus: fmt8(bonusPaid),
-      ref: fmt8(refPaid),
+      chainId: config.active.chainId,
+      router: routerOk,
+      buys: String(buys),
+      usdtIn: String(usdtIn),
+      soldIBITI: String(sold),
+      leftIBITI: String(left),
     });
+
   } catch (e) {
-    console.error("Promo stats error:", e);
-    setStatsEmpty("error");
+    console.error("✖ loadPromoStats error:", e);
+    await setStatsEmpty();
   }
 }
 
-// autoload
-(function boot() {
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", loadPromoStats);
-  } else {
-    loadPromoStats();
+// --- Referral link gating (>=10 IBITI) ---
+async function checkReferralEligibility(account) {
+  try {
+    const ibitiAddr = safeGetAddress(config.active?.contracts?.IBITI_TOKEN);
+    if (!ibitiAddr) return false;
+
+    const p = await getWalletProvider();
+    if (!p) return false;
+
+    const ibiti = new ethers.Contract(ibitiAddr, ERC20_ABI, p);
+    const bal = BigInt(await ibiti.balanceOf(account));
+    return bal >= QUALIFY_IBITI_MIN;
+  } catch {
+    return false;
+  }
+}
+
+async function updateReferralUI(account) {
+  const linkInput = $("myReferralLink");
+  if (!linkInput) return;
+
+  const refLink = buildRefLink(account);
+  linkInput.value = refLink;
+
+  // Включаем кнопки только если у юзера реально есть ≥10 IBITI
+  const eligible = await checkReferralEligibility(account);
+
+  if (eligible) {
+    // у тебя эта функция уже объявлена в shop.html (Referral activation script)
+    if (typeof window.enableReferralAfterPurchase === "function") {
+      window.enableReferralAfterPurchase(account);
+    }
+  }
+}
+
+function hookWalletEvents() {
+  if (!window.ethereum?.on) return;
+
+  window.ethereum.on("accountsChanged", async (accs) => {
+    const a = accs?.[0];
+    if (!a) return;
+    await updateReferralUI(a);
+    await loadPromoStats();
+  });
+
+  window.ethereum.on("chainChanged", async () => {
+    // при смене сети — обновляем всё
+    const a = window.selectedAccount || (await (async () => {
+      try {
+        const p = await getWalletProvider();
+        if (!p) return null;
+        const s = await p.getSigner();
+        return await s.getAddress();
+      } catch { return null; }
+    })());
+    if (a) await updateReferralUI(a);
+    await loadPromoStats();
+  });
+}
+
+// --- init ---
+document.addEventListener("DOMContentLoaded", async () => {
+  // 1) stats сразу
+  await loadPromoStats();
+
+  // 2) refresh кнопка (у тебя она может называться по-разному — цепляемся мягко)
+  const btn =
+    $("refreshStats") ||
+    $("refreshButton") ||
+    $("refresh") ||
+    document.querySelector("[data-action='refreshStats']");
+  if (btn) btn.addEventListener("click", loadPromoStats);
+
+  // 3) если кошелёк уже подключен — обновим referral
+  const account = window.selectedAccount;
+  if (account) {
+    await updateReferralUI(account);
   }
 
-  const btn = $("refreshStats");
-  if (btn) btn.addEventListener("click", loadPromoStats);
-})();
+  // 4) слушатели кошелька
+  hookWalletEvents();
+
+  // 5) авто-обновление stats раз в 30 сек (без фанатизма)
+  setInterval(loadPromoStats, 30000);
+});
