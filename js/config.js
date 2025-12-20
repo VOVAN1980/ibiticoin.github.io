@@ -35,17 +35,21 @@ const config = {
   },
 
   testnet: {
-    networkName: "BSC Testnet",
-    chainId: 97,
-    rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-    explorerUrl: "https://testnet.bscscan.com",
-    contracts: {
-      USDT_TOKEN:          "0x8001075AD56A169207a1ac5FAC81a26a11F58608",
-      IBITI_TOKEN:         "0x67F495E5299A3f5e7750B9D4D0486cb5d8c460fF",
-      PANCAKESWAP_ROUTER:  "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
-      REFERRAL_SWAP_ROUTER:"0xD6F6aaCCfe89E9162a708e32794D0CdD54774989"
-    }
-  },
+  networkName: "BSC Testnet",
+  chainId: 97,
+  rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+  explorerUrl: "https://testnet.bscscan.com",
+
+  // ✅ ВОТ СЮДА, ПРЯМО ЗДЕСЬ:
+  promoDeployTx: "0x21954e13c521c2cb9098e2f7508a09bea990cb86cab149c3f7473aa1b45bb424",
+
+  contracts: {
+    USDT_TOKEN: "0x8001075AD56A169207a1ac5FAC81a26a11F58608",
+    IBITI_TOKEN: "0x67F495E5299A3f5e7750B9D4D0486cb5d8c460fF",
+    PANCAKESWAP_ROUTER: "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
+    REFERRAL_SWAP_ROUTER: "0xD6F6aaCCfe89E9162a708e32794D0CdD54774989"
+  }
+},
 
   localhost: {
     networkName: "Localhost",
@@ -81,3 +85,4 @@ window.PROMO_STATS = {
 };
 
 export default config;
+
