@@ -1,140 +1,130 @@
-(function () {
-  const $ = (id) => document.getElementById(id);
+import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
+import config from "./config.js";
 
-  const ERC20_ABI = [
-    "function balanceOf(address) view returns (uint256)",
-    "function decimals() view returns (uint8)"
-  ];
+const $ = (id) => document.getElementById(id);
 
-  const REFERRAL_SWAP_ABI = [
-    "event BoughtWithBonus(address indexed buyer,uint256 usdtIn,uint256 ibitiOut,uint256 bonus,address indexed referrer,uint256 refReward)",
-    "event WithdrawIBITI(address indexed to,uint256 amount)"
-  ];
+const ERC20_ABI = [
+  "function balanceOf(address) view returns (uint256)",
+  "function decimals() view returns (uint8)"
+];
 
-  function setDash(message = "Updated: —") {
-    ["cap","refReserve","salePool","sold","left","bonusPool","soldPercent"].forEach(id => $(id) && ($(id).textContent = "—"));
-    if ($("salesProgress")) $("salesProgress").style.width = "0%";
-    if ($("lastUpdated")) $("lastUpdated").textContent = message;
+const REFERRAL_SWAP_ABI = [
+  "event BoughtWithBonus(address indexed buyer,uint256 usdtIn,uint256 ibitiOut,uint256 bonus,address indexed referrer,uint256 refReward)",
+  "event WithdrawIBITI(address indexed to,uint256 amount)"
+];
+
+function setDash(message = "Updated: —") {
+  ["cap","refReserve","salePool","sold","left","bonusPool","soldPercent"].forEach(id => $(id) && ($(id).textContent = "—"));
+  if ($("salesProgress")) $("salesProgress").style.width = "0%";
+  if ($("lastUpdated")) $("lastUpdated").textContent = message;
+}
+
+async function getWalletChainId() {
+  if (!window.ethereum) return null;
+  const p = new ethers.BrowserProvider(window.ethereum);
+  const net = await p.getNetwork();
+  return Number(net.chainId);
+}
+
+async function getLogsChunked(provider, filter, step = 1000) {
+  const latest = await provider.getBlockNumber();
+  let from = Number(filter.fromBlock ?? 0);
+  let to = Number(filter.toBlock ?? latest);
+  if (from < 0) from = 0;
+  if (to > latest) to = latest;
+
+  const out = [];
+  for (let start = from; start <= to; start += step + 1) {
+    const end = Math.min(start + step, to);
+    const part = await provider.getLogs({ ...filter, fromBlock: start, toBlock: end });
+    out.push(...part);
   }
+  return out;
+}
 
-  async function getProvider() {
-    if (window.ethereum) return new ethers.BrowserProvider(window.ethereum);
-    // fallback RPC (testnet by default)
-    return new ethers.JsonRpcProvider("https://data-seed-prebsc-1-s1.binance.org:8545/");
-  }
+async function loadPromoStats() {
+  try {
+    const walletChainId = await getWalletChainId();
 
-  async function getCfg(provider) {
-    const net = await provider.getNetwork();
-    const chainId = Number(net.chainId);
+    const netCfg =
+      walletChainId === config.mainnet.chainId ? config.mainnet :
+      walletChainId === config.testnet.chainId ? config.testnet :
+      config.active; // fallback
 
-    // 1) если есть config.active — берём оттуда (это твой главный источник)
-    if (window.config && window.config.active && window.config.active.contracts) {
-      const c = window.config.active;
-      const router = c.contracts.REFERRAL_SWAP_ROUTER || "";
-      return {
-        chainId,
-        ibiti: c.contracts.IBITI_TOKEN,
-        usdt:  c.contracts.USDT_TOKEN,
-        router,
-        fromBlock: 0
-      };
+    const chainId = netCfg.chainId;
+
+    const ibitiAddr = netCfg.contracts.IBITI_TOKEN;
+    const routerAddr = netCfg.contracts.REFERRAL_SWAP_ROUTER || "";
+
+    if (!routerAddr) {
+      setDash("Updated: promo not deployed");
+      return;
     }
 
-    // 2) иначе пробуем PROMO_STATS
-    const ps = window.PROMO_STATS?.[chainId];
-    if (!ps) return { chainId, ibiti: "", usdt: "", router: "", fromBlock: 0 };
+    // ✅ КРИТИЧНО: логи читаем НЕ через MetaMask, а через RPC
+    const readProvider = new ethers.JsonRpcProvider(netCfg.rpcUrl);
 
-    return { chainId, ...ps };
-  }
-
-  async function getLogsChunked(provider, filter, step = 5000) {
-    const latest = await provider.getBlockNumber();
-    let from = Number(filter.fromBlock ?? 0);
-    let to = Number(filter.toBlock ?? latest);
-    if (from < 0) from = 0;
-    if (to > latest) to = latest;
-
-    const out = [];
-    for (let start = from; start <= to; start += step + 1) {
-      const end = Math.min(start + step, to);
-      const part = await provider.getLogs({ ...filter, fromBlock: start, toBlock: end });
-      out.push(...part);
+    // fromBlock — лучше с блока деплоя промо-роутера
+    // Добавь в config.testnet: promoDeployTx: "0x2195...."
+    let fromBlock = 0;
+    if (netCfg.promoDeployTx) {
+      const r = await readProvider.getTransactionReceipt(netCfg.promoDeployTx);
+      if (r?.blockNumber) fromBlock = r.blockNumber;
     }
-    return out;
-  }
 
-  async function loadPromoStats() {
-    try {
-      if (typeof ethers === "undefined") {
-        setDash("Updated: ethers missing");
-        return;
-      }
+    const ibiti = new ethers.Contract(ibitiAddr, ERC20_ABI, readProvider);
+    const dec = await ibiti.decimals();
+    if (Number(dec) !== 8) console.warn("IBITI decimals != 8, got:", dec);
 
-      const provider = await getProvider();
-      const cfg = await getCfg(provider);
+    const routerBal = await ibiti.balanceOf(routerAddr);
 
-      if (!cfg.ibiti || !cfg.router) {
-        setDash("Updated: promo not deployed");
-        return;
-      }
+    const iface = new ethers.Interface(REFERRAL_SWAP_ABI);
+    const topicBought = iface.getEvent("BoughtWithBonus").topicHash;
+    const topicWdr    = iface.getEvent("WithdrawIBITI").topicHash;
 
-      const ibiti = new ethers.Contract(cfg.ibiti, ERC20_ABI, provider);
-      const dec = await ibiti.decimals();
-      if (Number(dec) !== 8) console.warn("IBITI decimals != 8, got:", dec);
+    const boughtLogs = await getLogsChunked(readProvider, { address: routerAddr, topics: [topicBought], fromBlock });
+    const wdrLogs    = await getLogsChunked(readProvider, { address: routerAddr, topics: [topicWdr], fromBlock });
 
-      const routerBal = await ibiti.balanceOf(cfg.router);
+    let totalBonus = 0n, totalRef = 0n, totalWdr = 0n;
 
-      const iface = new ethers.Interface(REFERRAL_SWAP_ABI);
-      const topicBought = iface.getEvent("BoughtWithBonus").topicHash;
-      const topicWdr    = iface.getEvent("WithdrawIBITI").topicHash;
-
-      const fromBlock = Number(cfg.fromBlock || 0);
-
-      const boughtLogs = await getLogsChunked(provider, { address: cfg.router, topics: [topicBought], fromBlock });
-      const wdrLogs    = await getLogsChunked(provider, { address: cfg.router, topics: [topicWdr], fromBlock });
-
-      let totalBonus = 0n, totalRef = 0n, totalWdr = 0n;
-
-      for (const l of boughtLogs) {
-        const p = iface.parseLog(l);
-        totalBonus += BigInt(p.args.bonus);
-        totalRef   += BigInt(p.args.refReward);
-      }
-      for (const l of wdrLogs) {
-        const p = iface.parseLog(l);
-        totalWdr += BigInt(p.args.amount);
-      }
-
-      const spent = totalBonus + totalRef;
-      const cap   = routerBal + spent + totalWdr;
-      const soldPct = cap > 0n ? Number((spent * 10000n) / cap) / 100 : 0;
-
-      const fmt8 = (x) => ethers.formatUnits(x, 8);
-
-      if ($("cap"))        $("cap").textContent        = fmt8(cap);
-      if ($("refReserve")) $("refReserve").textContent = fmt8(totalRef);
-      if ($("salePool"))   $("salePool").textContent   = "0";
-      if ($("sold"))       $("sold").textContent       = fmt8(spent);
-      if ($("left"))       $("left").textContent       = fmt8(routerBal);
-      if ($("bonusPool"))  $("bonusPool").textContent  = fmt8(totalBonus);
-
-      if ($("soldPercent")) $("soldPercent").textContent = soldPct.toFixed(2) + "%";
-      if ($("salesProgress")) $("salesProgress").style.width = Math.min(100, soldPct) + "%";
-      if ($("lastUpdated")) $("lastUpdated").textContent = "Updated: " + new Date().toLocaleString();
-
-    } catch (e) {
-      console.error(e);
-      setDash("Updated: error");
+    for (const l of boughtLogs) {
+      const p = iface.parseLog(l);
+      totalBonus += BigInt(p.args.bonus);
+      totalRef   += BigInt(p.args.refReward);
     }
-  }
+    for (const l of wdrLogs) {
+      const p = iface.parseLog(l);
+      totalWdr += BigInt(p.args.amount);
+    }
 
-  // auto-load + refresh button
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", loadPromoStats);
-  } else {
-    loadPromoStats();
-  }
+    const spent = totalBonus + totalRef;
+    const cap   = routerBal + spent + totalWdr;
+    const soldPct = cap > 0n ? Number((spent * 10000n) / cap) / 100 : 0;
 
-  const btn = document.getElementById("refreshStats");
-  if (btn) btn.addEventListener("click", loadPromoStats);
-})();
+    const fmt8 = (x) => ethers.formatUnits(x, 8);
+
+    if ($("cap"))        $("cap").textContent        = fmt8(cap);
+    if ($("refReserve")) $("refReserve").textContent = fmt8(totalRef);
+    if ($("salePool"))   $("salePool").textContent   = "0";
+    if ($("sold"))       $("sold").textContent       = fmt8(spent);
+    if ($("left"))       $("left").textContent       = fmt8(routerBal);
+    if ($("bonusPool"))  $("bonusPool").textContent  = fmt8(totalBonus);
+
+    if ($("soldPercent")) $("soldPercent").textContent = soldPct.toFixed(2) + "%";
+    if ($("salesProgress")) $("salesProgress").style.width = Math.min(100, soldPct) + "%";
+    if ($("lastUpdated")) $("lastUpdated").textContent = "Updated: " + new Date().toLocaleString();
+
+  } catch (e) {
+    console.error("Promo stats error:", e);
+    setDash("Updated: error");
+  }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", loadPromoStats);
+} else {
+  loadPromoStats();
+}
+
+const btn = document.getElementById("refreshStats");
+if (btn) btn.addEventListener("click", loadPromoStats);
