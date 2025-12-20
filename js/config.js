@@ -48,12 +48,12 @@ const config = {
     rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
     explorerUrl: "https://testnet.bscscan.com",
     contracts: {
-      USDT_TOKEN:          "0x5bbe53467E61820E483976aF73084036fFa16aF7",
-      IBITI_TOKEN:         "0xb82170a36c7DA2AE4960Db07355771836F89ef10",
+      USDT_TOKEN:          "0x8001075AD56A169207a1ac5FAC81a26a11F58608",
+      IBITI_TOKEN:         "0x67F495E5299A3f5e7750B9D4D0486cb5d8c460fF",
       PANCAKESWAP_ROUTER:  "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
 
       // твой только что задеплоенный ReferralSwapRouter на testnet
-      REFERRAL_SWAP_ROUTER: "0x0a2f3986E5037A9DAAFB97df7D12be304149B501",
+      REFERRAL_SWAP_ROUTER: "0xD6F6aaCCfe89E9162a708e32794D0CdD54774989",
     }
   },
 
@@ -75,4 +75,5 @@ const config = {
 config.active = config.testnet;
 
 export default config;
+
 
