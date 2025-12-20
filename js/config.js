@@ -7,10 +7,8 @@ const config = {
     saleDeployBlock: 51339916,
 
     contracts: {
-      // базовые токены и инфраструктура
       USDT_TOKEN:           "0x55d398326f99059fF775485246999027B3197955",
       IBITI_TOKEN:          "0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb",
-
       PANCAKESWAP_ROUTER:   "0x10ED43C718714eb63d5aA57B78B54704E256024E",
 
       FEE_MANAGER:          "0x34770ba3625437742e18C6827DFC893c42Eec956",
@@ -19,29 +17,23 @@ const config = {
       NFTDISCOUNT:          "0x911f7153AA7554b3f936f2ad05318B8368c14668",
       IBITI_PRICE_ORACLE:   "0x09e28925487841f0400687FD9DC9cf1d14B85aF3",
 
-      // команда и стейкинг
       TEAM_VESTING:         "0xae6fA65adede487e46ABCE1b3570063D02510d5d",
       STAKING_MODULE:       "0x9ad8D68F7a6C9f673bd1db8348734f8dA515113c",
       DAO_MODULE:           "0xc0213d9d331Ea207717E38F5e0e995BA567fbd1F",
 
-      // NFT
       IBITI_NFT_ADDRESS:    "0xE14bfBB10180eda4bDC574f02700e0E2BC0A4667",
       NFTSALEMANAGER:       "0x2c702A42966a939b6C5Da4828cd8D67890Db097E",
 
-      // сейл + байбак
       PHASED_TOKENSALE:     "0x6A6eDc85f4690DBAB98d52CdF656ef849d28148e",
       BUYBACK_MANAGER:      "0xdE7E16bbDe9076daF23DB25BA4E50d8FEeca5AC9",
 
-      // награда для сейла (IBITI с 8 знаками)
       PHASED_REWARD_AMOUNT: 100000000,
 
-      // тут потом пропишем адрес роутера для MAINNET,
-      // когда задеплоишь боевой:
-      // REFERRAL_SWAP_ROUTER: "0x...."
+      // ✅ ПУСТО пока не деплоили на mainnet — но поле есть, чтобы ничего не падало
+      REFERRAL_SWAP_ROUTER: ""
     }
   },
 
-  // 🔥 BSC TESTNET — тут сейчас твой ReferralSwapRouter
   testnet: {
     networkName: "BSC Testnet",
     chainId: 97,
@@ -51,9 +43,7 @@ const config = {
       USDT_TOKEN:          "0x8001075AD56A169207a1ac5FAC81a26a11F58608",
       IBITI_TOKEN:         "0x67F495E5299A3f5e7750B9D4D0486cb5d8c460fF",
       PANCAKESWAP_ROUTER:  "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
-
-      // твой только что задеплоенный ReferralSwapRouter на testnet
-      REFERRAL_SWAP_ROUTER: "0xD6F6aaCCfe89E9162a708e32794D0CdD54774989",
+      REFERRAL_SWAP_ROUTER:"0xD6F6aaCCfe89E9162a708e32794D0CdD54774989"
     }
   },
 
@@ -71,9 +61,23 @@ const config = {
   }
 };
 
-// ⬅ сейчас тестим на TESTNET
+// сейчас тестим на TESTNET
 config.active = config.testnet;
 
+// === Promo stats for sale.js ===
+window.PROMO_STATS = {
+  [config.testnet.chainId]: {
+    ibiti:  config.testnet.contracts.IBITI_TOKEN,
+    usdt:   config.testnet.contracts.USDT_TOKEN,
+    router: config.testnet.contracts.REFERRAL_SWAP_ROUTER,
+    fromBlock: 0
+  },
+  [config.mainnet.chainId]: {
+    ibiti:  config.mainnet.contracts.IBITI_TOKEN,
+    usdt:   config.mainnet.contracts.USDT_TOKEN,
+    router: config.mainnet.contracts.REFERRAL_SWAP_ROUTER || "",
+    fromBlock: config.mainnet.saleDeployBlock || 0
+  }
+};
+
 export default config;
-
-
