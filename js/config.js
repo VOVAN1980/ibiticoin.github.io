@@ -84,7 +84,13 @@ window.PROMO_STATS = {
   }
 };
 
+// делаем доступным в консоли и другим скриптам
+window.config = config;
+window.APP_CONFIG = config;
+
+
 export default config;
+
 
 
 
