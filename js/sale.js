@@ -114,18 +114,23 @@ export function getSaleContract() {
     return out;
   }
 
-  async function loadPromoStats() {
-    try {
-      const { provider, chainId } = await getProviderAndChain();
+  const cfg = window.PROMO_STATS?.[chainId];
 
-      const cfg = window.PROMO_STATS?.[chainId];
-      if (!cfg) {
-        // сеть не поддержана
-        ["cap","refReserve","salePool","sold","left","bonusPool","soldPercent"].forEach(id => $(id) && ($(id).textContent = "—"));
-        if ($("salesProgress")) $("salesProgress").style.width = "0%";
-        if ($("lastUpdated")) $("lastUpdated").textContent = "Updated: —";
-        return;
-      }
+if (!cfg) {
+  // сеть не поддержана
+  ["cap","refReserve","salePool","sold","left","bonusPool","soldPercent"].forEach(id => $(id) && ($(id).textContent = "—"));
+  if ($("salesProgress")) $("salesProgress").style.width = "0%";
+  if ($("lastUpdated")) $("lastUpdated").textContent = "Updated: —";
+  return;
+}
+
+if (!cfg.router || cfg.router === "") {
+  // сеть поддержана, но промо-роутер ещё не задан (mainnet до деплоя)
+  ["cap","refReserve","salePool","sold","left","bonusPool","soldPercent"].forEach(id => $(id) && ($(id).textContent = "—"));
+  if ($("salesProgress")) $("salesProgress").style.width = "0%";
+  if ($("lastUpdated")) $("lastUpdated").textContent = "Updated: promo not deployed";
+  return;
+}
 
       const ibiti = new ethers.Contract(cfg.ibiti, ERC20_ABI, provider);
       const dec = await ibiti.decimals(); // должно быть 8
@@ -203,3 +208,4 @@ export function getSaleContract() {
   if (btn) btn.addEventListener("click", loadPromoStats);
 
 })();
+
