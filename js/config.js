@@ -1,6 +1,8 @@
-// js/config.js
+// js/config.js (REWRITE: testnet-first, URL override, config.active поддержка)
+
 const NETWORKS = {
   testnet: {
+    key: "testnet",
     name: "BSC Testnet",
     chainId: 97,
     contracts: {
@@ -12,31 +14,37 @@ const NETWORKS = {
   },
 
   mainnet: {
+    key: "mainnet",
     name: "BSC Mainnet",
     chainId: 56,
     contracts: {
       USDT_TOKEN: "0x55d398326f99059fF775485246999027B3197955",
       IBITI_TOKEN: "0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb",
-      // сюда вставишь после mainnet деплоя роутера:
-      REFERRAL_SWAP_ROUTER: "", 
+      // MAINNET router позже вставишь после деплоя:
+      REFERRAL_SWAP_ROUTER: "",
       PANCAKESWAP_ROUTER: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
     },
   },
 };
 
-function getPreferred() {
+function parseNetFromUrl() {
   const q = new URLSearchParams(location.search);
-  const forced = q.get("net"); // ?net=testnet или ?net=mainnet
+  const forced = (q.get("net") || "").toLowerCase();
   if (forced === "testnet" || forced === "mainnet") return forced;
-
-  return localStorage.getItem("ibiti_net") || "mainnet";
+  return null;
 }
 
-function setPreferred(key) {
+function getSavedNet() {
+  const v = (localStorage.getItem("ibiti_net") || "").toLowerCase();
+  if (v === "testnet" || v === "mainnet") return v;
+  return null;
+}
+
+function saveNet(key) {
   localStorage.setItem("ibiti_net", key);
 }
 
-async function detectByWallet() {
+async function detectNetFromWallet() {
   try {
     if (!window.ethereum) return null;
     const hex = await window.ethereum.request({ method: "eth_chainId" });
@@ -49,16 +57,71 @@ async function detectByWallet() {
   }
 }
 
+function warnMismatch(forcedKey, walletKey) {
+  if (!forcedKey || !walletKey) return;
+  if (forcedKey !== walletKey) {
+    console.warn(
+      `⚠️ Network mismatch: URL forces "${forcedKey}", but wallet is on "${walletKey}". ` +
+      `Switch network in wallet or remove ?net=...`
+    );
+  }
+}
+
 const config = {
   networks: NETWORKS,
+  active: NETWORKS.testnet, // дефолт сразу testnet (ты сейчас в тестах)
 
-  // всегда отдаём актуальную сеть: wallet -> query/localStorage -> default
+  /**
+   * Выбор сети по строгому приоритету:
+   * 1) URL ?net=testnet|mainnet (ЖЁСТКО)
+   * 2) wallet chainId
+   * 3) localStorage ibiti_net
+   * 4) default testnet
+   */
   async getActive() {
-    const byWallet = await detectByWallet();
-    const key = byWallet || getPreferred();
-    setPreferred(key);
-    return NETWORKS[key];
+    const forced = parseNetFromUrl();
+    const byWallet = await detectNetFromWallet();
+    const saved = getSavedNet();
+
+    const key = forced || byWallet || saved || "testnet";
+
+    if (!NETWORKS[key]) {
+      // на всякий случай
+      config.active = NETWORKS.testnet;
+      saveNet("testnet");
+      return config.active;
+    }
+
+    warnMismatch(forced, byWallet);
+
+    config.active = NETWORKS[key];
+    saveNet(key);
+    return config.active;
   },
+
+  async isTestnet() {
+    const a = await config.getActive();
+    return a.chainId === 97;
+  },
+
+  async requireTestnet() {
+    const a = await config.getActive();
+    if (a.chainId !== 97) {
+      throw new Error(`This page is in TESTNET mode, but wallet/network is not testnet. Active=${a.name} chainId=${a.chainId}`);
+    }
+    return a;
+  },
+
+  async print() {
+    const a = await config.getActive();
+    console.log("✅ Active config:", {
+      key: a.key,
+      name: a.name,
+      chainId: a.chainId,
+      contracts: a.contracts
+    });
+    return a;
+  }
 };
 
 export default config;
