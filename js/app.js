@@ -15,6 +15,19 @@
     if (unlockedBox) unlockedBox.classList.toggle("hidden", !unlocked);
   }
 
+  function setPurchaseEnabled(enabled) {
+    const ids = ["promoBuyButton", "buyPancakeBtn", "buyNftBtn"];
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.disabled = !enabled;
+      el.classList.toggle("btn-disabled", !enabled);
+      if (!enabled) el.title = "Connect wallet first";
+      else el.title = "";
+    });
+  }
+
+
   async function hasConnectedAccount() {
     if (!window.ethereum) return false;
     const accs = await window.ethereum.request({ method: "eth_accounts" });
@@ -94,7 +107,7 @@
     "function approve(address spender, uint256 value) returns (bool)"
   ];
 
-  // PromoRouter ABI (only what we use)
+    // PromoRouter ABI (only what we use)
   const PROMO_ABI = [
     "function promoActive() view returns (bool)",
     "function promoEndTime() view returns (uint256)",
@@ -102,7 +115,13 @@
     "function minPaymentAmount() view returns (uint256)",
     "function getStats() view returns (uint256 bonusPoolTotal, uint256 bonusSpent, uint256 refSpent)",
     "function poolRemaining() view returns (uint256)",
-    "function buyWithReferral(uint256 usdtAmount, address referrer) external"
+    "function swapPath(uint256) view returns (address)",
+    "function buyWithReferral(uint256 paymentAmount, address referrer, uint256 minIbitiOut) external"
+  ];
+
+// Pancake/Uniswap v2 router (quote only)
+  const DEX_ROUTER_ABI = [
+    "function getAmountsOut(uint256 amountIn, address[] path) view returns (uint256[] amounts)"
   ];
 
   function net() {
@@ -218,6 +237,8 @@
 
     // referral link field (unlocks after first promo buy)
     await updateReferralUI(addr);
+
+    setPurchaseEnabled(true);
 
     toast("Wallet connected.");
   }
@@ -347,11 +368,32 @@
 
     // buy
     const promo = new ethers.Contract(netCfg.promoRouter, PROMO_ABI, signer);
+    // buy (with slippage protection)
+    const dex = new ethers.Contract(netCfg.pancakeRouter, DEX_ROUTER_ABI, signer);
+    let minOut = 0n;
+    try {
+      // read swapPath from promo (public array)
+      const path = [];
+      for (let i = 0; i < 6; i++) {
+        try { path.push(await promo.swapPath(i)); } catch (_) { break; }
+      }
+      if (path.length >= 2) {
+        const amounts = await dex.getAmountsOut(amount, path);
+        const boughtEst = amounts[amounts.length - 1];
+        const slBps = Number(netCfg.slippageBps || 300); // default 3%
+        const keepBps = BigInt(Math.max(0, 10000 - slBps));
+        minOut = (boughtEst * keepBps) / 10000n;
+      }
+    } catch (e) {
+      // if quote fails, fallback to 0 (will still work, just less protected)
+      minOut = 0n;
+    }
+
     toast("Buying with +10% bonus…");
-    const txB = await promo.buyWithReferral(amount, ref ? ref : ethers.ZeroAddress);
+    const txB = await promo.buyWithReferral(amount, ref ? ref : ethers.ZeroAddress, minOut);
     await txB.wait();
 
-    // mark referral unlocked (after first successful promo purchase)
+// mark referral unlocked (after first successful promo purchase)
     try {
       const acc = await currentAccount();
       if (acc) localStorage.setItem(lsKey(net().chainIdDec, acc), "1");
@@ -430,6 +472,7 @@
 
   function wire() {
     setNetBadge();
+    setPurchaseEnabled(false);
     setReferralUnlocked(false);
 
     const btnConnect = $("connectWalletBtn");
@@ -442,7 +485,8 @@
     if (btnBuy) btnBuy.addEventListener("click", async () => {
       if (!(await hasConnectedAccount())) {
         toast("Please connect your wallet first.");
-        await connectWallet();
+        try { await connectWallet(); } catch (e) { return; }
+        if (!(await hasConnectedAccount())) return;
       }
       return buyPromo().catch(e => { console.error(e); toast(e?.shortMessage || e?.message || "Buy failed."); });
     });
@@ -517,11 +561,27 @@
 
     const overlay = $("pancakeOverlay");
     if (overlay) overlay.addEventListener("click", closePancakeModal);
-
-    // Init referral link if wallet already connected
+    // Init UI if wallet already connected (no popups)
     window.ethereum?.request({ method: "eth_accounts" })
-      .then((accs) => {
-        if (accs && accs[0]) updateReferralUI(accs[0]).catch(() => {});
+      .then(async (accs) => {
+        if (!accs || !accs[0]) return;
+        const addr = accs[0];
+
+        const addrEl = $("walletAddress");
+        if (addrEl) addrEl.textContent = addr;
+
+        setPurchaseEnabled(true);
+
+        try {
+          const { signer } = await getBrowserProviderSigner();
+          const token = new ethers.Contract(net().ibiti, ERC20_ABI, signer);
+          const dec = await token.decimals();
+          const bal = await token.balanceOf(addr);
+          const balEl = $("ibitiBalance");
+          if (balEl) balEl.textContent = `${fmt(bal, dec, 8)} IBITI`;
+        } catch (_) {}
+
+        updateReferralUI(addr).catch(() => {});
       })
       .catch(() => {});
 
