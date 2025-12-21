@@ -1,4 +1,4 @@
-// js/wallet.js
+// js/wallet.js (FIXED)
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
 import { ibitiTokenAbi }      from "./abis/ibitiTokenAbi.js";
 import { nftSaleManagerAbi }  from "./abis/nftSaleManagerAbi.js";
@@ -7,7 +7,7 @@ import { PhasedTokenSaleAbi } from "./abis/PhasedTokenSaleAbi.js";
 import { initSaleContract }   from "./sale.js";
 import config                 from "./config.js";
 
-console.log("✅ wallet.js загружен");
+console.log("✅ wallet.js loaded (fixed)");
 
 export let selectedAccount = null;
 export let signer = null;
@@ -25,110 +25,84 @@ function safeGetAddress(addr) {
   }
 }
 
-const IBITI_TOKEN_ADDRESS      = safeGetAddress(config.active?.contracts?.IBITI_TOKEN);
-const NFTSALEMANAGER_ADDRESS   = safeGetAddress(config.active?.contracts?.NFTSALEMANAGER_ADDRESS_MAINNET) || null;
-const NFT_DISCOUNT_ADDRESS     = safeGetAddress(config.active?.contracts?.NFTDISCOUNT_ADDRESS_MAINNET) || null;
-const PHASED_TOKENSALE_ADDRESS = safeGetAddress(config.active?.contracts?.PHASED_TOKENSALE) || null;
+async function getActiveConfig() {
+  const active = await config.getActive();
+  config.active = active; // ✅ важно: другим модулям удобно читать config.active
+  return active;
+}
+
+function setText(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.innerText = text;
+}
 
 export async function connectWallet() {
-  console.log("► connectWallet() вызван");
+  console.log("► connectWallet()");
+
   try {
     if (!window.ethereum) {
       alert("Injected-провайдер (MetaMask/Trust Wallet) не найден.");
       return;
     }
 
+    // accounts
     const accounts = await window.ethereum.request({ method: "eth_accounts" });
     const req = accounts.length ? accounts : await window.ethereum.request({ method: "eth_requestAccounts" });
-    const account = req[0];
-
-    selectedAccount = account;
+    selectedAccount = req[0];
     window.selectedAccount = selectedAccount;
-    console.log("✓ Выбран аккаунт:", selectedAccount);
 
-    const addrEl = document.getElementById("walletAddress");
-    if (addrEl) addrEl.innerText = selectedAccount;
+    setText("walletAddress", selectedAccount);
 
-    const web3Provider = new ethers.BrowserProvider(window.ethereum);
-    signer = await web3Provider.getSigner();
-    provider = web3Provider;
+    // provider/signer
+    provider = new ethers.BrowserProvider(window.ethereum);
+    signer = await provider.getSigner();
     window.signer = signer;
 
-    console.log("✓ ethers провайдер и signer готовы");
+    // ✅ выбираем сеть/адреса ПОСЛЕ подключения
+    const active = await getActiveConfig();
+    console.log("✓ Active network:", active.name, "chainId:", active.chainId);
 
-    await initContracts();
-    await initSaleContract();      // ✅ теперь export реально есть
+    await initContracts(active);
+    await initSaleContract();
     await showIbitiBalance(true);
 
-    window.ethereum.on("accountsChanged", async (newAccounts) => {
-      if (!newAccounts.length) return disconnectWallet();
-      selectedAccount = newAccounts[0];
+    // listeners
+    window.ethereum.on("accountsChanged", async (accs) => {
+      if (!accs?.length) return disconnectWallet();
+      selectedAccount = accs[0];
       window.selectedAccount = selectedAccount;
-      const addrEl2 = document.getElementById("walletAddress");
-      if (addrEl2) addrEl2.innerText = selectedAccount;
+      setText("walletAddress", selectedAccount);
+      const a = await getActiveConfig();
+      await initContracts(a);
       await showIbitiBalance(true);
-      if (typeof window.loadSaleStats === "function") window.loadSaleStats();
+      if (typeof window.loadPromoStats === "function") window.loadPromoStats();
+    });
+
+    window.ethereum.on("chainChanged", async () => {
+      const a = await getActiveConfig();
+      await initContracts(a);
+      await showIbitiBalance(true);
+      if (typeof window.loadPromoStats === "function") window.loadPromoStats();
     });
 
     window.ethereum.on("disconnect", () => disconnectWallet());
 
   } catch (e) {
-    console.error("✖ Ошибка в connectWallet():", e);
+    console.error("✖ connectWallet error:", e);
     alert("Не удалось подключиться к кошельку.");
   }
 }
 window.connectWallet = connectWallet;
 
-export async function connectViaCoinbase() {
-  console.log("► connectViaCoinbase() вызван");
-  try {
-    const CoinbaseWalletSDK = window.CoinbaseWalletSDK;
-    if (!CoinbaseWalletSDK) {
-      alert("CoinbaseWalletSDK не найден. Проверь UMD-скрипт.");
-      return;
-    }
-
-    const walletLink = new CoinbaseWalletSDK({ appName: "IBITIcoin DApp", darkMode: false });
-    const coinbaseProvider = walletLink.makeWeb3Provider("https://bsc-dataseed.binance.org/", 56);
-
-    const accounts = await coinbaseProvider.request({ method: "eth_requestAccounts" });
-    selectedAccount = accounts[0];
-    window.selectedAccount = selectedAccount;
-
-    const addrEl = document.getElementById("walletAddress");
-    if (addrEl) addrEl.innerText = selectedAccount;
-
-    const web3Provider = new ethers.BrowserProvider(coinbaseProvider);
-    signer = await web3Provider.getSigner();
-    provider = web3Provider;
-    window.signer = signer;
-
-    await initContracts();
-    await initSaleContract();
-    await showIbitiBalance(true);
-
-    coinbaseProvider.on("accountsChanged", async (newAccounts) => {
-      if (!newAccounts.length) return disconnectWallet();
-      selectedAccount = newAccounts[0];
-      window.selectedAccount = selectedAccount;
-      const addrEl2 = document.getElementById("walletAddress");
-      if (addrEl2) addrEl2.innerText = selectedAccount;
-      await showIbitiBalance(true);
-      if (typeof window.loadSaleStats === "function") window.loadSaleStats();
-    });
-
-    coinbaseProvider.on("disconnect", () => disconnectWallet());
-
-  } catch (e) {
-    console.error("✖ Ошибка в connectViaCoinbase():", e);
-    alert("Не удалось подключиться через Coinbase Wallet.");
-  }
-}
-window.connectViaCoinbase = connectViaCoinbase;
-
-export async function initContracts() {
+export async function initContracts(active) {
   console.log("► initContracts()");
+
   try {
+    const IBITI_TOKEN_ADDRESS = safeGetAddress(active?.contracts?.IBITI_TOKEN);
+    const NFTSALEMANAGER_ADDRESS = safeGetAddress(active?.contracts?.NFTSALEMANAGER_ADDRESS_MAINNET) || null;
+    const NFT_DISCOUNT_ADDRESS = safeGetAddress(active?.contracts?.NFTDISCOUNT_ADDRESS_MAINNET) || null;
+    const PHASED_TOKENSALE_ADDRESS = safeGetAddress(active?.contracts?.PHASED_TOKENSALE) || null;
+
     window.ibitiToken = IBITI_TOKEN_ADDRESS
       ? new ethers.Contract(IBITI_TOKEN_ADDRESS, ibitiTokenAbi, signer)
       : null;
@@ -145,7 +119,7 @@ export async function initContracts() {
       ? new ethers.Contract(PHASED_TOKENSALE_ADDRESS, PhasedTokenSaleAbi, signer)
       : null;
 
-    console.log("✓ Контракты:", {
+    console.log("✓ Contracts:", {
       ibitiToken: IBITI_TOKEN_ADDRESS || ZERO,
       saleManager: NFTSALEMANAGER_ADDRESS || ZERO,
       nftDiscount: NFT_DISCOUNT_ADDRESS || ZERO,
@@ -153,15 +127,23 @@ export async function initContracts() {
     });
 
   } catch (e) {
-    console.error("✖ Ошибка в initContracts():", e);
+    console.error("✖ initContracts error:", e);
   }
 }
 
 export async function showIbitiBalance(highlight = false) {
   if (!window.ibitiToken || !selectedAccount) return;
+
   try {
+    // IBITI decimals = 8, но читаем через abi если есть decimals()
+    let dec = 8;
+    try {
+      if (window.ibitiToken.decimals) dec = Number(await window.ibitiToken.decimals());
+    } catch {}
+
     const balance = await window.ibitiToken.balanceOf(selectedAccount);
-    const formatted = ethers.formatUnits(balance, 8);
+    const formatted = ethers.formatUnits(balance, dec);
+
     const el = document.getElementById("ibitiBalance");
     if (el) {
       el.innerText = `Ваш баланс IBITI: ${formatted}`;
@@ -172,7 +154,7 @@ export async function showIbitiBalance(highlight = false) {
       }
     }
   } catch (e) {
-    console.error("✖ Ошибка в showIbitiBalance():", e);
+    console.error("✖ showIbitiBalance error:", e);
   }
 }
 
@@ -182,9 +164,6 @@ export async function disconnectWallet() {
   signer = null;
   selectedAccount = null;
 
-  const addrEl = document.getElementById("walletAddress");
-  if (addrEl) addrEl.innerText = "Disconnected";
-
-  const balEl = document.getElementById("ibitiBalance");
-  if (balEl) balEl.innerText = "";
+  setText("walletAddress", "Disconnected");
+  setText("ibitiBalance", "");
 }
