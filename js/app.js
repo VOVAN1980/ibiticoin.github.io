@@ -162,7 +162,8 @@
       // token meta (fixed)
       const tokenSymbol = "IBITI";
       const tokenDecimals = 8;
-      const tokenImage = "https://www.ibiticoin.com/img/ibiti-coin.png";
+      // Use your existing public asset (keeps previews consistent)
+      const tokenImage = "https://ibiticoin.com/img/IBITI-512.png";
 
       const ok = await window.ethereum.request({
         method: "wallet_watchAsset",
