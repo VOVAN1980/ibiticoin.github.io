@@ -3,59 +3,187 @@
   "use strict";
 
   const $ = (id) => document.getElementById(id);
+  const isAddr = (a) => typeof a === "string" && /^0x[a-fA-F0-9]{40}$/.test(a);
 
-  function toast(msg) {
-    const el = $("toast");
-    const ok = $("toastOK");
-    if (!el) return alert(msg);
-    el.textContent = msg;
-    el.style.opacity = "1";
-    if (el._timer) clearTimeout(el._timer);
-    el._timer = setTimeout(() => (el.style.opacity = "0"), 2600);
-    if (ok) ok.style.display = "inline-block";
+  const LS_PREFIX = "ibiti_promo_purchased_v1";
+  function lsKey(chainIdDec, account){ return `${LS_PREFIX}:${chainIdDec}:${String(account||"").toLowerCase()}`; }
+
+  function setReferralUnlocked(unlocked) {
+    const locked = $("refLocked");
+    const unlockedBox = $("refUnlocked");
+    if (locked) locked.classList.toggle("hidden", !!unlocked);
+    if (unlockedBox) unlockedBox.classList.toggle("hidden", !unlocked);
   }
 
-  function fmt(n, d = 8, maxFrac = 8) {
+  async function hasConnectedAccount() {
+    if (!window.ethereum) return false;
+    const accs = await window.ethereum.request({ method: "eth_accounts" });
+    return !!(accs && accs[0]);
+  }
+
+  async function currentAccount() {
+    if (!window.ethereum) return null;
+    const accs = await window.ethereum.request({ method: "eth_accounts" });
+    return accs && accs[0] ? accs[0] : null;
+  }
+
+  async function checkPurchasedOnchain(account) {
+    const netCfg = net();
+    if (!netCfg.promoRouter || !isAddr(netCfg.promoRouter) || !account) return false;
+    const rp = getReadProvider();
+    const iface = new ethers.Interface([
+      "event PromoBuy(address indexed buyer, address indexed referrer, uint256 paymentAmount, uint256 boughtAmount, uint256 bonusAmount, uint256 refAmount)"
+    ]);
+    const topic0 = iface.getEvent("PromoBuy").topicHash;
+    const topic1 = ethers.zeroPadValue(account, 32);
+    const toBlock = await rp.getBlockNumber();
+    const scan = Number(netCfg.logScanBlocks || 200000);
+    const fromBlock = Math.max(0, toBlock - scan);
+    const logs = await rp.getLogs({
+      address: netCfg.promoRouter,
+      fromBlock,
+      toBlock,
+      topics: [topic0, topic1]
+    });
+    return Array.isArray(logs) && logs.length > 0;
+  }
+
+  async function updateReferralUI(account) {
+    const netCfg = net();
+    const input = $("referralLink");
+    const copyBtn = $("copyMyReferralLink");
+    const shareBtn = $("shareReferralLink");
+
+    // Default: locked
+    setReferralUnlocked(false);
+    if (input) input.value = "";
+
+    if (!account) return;
+
+    // LocalStorage first
+    let purchased = false;
     try {
-      const x = Number(n);
-      if (!isFinite(x)) return String(n);
-      return x.toLocaleString(undefined, { maximumFractionDigits: maxFrac });
-    } catch {
-      return String(n);
+      purchased = localStorage.getItem(lsKey(netCfg.chainIdDec, account)) === "1";
+    } catch (_) {}
+
+    // If not in LS, check chain logs (for users who bought earlier)
+    if (!purchased) {
+      try {
+        purchased = await checkPurchasedOnchain(account);
+        if (purchased) {
+          try { localStorage.setItem(lsKey(netCfg.chainIdDec, account), "1"); } catch (_) {}
+        }
+      } catch (_) {}
+    }
+
+    if (purchased) {
+      setReferralUnlocked(true);
+      if (input) input.value = buildMyReferralLink(account);
+      if (copyBtn) copyBtn.disabled = false;
+      if (shareBtn) shareBtn.disabled = false;
+    } else {
+      if (copyBtn) copyBtn.disabled = true;
+      if (shareBtn) shareBtn.disabled = true;
     }
   }
 
-  function isAddr(a) {
-    try { return ethers.isAddress(a); } catch { return false; }
-  }
+  const ERC20_ABI = [
+    "function decimals() view returns (uint8)",
+    "function symbol() view returns (string)",
+    "function balanceOf(address) view returns (uint256)",
+    "function approve(address spender, uint256 value) returns (bool)"
+  ];
 
-  function currentNet() {
-    if (!window.IBITI_CONFIG) throw new Error("IBITI_CONFIG missing. Check js/config.js include order.");
+  // PromoRouter ABI (only what we use)
+  const PROMO_ABI = [
+    "function promoActive() view returns (bool)",
+    "function promoEndTime() view returns (uint256)",
+    "function bonusBps() view returns (uint256)",
+    "function minPaymentAmount() view returns (uint256)",
+    "function getStats() view returns (uint256 bonusPoolTotal, uint256 bonusSpent, uint256 refSpent)",
+    "function poolRemaining() view returns (uint256)",
+    "function buyWithReferral(uint256 usdtAmount, address referrer) external"
+  ];
+
+  function net() {
     return window.IBITI_CONFIG.getNet();
   }
 
-  async function hasEthereum() {
-    return !!(window.ethereum && typeof window.ethereum.request === "function");
+  function setNetBadge() {
+    const badge = $("netBadge");
+    if (!badge) return;
+    if (net().key === "testnet") {
+      badge.textContent = "TESTNET MODE";
+      badge.style.display = "inline-block";
+    } else {
+      badge.style.display = "none";
+    }
   }
 
-  async function ensureChain(net) {
-    const eth = window.ethereum;
-    const current = await eth.request({ method: "eth_chainId" });
-    if (current === net.chainIdHex) return;
+  function fmt(n, decimals = 8, maxFrac = 8) {
+    const f = Number(ethers.formatUnits(n, decimals));
+    if (!Number.isFinite(f)) return "—";
+    // trim noisy tails
+    return f.toLocaleString(undefined, { maximumFractionDigits: maxFrac });
+  }
+
+  function nowStr() {
+    const d = new Date();
+    const pad = (x) => String(x).padStart(2, "0");
+    return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+
+  function currentRefParam() {
+    const url = new URL(window.location.href);
+    const r = (url.searchParams.get("ref") || "").trim();
+    return isAddr(r) ? r : null;
+  }
+
+  function buildMyReferralLink(addr) {
+    const url = new URL(window.location.href);
+    url.searchParams.set("ref", addr);
+    // keep current net param if testnet
+    if (net().key === "testnet") url.searchParams.set("net", "testnet");
+    else url.searchParams.delete("net");
+    return url.toString();
+  }
+
+  function toast(msg) {
+    const el = $("toast");
+    if (!el) return alert(msg);
+    el.textContent = msg;
+    el.classList.add("show");
+    setTimeout(() => el.classList.remove("show"), 2400);
+  }
+
+  function getReadProvider() {
+    const rpc = net().rpcUrls && net().rpcUrls[0] ? net().rpcUrls[0] : null;
+    if (!rpc) throw new Error("RPC not set in config for this network.");
+    return new ethers.JsonRpcProvider(rpc);
+  }
+
+  async function ensureChain() {
+    if (!window.ethereum) throw new Error("No wallet detected (MetaMask/Trust Wallet/Binance Wallet).");
+    const target = net();
+    const chainId = await window.ethereum.request({ method: "eth_chainId" });
+    if (chainId && chainId.toLowerCase() === target.chainIdHex.toLowerCase()) return;
 
     try {
-      await eth.request({ method: "wallet_switchEthereumChain", params: [{ chainId: net.chainIdHex }] });
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: target.chainIdHex }]
+      });
     } catch (e) {
-      // 4902 = unknown chain
-      if (e && e.code === 4902) {
-        await eth.request({
+      // 4902: chain not added
+      if (e && (e.code === 4902 || String(e.message || "").includes("4902"))) {
+        await window.ethereum.request({
           method: "wallet_addEthereumChain",
           params: [{
-            chainId: net.chainIdHex,
-            chainName: net.chainName,
-            rpcUrls: net.rpcUrls,
-            blockExplorerUrls: net.blockExplorerUrls,
-            nativeCurrency: net.nativeCurrency
+            chainId: target.chainIdHex,
+            chainName: target.chainName,
+            rpcUrls: target.rpcUrls,
+            nativeCurrency: target.nativeCurrency,
+            blockExplorerUrls: target.blockExplorerUrls
           }]
         });
       } else {
@@ -64,314 +192,348 @@
     }
   }
 
-  async function getProviderSigner() {
-    if (!(await hasEthereum())) throw new Error("No wallet found (window.ethereum). Install MetaMask or use a Web3 wallet.");
-    const net = currentNet();
-    await ensureChain(net);
-
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    const signer = await provider.getSigner();
-    return { provider, signer, net };
-  }
-
-  function setNetBadge() {
-    const net = currentNet();
-    const badge = $("netBadge");
-    if (!badge) return;
-
-    if (net.key === "testnet") {
-      badge.style.display = "block";
-      badge.textContent = "TESTNET MODE";
-    } else {
-      badge.style.display = "none";
-    }
-  }
-
-  function baseReferralUrl(addr) {
-    const u = new URL(window.location.href);
-    u.searchParams.set("ref", addr);
-    // keep net=testnet if currently in testnet
-    const mode = window.IBITI_CONFIG.detectMode();
-    if (mode === "testnet") u.searchParams.set("net", "testnet");
-    else u.searchParams.delete("net");
-    return u.toString();
-  }
-
-  function getRefFromUrl() {
-    const u = new URL(window.location.href);
-    const ref = (u.searchParams.get("ref") || "").trim();
-    return isAddr(ref) ? ref : ethers.ZeroAddress;
-  }
-
-  async function updateBalances(address) {
-    const net = currentNet();
-    const { provider } = await getProviderSigner();
-
-    const erc20 = [
-      "function decimals() view returns (uint8)",
-      "function balanceOf(address) view returns (uint256)"
-    ];
-
-    const ibiti = new ethers.Contract(net.ibiti, erc20, provider);
-    const dec = await ibiti.decimals();
-    const bal = await ibiti.balanceOf(address);
-    const human = ethers.formatUnits(bal, dec);
-
-    const balEl = $("ibitiBalance");
-    if (balEl) balEl.textContent = `IBITI balance: ${fmt(human, dec, 8)}`;
+  async function getBrowserProviderSigner() {
+    await ensureChain();
+    const bp = new ethers.BrowserProvider(window.ethereum);
+    const signer = await bp.getSigner();
+    return { bp, signer };
   }
 
   async function connectWallet() {
-    const net = currentNet();
-    setNetBadge();
-
-    if (!(await hasEthereum())) {
-      toast("Wallet not found. Install MetaMask or open in a Web3 wallet.");
-      return;
-    }
-
-    await window.ethereum.request({ method: "eth_requestAccounts" });
-
-    const { signer } = await getProviderSigner();
-    const addr = await signer.getAddress();
+    await ensureChain();
+    const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+    const addr = accounts && accounts[0] ? accounts[0] : null;
+    if (!addr) throw new Error("No account returned by wallet.");
 
     const addrEl = $("walletAddress");
     if (addrEl) addrEl.textContent = addr;
 
-    const ct = $("ctAddr");
-    if (ct) ct.textContent = net.promoRouter ? net.promoRouter : "(promo router not set)";
+    // show balance
+    const { signer } = await getBrowserProviderSigner();
+    const token = new ethers.Contract(net().ibiti, ERC20_ABI, signer);
+    const dec = await token.decimals();
+    const bal = await token.balanceOf(addr);
+    const balEl = $("ibitiBalance");
+    if (balEl) balEl.textContent = `${fmt(bal, dec, 8)} IBITI`;
 
-    // referral link for user
-    const linkInput = $("myReferralLink");
-    if (linkInput) linkInput.value = baseReferralUrl(addr);
+    // referral link field (unlocks after first promo buy)
+    await updateReferralUI(addr);
 
-    await updateBalances(addr);
-
-    // refresh stats after connect
-    await refreshStats();
+    toast("Wallet connected.");
   }
 
   async function addTokenToWallet() {
-    if (!(await hasEthereum())) return toast("Wallet not found.");
-    const net = currentNet();
+    if (!window.ethereum) throw new Error("No wallet detected.");
+    const tokenAddress = net().ibiti;
+    const tokenSymbol = "IBITI";
+    const tokenDecimals = 8;
+    const tokenImage = "https://ibiticoin.com/img/IBITI-512.png";
 
-    try {
-      await ensureChain(net);
-      const tokenAddress = net.ibiti;
-
-      // token meta (fixed)
-      const tokenSymbol = "IBITI";
-      const tokenDecimals = 8;
-      // Use your existing public asset (keeps previews consistent)
-      const tokenImage = "https://ibiticoin.com/img/IBITI-512.png";
-
-      const ok = await window.ethereum.request({
-        method: "wallet_watchAsset",
-        params: {
-          type: "ERC20",
-          options: { address: tokenAddress, symbol: tokenSymbol, decimals: tokenDecimals, image: tokenImage }
+    await window.ethereum.request({
+      method: "wallet_watchAsset",
+      params: {
+        type: "ERC20",
+        options: {
+          address: tokenAddress,
+          symbol: tokenSymbol,
+          decimals: tokenDecimals,
+          image: tokenImage
         }
-      });
+      }
+    });
 
-      toast(ok ? "Token added to wallet." : "Token add cancelled.");
-    } catch (e) {
-      console.error(e);
-      toast("Failed to add token. Check wallet permissions / network.");
+    toast("Token request sent to wallet.");
+  }
+
+  function updateProgress(percent) {
+    const bar = $("salesProgress");
+    const p = $("soldPercent");
+    if (p) p.textContent = Number.isFinite(percent) ? `${percent.toFixed(2)}%` : "—";
+    if (bar) {
+      const w = Math.max(0, Math.min(100, percent || 0));
+      bar.style.width = `${w}%`;
     }
   }
 
   async function refreshStats() {
-    const net = currentNet();
     setNetBadge();
 
-    const setText = (id, text) => { const el = $(id); if (el) el.textContent = text; };
+    const netCfg = net();
+    const setText = (id, t) => { const el = $(id); if (el) el.textContent = t; };
 
-    // If promo router not set on mainnet yet — show placeholders
-    if (!net.promoRouter || !isAddr(net.promoRouter)) {
-      setText("soldPercent", "—");
-      setText("sold", "— IBITI");
-      setText("left", "— IBITI");
-      setText("bonusPool", "— IBITI");
-      setText("lastUpdated", "Promo router not set for this network.");
+    if (!netCfg.promoRouter || !isAddr(netCfg.promoRouter)) {
+      setText("statTotal", "—");
+      setText("statSpent", "—");
+      setText("statRemaining", "—");
+      setText("statBonusPool", "—");
+      setText("routerAddr", "(promo router not set)");
+      setText("lastUpdated", "Promo router is not set for this network yet.");
+      updateProgress(NaN);
       return;
     }
 
+    const rp = getReadProvider();
+    const promo = new ethers.Contract(netCfg.promoRouter, PROMO_ABI, rp);
+    const ibiti = new ethers.Contract(netCfg.ibiti, ERC20_ABI, rp);
+
+    const ibitiDec = await ibiti.decimals();
+    const routerBal = await ibiti.balanceOf(netCfg.promoRouter);
+
+    const stats = await promo.getStats();
+    const bonusPoolTotal = stats[0];
+    const bonusSpent = stats[1];
+    const refSpent = stats[2];
+    const spentTotal = bonusSpent + refSpent;
+
+    let remaining;
     try {
-      const { provider } = await getProviderSigner();
+      remaining = await promo.poolRemaining();
+    } catch {
+      remaining = routerBal;
+    }
 
-      const erc20 = [
-        "function decimals() view returns (uint8)",
-        "function balanceOf(address) view returns (uint256)"
-      ];
+    // progress = spent / bonusPoolTotal (safe bigint math)
+    let pct = NaN;
+    if (bonusPoolTotal > 0n) {
+      const pct100 = (spentTotal * 10000n) / bonusPoolTotal; // 2 decimals
+      pct = Number(pct100) / 100;
+    }
+    updateProgress(pct);
 
-      const promoAbi = [
-        "function bonusBps() view returns (uint256)",
-        "function minPaymentAmount() view returns (uint256)",
-        "function getStats() view returns (uint256,uint256,uint256)",
-        "function poolRemaining() view returns (uint256)",
-        "function promoActive() view returns (bool)"
-      ];
+    setText("statTotal", `${fmt(routerBal, ibitiDec, 8)} IBITI`);
+    setText("statSpent", `${fmt(spentTotal, ibitiDec, 8)} IBITI`);
+    setText("statRemaining", `${fmt(remaining, ibitiDec, 8)} IBITI`);
+    setText("statBonusPool", `${fmt(bonusPoolTotal, ibitiDec, 8)} IBITI`);
 
-      const ibiti = new ethers.Contract(net.ibiti, erc20, provider);
-      const usdt  = new ethers.Contract(net.usdt, erc20, provider);
-      const promo = new ethers.Contract(net.promoRouter, promoAbi, provider);
+    setText("routerAddr", netCfg.promoRouter);
+    setText("lastUpdated", `Updated: ${nowStr()}`);
 
-      const ibitiDec = await ibiti.decimals();
-      const usdtDec = await usdt.decimals();
+    // promo info line
+    const active = await promo.promoActive();
+    const bonusBps = await promo.bonusBps();
+    const minPay = await promo.minPaymentAmount();
+    const usdt = new ethers.Contract(netCfg.usdt, ERC20_ABI, rp);
+    const usdtDec = await usdt.decimals();
 
-      const [poolTotal, bonusSpent, refSpent] = await promo.getStats();
-      const remaining = await promo.poolRemaining();
-      const balOnContract = await ibiti.balanceOf(net.promoRouter);
-      const bps = await promo.bonusBps();
-      const minPay = await promo.minPaymentAmount();
-      const active = await promo.promoActive();
-
-      // UI fields
-      setText("bonusPool", `${ethers.formatUnits(poolTotal, ibitiDec)} IBITI`);
-      setText("sold", `${ethers.formatUnits(bonusSpent + refSpent, ibitiDec)} IBITI`);
-      setText("left", `${ethers.formatUnits(remaining, ibitiDec)} IBITI`);
-
-      const soldPct = poolTotal > 0n ? Number(((poolTotal - remaining) * 10000n) / poolTotal) / 100 : 0;
-      setText("soldPercent", `${soldPct.toFixed(2)}%`);
-
-      // show min payment and bonus
-      const minEl = $("minPayInfo");
-      if (minEl) minEl.textContent = `Min: ${ethers.formatUnits(minPay, usdtDec)} USDT • Bonus: ${(Number(bps)/100).toFixed(2)}% • Active: ${active}`;
-
-      // contract balance (optional)
-      const capEl = $("cap");
-      if (capEl) capEl.textContent = `On contract: ${ethers.formatUnits(balOnContract, ibitiDec)} IBITI`;
-
-      const time = new Date().toLocaleString();
-      setText("lastUpdated", `Updated: ${time}`);
-    } catch (e) {
-      console.error(e);
-      toast("Stats update failed. Check wallet connection and network.");
-      const errEl = $("lastUpdated");
-      if (errEl) errEl.textContent = "Error: cannot load promo stats.";
+    const infoEl = $("minPayInfo");
+    if (infoEl) {
+      infoEl.textContent = `Min: ${fmt(minPay, usdtDec, 2)} USDT · Bonus: ${(Number(bonusBps) / 100).toFixed(2)}% · Active: ${active}`;
     }
   }
 
   async function buyPromo() {
-    const net = currentNet();
-    if (!net.promoRouter || !isAddr(net.promoRouter)) return toast("Promo router not set for this network.");
-
-    const amountEl = $("promoUsdtAmount");
-    const raw = amountEl ? String(amountEl.value || "").trim() : "";
-    const n = Number(raw);
-
-    if (!raw || !isFinite(n) || n <= 0) return toast("Enter USDT amount.");
-    // min 10 enforced by contract; still pre-check to save gas
-    if (n < 10) return toast("Minimum is 10 USDT.");
-
-    const { signer, provider } = await getProviderSigner();
-
-    const erc20 = [
-      "function decimals() view returns (uint8)",
-      "function approve(address spender, uint256 amount) returns (bool)",
-      "function allowance(address owner, address spender) view returns (uint256)"
-    ];
-
-    const promoAbi = [
-      "function buyWithReferral(uint256 paymentAmount, address referrer, uint256 minIbitiOut) external"
-    ];
-
-    const usdt = new ethers.Contract(net.usdt, erc20, signer);
-    const promo = new ethers.Contract(net.promoRouter, promoAbi, signer);
-
-    const usdtDec = await new ethers.Contract(net.usdt, ["function decimals() view returns (uint8)"], provider).decimals();
-    const pay = ethers.parseUnits(String(Math.floor(n)), usdtDec);
-
-    const ref = getRefFromUrl();
-
-    // approve if needed
-    const me = await signer.getAddress();
-    const allowance = await usdt.allowance(me, net.promoRouter);
-    if (allowance < pay) {
-      toast("Approve USDT...");
-      const txA = await usdt.approve(net.promoRouter, pay);
-      await txA.wait();
+    const netCfg = net();
+    if (!netCfg.promoRouter || !isAddr(netCfg.promoRouter)) {
+      throw new Error("Promo router not set on this network.");
     }
 
-    toast("Buying IBITI (promo)...");
-    const tx = await promo.buyWithReferral(pay, ref, 0);
-    toast(`TX sent: ${tx.hash.slice(0, 10)}...`);
-    await tx.wait();
+    const amtEl = $("promoUsdtAmount");
+    const amtStr = amtEl ? String(amtEl.value || "").trim() : "";
+    const amtNum = Number(amtStr);
+    if (!Number.isFinite(amtNum) || amtNum <= 0) throw new Error("Invalid USDT amount.");
+    if (amtNum < 10) throw new Error("Minimum is 10 USDT.");
 
-    toast("✅ Purchase completed");
-    await updateBalances(me);
-    await refreshStats();
+    const ref = currentRefParam();
+    const { signer } = await getBrowserProviderSigner();
 
-    // ensure referral link exists
-    const linkInput = $("myReferralLink");
-    if (linkInput && !linkInput.value) linkInput.value = baseReferralUrl(me);
+    const usdt = new ethers.Contract(netCfg.usdt, ERC20_ABI, signer);
+    const usdtDec = await usdt.decimals();
+    const amount = ethers.parseUnits(String(amtNum), usdtDec);
+
+    // approve
+    toast("Approve USDT…");
+    const txA = await usdt.approve(netCfg.promoRouter, amount);
+    await txA.wait();
+
+    // buy
+    const promo = new ethers.Contract(netCfg.promoRouter, PROMO_ABI, signer);
+    toast("Buying with +10% bonus…");
+    const txB = await promo.buyWithReferral(amount, ref ? ref : ethers.ZeroAddress);
+    await txB.wait();
+
+    // mark referral unlocked (after first successful promo purchase)
+    try {
+      const acc = await currentAccount();
+      if (acc) localStorage.setItem(lsKey(net().chainIdDec, acc), "1");
+      await updateReferralUI(acc);
+    } catch (_) {}
+
+    toast("Done!");
+    await connectWallet().catch(() => {});
+    await refreshStats().catch(() => {});
   }
 
-  function copyMyLink() {
-    const input = $("myReferralLink");
-    if (!input || !input.value) return toast("Referral link not ready. Connect wallet and buy at least once.");
-    navigator.clipboard.writeText(input.value).then(
-      () => toast("Referral link copied."),
-      () => toast("Copy failed (browser permissions).")
-    );
+    // ===== Regular buy (no bonus): PancakeSwap modal =====
+  async function openPancakeModal() {
+    // user requirement: show connect wallet prompt first
+    if (!(await hasConnectedAccount())) {
+      toast("Please connect your wallet first.");
+      await connectWallet();
+    }
+
+    const modal = $("pancakeModal");
+    const overlay = $("pancakeOverlay");
+    const link = $("pancakeOpenLink");
+    const url = net().pancakeSwapUrl;
+    if (link) link.href = url;
+    if (overlay) overlay.classList.add("open");
+    if (modal) modal.classList.add("open");
   }
 
-  function shareMyLink() {
-    const input = $("myReferralLink");
-    const url = (input && input.value) ? input.value : window.location.href;
+  function closePancakeModal() {
+    const modal = $("pancakeModal");
+    if (modal) modal.classList.remove("open");
+  }
+
+  function goNftGallery() {
+    const url = net().nftGalleryUrl || "nft.html";
+    window.location.href = url;
+  }
+
+    async function copyMyLink() {
+    const input = $("referralLink");
+    const v = input ? String(input.value || "") : "";
+    if (!v) return toast("Referral link is not available yet. Make your first promo purchase (>= $10) to unlock it.");
+    await navigator.clipboard.writeText(v);
+    toast("Copied!");
+  }
+
+    function openShareModal() {
+    const overlay = $("shareOverlay");
+    const modal = $("shareModal");
+    if (overlay) overlay.classList.remove("hidden");
+    if (modal) modal.classList.remove("hidden");
+  }
+  function closeShareModal() {
+    const overlay = $("shareOverlay");
+    const modal = $("shareModal");
+    if (overlay) overlay.classList.add("hidden");
+    if (modal) modal.classList.add("hidden");
+  }
+
+  async function shareLink() {
+    const input = $("referralLink");
+    const v = input ? String(input.value || "") : "";
+    if (!v) return toast("Referral link is not available yet. Make your first promo purchase (>= $10) to unlock it.");
+
+    // Native share sheet (mobile) if available
     if (navigator.share) {
-      navigator.share({ title: "IBITIcoin Promo", url }).catch(() => {});
-    } else {
-      // fallback
-      window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}`, "_blank");
+      try {
+        await navigator.share({ title: "IBITI Referral Link", url: v });
+        return;
+      } catch (_) {}
     }
+
+    // Desktop fallback: our own chooser modal
+    openShareModal();
   }
 
   function wire() {
     setNetBadge();
+    setReferralUnlocked(false);
 
     const btnConnect = $("connectWalletBtn");
     if (btnConnect) btnConnect.addEventListener("click", () => connectWallet().catch(e => { console.error(e); toast("Connect failed."); }));
 
     const btnAdd = $("addTokenBtn");
-    if (btnAdd) btnAdd.addEventListener("click", () => addTokenToWallet());
+    if (btnAdd) btnAdd.addEventListener("click", () => addTokenToWallet().catch(e => { console.error(e); toast("Add token failed."); }));
 
     const btnBuy = $("promoBuyButton");
-    if (btnBuy) btnBuy.addEventListener("click", () => buyPromo().catch(e => { console.error(e); toast("Buy failed."); }));
+    if (btnBuy) btnBuy.addEventListener("click", async () => {
+      if (!(await hasConnectedAccount())) {
+        toast("Please connect your wallet first.");
+        await connectWallet();
+      }
+      return buyPromo().catch(e => { console.error(e); toast(e?.shortMessage || e?.message || "Buy failed."); });
+    });
 
     const btnRefresh = $("refreshStatsBtn");
-    if (btnRefresh) btnRefresh.addEventListener("click", () => refreshStats());
+    if (btnRefresh) btnRefresh.addEventListener("click", () => refreshStats().catch(e => { console.error(e); toast("Refresh failed."); }));
 
     const copyBtn = $("copyMyReferralLink");
-    if (copyBtn) copyBtn.addEventListener("click", copyMyLink);
+    if (copyBtn) copyBtn.addEventListener("click", () => copyMyLink().catch(e => { console.error(e); toast("Copy failed."); }));
 
-    const shareBtn = $("shareMyReferralLink");
-    if (shareBtn) shareBtn.addEventListener("click", shareMyLink);
+    const shareBtn = $("shareReferralLink");
+    if (shareBtn) shareBtn.addEventListener("click", shareLink);
 
-    // auto-show ref address info
-    const ref = getRefFromUrl();
-    const refBadge = $("refBadge");
-    if (refBadge && ref !== ethers.ZeroAddress) {
-      refBadge.style.display = "block";
-      refBadge.textContent = `Referral: ${ref}`;
-    }
+    // Share modal wiring
+    const shOv = $("shareOverlay");
+    const shCancel = $("shareCancelBtn");
+    if (shOv) shOv.addEventListener("click", closeShareModal);
+    if (shCancel) shCancel.addEventListener("click", closeShareModal);
 
-    // Initial stats (will prompt connect if needed)
-    // We avoid auto connect; just show placeholders until user connects.
-    const net = currentNet();
-    const pancakeBtn = $("buyOnPancakeBtn");
-    if (pancakeBtn) {
-      const url = `https://pancakeswap.finance/swap?chain=bsc&outputCurrency=${net.ibiti}&inputCurrency=${net.usdt}`;
-      pancakeBtn.href = url;
-      // On testnet, Pancake main UI may not support; keep but label
-      if (net.key === "testnet") pancakeBtn.textContent = "Buy on PancakeSwap (main UI)";
-    }
+    const shCopy = $("shareCopyBtn");
+    const shTg = $("shareTgBtn");
+    const shX = $("shareXBtn");
+    const shFb = $("shareFbBtn");
 
-    const ct = $("ctAddr");
-    if (ct) ct.textContent = net.promoRouter ? net.promoRouter : "(promo router not set)";
+    const getRefValue = () => {
+      const input = $("referralLink");
+      return input ? String(input.value || "") : "";
+    };
+
+    if (shCopy) shCopy.addEventListener("click", async () => {
+      const v = getRefValue();
+      if (!v) return toast("Referral link is empty.");
+      await navigator.clipboard.writeText(v);
+      toast("Copied!");
+      closeShareModal();
+    });
+
+    if (shTg) shTg.addEventListener("click", () => {
+      const v = getRefValue();
+      if (!v) return toast("Referral link is empty.");
+      window.open(`https://t.me/share/url?url=${encodeURIComponent(v)}`, "_blank");
+      closeShareModal();
+    });
+
+    if (shX) shX.addEventListener("click", () => {
+      const v = getRefValue();
+      if (!v) return toast("Referral link is empty.");
+      const text = "IBITI promo: +10% bonus with my referral link";
+      window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(v)}&text=${encodeURIComponent(text)}`, "_blank");
+      closeShareModal();
+    });
+
+    if (shFb) shFb.addEventListener("click", () => {
+      const v = getRefValue();
+      if (!v) return toast("Referral link is empty.");
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(v)}`, "_blank");
+      closeShareModal();
+    });
+
+
+    const buyPancake = $("buyPancakeBtn");
+    if (buyPancake) buyPancake.addEventListener("click", openPancakeModal);
+
+    const nftBtn = $("buyNftBtn");
+    if (nftBtn) nftBtn.addEventListener("click", goNftGallery);
+
+    const closeBtn = $("pancakeCloseBtn");
+    if (closeBtn) closeBtn.addEventListener("click", closePancakeModal);
+
+    const cancelBtn = $("pancakeCancelBtn");
+    if (cancelBtn) cancelBtn.addEventListener("click", closePancakeModal);
+
+    const overlay = $("pancakeOverlay");
+    if (overlay) overlay.addEventListener("click", closePancakeModal);
+
+    // Init referral link if wallet already connected
+    window.ethereum?.request({ method: "eth_accounts" })
+      .then((accs) => {
+        if (accs && accs[0]) updateReferralUI(accs[0]).catch(() => {});
+      })
+      .catch(() => {});
+
+    refreshStats().catch(() => {});
   }
 
   document.addEventListener("DOMContentLoaded", wire);
-  // Expose for debugging
-  window.IBITI_APP = { connectWallet, refreshStats, buyPromo };
+
+  window.IBITI_APP = {
+    connectWallet,
+    refreshStats,
+    buyPromo,
+    openPancakeModal
+  };
 })();
