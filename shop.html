@@ -201,18 +201,22 @@
       box-shadow: var(--ib-shadow);
       overflow:hidden;
     }
-    .shop-item .image-wrapper{
+        .shop-item .image-wrapper{
       background: rgba(0,0,0,0.35);
       border-bottom: 1px solid rgba(247,208,0,0.12);
-      padding: 0;
+      padding: 16px;
+      height: 320px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
       overflow: hidden;
     }
-    .shop-item img{
+        .shop-item img{
       display:block;
       width: 100%;
-      height: auto;
-      max-height: 320px;
-      object-fit: cover;
+      height: 100%;
+      max-height: none;
+      object-fit: contain;
       border-radius: 14px;
       border: 1px solid rgba(247,208,0,0.15);
     }
@@ -481,6 +485,14 @@
       justify-content: center;
     }
     .modal-actions .btn{ min-width: 110px; }
+
+
+    /* Disabled purchase buttons (force connect wallet) */
+    .btn:disabled, .btn-disabled{
+      opacity: 0.45;
+      cursor: not-allowed;
+      filter: grayscale(0.25);
+    }
 </style>
 </head>
 <body>
