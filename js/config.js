@@ -15,7 +15,8 @@
       ibiti: "0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb",
       usdt:  "0x55d398326f99059fF775485246999027B3197955",
       pancakeRouter: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
-      promoRouter: null // set after mainnet deploy
+      promoRouter: null, // set after mainnet deploy
+      slippageBps: 300
     },
 
     testnet: {
@@ -31,7 +32,8 @@
       usdt:  "0x25F48F48bFfc6D9901d32Dc6c76A2C4486C4E55d",
       ibiti: "0x8975221CCceF486DBCcC4CCa282662e36280577D",
       pancakeRouter: "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
-      promoRouter:  "0x131f8AC959e5D27105485397a63F614F4c5c2aA5"
+      promoRouter:  "0x131f8AC959e5D27105485397a63F614F4c5c2aA5",
+      slippageBps: 300
     }
   };
 
