@@ -2,1226 +2,212 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>IBITIcoin Shop</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
-    .hero-header {
-      padding: 15px 20px;
-      text-align: center;
+    /* Small, safe UI additions (doesn't fight your main CSS) */
+    #netBadge {
+      display:none;
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 9999;
+      padding: 8px 12px;
+      border: 1px solid #f7d000;
+      border-radius: 10px;
+      background: rgba(0,0,0,0.75);
+      color: #f7d000;
+      font-family: Orbitron, sans-serif;
+      font-weight: 700;
+      letter-spacing: 1px;
+      box-shadow: 0 0 18px rgba(247,208,0,0.25);
     }
-    .hero-header h1 {
-      font-size: 3em;
-      color: gold;
-      margin: 0;
+    #refBadge {
+      display:none;
+      margin: 10px auto 0;
+      max-width: 720px;
+      padding: 8px 12px;
+      border: 1px solid rgba(247,208,0,0.55);
+      border-radius: 10px;
+      color: #f7d000;
+      font-family: Orbitron, sans-serif;
+      font-size: 12px;
+      text-align:center;
+      background: rgba(0,0,0,0.35);
     }
-    .hero-header p {
-      font-size: 1.5em;
-      color: #fff;
-    }
-    #countdownNotice {
-      text-align: center;
-      font-weight: bold;
-      color: gold;
-      font-size: 1.2em;
-      margin-bottom: 10px;
-    }
-    .wallet-section {
-      text-align: center;
-      margin: 20px auto;
-    }
-    .wallet-section button {
-      background: gold;
-      color: #000;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 6px;
-      font-weight: bold;
+    .mini-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:10px; }
+    .mini-actions button { min-width: 160px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 12px; }
+
+    /* basic gold/black buttons (so the page looks right even if css/style.css changes) */
+    .btn-primary, .btn-secondary, .gift-button, .shop-buy {
+      appearance:none;
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-family: Orbitron, sans-serif;
+      font-weight: 700;
       cursor: pointer;
-      font-size: 1rem;
-      transition: background 0.3s;
+      border: 1px solid rgba(247,208,0,0.55);
+      background: rgba(0,0,0,0.65);
+      color: #f7d000;
+      box-shadow: 0 0 14px rgba(247,208,0,0.18);
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
     }
-    .wallet-section button:hover {
-      background: #c0a000;
+    .btn-primary:hover, .btn-secondary:hover, .gift-button:hover, .shop-buy:hover {
+      box-shadow: 0 0 22px rgba(247,208,0,0.28);
+      transform: translateY(-1px);
     }
-    .wallet-section #walletAddress {
-      margin-top: 10px;
-      font-weight: bold;
-      color: gold;
-    }
-    .wallet-section #ibitiBalance {
-      color: gold;
-      font-weight: bold;
-      margin-top: 10px;
-    }
-    .shop-items {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      max-width: 1200px;
+    .btn-secondary { opacity: 0.95; }
+    .stats-card, .ref-card {
       margin: 40px auto;
-      padding: 0 20px;
+      max-width: 980px;
+      padding: 22px;
+      border: 1px solid rgba(247,208,0,0.45);
+      border-radius: 16px;
+      background: rgba(0,0,0,0.55);
+      box-shadow: 0 0 18px rgba(0,0,0,0.35);
     }
-    .shop-item {
-      background: #111;
-      border: 1px solid gold;
-      border-radius: 10px;
-      overflow: hidden;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-      transition: transform 0.3s;
-    }
-    .shop-item img {
-      width: 100%;
-      display: block;
-    }
-    .shop-item h3 {
-      margin: 10px 0;
-      color: gold;
-      font-size: 1.3em;
-    }
-    .shop-item p {
-      color: gold;
-      margin: 0 10px 10px;
-    }
-    .shop-item button {
-      background: gold;
-      color: #000;
-      border: none;
-      padding: 10px;
-      width: 100%;
-      font-weight: bold;
-      cursor: pointer;
-      border-radius: 0 0 10px 10px;
-      transition: background 0.3s;
-    }
-    .shop-item button:hover {
-      background: #c0a000;
-    }
-    #walletModal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    #walletModal .modal-content {
-      background: #111;
-      padding: 20px;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 320px;
-      text-align: center;
-      color: gold;
-      position: relative;
-    }
-    #walletModal h2 {
-      margin-top: 0;
-      font-size: 1.25rem;
-    }
-    #walletModal button {
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px 0;
-      border: none;
-      border-radius: 4px;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    #walletModal .close-btn {
-      background: transparent;
-      color: #fff;
-      font-size: 1.1rem;
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      border: none;
-    }
-    #walletModal .btn-injected {
-      background: gold;
-      color: #000;
-    }
-    #walletModal .btn-coinbase {
-      background: #0052ff;
-      color: #fff;
-    }
-    #walletModal .btn-coinbase:hover {
-      background: #003bb5;
-    }
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 2000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background: rgba(0,0,0,0.7);
-    }
-    .modal-content-custom {
-      background: #111;
-      margin: 10% auto;
-      padding: 20px;
-      border: 2px solid gold;
-      width: 90%;
-      max-width: 500px;
-      border-radius: 10px;
-      color: gold;
-      text-align: center;
-      position: relative;
-    }
-    .modal-content-custom .close {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 1.5em;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .modal-content-custom label {
-      display: block;
-      margin-bottom: 10px;
-      font-weight: bold;
-    }
-    .modal-content-custom input[type="number"] {
-      padding: 10px;
-      width: 80%;
-      border: 1px solid gold;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      background: #000;
-      color: gold;
-    }
-    .modal-content-custom select {
-      padding: 10px;
-      width: 85%;
-      border: 1px solid gold;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      background: #000;
-      color: gold;
-      font-weight: bold;
-    }
-    .modal-content-custom select option {
-      background: #000;
-      color: gold;
-    }
-    .modal-content-custom button[type="submit"],
-    .modal-content-custom button.cancel {
-      background: gold;
-      color: #000;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
-      margin: 0 5px;
-    }
-    .modal-content-custom button[type="submit"]:hover,
-    .modal-content-custom button.cancel:hover {
-      background: #c0a000;
-    }
-    footer {
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.8);
-      border-top: 2px solid gold;
-      text-align: center;
-      color: gold;
-    }
-    footer p, footer a {
-      color: gold;
-      text-decoration: none;
-    }
-    footer a:hover {
-      text-decoration: underline;
-    }
-
-    /* ===== Новый аккуратный промо-сундук ===== */
-
-.promo-hero {
-  margin-top: 24px;
-  display: flex;
-  justify-content: center;
-}
-
-/* сама плашка — тёмная, а не жёлтая */
-
-.promo-hero-button {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 14px 20px;
-  border-radius: 18px;
-  border: 1px solid #ffde4d;
-  background: radial-gradient(circle at top, #20232b 0, #050608 60%);
-  cursor: pointer;
-  box-shadow: 0 0 18px rgba(255, 222, 77, 0.45);
-  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
-}
-
-.promo-hero-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 26px rgba(255, 222, 77, 0.9);
-  background: radial-gradient(circle at top, #292d37 0, #080a10 60%);
-}
-
-/* сам сундук */
-
-.promo-chest {
-  position: relative;
-  width: 70px;
-  height: 56px;
-}
-
-/* нижняя часть */
-
-.promo-chest-box {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 62%;
-  background: linear-gradient(to top, #22130a, #6a4319);
-  border-radius: 10px 10px 8px 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.6);
-}
-
-/* металлическая полоса по центру */
-
-.promo-chest-box::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 0;
-  width: 18%;
-  height: 100%;
-  transform: translateX(-50%);
-  background: linear-gradient(to right, #d7b16a, #f5e2a5, #d7b16a);
-  opacity: 0.9;
-}
-
-/* замок */
-
-.promo-chest-light {
-  position: absolute;
-  left: 50%;
-  bottom: 18%;
-  width: 16px;
-  height: 16px;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  background: radial-gradient(circle, #f6e6b2 0, #b88b3a 65%, #5b3a15 100%);
-  box-shadow: 0 0 8px rgba(255, 222, 160, 0.7);
-}
-
-/* крышка с лёгким подпрыгиванием */
-
-.promo-chest-lid {
-  position: absolute;
-  top: -3px;
-  left: -5px;
-  width: calc(100% + 10px);
-  height: 40%;
-  background: linear-gradient(to bottom, #f6e0a4, #c68b2b);
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-  transform-origin: center bottom;
-  animation: chest-lid-bounce 1.4s infinite;
-}
-
-@keyframes chest-lid-bounce {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  35%      { transform: translateY(-5px) rotate(-5deg); }
-  55%      { transform: translateY(-2px) rotate(3deg); }
-}
-
-/* текст сбоку от сундука */
-
-.promo-hero-text {
-  text-align: left;
-  color: #ffde4d;
-  max-width: 420px;
-}
-
-.promo-hero-title {
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  margin-bottom: 4px;
-}
-
-.promo-hero-sub {
-  font-size: 13px;
-  color: #f5f5f5;
-}
-
-/* нижний блок с суммой и кнопкой */
-
-.promo-wrapper {
-  margin: 26px auto 0;
-  max-width: 420px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  justify-content: center;
-}
-
-.promo-controls label {
-  display: block;
-  font-size: 14px;
-  color: #ffde4d;
-  margin-bottom: 4px;
-}
-
-#promoUsdtAmount {
-  background: #111;
-  border: 1px solid #ffde4d;
-  color: #fff;
-  padding: 6px 10px;
-  border-radius: 6px;
-  width: 100px;
-}
-
-.gift-button {
-  padding: 10px 18px;
-  border-radius: 999px;
-  border: 1px solid #ffde4d;
-  background: #222;
-  cursor: pointer;
-  color: #ffde4d;
-  font-weight: 600;
-  transition: box-shadow 0.2s, transform 0.1s, background 0.2s;
-}
-
-.gift-button:hover {
-  background: #333;
-  box-shadow: 0 0 15px rgba(255, 222, 77, 0.7);
-  transform: translateY(-1px);
-}
-
-    /* ЖЁЛТЫЙ ФОН ВЫРУБИТЬ НАХРЕН */
-.promo-hero-button {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-}
-
-/* делаем аккуратный тёмный прямоугольник внутри, если нужно */
-.promo-chest-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 18px;
-  border-radius: 18px;
-  background: radial-gradient(circle at top, #20232b 0, #050608 60%);
-  border: 1px solid #ffde4d;
-}
-
-    /* Центруем новогодний сундук */
-
-.promo-hero {
-  margin-top: 24px;
-  text-align: center;      /* центр по строке */
-}
-
-.promo-hero-button {
-  display: inline-flex;    /* чтобы вел себя как картинка */
-  margin: 0 auto;          /* центр внутри .promo-hero */
-}
-
-    /* Временно прячем промо с сайта, чтобы пользователи не видели сырой функционал */
-.promo-hero,
-promo-section {
-  display: none !important;
-}
+    .stats-title, .ref-title { font-family: Orbitron, sans-serif; font-weight: 800; font-size: 22px; color:#f7d000; }
+    .stats-sub { color:#c9c9c9; font-family: Orbitron, sans-serif; font-size: 14px; }
+    .stats-header { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom: 12px; }
+    .stats-list { list-style:none; padding:0; margin:0; }
+    .stats-list li { display:flex; justify-content:space-between; gap:16px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); color:#e8e8e8; }
+    .stats-list li span:last-child { color:#f7d000; font-family: ui-monospace, monospace; }
+    .ref-list { margin: 12px 0 0; color:#e8e8e8; }
+    .ref-link-wrap { margin-top: 14px; display:flex; justify-content:center; }
+    .ref-input { width: min(860px, 92vw); padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(247,208,0,0.35); background: rgba(0,0,0,0.45); color:#f7d000; }
+    .promo-banner { margin: 18px auto 0; max-width: 760px; border: 1px solid rgba(247,208,0,0.35); border-radius: 16px; padding: 14px 18px; background: rgba(0,0,0,0.45); }
+    .promo-title { font-family: Orbitron, sans-serif; font-weight: 800; color:#f7d000; }
+    .promo-text { margin-top: 6px; color:#e8e8e8; }
 
   </style>
 </head>
+
 <body>
-  <header class="hero-header">
-    <h1>IBITIcoin Shop</h1>
-    <p>Get exclusive items and utilities connected with IBITIcoin.</p>
+  <div id="netBadge">TESTNET MODE</div>
+
+  <header class="hero">
+    <h1 class="title">IBITIcoin Shop</h1>
+    <p class="subtitle">Get exclusive items and utilities connected with IBITIcoin.</p>
+
+    <div class="mini-actions">
+      <button id="connectWalletBtn" class="btn-primary">Connect wallet</button>
+    </div>
+
+    <div id="walletAddress" class="mono" style="margin-top:10px;"></div>
+    <div id="ibitiBalance" class="mono" style="margin-top:6px;"></div>
+
+    <div id="refBadge"></div>
+
+    <div class="promo-banner">
+      <div class="promo-title">NEW YEAR IBITI BONUS</div>
+      <div class="promo-text">Buy from $10 in USDT and get +10% IBITI + a personal referral link.</div>
+    </div>
+
+    <div class="mini-actions">
+      <button id="addTokenBtn" class="btn-secondary">Add IBITI to wallet</button>
+    </div>
+
+    <div class="mini-actions">
+      <a id="buyOnPancakeBtn" class="btn-primary" href="#" target="_blank" rel="noopener">Buy on PancakeSwap</a>
+    </div>
+
+
+    <section id="promo-section" class="promo-wrapper">
+      <div class="promo-controls">
+        <label for="promoUsdtAmount">New Year promo — amount (USDT):</label>
+        <input id="promoUsdtAmount" type="number" min="10" step="1" value="10">
+      </div>
+
+      <button id="promoBuyButton" class="gift-button">Buy IBITI +10% bonus</button>
+
+      <div id="minPayInfo" class="mono" style="margin-top:10px; opacity:0.85;"></div>
+    </section>
   </header>
 
-  <div id="countdownNotice"></div>
-
-  <section class="wallet-section">
-    <button onclick="onConnectClick()">Connect wallet</button>
-    <div id="walletAddress"></div>
-    <div id="ibitiBalance"></div>
-    <button id="promoHeroButton" class="promo-hero-button">
-  <div class="promo-chest-wrapper">
-    <div class="promo-chest">
-      <div class="promo-chest-box"></div>
-      <div class="promo-chest-lid"></div>
-      <div class="promo-chest-light"></div>
-    </div>
-    <div class="promo-hero-text">
-      <div class="promo-hero-title">New Year IBITI Bonus</div>
-      <div class="promo-hero-sub">
-        Buy from <b>$10</b> in USDT and get <b>+10% IBITI</b> + a personal referral link.
+  <main class="container">
+    <!-- Example items (keep your existing blocks if you want; this is just structure) -->
+    <section class="shop-items">
+      <div class="shop-item">
+        <div class="shop-item-title">Item 1 (IBITIcoin)</div>
+        <div class="shop-item-desc">Short description, price and payment conditions.</div>
+        <button class="shop-buy">Buy</button>
       </div>
-    </div>
-  </div>
-</button>
-</div>
-  </section>
 
-  <button type="button" onclick="openAddTokenModal()"
-    style="margin-top:10px;background:#0f172a;color:#d1fae5;border:1px solid #10b981;padding:10px 16px;border-radius:10px;cursor:pointer;">
-    Add IBITI to wallet
-  </button>
-
-  <!-- ===== CONNECT WALLET MODAL (desktop dynamic) ===== -->
-  <div id="walletModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;align-items:center;justify-content:center;backdrop-filter:blur(2px)">
-    <div class="ibiti-card" style="background:#111;padding:18px;border:1px solid gold;border-radius:10px;max-width:420px;width:92%;color:#ffd700;position:relative;">
-      <button type="button" id="closeWalletModal" class="ibiti-close" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer;">✕</button>
-      <h3 style="margin:0 0 10px;font-size:18px;">Select a wallet</h3>
-
-      <!-- JS injects detected desktop wallets here -->
-      <div id="desktopWalletList" style="display:flex;flex-direction:column;gap:10px"></div>
-
-      <div style="margin-top:8px;font-size:12px;color:#9ca3af">
-        Trust Wallet has no browser extension on desktop. Use mobile app (or WalletConnect – coming later).
+      <div class="shop-item">
+        <div class="shop-item-title">Item 2 (NFT)</div>
+        <div class="shop-item-desc">Short description, price and payment conditions.</div>
+        <button class="shop-buy">Buy</button>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- Promo section: сумма + кнопка покупки с бонусом -->
-<section id="promo-section" class="promo-wrapper">
-  <div class="promo-controls">
-    <label for="promoUsdtAmount">New Year promo — amount (USDT):</label>
-    <input id="promoUsdtAmount" type="number" min="10" step="1" value="10">
-  </div>
-
-  <button id="promoBuyButton" class="gift-button">
-    Buy IBITI +10% bonus
-  </button>
-</section>
-
-  <!-- Example items -->
-  <section class="shop-items">
-    <div class="shop-item">
-      <div class="image-wrapper">
-        <img src="img/IBITIcoin.webp" alt="IBITIcoin">
+    <!-- Stats card -->
+    <section class="stats-card">
+      <div class="stats-header">
+        <div class="stats-title">Token sale statistics</div>
+        <div class="stats-sub">Sold: <span id="soldPercent">—</span></div>
       </div>
-      <h3>Item 1 (IBITIcoin)</h3>
-      <p>Short description, price and payment conditions.</p>
-      <button class="buy-button" onclick="openPurchaseModal('IBITIcoin')">Buy</button>
-    </div>
-    <div class="shop-item">
-      <div class="image-wrapper">
-        <img src="img/NFT.webp" alt="NFT">
+
+      <ul class="stats-list">
+        <li><span>Total on contract</span><span id="cap">— IBITI</span></li>
+        <li><span>Spent (bonus+ref)</span><span id="sold">— IBITI</span></li>
+        <li><span>Remaining for promo</span><span id="left">— IBITI</span></li>
+        <li><span>Bonus pool total</span><span id="bonusPool">— IBITI</span></li>
+      </ul>
+
+      <div class="mini-actions">
+        <button id="refreshStatsBtn" class="btn-secondary">Refresh</button>
       </div>
-      <h3>Item 2 (NFT)</h3>
-      <p>Short description, price and payment conditions.</p>
-      <button class="buy-button" onclick="openPurchaseModal('NFT')">Buy</button>
-    </div>
-  </section>
 
-    <!-- Purchase modal -->
-  <div id="purchaseModal" class="modal">
-    <div class="modal-content-custom">
-      <span class="close" onclick="closePurchaseModal()">&times;</span>
-      <h2 id="purchaseTitle">Purchase</h2>
-      <form id="purchaseForm">
-        <label for="nftAmount">Enter amount:</label>
-        <input type="number" id="nftAmount" name="nftAmount" min="1" required>
-        <label for="paymentToken">Payment method:</label>
-        <select id="paymentToken" required>
-          <option value="">-- Select --</option>
-          <option value="USDT">USDT</option>
-        </select>
-        <br><br>
-        <button type="submit" id="confirmBtn" disabled>Confirm purchase</button>
-        <button type="button" class="cancel" onclick="closePurchaseModal()">Cancel</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Token sale stats (front-end; actual logic in sale.js) -->
-  <section id="saleStats"
-    data-aos="fade-up"
-    style="
-      margin: 40px auto;
-      max-width: 800px;
-      padding: 24px;
-      background: #111;
-      color: #fff;
-      border: 1px solid gold;
-      border-radius: 10px;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    "
-    onmouseover="this.style.transform='scale(1.015)'; this.style.boxShadow='0 0 25px rgba(255, 215, 0, 0.3)'"
-    onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 20px rgba(255, 215, 0, 0.1)'"
-  >
-    <div class="progress-container">
-      <div id="salesProgress" class="progress-bar"></div>
-    </div>
-    <div style="font-size:0.9em; color:#aaa;">
-      Sold: <span id="soldPercent">0%</span>
-    </div>
-
-    <h3 style="color: gold; font-size: 1.8em; margin-bottom: 16px;">📊 Token sale statistics</h3>
-    <ul style="list-style: none; padding-left: 0; color: gold; font-size: 1.1em;">
-      <li>🔹 Total on contract:     <strong><span id="cap">—</span></strong> IBI</li>
-      <li>🔹 Referral reserve:       <strong><span id="refReserve">—</span></strong> IBI</li>
-      <li>🔹 Main sale pool:         <strong><span id="salePool">—</span></strong> IBI</li>
-      <li>🔹 Sold:                   <strong><span id="sold">—</span></strong> IBI</li>
-      <li>🔹 Remaining for sale:     <strong><span id="left">—</span></strong> IBI</li>
-      <li>🔹 Bonus pool (10%):       <strong><span id="bonusPool">—</span></strong> IBI</li>
-    </ul>
-
-    <div style="margin-top: 16px; font-size: 0.9em; color: #aaa;">
-      <span id="lastUpdated">Updated: —</span>
-      <button id="refreshStats"
-        style="margin-left: 12px; background: gold; color: #000; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
-        🔄 Refresh
-      </button>
-    </div>
-  </section>
-
-  <!-- Referral program -->
-  <section id="referralInfo"
-    data-aos="fade-up"
-    style="
-      margin: 40px auto;
-      max-width: 800px;
-      padding: 24px;
-      background: #111;
-      color: #fff;
-      border: 1px solid gold;
-      border-radius: 10px;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    "
-    onmouseover="this.style.transform='scale(1.015)'; this.style.boxShadow='0 0 25px rgba(255, 215, 0, 0.3)'"
-    onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 20px rgba(255, 215, 0, 0.1)'"
-  >
-    <h3 style="color: gold; font-size: 1.8em; margin-bottom: 16px;">🎁 Referral program</h3>
-    <p style="margin: 8px 0;">🔸 Buy at least <strong>10 IBITI</strong> — and get <strong>+1 IBITI</strong> as a bonus.</p>
-    <p style="margin: 8px 0;">🔸 After your first purchase you receive a personal referral link.</p>
-    <p style="margin: 8px 0;">🔸 Share it with friends — for each friend who buys tokens you get an extra <strong>+1 IBITI</strong>.</p>
-    <p style="margin-top: 16px;">📌 Logic is handled automatically by the sale contract once enabled; no registration or manual approval required.</p>
-  </section>
-
-  <!-- Referral link / sharing -->
-  <div style="margin: 32px auto 64px; text-align: center;">
-    <input
-      type="text"
-      id="myReferralLink"
-      readonly
-      placeholder="Your referral link will appear after the first purchase of at least 10 IBITI"
-      style="
-        width: 100%;
-        max-width: 500px;
-        padding: 10px;
-        border: 1px solid gold;
-        border-radius: 6px;
-        background: #000;
-        color: gold;
-        font-weight: bold;
-        margin-bottom: 12px;
-      "
-    />
-    <br />
-    <button id="copyMyReferralLink" class="btn-small"
-      style="padding: 10px 24px; font-weight: bold;">
-      📋 Copy my link
-    </button>
-
-    <button id="openShareModal"
-      style="margin-top: 12px; margin-left: 8px; padding: 10px 24px; font-weight: bold; background: gold; color: #000; border: none; border-radius: 6px; cursor: pointer;">
-      📣 Share link
-    </button>
-
-    <div id="referralStats" style="display:none">
-      👥 Referred friends: <span id="refCount">0</span><br>
-      💰 Earned bonuses: <span id="refReward">0</span> IBITI
-    </div>
-  </div>
-
-  <!-- Social share modal -->
-  <div id="shareModal" class="modal" style="
-    display: none;
-    position: fixed;
-    z-index: 3000;
-    left: 0; top: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    justify-content: center;
-    align-items: center;
-  ">
-    <div class="modal-content-custom" style="
-      background: #111;
-      padding: 20px;
-      border: 2px solid gold;
-      border-radius: 10px;
-      color: gold;
-      text-align: center;
-      max-width: 500px;
-      margin: auto;
-      position: relative;
-    ">
-      <span id="closeShareModal" style="position: absolute; top: 10px; right: 15px; font-size: 1.5em; font-weight: bold; cursor: pointer;">&times;</span>
-      <h3 style="margin-bottom: 20px;">Choose a social network</h3>
-      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
-        <a id="share-facebook"  target="_blank" class="btn-small">Facebook</a>
-        <a id="share-twitter"   target="_blank" class="btn-small">Twitter</a>
-        <a id="share-vk"        target="_blank" class="btn-small">VK</a>
-        <a id="share-telegram"  target="_blank" class="btn-small">Telegram</a>
-        <a id="share-ok"        target="_blank" class="btn-small">OK</a>
-        <a id="share-linkedin"  target="_blank" class="btn-small">LinkedIn</a>
-        <a id="share-weibo"     target="_blank" class="btn-small">Weibo</a>
+      <div id="lastUpdated" class="mono" style="margin-top:10px; text-align:center; opacity:0.85;"></div>
+      <div class="mono" style="margin-top:6px; text-align:center; opacity:0.7;">
+        Promo router: <span id="ctAddr"></span>
       </div>
-    </div>
-  </div>
+    </section>
+
+    <!-- Referral card -->
+    <section class="ref-card">
+      <div class="ref-title">Referral program</div>
+      <ul class="ref-list">
+        <li>Buy at least $10 (USDT) — and get +10% IBITI as a bonus.</li>
+        <li>After your first purchase you receive a personal referral link.</li>
+        <li>Share it — for each friend who buys you get an extra <b>+1 IBITI</b>.</li>
+        <li>Logic is handled automatically by the promo router. No registration required.</li>
+      </ul>
+
+      <div class="ref-link-wrap">
+        <input id="myReferralLink" class="ref-input" readonly placeholder="Your referral link will appear after wallet connect (and purchase).">
+      </div>
+
+      <div class="mini-actions">
+        <button id="copyMyReferralLink" class="btn-primary">Copy my link</button>
+        <button id="shareMyReferralLink" class="btn-secondary">Share link</button>
+      </div>
+    </section>
+  </main>
 
   <!-- Toast -->
-  <div id="toast" style="
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background: #111;
-    color: gold;
-    border: 1px solid gold;
-    border-radius: 8px;
-    padding: 12px 20px;
-    font-weight: bold;
-    box-shadow: 0 0 10px rgba(255,215,0,0.3);
-    opacity: 0;
-    pointer-events: none;
-    z-index: 9999;
-    transition: opacity 0.3s ease;
-  ">
-    ✅ Copied to clipboard
+  <div id="toast" style="opacity:0; position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    background:rgba(0,0,0,0.82); color:#f7d000; padding:10px 14px; border-radius:12px; border:1px solid rgba(247,208,0,0.35);
+    font-family:Orbitron,sans-serif; font-size:13px; z-index:9999; transition:opacity .25s;">
   </div>
 
-  <footer>
-    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
-    <p><a href="index.html">Back to home</a></p>
-  </footer>
-
-  <!-- Libs -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk@4.3.3/dist/CoinbaseWalletSDK.umd.min.js"></script>
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-  <script>
-    AOS.init({ once: true });
-  </script>
 
-  <!-- App modules -->
-  <script type="module" src="js/config.js"></script>
-  <script type="module" src="js/sale.js"></script>
-  <script type="module" src="js/promo-stats.js"></script>
-  <script type="module" src="js/wallet.js"></script>
-  <script type="module" src="js/shop.js"></script>
-
-    <!-- Promo swap module -->
-<script type="module">
-  import { initPromoButton } from "./js/referralSwap.js";
-
-  document.addEventListener("DOMContentLoaded", () => {
-    initPromoButton();
-  });
-</script>
-
-  <!-- Referral activation script -->
-  <script type="module">
-    import { getSaleContract } from './js/sale.js';
-    import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/+esm";
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const linkInput   = document.getElementById("myReferralLink");
-      const copyBtn     = document.getElementById("copyMyReferralLink");
-      const toast       = document.getElementById("toast");
-      const rewardEl    = document.getElementById("refReward");
-      const countEl     = document.getElementById("refCount");
-      const statsBlock  = document.getElementById("referralStats");
-      const shareModal  = document.getElementById("shareModal");
-      const openBtn     = document.getElementById("openShareModal");
-      const closeBtn    = document.getElementById("closeShareModal");
-      const pageTitle   = encodeURIComponent(document.title);
-
-      // Locked by default
-      copyBtn.addEventListener("click", () => {
-        Swal.fire({
-          icon: "info",
-          title: "Not available",
-          text: "Buy at least 10 IBITI first to receive your referral link."
-        });
-      });
-
-      // Enable after successful on-chain purchase
-      window.enableReferralAfterPurchase = async function(account) {
-        const refLink = `${window.location.origin}${window.location.pathname}?ref=${account}`;
-        linkInput.value = refLink;
-
-        copyBtn.onclick = () => {
-          navigator.clipboard.writeText(refLink).then(() => {
-            toast.style.opacity = "1";
-            setTimeout(() => toast.style.opacity = "0", 2500);
-          });
-        };
-
-        // Social share URLs
-        document.getElementById('share-facebook').href   = `https://www.facebook.com/sharer/sharer.php?u=${refLink}`;
-        document.getElementById('share-twitter').href    = `https://twitter.com/intent/tweet?url=${refLink}&text=${pageTitle}`;
-        document.getElementById('share-vk').href         = `https://vk.com/share.php?url=${refLink}&title=${pageTitle}`;
-        document.getElementById('share-telegram').href   = `https://telegram.me/share/url?url=${refLink}&text=${pageTitle}`;
-        document.getElementById('share-ok').href         = `https://connect.ok.ru/offer?url=${refLink}`;
-        document.getElementById('share-linkedin').href   = `https://www.linkedin.com/sharing/share-offsite/?url=${refLink}`;
-        document.getElementById('share-weibo').href      = `http://service.weibo.com/share/share.php?url=${refLink}&title=${pageTitle}`;
-
-        // Share modal open/close
-        openBtn.onclick = () => shareModal.style.display = 'flex';
-        closeBtn.onclick = () => shareModal.style.display = 'none';
-        window.addEventListener('click', e => {
-          if (e.target === shareModal) shareModal.style.display = 'none';
-        });
-
-        if (typeof loadReferralStats === "function") {
-          await loadReferralStats(account);
-        }
-        statsBlock.style.display = "block";
-      };
-    });
-  </script>
-
-  <!-- ===== ADD IBITI TOKEN MODAL ===== -->
-  <div id="addTokenModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:3000;align-items:center;justify-content:center;">
-    <div style="background:#111;padding:18px 18px 14px;border:1px solid gold;border-radius:10px;max-width:420px;width:92%;color:#ffd700;position:relative;">
-      <button onclick="closeAddTokenModal()" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer;">✕</button>
-      <h3 style="margin:0 0 10px;font-size:18px;">Where to add IBITI token?</h3>
-
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <button onclick="addTokenEip747()" style="padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;">
-          MetaMask / Trust Wallet / Binance Wallet (auto)
-        </button>
-
-        <details style="background:#0b0f1a;border:1px solid #333;border-radius:8px;padding:10px;">
-          <summary style="cursor:pointer;color:#e5e7eb">Coinbase Wallet (manual)</summary>
-          <div style="margin-top:10px;color:#e5e7eb;font-size:14px;line-height:1.4">
-            Open Coinbase Wallet → <b>Tokens</b> → <b>+</b> → <b>Import Token</b> → paste:
-            <div style="margin-top:8px">
-              <div>Contract: <code id="ctAddr">0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></div>
-              <div>Symbol: <code>IBITI</code></div>
-              <div>Decimals: <code>8</code></div>
-            </div>
-            <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-              <button onclick="copyText('#ctAddr')" style="padding:6px 10px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">Copy address</button>
-              <button onclick="openBscscan()" style="padding:6px 10px;border:1px solid #3f3f46;border-radius:8px;background:#111827;color:#e5e7eb;cursor:pointer;">Open in BscScan</button>
-            </div>
-          </div>
-        </details>
-
-        <div style="font-size:12px;color:#9ca3af;margin-top:4px">
-          On mobile Trust Wallet, open this site in the DApp browser and press the auto-add button.
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const IBITI_TOKEN = {
-      address: '0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb',
-      symbol:  'IBITI',
-      decimals: 8,
-      image:   'https://ibiticoin.com/img/IBITI-512.png'
-    };
-
-    function openAddTokenModal(){
-      const m = document.getElementById('addTokenModal');
-      m.style.display = 'flex';
-      m.onclick = (e)=>{ if (e.target === m) closeAddTokenModal(); };
-    }
-    function closeAddTokenModal(){
-      document.getElementById('addTokenModal').style.display='none';
-    }
-
-    function openInstallMM(){
-      const m = document.getElementById('installMM');
-      m.style.display='flex';
-      m.onclick=(e)=>{ if(e.target===m) closeInstallMM(); };
-    }
-    function closeInstallMM(){
-      document.getElementById('installMM').style.display='none';
-    }
-
-    function toast(msg){
-      const el = document.getElementById('toastOK');
-      el.textContent = msg;
-      el.style.opacity = '1';
-      clearTimeout(el._timer);
-      el._timer = setTimeout(()=> el.style.opacity='0', 2600);
-    }
-
-    function hasEthereum(){
-      return !!(window.ethereum && typeof window.ethereum.request === 'function');
-    }
-
-    async function addTokenEip747(){
-      if (!hasEthereum()){
-        openInstallMM();
-        return;
-      }
-      try {
-        const bscId = '0x38'; // BSC mainnet
-        const current = await window.ethereum.request({ method:'eth_chainId' });
-        if (current !== bscId){
-          try {
-            await window.ethereum.request({ method:'wallet_switchEthereumChain', params:[{ chainId: bscId }] });
-          } catch(e){
-            if (e.code === 4902){
-              await window.ethereum.request({
-                method:'wallet_addEthereumChain',
-                params:[{
-                  chainId: bscId,
-                  chainName:'BNB Smart Chain',
-                  nativeCurrency:{ name:'BNB', symbol:'BNB', decimals:18 },
-                  rpcUrls:['https://bsc-dataseed1.bnbchain.org'],
-                  blockExplorerUrls:['https://bscscan.com']
-                }]
-              });
-            } else { throw e; }
-          }
-        }
-
-        const added = await window.ethereum.request({
-          method:'wallet_watchAsset',
-          params:{ type:'ERC20', options: IBITI_TOKEN }
-        });
-
-        if (added) {
-          toast('✅ IBITI added to wallet');
-          closeAddTokenModal();
-        } else {
-          toast('ℹ️ Action cancelled');
-        }
-      } catch(err){
-        if (err && err.code === 4001) {
-          toast('ℹ️ Action cancelled by user');
-        } else {
-          console.error('Add IBITI error:', err);
-          alert('Failed to add token. Make sure your wallet is installed and unlocked.');
-        }
-      }
-    }
-
-    function copyText(sel){
-      const text = document.querySelector(sel).textContent.trim();
-      navigator.clipboard.writeText(text).then(()=>toast('✅ Address copied'));
-    }
-    function openBscscan(){
-      window.open('https://bscscan.com/token/'+IBITI_TOKEN.address,'_blank');
-    }
-  </script>
-
-  <!-- Toast for add-token -->
-  <div id="toastOK" style="position:fixed;right:20px;bottom:24px;background:#0b0f1a;border:1px solid #10b981;color:#d1fae5;padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:4000"></div>
-
-  <!-- Install MetaMask modal -->
-  <div id="installMM" style="display:none;position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,.6);align-items:center;justify-content:center">
-    <div style="background:#111;border:1px solid gold;border-radius:10px;padding:18px;max-width:420px;width:92%;color:#ffd700;position:relative">
-      <button onclick="closeInstallMM()" style="position:absolute;top:8px;right:10px;background:transparent;border:0;color:#fff;font-size:18px;cursor:pointer">✕</button>
-      <h3 style="margin:0 0 10px">Install MetaMask</h3>
-      <p style="color:#e5e7eb;margin:0 0 12px">To add the token automatically, you need MetaMask (or a compatible wallet) installed.</p>
-      <a href="https://metamask.io/download/" target="_blank" rel="noopener"
-        style="display:inline-block;padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;text-decoration:none">Download MetaMask</a>
-    </div>
-  </div>
-
-  <!-- Wallet selection / patches -->
-  <script>
-// === Universal wallet selection ===
-function openWalletSelector() {
-  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  if (!isMobile) {
-    document.getElementById('walletModal').style.display = 'flex';
-    return;
-  }
-
-  Swal.fire({
-    title: 'Select a wallet',
-    showCancelButton: true,
-    showConfirmButton: false,
-    html: `
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <button onclick="openInWallet('metamask')" class="btn-small">🦊 MetaMask</button>
-        <button onclick="openInWallet('trust')" class="btn-small">🔵 Trust Wallet</button>
-        <button onclick="openInWallet('binance')" class="btn-small">🟡 Binance Wallet</button>
-        <button onclick="openInWallet('coinbase')" class="btn-small">🧢 Coinbase</button>
-      </div>
-    `
-  });
-}
-
-function openInWallet(wallet) {
-  const appUrl = encodeURIComponent(window.location.href);
-  let deeplink = "";
-
-  switch (wallet) {
-    case 'metamask':
-      deeplink = `https://metamask.app.link/dapp/${location.hostname}${location.pathname}`;
-      break;
-    case 'trust':
-      deeplink = `https://link.trustwallet.com/open_url?coin_id=60&url=${appUrl}`;
-      break;
-    case 'binance':
-      deeplink = `https://dapp.bnbchain.org/#/dapp/${appUrl}`;
-      break;
-    case 'coinbase':
-      deeplink = `https://go.cb-w.com/dapp?cb_url=${appUrl}`;
-      break;
-    default:
-      return;
-  }
-
-  window.location.href = deeplink;
-}
-  </script>
-
-  <script>
-function isInMetaMask() {
-  return !!(window.ethereum?.isMetaMask) || /MetaMask/i.test(navigator.userAgent);
-}
-function isInTrust() {
-  return /TrustWallet|Trust/i.test(navigator.userAgent);
-}
-function isMobile() {
-  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-}
-
-function waitForEthereum(maxMs = 2500) {
-  const started = Date.now();
-  return new Promise(resolve => {
-    (function tick() {
-      if (window.ethereum && typeof window.ethereum.request === 'function') return resolve(true);
-      if (Date.now() - started > maxMs) return resolve(false);
-      setTimeout(tick, 100);
-    })();
-  });
-}
-
-async function onConnectClick() {
-  const mobile = isMobile();
-  const inMM   = isInMetaMask();
-  const inTW   = isInTrust();
-
-  if (mobile && (inMM || inTW)) {
-    await safeConnectInApp();
-    return;
-  }
-
-  if (mobile && !inMM && !inTW) {
-    if (typeof openWalletSelector === 'function') {
-      openWalletSelector();
-    } else {
-      alert('Open this site inside MetaMask/Trust wallet or use a deeplink.');
-    }
-    return;
-  }
-
-  openDesktopWalletModal();
-}
-
-async function safeConnectInApp() {
-  const ok = await waitForEthereum(3000);
-  if (!ok) {
-    alert('Wallet did not initialize Web3. Reload the tab inside MetaMask/Trust.');
-    return;
-  }
-
-  if (typeof window.connectWallet === 'function') {
-    try {
-      await window.connectWallet();
-      return;
-    } catch (e) {
-      console.warn('connectWallet() failed, falling back:', e);
-    }
-  }
-
-  try {
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const acc = accounts?.[0];
-    if (acc) {
-      const addrEl = document.getElementById('walletAddress');
-      if (addrEl) addrEl.textContent = acc;
-      if (typeof window.showIbitiBalance === 'function') {
-        try { await window.showIbitiBalance(true); } catch {}
-      }
-    } else {
-      alert('Wallet returned no accounts.');
-    }
-  } catch (err) {
-    const msg = (err && (err.message || err.shortMessage)) || String(err);
-    alert('Connection error: ' + msg);
-  }
-}
-
-(function patchOpenInWallet() {
-  const original = window.openInWallet;
-  if (typeof original !== 'function') return;
-  window.openInWallet = function(wallet) {
-    if (isInMetaMask() || isInTrust()) {
-      safeConnectInApp();
-      return;
-    }
-    original(wallet);
-  }
-})();
-  </script>
-
-  <script>
-// ==== DESKTOP WALLET SELECTOR (PC) ====
-function hideWalletModal() {
-  const m = document.getElementById('walletModal');
-  if (m) m.style.display = 'none';
-}
-
-function getInjectedProviders() {
-  const eth = window.ethereum;
-  const list = [];
-  if (!eth) return list;
-  if (Array.isArray(eth.providers)) list.push(...eth.providers);
-  else list.push(eth);
-  return list;
-}
-
-function providerLabel(p) {
-  if (p.isMetaMask) return 'MetaMask';
-  if (p.isCoinbaseWallet) return 'Coinbase Wallet';
-  if (p.isOKXWallet) return 'OKX Wallet';
-  if (p.isBitKeep || p.isBitget) return 'Bitget/BitKeep';
-  return 'Injected Wallet';
-}
-
-async function useProvider(p) {
-  hideWalletModal();
-
-  if (window.ethereum !== p) { try { window.ethereum = p; } catch {} }
-  if (typeof window.connectWallet === 'function') {
-    await window.connectWallet();
-  } else {
-    const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const acc = accs?.[0];
-    if (acc) {
-      const wa = document.getElementById('walletAddress');
-      if (wa) wa.textContent = acc;
-    }
-  }
-}
-
-async function connectBinanceExtension() {
-  const b = window.BinanceChain || window.binance || null;
-  if (!b) return alert('Binance Wallet extension not detected.');
-  hideWalletModal();
-
-  try {
-    const accounts = await b.request({ method: 'eth_requestAccounts' });
-    const acc = accounts?.[0];
-    if (acc) {
-      if (window.ethereum !== b) { try { window.ethereum = b; } catch {} }
-      if (typeof window.connectWallet === 'function') {
-        await window.connectWallet();
-      } else {
-        const wa = document.getElementById('walletAddress');
-        if (wa) wa.textContent = acc;
-      }
-    }
-  } catch (e) {
-    alert('Binance Wallet: ' + (e?.message || e));
-  }
-}
-
-function openDesktopWalletModal() {
-  const modal = document.getElementById('walletModal');
-  const listEl = document.getElementById('desktopWalletList');
-  if (!modal || !listEl) return;
-
-  listEl.innerHTML = '';
-
-  const providers = getInjectedProviders();
-  if (providers.length) {
-    providers.forEach(p => {
-      const btn = document.createElement('button');
-      btn.textContent = providerLabel(p);
-      btn.style.cssText = 'padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;cursor:pointer;';
-      btn.onclick = () => useProvider(p);
-      listEl.appendChild(btn);
-    });
-  } else {
-    const a = document.createElement('a');
-    a.href = 'https://metamask.io/download/';
-    a.target = '_blank';
-    a.rel = 'noopener';
-    a.textContent = 'Install MetaMask';
-    a.style.cssText = 'padding:10px 14px;border:1px solid #10b981;border-radius:8px;background:#052e2b;color:#d1fae5;display:inline-block;text-decoration:none;text-align:center;';
-    listEl.appendChild(a);
-  }
-
-  const bBtn = document.createElement('button');
-  bBtn.textContent = 'Binance Wallet (Extension)';
-  bBtn.style.cssText = 'padding:10px 14px;border:1px solid #f59e0b;border-radius:8px;background:#1f2937;color:#fde68a;cursor:pointer;';
-  bBtn.onclick = connectBinanceExtension;
-  if (!(window.BinanceChain || window.binance)) bBtn.disabled = true;
-  listEl.appendChild(bBtn);
-
-  if (!providers.some(p => p.isCoinbaseWallet)) {
-    const cb = document.createElement('a');
-    cb.href = 'https://www.coinbase.com/wallet';
-    cb.target = '_blank';
-    cb.rel = 'noopener';
-    cb.textContent = 'Install Coinbase Wallet';
-    cb.style.cssText = 'padding:10px 14px;border:1px solid #3b82f6;border-radius:8px;background:#111827;color:#e5e7eb;display:inline-block;text-decoration:none;text-align:center;';
-    listEl.appendChild(cb);
-  }
-
-  modal.style.display = 'flex';
-  document.getElementById('closeWalletModal')?.addEventListener('click', () => modal.style.display = 'none', { once:true });
-}
-
-(function patchDesktopSelector(){
-  const orig = window.openWalletSelector;
-  window.openWalletSelector = function() {
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if (isMobile) return orig ? orig() : null;
-    openDesktopWalletModal();
-  };
-})();
-  </script>
-
+  <!-- App (classic scripts; NO module headaches) -->
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
