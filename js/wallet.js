@@ -59,21 +59,21 @@ export async function connectWallet() {
     window.signer = signer;
 
     // ✅ выбираем сеть/адреса ПОСЛЕ подключения
-const active = await getActiveConfig();
+let active = await getActiveConfig();
 console.log("✓ Active network (config):", active.name, "chainId:", active.chainId);
 
 // ✅ проверяем реальную сеть кошелька
 let net = await provider.getNetwork();
+
 if (Number(net.chainId) !== Number(active.chainId)) {
   console.warn(`⚠️ Wallet on chainId=${net.chainId}, but page expects ${active.chainId}. Switching...`);
 
-  // пытаемся переключить сеть автоматически
   try {
-    await config.switchWalletToActive(); // функция из нового config.js
+    await config.switchWalletToActive();
   } catch (e) {
     console.error("✖ switchWalletToActive failed:", e);
     alert(`Переключи сеть в кошельке на ${active.name} (chainId ${active.chainId})`);
-    return; // ❗ не продолжаем, иначе снова будут undefined/пустые контракты
+    return; // ❗ дальше не идём
   }
 
   // ⚠️ после смены сети надо пересоздать provider/signer
@@ -83,6 +83,10 @@ if (Number(net.chainId) !== Number(active.chainId)) {
 
   net = await provider.getNetwork();
   console.log("✓ Wallet switched. Now chainId:", Number(net.chainId));
+
+  // ✅ и ещё раз получить active (на всякий случай, чтобы адреса совпали)
+  active = await getActiveConfig();
+  console.log("✓ Active network (after switch):", active.name, "chainId:", active.chainId);
 }
 
 // ✅ только теперь инициализация контрактов и UI
@@ -191,4 +195,5 @@ export async function disconnectWallet() {
   setText("walletAddress", "Disconnected");
   setText("ibitiBalance", "");
 }
+
 
