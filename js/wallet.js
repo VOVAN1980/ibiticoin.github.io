@@ -73,10 +73,10 @@ if (Number(net.chainId) !== Number(active.chainId)) {
   } catch (e) {
     console.error("✖ switchWalletToActive failed:", e);
     alert(`Переключи сеть в кошельке на ${active.name} (chainId ${active.chainId})`);
-    return; // ❗ дальше не идём
+    return; // ❗не продолжаем
   }
 
-  // ⚠️ после смены сети надо пересоздать provider/signer
+  // после смены сети пересоздаём provider/signer
   provider = new ethers.BrowserProvider(window.ethereum);
   signer = await provider.getSigner();
   window.signer = signer;
@@ -84,9 +84,8 @@ if (Number(net.chainId) !== Number(active.chainId)) {
   net = await provider.getNetwork();
   console.log("✓ Wallet switched. Now chainId:", Number(net.chainId));
 
-  // ✅ и ещё раз получить active (на всякий случай, чтобы адреса совпали)
+  // ✅ обновить active после switch
   active = await getActiveConfig();
-  console.log("✓ Active network (after switch):", active.name, "chainId:", active.chainId);
 }
 
 // ✅ только теперь инициализация контрактов и UI
@@ -195,5 +194,6 @@ export async function disconnectWallet() {
   setText("walletAddress", "Disconnected");
   setText("ibitiBalance", "");
 }
+
 
 
