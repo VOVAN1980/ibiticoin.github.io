@@ -5,6 +5,88 @@
   const $ = (id) => document.getElementById(id);
   const isAddr = (a) => typeof a === "string" && /^0x[a-fA-F0-9]{40}$/.test(a);
 
+  const LS_PREFIX = "ibiti_promo_purchased_v1";
+  function lsKey(chainIdDec, account){ return `${LS_PREFIX}:${chainIdDec}:${String(account||"").toLowerCase()}`; }
+
+  function setReferralUnlocked(unlocked) {
+    const locked = $("refLocked");
+    const unlockedBox = $("refUnlocked");
+    if (locked) locked.classList.toggle("hidden", !!unlocked);
+    if (unlockedBox) unlockedBox.classList.toggle("hidden", !unlocked);
+  }
+
+  async function hasConnectedAccount() {
+    if (!window.ethereum) return false;
+    const accs = await window.ethereum.request({ method: "eth_accounts" });
+    return !!(accs && accs[0]);
+  }
+
+  async function currentAccount() {
+    if (!window.ethereum) return null;
+    const accs = await window.ethereum.request({ method: "eth_accounts" });
+    return accs && accs[0] ? accs[0] : null;
+  }
+
+  async function checkPurchasedOnchain(account) {
+    const netCfg = net();
+    if (!netCfg.promoRouter || !isAddr(netCfg.promoRouter) || !account) return false;
+    const rp = getReadProvider();
+    const iface = new ethers.Interface([
+      "event PromoBuy(address indexed buyer, address indexed referrer, uint256 paymentAmount, uint256 boughtAmount, uint256 bonusAmount, uint256 refAmount)"
+    ]);
+    const topic0 = iface.getEvent("PromoBuy").topicHash;
+    const topic1 = ethers.zeroPadValue(account, 32);
+    const toBlock = await rp.getBlockNumber();
+    const scan = Number(netCfg.logScanBlocks || 200000);
+    const fromBlock = Math.max(0, toBlock - scan);
+    const logs = await rp.getLogs({
+      address: netCfg.promoRouter,
+      fromBlock,
+      toBlock,
+      topics: [topic0, topic1]
+    });
+    return Array.isArray(logs) && logs.length > 0;
+  }
+
+  async function updateReferralUI(account) {
+    const netCfg = net();
+    const input = $("referralLink");
+    const copyBtn = $("copyMyReferralLink");
+    const shareBtn = $("shareReferralLink");
+
+    // Default: locked
+    setReferralUnlocked(false);
+    if (input) input.value = "";
+
+    if (!account) return;
+
+    // LocalStorage first
+    let purchased = false;
+    try {
+      purchased = localStorage.getItem(lsKey(netCfg.chainIdDec, account)) === "1";
+    } catch (_) {}
+
+    // If not in LS, check chain logs (for users who bought earlier)
+    if (!purchased) {
+      try {
+        purchased = await checkPurchasedOnchain(account);
+        if (purchased) {
+          try { localStorage.setItem(lsKey(netCfg.chainIdDec, account), "1"); } catch (_) {}
+        }
+      } catch (_) {}
+    }
+
+    if (purchased) {
+      setReferralUnlocked(true);
+      if (input) input.value = buildMyReferralLink(account);
+      if (copyBtn) copyBtn.disabled = false;
+      if (shareBtn) shareBtn.disabled = false;
+    } else {
+      if (copyBtn) copyBtn.disabled = true;
+      if (shareBtn) shareBtn.disabled = true;
+    }
+  }
+
   const ERC20_ABI = [
     "function decimals() view returns (uint8)",
     "function symbol() view returns (string)",
@@ -134,9 +216,8 @@
     const balEl = $("ibitiBalance");
     if (balEl) balEl.textContent = `${fmt(bal, dec, 8)} IBITI`;
 
-    // referral link field
-    const linkEl = $("referralLink");
-    if (linkEl) linkEl.value = buildMyReferralLink(addr);
+    // referral link field (unlocks after first promo buy)
+    await updateReferralUI(addr);
 
     toast("Wallet connected.");
   }
@@ -270,17 +351,32 @@
     const txB = await promo.buyWithReferral(amount, ref ? ref : ethers.ZeroAddress);
     await txB.wait();
 
+    // mark referral unlocked (after first successful promo purchase)
+    try {
+      const acc = await currentAccount();
+      if (acc) localStorage.setItem(lsKey(net().chainIdDec, acc), "1");
+      await updateReferralUI(acc);
+    } catch (_) {}
+
     toast("Done!");
     await connectWallet().catch(() => {});
     await refreshStats().catch(() => {});
   }
 
-  // ===== Regular buy (no bonus): PancakeSwap modal =====
-  function openPancakeModal() {
+    // ===== Regular buy (no bonus): PancakeSwap modal =====
+  async function openPancakeModal() {
+    // user requirement: show connect wallet prompt first
+    if (!(await hasConnectedAccount())) {
+      toast("Please connect your wallet first.");
+      await connectWallet();
+    }
+
     const modal = $("pancakeModal");
+    const overlay = $("pancakeOverlay");
     const link = $("pancakeOpenLink");
     const url = net().pancakeSwapUrl;
     if (link) link.href = url;
+    if (overlay) overlay.classList.add("open");
     if (modal) modal.classList.add("open");
   }
 
@@ -294,27 +390,47 @@
     window.location.href = url;
   }
 
-  async function copyMyLink() {
+    async function copyMyLink() {
     const input = $("referralLink");
     const v = input ? String(input.value || "") : "";
-    if (!v) return toast("Referral link is empty.");
+    if (!v) return toast("Referral link is not available yet. Make your first promo purchase (>= $10) to unlock it.");
     await navigator.clipboard.writeText(v);
-    toast("Copied.");
+    toast("Copied!");
   }
 
-  function shareLink() {
+    function openShareModal() {
+    const overlay = $("shareOverlay");
+    const modal = $("shareModal");
+    if (overlay) overlay.classList.remove("hidden");
+    if (modal) modal.classList.remove("hidden");
+  }
+  function closeShareModal() {
+    const overlay = $("shareOverlay");
+    const modal = $("shareModal");
+    if (overlay) overlay.classList.add("hidden");
+    if (modal) modal.classList.add("hidden");
+  }
+
+  async function shareLink() {
     const input = $("referralLink");
     const v = input ? String(input.value || "") : "";
-    if (!v) return toast("Referral link is empty.");
+    if (!v) return toast("Referral link is not available yet. Make your first promo purchase (>= $10) to unlock it.");
+
+    // Native share sheet (mobile) if available
     if (navigator.share) {
-      navigator.share({ title: "IBITI Referral Link", url: v }).catch(() => {});
-    } else {
-      window.open(`https://t.me/share/url?url=${encodeURIComponent(v)}`, "_blank");
+      try {
+        await navigator.share({ title: "IBITI Referral Link", url: v });
+        return;
+      } catch (_) {}
     }
+
+    // Desktop fallback: our own chooser modal
+    openShareModal();
   }
 
   function wire() {
     setNetBadge();
+    setReferralUnlocked(false);
 
     const btnConnect = $("connectWalletBtn");
     if (btnConnect) btnConnect.addEventListener("click", () => connectWallet().catch(e => { console.error(e); toast("Connect failed."); }));
@@ -323,7 +439,13 @@
     if (btnAdd) btnAdd.addEventListener("click", () => addTokenToWallet().catch(e => { console.error(e); toast("Add token failed."); }));
 
     const btnBuy = $("promoBuyButton");
-    if (btnBuy) btnBuy.addEventListener("click", () => buyPromo().catch(e => { console.error(e); toast(e?.shortMessage || e?.message || "Buy failed."); }));
+    if (btnBuy) btnBuy.addEventListener("click", async () => {
+      if (!(await hasConnectedAccount())) {
+        toast("Please connect your wallet first.");
+        await connectWallet();
+      }
+      return buyPromo().catch(e => { console.error(e); toast(e?.shortMessage || e?.message || "Buy failed."); });
+    });
 
     const btnRefresh = $("refreshStatsBtn");
     if (btnRefresh) btnRefresh.addEventListener("click", () => refreshStats().catch(e => { console.error(e); toast("Refresh failed."); }));
@@ -333,6 +455,53 @@
 
     const shareBtn = $("shareReferralLink");
     if (shareBtn) shareBtn.addEventListener("click", shareLink);
+
+    // Share modal wiring
+    const shOv = $("shareOverlay");
+    const shCancel = $("shareCancelBtn");
+    if (shOv) shOv.addEventListener("click", closeShareModal);
+    if (shCancel) shCancel.addEventListener("click", closeShareModal);
+
+    const shCopy = $("shareCopyBtn");
+    const shTg = $("shareTgBtn");
+    const shX = $("shareXBtn");
+    const shFb = $("shareFbBtn");
+
+    const getRefValue = () => {
+      const input = $("referralLink");
+      return input ? String(input.value || "") : "";
+    };
+
+    if (shCopy) shCopy.addEventListener("click", async () => {
+      const v = getRefValue();
+      if (!v) return toast("Referral link is empty.");
+      await navigator.clipboard.writeText(v);
+      toast("Copied!");
+      closeShareModal();
+    });
+
+    if (shTg) shTg.addEventListener("click", () => {
+      const v = getRefValue();
+      if (!v) return toast("Referral link is empty.");
+      window.open(`https://t.me/share/url?url=${encodeURIComponent(v)}`, "_blank");
+      closeShareModal();
+    });
+
+    if (shX) shX.addEventListener("click", () => {
+      const v = getRefValue();
+      if (!v) return toast("Referral link is empty.");
+      const text = "IBITI promo: +10% bonus with my referral link";
+      window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(v)}&text=${encodeURIComponent(text)}`, "_blank");
+      closeShareModal();
+    });
+
+    if (shFb) shFb.addEventListener("click", () => {
+      const v = getRefValue();
+      if (!v) return toast("Referral link is empty.");
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(v)}`, "_blank");
+      closeShareModal();
+    });
+
 
     const buyPancake = $("buyPancakeBtn");
     if (buyPancake) buyPancake.addEventListener("click", openPancakeModal);
@@ -352,7 +521,7 @@
     // Init referral link if wallet already connected
     window.ethereum?.request({ method: "eth_accounts" })
       .then((accs) => {
-        if (accs && accs[0] && $("referralLink")) $("referralLink").value = buildMyReferralLink(accs[0]);
+        if (accs && accs[0]) updateReferralUI(accs[0]).catch(() => {});
       })
       .catch(() => {});
 
