@@ -1,10 +1,12 @@
-// js/config.js (REWRITE: testnet-first, URL override, config.active поддержка)
-
+// js/config.js (HARD TESTNET MODE + switch)
 const NETWORKS = {
   testnet: {
     key: "testnet",
     name: "BSC Testnet",
     chainId: 97,
+    chainIdHex: "0x61",
+    rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545",
+    explorer: "https://testnet.bscscan.com",
     contracts: {
       USDT_TOKEN: "0x25F48F48bFfc6D9901d32Dc6c76A2C4486C4E55d",
       IBITI_TOKEN: "0x8975221CCceF486DBCcC4CCa282662e36280577D",
@@ -12,16 +14,17 @@ const NETWORKS = {
       PANCAKESWAP_ROUTER: "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
     },
   },
-
   mainnet: {
     key: "mainnet",
     name: "BSC Mainnet",
     chainId: 56,
+    chainIdHex: "0x38",
+    rpcUrl: "https://bsc-dataseed.binance.org",
+    explorer: "https://bscscan.com",
     contracts: {
       USDT_TOKEN: "0x55d398326f99059fF775485246999027B3197955",
       IBITI_TOKEN: "0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb",
-      // MAINNET router позже вставишь после деплоя:
-      REFERRAL_SWAP_ROUTER: "",
+      REFERRAL_SWAP_ROUTER: "", // пусто — потому что mainnet ещё не делали
       PANCAKESWAP_ROUTER: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
     },
   },
@@ -30,98 +33,60 @@ const NETWORKS = {
 function parseNetFromUrl() {
   const q = new URLSearchParams(location.search);
   const forced = (q.get("net") || "").toLowerCase();
-  if (forced === "testnet" || forced === "mainnet") return forced;
-  return null;
+  return (forced === "testnet" || forced === "mainnet") ? forced : null;
 }
 
-function getSavedNet() {
-  const v = (localStorage.getItem("ibiti_net") || "").toLowerCase();
-  if (v === "testnet" || v === "mainnet") return v;
-  return null;
-}
-
-function saveNet(key) {
-  localStorage.setItem("ibiti_net", key);
-}
-
-async function detectNetFromWallet() {
+async function walletChainId() {
   try {
     if (!window.ethereum) return null;
     const hex = await window.ethereum.request({ method: "eth_chainId" });
-    const cid = Number(hex);
-    if (cid === 97) return "testnet";
-    if (cid === 56) return "mainnet";
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-function warnMismatch(forcedKey, walletKey) {
-  if (!forcedKey || !walletKey) return;
-  if (forcedKey !== walletKey) {
-    console.warn(
-      `⚠️ Network mismatch: URL forces "${forcedKey}", but wallet is on "${walletKey}". ` +
-      `Switch network in wallet or remove ?net=...`
-    );
-  }
+    return Number(hex);
+  } catch { return null; }
 }
 
 const config = {
   networks: NETWORKS,
-  active: NETWORKS.testnet, // дефолт сразу testnet (ты сейчас в тестах)
+  active: NETWORKS.testnet,
 
-  /**
-   * Выбор сети по строгому приоритету:
-   * 1) URL ?net=testnet|mainnet (ЖЁСТКО)
-   * 2) wallet chainId
-   * 3) localStorage ibiti_net
-   * 4) default testnet
-   */
   async getActive() {
     const forced = parseNetFromUrl();
-    const byWallet = await detectNetFromWallet();
-    const saved = getSavedNet();
-
-    const key = forced || byWallet || saved || "testnet";
-
-    if (!NETWORKS[key]) {
-      // на всякий случай
-      config.active = NETWORKS.testnet;
-      saveNet("testnet");
-      return config.active;
-    }
-
-    warnMismatch(forced, byWallet);
-
+    const key = forced || "testnet"; // ✅ пока тестируем — ВСЕГДА testnet по умолчанию
     config.active = NETWORKS[key];
-    saveNet(key);
+    localStorage.setItem("ibiti_net", key);
     return config.active;
   },
 
-  async isTestnet() {
+  async ensureWalletOnActive() {
     const a = await config.getActive();
-    return a.chainId === 97;
-  },
+    const cid = await walletChainId();
+    if (!cid) return; // нет кошелька — ок, статы можно читать по rpc
 
-  async requireTestnet() {
-    const a = await config.getActive();
-    if (a.chainId !== 97) {
-      throw new Error(`This page is in TESTNET mode, but wallet/network is not testnet. Active=${a.name} chainId=${a.chainId}`);
+    if (cid === a.chainId) return; // уже там
+
+    // переключаем сеть
+    try {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: a.chainIdHex }],
+      });
+    } catch (e) {
+      // если сети нет — добавляем
+      if (e && (e.code === 4902 || e?.data?.originalError?.code === 4902)) {
+        await window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [{
+            chainId: a.chainIdHex,
+            chainName: a.name,
+            rpcUrls: [a.rpcUrl],
+            nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+            blockExplorerUrls: [a.explorer],
+          }],
+        });
+      } else {
+        throw e;
+      }
     }
-    return a;
   },
-
-  async print() {
-    const a = await config.getActive();
-    console.log("✅ Active config:", {
-      key: a.key,
-      name: a.name,
-      chainId: a.chainId,
-      contracts: a.contracts
-    });
-    return a;
-  }
 };
 
 export default config;
