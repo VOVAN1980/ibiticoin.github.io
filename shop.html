@@ -5,13 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>IBITIcoin Shop</title>
 
+  <!-- Global site theme -->
   <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Font used across the project -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* Small, safe UI additions (doesn't fight your main CSS) */
+    /* Safe UI layer (doesn't fight your css/style.css) */
+    :root {
+      --ib-gold: #f7d000;
+      --ib-bg: rgba(0,0,0,0.55);
+      --ib-border: rgba(247,208,0,0.45);
+      --ib-shadow: 0 0 18px rgba(0,0,0,0.35);
+      --ib-radius: 16px;
+    }
+
     #netBadge {
       display:none;
       position: fixed;
@@ -19,35 +30,44 @@
       left: 14px;
       z-index: 9999;
       padding: 8px 12px;
-      border: 1px solid #f7d000;
+      border: 1px solid var(--ib-gold);
       border-radius: 10px;
       background: rgba(0,0,0,0.75);
-      color: #f7d000;
+      color: var(--ib-gold);
       font-family: Orbitron, sans-serif;
       font-weight: 700;
       letter-spacing: 1px;
       box-shadow: 0 0 18px rgba(247,208,0,0.25);
     }
-    #refBadge {
-      display:none;
-      margin: 10px auto 0;
-      max-width: 720px;
-      padding: 8px 12px;
-      border: 1px solid rgba(247,208,0,0.55);
-      border-radius: 10px;
-      color: #f7d000;
-      font-family: Orbitron, sans-serif;
-      font-size: 12px;
-      text-align:center;
-      background: rgba(0,0,0,0.35);
-    }
-    .mini-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:10px; }
-    .mini-actions button { min-width: 160px; }
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 12px; }
 
-    /* basic gold/black buttons (so the page looks right even if css/style.css changes) */
-    .btn-primary, .btn-secondary, .gift-button, .shop-buy {
-      appearance:none;
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+    }
+
+    .hero {
+      padding: 46px 18px 26px;
+      text-align: center;
+    }
+    .title {
+      font-family: Orbitron, sans-serif;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: var(--ib-gold);
+      margin: 0;
+      font-size: clamp(28px, 5vw, 48px);
+    }
+    .subtitle {
+      margin: 10px 0 0;
+      color: #e8e8e8;
+      opacity: 0.92;
+      font-family: Orbitron, sans-serif;
+      font-size: clamp(14px, 2.4vw, 18px);
+    }
+
+    /* Buttons (consistent even if external CSS changes) */
+    .btn {
+      appearance: none;
       border-radius: 12px;
       padding: 10px 16px;
       font-family: Orbitron, sans-serif;
@@ -55,41 +75,202 @@
       cursor: pointer;
       border: 1px solid rgba(247,208,0,0.55);
       background: rgba(0,0,0,0.65);
-      color: #f7d000;
+      color: var(--ib-gold);
       box-shadow: 0 0 14px rgba(247,208,0,0.18);
-      text-decoration:none;
-      display:inline-flex;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+    }
+    .btn:hover { box-shadow: 0 0 22px rgba(247,208,0,0.28); transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); opacity: 0.95; }
+    .btn-primary { background: rgba(0,0,0,0.75); }
+    .btn-secondary { opacity: 0.92; }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .wallet-info {
+      margin-top: 10px;
+      color: var(--ib-gold);
+      text-align: center;
+      word-break: break-word;
+    }
+
+    #refBadge {
+      display:none;
+      margin: 10px auto 0;
+      max-width: 820px;
+      padding: 8px 12px;
+      border: 1px solid rgba(247,208,0,0.55);
+      border-radius: 10px;
+      color: var(--ib-gold);
+      font-family: Orbitron, sans-serif;
+      font-size: 12px;
+      text-align:center;
+      background: rgba(0,0,0,0.35);
+    }
+
+    .promo-banner {
+      margin: 18px auto 0;
+      max-width: 820px;
+      border: 1px solid rgba(247,208,0,0.35);
+      border-radius: var(--ib-radius);
+      padding: 14px 18px;
+      background: rgba(0,0,0,0.45);
+      box-shadow: var(--ib-shadow);
+    }
+    .promo-title { font-family: Orbitron, sans-serif; font-weight: 800; color: var(--ib-gold); }
+    .promo-text { margin-top: 6px; color: #e8e8e8; }
+
+    .promo-wrapper {
+      margin: 14px auto 0;
+      max-width: 820px;
+      border: 1px solid rgba(247,208,0,0.22);
+      border-radius: var(--ib-radius);
+      background: rgba(0,0,0,0.22);
+      padding: 14px;
+    }
+    .promo-row {
+      display:flex;
       align-items:center;
       justify-content:center;
-      gap:8px;
+      gap: 12px;
+      flex-wrap: wrap;
     }
-    .btn-primary:hover, .btn-secondary:hover, .gift-button:hover, .shop-buy:hover {
-      box-shadow: 0 0 22px rgba(247,208,0,0.28);
-      transform: translateY(-1px);
+    .promo-controls {
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content:center;
+      color: #e8e8e8;
+      font-family: Orbitron, sans-serif;
+      font-size: 13px;
     }
-    .btn-secondary { opacity: 0.95; }
-    .stats-card, .ref-card {
-      margin: 40px auto;
+    .promo-controls input {
+      width: 110px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(247,208,0,0.35);
+      background: rgba(0,0,0,0.45);
+      color: var(--ib-gold);
+      font-family: Orbitron, sans-serif;
+      font-weight: 700;
+      outline: none;
+      text-align:center;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 18px 40px;
+    }
+
+    /* Shop items (use the real images from the old file) */
+    .shop-items {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(240px, 1fr));
+      gap: 22px;
+      margin: 28px auto 0;
+      max-width: 1100px;
+    }
+    @media (max-width: 860px) {
+      .shop-items { grid-template-columns: 1fr; }
+    }
+    .shop-item {
+      background: var(--ib-bg);
+      border: 1px solid var(--ib-border);
+      border-radius: var(--ib-radius);
+      overflow: hidden;
+      box-shadow: var(--ib-shadow);
+    }
+    .image-wrapper { padding: 14px; }
+    .image-wrapper img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 14px;
+      border: 1px solid rgba(247,208,0,0.18);
+    }
+    .shop-item-body { padding: 0 16px 16px; text-align:center; }
+    .shop-item-title {
+      font-family: Orbitron, sans-serif;
+      font-weight: 800;
+      color: var(--ib-gold);
+      margin: 8px 0 6px;
+    }
+    .shop-item-desc { color: #e8e8e8; opacity: 0.9; margin: 0 0 14px; }
+    .shop-buy { width: 100%; }
+
+    /* Cards */
+    .card {
+      margin: 28px auto 0;
       max-width: 980px;
       padding: 22px;
-      border: 1px solid rgba(247,208,0,0.45);
-      border-radius: 16px;
-      background: rgba(0,0,0,0.55);
-      box-shadow: 0 0 18px rgba(0,0,0,0.35);
+      border: 1px solid var(--ib-border);
+      border-radius: var(--ib-radius);
+      background: var(--ib-bg);
+      box-shadow: var(--ib-shadow);
     }
-    .stats-title, .ref-title { font-family: Orbitron, sans-serif; font-weight: 800; font-size: 22px; color:#f7d000; }
-    .stats-sub { color:#c9c9c9; font-family: Orbitron, sans-serif; font-size: 14px; }
-    .stats-header { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom: 12px; }
+    .card-title { font-family: Orbitron, sans-serif; font-weight: 800; font-size: 22px; color: var(--ib-gold); }
+    .card-sub { color:#c9c9c9; font-family: Orbitron, sans-serif; font-size: 14px; }
+    .card-header { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom: 12px; }
+
     .stats-list { list-style:none; padding:0; margin:0; }
-    .stats-list li { display:flex; justify-content:space-between; gap:16px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); color:#e8e8e8; }
-    .stats-list li span:last-child { color:#f7d000; font-family: ui-monospace, monospace; }
+    .stats-list li {
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      color:#e8e8e8;
+    }
+    .stats-list li span:last-child { color: var(--ib-gold); font-family: ui-monospace, monospace; }
+
     .ref-list { margin: 12px 0 0; color:#e8e8e8; }
     .ref-link-wrap { margin-top: 14px; display:flex; justify-content:center; }
-    .ref-input { width: min(860px, 92vw); padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(247,208,0,0.35); background: rgba(0,0,0,0.45); color:#f7d000; }
-    .promo-banner { margin: 18px auto 0; max-width: 760px; border: 1px solid rgba(247,208,0,0.35); border-radius: 16px; padding: 14px 18px; background: rgba(0,0,0,0.45); }
-    .promo-title { font-family: Orbitron, sans-serif; font-weight: 800; color:#f7d000; }
-    .promo-text { margin-top: 6px; color:#e8e8e8; }
+    .ref-input {
+      width: min(860px, 92vw);
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(247,208,0,0.35);
+      background: rgba(0,0,0,0.45);
+      color: var(--ib-gold);
+    }
 
+    footer {
+      text-align:center;
+      padding: 26px 16px 34px;
+      opacity: 0.9;
+    }
+    footer a { color: var(--ib-gold); text-decoration: none; border-bottom: 1px dashed rgba(247,208,0,0.45); }
+    footer a:hover { opacity: 0.9; }
+
+    /* Toast */
+    #toast {
+      opacity:0;
+      position:fixed;
+      bottom:20px;
+      left:50%;
+      transform:translateX(-50%);
+      background:rgba(0,0,0,0.82);
+      color:var(--ib-gold);
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid rgba(247,208,0,0.35);
+      font-family:Orbitron,sans-serif;
+      font-size:13px;
+      z-index:9999;
+      transition:opacity .25s;
+    }
   </style>
 </head>
 
@@ -100,13 +281,12 @@
     <h1 class="title">IBITIcoin Shop</h1>
     <p class="subtitle">Get exclusive items and utilities connected with IBITIcoin.</p>
 
-    <div class="mini-actions">
-      <button id="connectWalletBtn" class="btn-primary">Connect wallet</button>
+    <div class="actions">
+      <button id="connectWalletBtn" class="btn btn-primary">Connect wallet</button>
     </div>
 
-    <div id="walletAddress" class="mono" style="margin-top:10px;"></div>
-    <div id="ibitiBalance" class="mono" style="margin-top:6px;"></div>
-
+    <div id="walletAddress" class="wallet-info mono"></div>
+    <div id="ibitiBalance" class="wallet-info mono"></div>
     <div id="refBadge"></div>
 
     <div class="promo-banner">
@@ -114,48 +294,57 @@
       <div class="promo-text">Buy from $10 in USDT and get +10% IBITI + a personal referral link.</div>
     </div>
 
-    <div class="mini-actions">
-      <button id="addTokenBtn" class="btn-secondary">Add IBITI to wallet</button>
+    <div class="actions">
+      <button id="addTokenBtn" class="btn btn-secondary">Add IBITI to wallet</button>
+      <a id="buyOnPancakeBtn" class="btn btn-primary" href="#" target="_blank" rel="noopener">Buy on PancakeSwap</a>
     </div>
 
-    <div class="mini-actions">
-      <a id="buyOnPancakeBtn" class="btn-primary" href="#" target="_blank" rel="noopener">Buy on PancakeSwap</a>
-    </div>
+    <!-- Promo buy controls (centered + mobile-safe) -->
+    <section id="promo-section" class="promo-wrapper" aria-label="Promo purchase">
+      <div class="promo-row">
+        <div class="promo-controls">
+          <label for="promoUsdtAmount">Promo amount (USDT):</label>
+          <input id="promoUsdtAmount" type="number" min="10" step="1" value="10" inputmode="decimal" />
+        </div>
 
-
-    <section id="promo-section" class="promo-wrapper">
-      <div class="promo-controls">
-        <label for="promoUsdtAmount">New Year promo — amount (USDT):</label>
-        <input id="promoUsdtAmount" type="number" min="10" step="1" value="10">
+        <button id="promoBuyButton" class="btn btn-primary">Buy IBITI +10% bonus</button>
       </div>
 
-      <button id="promoBuyButton" class="gift-button">Buy IBITI +10% bonus</button>
-
-      <div id="minPayInfo" class="mono" style="margin-top:10px; opacity:0.85;"></div>
+      <div id="minPayInfo" class="mono" style="margin-top:10px; opacity:0.85; text-align:center;"></div>
     </section>
   </header>
 
   <main class="container">
-    <!-- Example items (keep your existing blocks if you want; this is just structure) -->
-    <section class="shop-items">
-      <div class="shop-item">
-        <div class="shop-item-title">Item 1 (IBITIcoin)</div>
-        <div class="shop-item-desc">Short description, price and payment conditions.</div>
-        <button class="shop-buy">Buy</button>
-      </div>
+    <!-- Shop items with the original images/paths -->
+    <section class="shop-items" aria-label="Shop items">
+      <article class="shop-item">
+        <div class="image-wrapper">
+          <img src="img/IBITIcoin.webp" alt="IBITIcoin" loading="lazy" />
+        </div>
+        <div class="shop-item-body">
+          <div class="shop-item-title">Item 1 (IBITIcoin)</div>
+          <p class="shop-item-desc">Short description, price and payment conditions.</p>
+          <button class="btn btn-secondary shop-buy" type="button" data-item="IBITIcoin">Buy</button>
+        </div>
+      </article>
 
-      <div class="shop-item">
-        <div class="shop-item-title">Item 2 (NFT)</div>
-        <div class="shop-item-desc">Short description, price and payment conditions.</div>
-        <button class="shop-buy">Buy</button>
-      </div>
+      <article class="shop-item">
+        <div class="image-wrapper">
+          <img src="img/NFT.webp" alt="NFT" loading="lazy" />
+        </div>
+        <div class="shop-item-body">
+          <div class="shop-item-title">Item 2 (NFT)</div>
+          <p class="shop-item-desc">Short description, price and payment conditions.</p>
+          <button class="btn btn-secondary shop-buy" type="button" data-item="NFT">Buy</button>
+        </div>
+      </article>
     </section>
 
-    <!-- Stats card -->
-    <section class="stats-card">
-      <div class="stats-header">
-        <div class="stats-title">Token sale statistics</div>
-        <div class="stats-sub">Sold: <span id="soldPercent">—</span></div>
+    <!-- Token sale statistics -->
+    <section class="card" aria-label="Token sale statistics">
+      <div class="card-header">
+        <div class="card-title">Token sale statistics</div>
+        <div class="card-sub">Sold: <span id="soldPercent">—</span></div>
       </div>
 
       <ul class="stats-list">
@@ -165,8 +354,8 @@
         <li><span>Bonus pool total</span><span id="bonusPool">— IBITI</span></li>
       </ul>
 
-      <div class="mini-actions">
-        <button id="refreshStatsBtn" class="btn-secondary">Refresh</button>
+      <div class="actions" style="margin-top:14px;">
+        <button id="refreshStatsBtn" class="btn btn-secondary" type="button">Refresh</button>
       </div>
 
       <div id="lastUpdated" class="mono" style="margin-top:10px; text-align:center; opacity:0.85;"></div>
@@ -175,9 +364,9 @@
       </div>
     </section>
 
-    <!-- Referral card -->
-    <section class="ref-card">
-      <div class="ref-title">Referral program</div>
+    <!-- Referral program -->
+    <section class="card" aria-label="Referral program">
+      <div class="card-title">Referral program</div>
       <ul class="ref-list">
         <li>Buy at least $10 (USDT) — and get +10% IBITI as a bonus.</li>
         <li>After your first purchase you receive a personal referral link.</li>
@@ -186,21 +375,35 @@
       </ul>
 
       <div class="ref-link-wrap">
-        <input id="myReferralLink" class="ref-input" readonly placeholder="Your referral link will appear after wallet connect (and purchase).">
+        <input id="myReferralLink" class="ref-input" readonly placeholder="Your referral link will appear after wallet connect (and purchase)." />
       </div>
 
-      <div class="mini-actions">
-        <button id="copyMyReferralLink" class="btn-primary">Copy my link</button>
-        <button id="shareMyReferralLink" class="btn-secondary">Share link</button>
+      <div class="actions" style="margin-top:14px;">
+        <button id="copyMyReferralLink" class="btn btn-primary" type="button">Copy my link</button>
+        <button id="shareMyReferralLink" class="btn btn-secondary" type="button">Share link</button>
       </div>
     </section>
   </main>
 
-  <!-- Toast -->
-  <div id="toast" style="opacity:0; position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
-    background:rgba(0,0,0,0.82); color:#f7d000; padding:10px 14px; border-radius:12px; border:1px solid rgba(247,208,0,0.35);
-    font-family:Orbitron,sans-serif; font-size:13px; z-index:9999; transition:opacity .25s;">
+  <!-- Minimal purchase modal (UI only, keeps old buttons from looking dead) -->
+  <div id="purchaseModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:3000; align-items:center; justify-content:center;">
+    <div style="background:#111; color:var(--ib-gold); border:1px solid var(--ib-gold); border-radius: 12px; width:min(520px, 92vw); padding:18px; position:relative;">
+      <button id="closePurchaseModal" type="button" class="btn" style="position:absolute; top:10px; right:10px; padding:6px 10px; border-radius:10px;">✕</button>
+      <h3 id="purchaseTitle" style="margin:0 0 10px; font-family:Orbitron,sans-serif;">Purchase</h3>
+      <div style="color:#e8e8e8; opacity:0.9; margin-bottom:12px;">Coming soon. Payments will be enabled after the promo launch.</div>
+      <div class="actions">
+        <button id="purchaseOk" type="button" class="btn btn-primary">OK</button>
+      </div>
+    </div>
   </div>
+
+  <!-- Toast -->
+  <div id="toast"></div>
+
+  <footer>
+    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
+    <p><a href="index.html">Back to home</a></p>
+  </footer>
 
   <!-- Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
@@ -209,5 +412,32 @@
   <!-- App (classic scripts; NO module headaches) -->
   <script src="js/config.js"></script>
   <script src="js/app.js"></script>
+
+  <!-- UI-only modal handlers -->
+  <script>
+    (function(){
+      const modal = document.getElementById('purchaseModal');
+      const title = document.getElementById('purchaseTitle');
+      const closeBtn = document.getElementById('closePurchaseModal');
+      const okBtn = document.getElementById('purchaseOk');
+
+      function openModal(name){
+        if (title) title.textContent = `Purchase: ${name}`;
+        if (modal) modal.style.display = 'flex';
+      }
+      function closeModal(){
+        if (modal) modal.style.display = 'none';
+      }
+
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest && e.target.closest('button[data-item]');
+        if (btn && btn.dataset && btn.dataset.item) openModal(btn.dataset.item);
+      });
+
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (okBtn) okBtn.addEventListener('click', closeModal);
+      if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    })();
+  </script>
 </body>
 </html>
