@@ -1,19 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IBITIcoin Shop</title>
-
-  <!-- Keep your existing global theme -->
-  <link rel="stylesheet" href="css/style.css" />
-
-  <!-- Orbitron font (same vibe as the site) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&display=swap" rel="stylesheet">
-
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>IBITIcoin Shop</title>
+<!-- Keep your existing global theme -->
+<link href="css/style.css" rel="stylesheet"/>
+<!-- Orbitron font (same vibe as the site) -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
     :root{
       --ib-bg: #060606;
       --ib-gold: #f7d000;
@@ -207,13 +204,13 @@
     .shop-item .image-wrapper{
       background: rgba(0,0,0,0.35);
       border-bottom: 1px solid rgba(247,208,0,0.12);
-      padding: 12px;
-      display:flex;
-      justify-content:center;
-      align-items:center;
+      padding: 0;
+      overflow: hidden;
     }
     .shop-item img{
+      display:block;
       width: 100%;
+      height: auto;
       max-height: 320px;
       object-fit: cover;
       border-radius: 14px;
@@ -442,159 +439,174 @@
       background: #6b7280;
       color:#fff;
     }
-  </style>
+  
+
+    .ref-locked{
+      margin: 12px auto 0;
+      max-width: 860px;
+      text-align: center;
+      color: rgba(255,255,255,0.75);
+      font-size: 14px;
+      border: 1px dashed rgba(247,208,0,0.25);
+      border-radius: 12px;
+      padding: 12px 14px;
+      background: rgba(0,0,0,0.22);
+    }
+    .hidden{ display:none !important; }
+    .overlay{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 9998;
+    }
+    .modal{
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      width: min(520px, calc(100% - 24px));
+      background: #fff;
+      color: #111;
+      border-radius: 16px;
+      padding: 18px 18px 14px;
+      z-index: 9999;
+      box-shadow: 0 20px 80px rgba(0,0,0,0.4);
+    }
+    .modal h3{ margin: 0 0 10px; }
+    .modal p{ margin: 0 0 14px; color: rgba(0,0,0,0.7); }
+    .modal-actions{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    .modal-actions .btn{ min-width: 110px; }
+</style>
 </head>
-
 <body>
-  <div id="netBadge" class="badge">TESTNET MODE</div>
-
-  <div class="wrap">
-    <header>
-      <h1>IBITIcoin Shop</h1>
-      <div class="subtitle">Get exclusive items and utilities connected with IBITIcoin.</div>
-
-      <button id="connectWalletBtn" class="btn btn-primary">Connect wallet</button>
-
-      <div class="wallet-line">
+<div class="badge" id="netBadge">TESTNET MODE</div>
+<div class="wrap">
+<header>
+<h1>IBITIcoin Shop</h1>
+<div class="subtitle">Get exclusive items and utilities connected with IBITIcoin.</div>
+<button class="btn btn-primary" id="connectWalletBtn">Connect wallet</button>
+<div class="wallet-line">
         Wallet: <strong><span id="walletAddress">—</span></strong> ·
         IBITI balance: <strong><span id="ibitiBalance">—</span></strong>
-      </div>
-
-      <div class="promo-hero">
-        <div class="promo-title">NEW YEAR IBITI BONUS</div>
-        <div class="promo-text">
+</div>
+<div class="promo-hero">
+<div class="promo-title">NEW YEAR IBITI BONUS</div>
+<div class="promo-text">
           Buy from <strong>$10</strong> in USDT and get <strong>+10% IBITI</strong> + your personal referral link.
         </div>
-
-        <div class="promo-actions">
-          <button id="addTokenBtn" class="btn">Add IBITI to wallet</button>
-        </div>
-      </div>
-
-      <!-- Promo controls (fixed size + centered, requested) -->
-      <section id="promo-section" class="promo-wrapper" aria-label="Promo purchase">
-        <div class="promo-row">
-          <div class="promo-controls">
-            <label for="promoUsdtAmount">Promo amount (USDT):</label>
-            <input id="promoUsdtAmount" type="number" min="10" step="1" value="10" inputmode="decimal" />
-          </div>
-
-          <button id="promoBuyButton" class="btn btn-primary">Buy IBITI +10% bonus</button>
-        </div>
-        <div id="minPayInfo"></div>
-      </section>
-    </header>
-
-    <!-- Items (same images/paths as old style) -->
-    <section class="shop-items" aria-label="Shop items">
-      <div class="shop-item">
-        <div class="image-wrapper">
-          <img src="img/IBITIcoin.webp" alt="IBITIcoin">
-        </div>
-        <div class="content">
-          <h3>Item 1 (IBITIcoin)</h3>
-          <p>Regular purchase via PancakeSwap (no bonus). A safe redirect with instructions.</p>
-          <button id="buyPancakeBtn" class="btn">Buy</button>
-        </div>
-      </div>
-
-      <div class="shop-item">
-        <div class="image-wrapper">
-          <img src="img/NFT.webp" alt="NFT">
-        </div>
-        <div class="content">
-          <h3>Item 2 (NFT)</h3>
-          <p>Go to the NFT Gallery page.</p>
-          <button id="buyNftBtn" class="btn">Purchase: NFT</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Stats (with progress bar) -->
-    <section class="card" aria-label="Token sale statistics">
-      <div class="card-head">
-        <h2 class="card-title">Token sale statistics</h2>
-        <div style="min-width: 260px; width: 420px; max-width: 100%;">
-          <div class="progress-container"><div id="salesProgress" class="progress-bar"></div></div>
-          <div class="sold-line">Sold: <strong><span id="soldPercent">—</span></strong></div>
-        </div>
-      </div>
-
-      <table class="stats-table">
-        <tr><td>Total on contract</td><td id="statTotal">—</td></tr>
-        <tr><td>Spent (bonus + referral)</td><td id="statSpent">—</td></tr>
-        <tr><td>Remaining for promo</td><td id="statRemaining">—</td></tr>
-        <tr><td>Bonus pool total</td><td id="statBonusPool">—</td></tr>
-      </table>
-
-      <div class="ref-actions" style="margin-top: 14px;">
-        <button id="refreshStatsBtn" class="btn btn-primary">Refresh</button>
-      </div>
-
-      <div class="meta">
-        <div id="lastUpdated">—</div>
-        <div>Promo router: <span id="routerAddr">—</span></div>
-      </div>
-    </section>
-
-    <!-- Referral -->
-    <section class="card" aria-label="Referral program">
-      <h2 class="card-title" style="text-align:center;">Referral program</h2>
-
-      <div class="ref-text">
-        Buy at least <strong>$10 (USDT)</strong> and get <strong>+10% IBITI</strong> as a bonus.<br>
-        After your first purchase you will receive a personal referral link.<br>
-        Share it — for each friend who buys tokens, you get an extra <strong>+1 IBITI</strong> (once per buyer).<br>
+<div class="promo-actions">
+<button class="btn" id="addTokenBtn">Add IBITI to wallet</button>
+</div>
+</div>
+<!-- Promo controls (fixed size + centered, requested) -->
+<section aria-label="Promo purchase" class="promo-wrapper" id="promo-section">
+<div class="promo-row">
+<div class="promo-controls">
+<label for="promoUsdtAmount">Promo amount (USDT):</label>
+<input id="promoUsdtAmount" inputmode="decimal" min="10" step="1" type="number" value="10"/>
+</div>
+<button class="btn btn-primary" id="promoBuyButton">Buy IBITI +10% bonus</button>
+</div>
+<div id="minPayInfo"></div>
+</section>
+</header>
+<!-- Items (same images/paths as old style) -->
+<section aria-label="Shop items" class="shop-items">
+<div class="shop-item">
+<div class="image-wrapper">
+<img alt="IBITIcoin" src="img/IBITIcoin.webp"/>
+</div>
+<div class="content">
+<h3>Item 1 (IBITIcoin)</h3>
+<p>Regular purchase via PancakeSwap (no bonus). A safe redirect with instructions.</p>
+<button class="btn" id="buyPancakeBtn">Buy</button>
+</div>
+</div>
+<div class="shop-item">
+<div class="image-wrapper">
+<img alt="NFT" src="img/NFT.webp"/>
+</div>
+<div class="content">
+<h3>Item 2 (NFT)</h3>
+<p>Go to the NFT Gallery page.</p>
+<button class="btn" id="buyNftBtn">Purchase: NFT</button>
+</div>
+</div>
+</section>
+<!-- Stats (with progress bar) -->
+<section aria-label="Token sale statistics" class="card">
+<div class="card-head">
+<h2 class="card-title">Token sale statistics</h2>
+<div style="min-width: 260px; width: 420px; max-width: 100%;">
+<div class="progress-container"><div class="progress-bar" id="salesProgress"></div></div>
+<div class="sold-line">Sold: <strong><span id="soldPercent">—</span></strong></div>
+</div>
+</div>
+<table class="stats-table">
+<tr><td>Total on contract</td><td id="statTotal">—</td></tr>
+<tr><td>Spent (bonus + referral)</td><td id="statSpent">—</td></tr>
+<tr><td>Remaining for promo</td><td id="statRemaining">—</td></tr>
+<tr><td>Bonus pool total</td><td id="statBonusPool">—</td></tr>
+</table>
+<div class="ref-actions" style="margin-top: 14px;">
+<button class="btn btn-primary" id="refreshStatsBtn">Refresh</button>
+</div>
+<div class="meta">
+<div id="lastUpdated">—</div>
+<div>Promo router: <span id="routerAddr">—</span></div>
+</div>
+</section>
+<!-- Referral -->
+<section aria-label="Referral program" class="card">
+<h2 class="card-title" style="text-align:center;">Referral program</h2>
+<div class="ref-text">
+        Buy at least <strong>$10 (USDT)</strong> and get <strong>+10% IBITI</strong> as a bonus.<br/>
+        After your first purchase you will receive a personal referral link.<br/>
+        Share it — for each friend who buys tokens, you get an extra <strong>+1 IBITI</strong> (once per buyer).<br/>
         Logic is handled automatically by the promo router; no registration required.
-      </div>
-
-      <div class="ref-input">
-        <input id="referralLink" type="text" readonly value="" />
-      </div>
-
-      <div class="ref-actions">
-        <button id="copyMyReferralLink" class="btn btn-primary">Copy my link</button>
-        <button id="shareReferralLink" class="btn">Share link</button>
-      </div>
-    </section>
-
-    <footer>
-      © 2025 IBITIcoin. All rights reserved.<br>
-      <a href="index.html">Back to home</a>
-    </footer>
-  </div>
-
-  <div id="toast"></div>
-
-  <!-- PancakeSwap purchase modal -->
-  <div id="pancakeModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="pancakeTitle">
-    <div id="pancakeOverlay" class="modal-overlay"></div>
-    <div class="modal-box">
-      <h3 id="pancakeTitle">Purchase via PancakeSwap</h3>
-      <p>We never take custody of your funds. The purchase is made directly on PancakeSwap.</p>
-
-      <div class="modal-steps">
+      </div><div id="refLocked"><div class="ref-locked">Your referral link will appear after your first promo purchase of at least $10 USDT.</div></div><div id="refUnlocked"><div class="ref-input">
+<input id="referralLink" readonly="readonly" type="text" value=""/>
+</div><div class="ref-actions">
+<button class="btn btn-primary" disabled="disabled" id="copyMyReferralLink">Copy my link</button>
+<button class="btn" disabled="disabled" id="shareReferralLink">Share link</button>
+</div></div>
+</section>
+<footer>
+      © 2025 IBITIcoin. All rights reserved.<br/>
+<a href="index.html">Back to home</a>
+</footer>
+</div>
+<div class="overlay hidden" id="shareOverlay"></div><div aria-modal="true" class="modal hidden" id="shareModal" role="dialog"><h3 id="shareTitle">Share referral link</h3><p>Choose where to share. If native sharing is available, we will use it.</p><div class="modal-actions"><button class="btn btn-primary" id="shareCopyBtn">Copy</button><button class="btn" id="shareTgBtn">Telegram</button><button class="btn" id="shareXBtn">X</button><button class="btn" id="shareFbBtn">Facebook</button><button class="btn" id="shareCancelBtn">Close</button></div></div><div id="toast"></div>
+<!-- PancakeSwap purchase modal -->
+<div aria-labelledby="pancakeTitle" aria-modal="true" class="modal" id="pancakeModal" role="dialog">
+<div class="modal-overlay" id="pancakeOverlay"></div>
+<div class="modal-box">
+<h3 id="pancakeTitle">Purchase via PancakeSwap</h3>
+<p>We never take custody of your funds. The purchase is made directly on PancakeSwap.</p>
+<div class="modal-steps">
         Next steps:
         <ol>
-          <li>In the new tab connect your wallet to <strong>BNB Smart Chain</strong>.</li>
-          <li>Make sure the pair is <strong>USDT → IBITI</strong> (it will be filled automatically).</li>
-          <li>Enter the amount in USDT (for example, <strong>10</strong>) and click <strong>Swap</strong>.</li>
-          <li>Confirm the transaction in your wallet — IBITI will appear in your balance.</li>
-        </ol>
-      </div>
-
-      <div class="modal-actions">
-        <a id="pancakeOpenLink" href="#" target="_blank" rel="noopener">Open PancakeSwap</a>
-        <button id="pancakeCancelBtn" type="button">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Libraries -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
-
-  <!-- App -->
-  <script src="js/config.js"></script>
-  <script src="js/app.js"></script>
+<li>In the new tab connect your wallet to <strong>BNB Smart Chain</strong>.</li>
+<li>Make sure the pair is <strong>USDT → IBITI</strong> (it will be filled automatically).</li>
+<li>Enter the amount in USDT (for example, <strong>10</strong>) and click <strong>Swap</strong>.</li>
+<li>Confirm the transaction in your wallet — IBITI will appear in your balance.</li>
+</ol>
+</div>
+<div class="modal-actions">
+<a href="#" id="pancakeOpenLink" rel="noopener" target="_blank">Open PancakeSwap</a>
+<button id="pancakeCancelBtn" type="button">Cancel</button>
+</div>
+</div>
+</div>
+<!-- Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
+<!-- App -->
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
