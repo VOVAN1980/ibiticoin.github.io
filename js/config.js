@@ -34,6 +34,7 @@
       usdt:  "0x25F48F48bFfc6D9901d32Dc6c76A2C4486C4E55d",
       ibiti: "0x8975221CCceF486DBCcC4CCa282662e36280577D",
       promoRouter: "0x131f8AC959e5D27105485397a63F614F4c5c2aA5",
+    logScanBlocks: 250000,
 
       // Regular buy still goes to MAINNET PancakeSwap (your rule).
       pancakeSwapUrl: "https://pancakeswap.finance/swap?chain=bsc&outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&inputCurrency=0x55d398326f99059fF775485246999027B3197955",
