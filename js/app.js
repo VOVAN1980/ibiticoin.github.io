@@ -208,13 +208,19 @@
     const addrEl = $("walletAddress");
     if (addrEl) addrEl.textContent = addr;
 
-    // show balance
-    const { signer } = await getBrowserProviderSigner();
-    const token = new ethers.Contract(net().ibiti, ERC20_ABI, signer);
-    const dec = await token.decimals();
-    const bal = await token.balanceOf(addr);
-    const balEl = $("ibitiBalance");
-    if (balEl) balEl.textContent = `${fmt(bal, dec, 8)} IBITI`;
+    // show balance (best-effort; never block connect flow)
+    try {
+      const { signer } = await getBrowserProviderSigner();
+      const token = new ethers.Contract(net().ibiti, ERC20_ABI, signer);
+      const dec = await token.decimals();
+      const bal = await token.balanceOf(addr);
+      const balEl = $("ibitiBalance");
+      if (balEl) balEl.textContent = `${fmt(bal, dec, 8)} IBITI`;
+    } catch (e) {
+      console.warn("Balance read failed (ignoring):", e);
+      const balEl = $("ibitiBalance");
+      if (balEl) balEl.textContent = "—";
+    }
 
     // referral link field (unlocks after first promo buy)
     await updateReferralUI(addr);
@@ -336,14 +342,23 @@
     const ref = currentRefParam();
     const { signer } = await getBrowserProviderSigner();
 
-    const usdt = new ethers.Contract(netCfg.usdt, ERC20_ABI, signer);
+    const usdt = new ethers.Contract(netCfg.usdt, [...ERC20_ABI, "function allowance(address owner, address spender) view returns (uint256)"], signer);
     const usdtDec = await usdt.decimals();
     const amount = ethers.parseUnits(String(amtNum), usdtDec);
 
-    // approve
-    toast("Approve USDT…");
-    const txA = await usdt.approve(netCfg.promoRouter, amount);
-    await txA.wait();
+    const buyerAddr = await signer.getAddress();
+
+    // approve only if needed
+    let allowance = 0n;
+    try { allowance = await usdt.allowance(buyerAddr, netCfg.promoRouter); } catch (_) {}
+
+    if (allowance < amount) {
+      toast("Approve USDT…");
+      const txA = await usdt.approve(netCfg.promoRouter, amount);
+      await txA.wait();
+    } else {
+      toast("USDT allowance OK. Skipping approve.");
+    }
 
     // buy
     const promo = new ethers.Contract(netCfg.promoRouter, PROMO_ABI, signer);
@@ -359,7 +374,23 @@
     } catch (_) {}
 
     toast("Done!");
-    await connectWallet().catch(() => {});
+
+    // light refresh (no extra wallet popups)
+    try {
+      const { signer } = await getBrowserProviderSigner();
+      const addr = await signer.getAddress();
+      const token = new ethers.Contract(netCfg.ibiti, ERC20_ABI, signer);
+      let dec = 8;
+      try { dec = Number(await token.decimals()); } catch (_) {}
+      try {
+        const bal = await token.balanceOf(addr);
+        updateWalletLine(addr, fmt(bal, dec, 6));
+      } catch (_) {
+        updateWalletLine(addr, "—");
+      }
+      await updateReferralUI(addr);
+    } catch (_) {}
+
     await refreshStats().catch(() => {});
   }
 
@@ -368,7 +399,18 @@
     // user requirement: show connect wallet prompt first
     if (!(await hasConnectedAccount())) {
       toast("Please connect your wallet first.");
-      await connectWallet();
+      try {
+        await connectWallet();
+      } catch (e) {
+        console.error(e);
+        toast("Wallet connection cancelled.");
+        return;
+      }
+      // safety: if still not connected, stop
+      if (!(await hasConnectedAccount())) {
+        toast("Wallet not connected.");
+        return;
+      }
     }
 
     const modal = $("pancakeModal");
@@ -442,7 +484,17 @@
     if (btnBuy) btnBuy.addEventListener("click", async () => {
       if (!(await hasConnectedAccount())) {
         toast("Please connect your wallet first.");
-        await connectWallet();
+        try {
+          await connectWallet();
+        } catch (e) {
+          console.error(e);
+          toast("Wallet connection cancelled.");
+          return;
+        }
+        if (!(await hasConnectedAccount())) {
+          toast("Wallet not connected.");
+          return;
+        }
       }
       return buyPromo().catch(e => { console.error(e); toast(e?.shortMessage || e?.message || "Buy failed."); });
     });
