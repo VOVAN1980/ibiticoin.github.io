@@ -1,19 +1,26 @@
-// js/sale.js
+// js/sale.js (FULL REWRITE)
+// Purpose:
+// 1) Show promo pool stats from IBITIReferralPromoRouter (new version)
+// 2) Show referral link ONLY after first promo purchase >= minPaymentAmount (10 USDT)
+//    Eligibility is checked on-chain via PromoBuy event (NOT by IBITI balance).
+
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
 import config from "./config.js";
 
-console.log("✅ sale.js загружен");
+console.log("✅ sale.js loaded (rewritten)");
 
+// wallet.js expects these exports
 export function getSaleContract() {
-  return null; // phasedSale тут больше не используется
+  return null; // legacy phased sale not used anymore
 }
 
-// ✅ ЭТО НУЖНО, потому что wallet.js делает import { initSaleContract } from "./sale.js"
 export async function initSaleContract() {
-  // просто обновим UI/статы после коннекта кошелька
+  // called by wallet.js after connect
   try {
-    window.loadSaleStats = loadPromoStats; // совместимость со старым именем
+    await ensureActiveConfig();
+    window.loadSaleStats = loadPromoStats; // backward compat
     window.loadPromoStats = loadPromoStats;
+
     await loadPromoStats();
 
     const acc = window.selectedAccount;
@@ -24,32 +31,58 @@ export async function initSaleContract() {
   return true;
 }
 
+// ----------------------
+// Constants / ABIs
+// ----------------------
+
 const IBITI_DECIMALS = 8;
-const QUALIFY_IBITI_MIN = 10n * 10n ** 8n; // 10 IBITI (8 decimals)
+const USDT_DECIMALS_DEFAULT = 18;
 
-// --- ABIs ---
-const ERC20_ABI = [
-  "function balanceOf(address) view returns (uint256)",
-  "function decimals() view returns (uint8)",
-];
-
+// New PromoRouter (your current testnet deploy)
 const PROMO_ROUTER_ABI = [
   "function promoActive() view returns (bool)",
-  "function bonusPercent() view returns (uint256)",
-  "function minUsdtAmount() view returns (uint256)",
-  "function referrerRewardIBITI() view returns (uint256)",
-  "function getPromoStats() view returns (uint256 buys,uint256 usdtIn,uint256 ibitiToBuyers,uint256 bonusPaid,uint256 refPaid,uint256 ibitiOnContract,uint256 ibitiWithdrawn,uint256 usdtWithdrawn)",
+  "function promoEndTime() view returns (uint256)",
+  "function bonusBps() view returns (uint256)",
+  "function refReward() view returns (uint256)",
+  "function minPaymentAmount() view returns (uint256)",
+  "function bonusPoolTotal() view returns (uint256)",
+  "function bonusSpent() view returns (uint256)",
+  "function refSpent() view returns (uint256)",
+  "function poolRemaining() view returns (uint256)",
+  "function getStats() view returns (uint256 poolTotal,uint256 bonusSpent_,uint256 refSpent_,uint256 remaining)"
 ];
 
-// --- helpers ---
+// Event for eligibility check (indexed buyer)
+const PROMO_BUY_EVENT_ABI = [
+  "event PromoBuy(address indexed buyer,address indexed referrer,uint256 paymentAmount,uint256 boughtAmount,uint256 bonusAmount,uint256 refAmount)"
+];
+
+const ERC20_ABI = [
+  "function decimals() view returns (uint8)"
+];
+
+// ----------------------
+// Helpers
+// ----------------------
+
 const $ = (id) => document.getElementById(id);
-const fmt8 = (x) => ethers.formatUnits(x, IBITI_DECIMALS);
-const nowStamp = () => new Date().toLocaleString();
+
+function fmtIBITI(x) {
+  try { return ethers.formatUnits(x, IBITI_DECIMALS); } catch { return "0"; }
+}
+
+function fmtUSDT(x, dec = USDT_DECIMALS_DEFAULT) {
+  try { return ethers.formatUnits(x, dec); } catch { return "0"; }
+}
+
+function nowStamp() {
+  return new Date().toLocaleString();
+}
 
 function safeGetAddress(addr) {
   try {
     const a = ethers.getAddress(addr);
-    if (a === ethers.ZeroAddress) return null; // ✅ запрет нулевого адреса
+    if (a === ethers.ZeroAddress) return null;
     return a;
   } catch {
     return null;
@@ -65,110 +98,132 @@ async function hasCode(provider, addr) {
   }
 }
 
-function buildRefLink(account) {
-  const base = `${window.location.origin}${window.location.pathname}`;
-  return `${base}?ref=${account}`;
+// Make sure config.active exists for other modules, but also support config.getActive()
+async function ensureActiveConfig() {
+  if (config?.getActive && typeof config.getActive === "function") {
+    const active = await config.getActive();
+    // keep compatibility for old code that reads config.active
+    config.active = active;
+    return active;
+  }
+  // fallback: older config.js style
+  if (config?.active) return config.active;
+
+  // if nothing exists — don't crash
+  return null;
 }
 
-async function getReadProvider() {
+async function getReadProvider(active) {
+  // Prefer wallet provider (because user is actually connected to the right chain)
   if (window.ethereum) return new ethers.BrowserProvider(window.ethereum);
-  return new ethers.JsonRpcProvider(config.active.rpcUrl);
+
+  // If your config has rpcUrl - use it, else return null
+  const rpcUrl = active?.rpcUrl;
+  if (rpcUrl) return new ethers.JsonRpcProvider(rpcUrl);
+
+  return null;
 }
 
-async function getWalletProvider() {
-  if (!window.ethereum) return null;
-  return new ethers.BrowserProvider(window.ethereum);
+function storageKey(active, account, routerAddr) {
+  const cid = active?.chainId ?? "x";
+  return `ibiti_ref_ok_${cid}_${(routerAddr || "").toLowerCase()}_${account.toLowerCase()}`;
 }
 
-// --- Promo Stats ---
+// ----------------------
+// STATS UI
+// ----------------------
+
 async function setStatsEmpty() {
   const ids = ["cap", "refReserve", "salePool", "sold", "left", "bonusPool", "soldPercent", "lastUpdated"];
   ids.forEach((id) => { if ($(id)) $(id).textContent = "—"; });
   if ($("salesProgress")) $("salesProgress").style.width = "0%";
 }
 
-async function loadPromoStats() {
+export async function loadPromoStats() {
   try {
-    const routerAddr = config.active?.contracts?.REFERRAL_SWAP_ROUTER;
-    const ibitiAddr  = config.active?.contracts?.IBITI_TOKEN;
-
-    const routerOk = safeGetAddress(routerAddr);
-    const ibitiOk  = safeGetAddress(ibitiAddr);
-
-    if (!routerOk || !ibitiOk) {
+    const active = await ensureActiveConfig();
+    if (!active) {
       await setStatsEmpty();
-      console.warn("⛔ Адреса не заданы/невалидны:", { routerAddr, ibitiAddr });
+      console.warn("⛔ config.active is missing");
       return;
     }
 
-    const provider = await getReadProvider();
+    const routerAddr = active?.contracts?.REFERRAL_SWAP_ROUTER;
+    const routerOk = safeGetAddress(routerAddr);
 
-    // ✅ если адрес не контракт или сеть не та — не дергаем ABI вообще
+    if (!routerOk) {
+      await setStatsEmpty();
+      console.warn("⛔ Promo router address missing/invalid:", { routerAddr });
+      return;
+    }
+
+    const provider = await getReadProvider(active);
+    if (!provider) {
+      await setStatsEmpty();
+      console.warn("⛔ No provider (wallet not found and no rpcUrl in config).");
+      return;
+    }
+
     if (!(await hasCode(provider, routerOk))) {
       await setStatsEmpty();
-      console.warn("⛔ REFERRAL_SWAP_ROUTER: по адресу нет кода контракта (или сеть не та):", routerOk);
-      return;
-    }
-    if (!(await hasCode(provider, ibitiOk))) {
-      await setStatsEmpty();
-      console.warn("⛔ IBITI_TOKEN: по адресу нет кода контракта (или сеть не та):", ibitiOk);
+      console.warn("⛔ REFERRAL_SWAP_ROUTER: no contract code at address (wrong network?):", routerOk);
       return;
     }
 
     const promo = new ethers.Contract(routerOk, PROMO_ROUTER_ABI, provider);
-    const ibiti = new ethers.Contract(ibitiOk, ERC20_ABI, provider);
 
-    // (не обязательно) контроль decimals
-    try {
-      const dec = await ibiti.decimals();
-      if (Number(dec) !== IBITI_DECIMALS) console.warn("⚠ IBITI decimals != 8, got:", dec);
-    } catch {}
-
-    const [promoActive, bonusPercent, minUsdtAmount, refReward, stats] = await Promise.all([
-      promo.promoActive(),
-      promo.bonusPercent(),
-      promo.minUsdtAmount(),
-      promo.referrerRewardIBITI(),
-      promo.getPromoStats(),
+    // read core params + stats
+    const [
+      promoActive,
+      endTime,
+      bonusBps,
+      minPay,
+      refReward,
+      stats
+    ] = await Promise.all([
+      promo.promoActive().catch(() => false),
+      promo.promoEndTime().catch(() => 0n),
+      promo.bonusBps().catch(() => 0n),
+      promo.minPaymentAmount().catch(() => 0n),
+      promo.refReward().catch(() => 0n),
+      promo.getStats().catch(() => [0n, 0n, 0n, 0n])
     ]);
 
-    const buys             = BigInt(stats[0]);
-    const usdtIn           = BigInt(stats[1]);
-    const ibitiToBuyers    = BigInt(stats[2]); // включает бонус
-    const bonusPaid        = BigInt(stats[3]);
-    const refPaid          = BigInt(stats[4]);
-    const ibitiOnContract  = BigInt(stats[5]);
-    const ibitiWithdrawn   = BigInt(stats[6]);
+    const poolTotal  = BigInt(stats[0]);
+    const bonusSpent = BigInt(stats[1]);
+    const refSpent   = BigInt(stats[2]);
+    const remaining  = BigInt(stats[3]);
 
-    const cap  = ibitiOnContract + ibitiToBuyers + refPaid + ibitiWithdrawn;
-    const sold = ibitiToBuyers + refPaid;
-    const left = ibitiOnContract;
+    const sold = bonusSpent + refSpent;
+    const soldPct = poolTotal > 0n ? Number((sold * 10000n) / poolTotal) / 100 : 0;
 
-    const soldPct = cap > 0n ? Number((sold * 10000n) / cap) / 100 : 0;
+    // Map to your current UI labels (this is pool stats: bonus + referrals)
+    if ($("cap"))      $("cap").textContent      = fmtIBITI(poolTotal);
+    if ($("salePool")) $("salePool").textContent = fmtIBITI(poolTotal);
+    if ($("sold"))     $("sold").textContent     = fmtIBITI(sold);
+    if ($("left"))     $("left").textContent     = fmtIBITI(remaining);
 
-    if ($("cap"))        $("cap").textContent        = fmt8(cap);
-    if ($("salePool"))   $("salePool").textContent   = fmt8(cap);
-    if ($("sold"))       $("sold").textContent       = fmt8(sold);
-    if ($("left"))       $("left").textContent       = fmt8(left);
-
-    if ($("refReserve")) $("refReserve").textContent = fmt8(refPaid);
-    if ($("bonusPool"))  $("bonusPool").textContent  = fmt8(bonusPaid);
+    if ($("bonusPool"))  $("bonusPool").textContent  = fmtIBITI(bonusSpent);
+    if ($("refReserve")) $("refReserve").textContent = fmtIBITI(refSpent);
 
     if ($("soldPercent")) $("soldPercent").textContent = `${soldPct.toFixed(2)}%`;
     if ($("salesProgress")) $("salesProgress").style.width = `${Math.min(100, Math.max(0, soldPct))}%`;
 
     if ($("lastUpdated")) {
+      const bonusPct = (Number(bonusBps) / 100).toFixed(2);
+      const endTxt = (BigInt(endTime) === 0n) ? "∞" : new Date(Number(endTime) * 1000).toLocaleString();
       $("lastUpdated").textContent =
-        `Updated: ${nowStamp()} | promoActive=${promoActive} | bonus=${bonusPercent}% | minUSDT=${ethers.formatUnits(minUsdtAmount, 18)} | refReward=${fmt8(refReward)}`;
+        `Updated: ${nowStamp()} | net=${active.name ?? active.chainId} | promo=${promoActive} | bonus=${bonusPct}% | minUSDT=${fmtUSDT(minPay)} | ref=${fmtIBITI(refReward)} | end=${endTxt}`;
     }
 
-    console.log("📊 PromoStats:", {
-      chainId: config.active?.chainId,
+    // Debug
+    console.log("📊 PromoPoolStats:", {
+      chainId: active.chainId,
       router: routerOk,
-      buys: String(buys),
-      usdtIn: String(usdtIn),
-      soldIBITI: String(sold),
-      leftIBITI: String(left),
+      poolTotal: String(poolTotal),
+      bonusSpent: String(bonusSpent),
+      refSpent: String(refSpent),
+      remaining: String(remaining),
     });
 
   } catch (e) {
@@ -177,71 +232,147 @@ async function loadPromoStats() {
   }
 }
 
-// --- Referral link gating (>=10 IBITI) ---
-async function checkReferralEligibility(account) {
+// ----------------------
+// REFERRAL LINK: ONLY AFTER BUY >= 10 USDT (on-chain event)
+// ----------------------
+
+async function lockReferralUI() {
+  const linkInput = $("myReferralLink");
+  if (linkInput) {
+    linkInput.value = ""; // IMPORTANT: no link before eligibility
+  }
+  // buttons are managed by your inline script:
+  // before eligible it shows SweetAlert "Not available"
+}
+
+async function buyerHasPromoPurchase(active, routerAddr, buyer) {
+  const provider = await getReadProvider(active);
+  if (!provider) return false;
+
+  const routerOk = safeGetAddress(routerAddr);
+  if (!routerOk) return false;
+  if (!(await hasCode(provider, routerOk))) return false;
+
+  const promo = new ethers.Contract(routerOk, PROMO_ROUTER_ABI, provider);
+  const minPay = await promo.minPaymentAmount().catch(() => 0n);
+
+  // Event filter
+  const iface = new ethers.Interface(PROMO_BUY_EVENT_ABI);
+  const topic0 = iface.getEvent("PromoBuy").topicHash;
+
+  const buyerTopic = ethers.zeroPadValue(ethers.getAddress(buyer), 32);
+
+  // If you add promoDeployBlock to config later - use it. Otherwise from 0.
+  const fromBlock = active?.promoDeployBlock ?? 0;
+
+  let logs = [];
   try {
-    const ibitiAddr = safeGetAddress(config.active?.contracts?.IBITI_TOKEN);
-    if (!ibitiAddr) return false;
-
-    const p = await getWalletProvider();
-    if (!p) return false;
-
-    const ibiti = new ethers.Contract(ibitiAddr, ERC20_ABI, p);
-    const bal = BigInt(await ibiti.balanceOf(account));
-    return bal >= QUALIFY_IBITI_MIN;
-  } catch {
+    logs = await provider.getLogs({
+      address: routerOk,
+      fromBlock,
+      toBlock: "latest",
+      topics: [topic0, buyerTopic]
+    });
+  } catch (e) {
+    console.warn("getLogs failed:", e);
     return false;
   }
+
+  for (const log of logs) {
+    try {
+      const parsed = iface.parseLog(log);
+      const paymentAmount = BigInt(parsed.args.paymentAmount);
+      if (paymentAmount >= BigInt(minPay)) return true;
+    } catch {
+      // ignore
+    }
+  }
+  return false;
 }
 
 async function updateReferralUI(account) {
-  const linkInput = $("myReferralLink");
-  if (!linkInput) return;
+  const active = await ensureActiveConfig();
+  if (!active) {
+    await lockReferralUI();
+    return;
+  }
 
-  linkInput.value = buildRefLink(account);
+  const routerAddr = active?.contracts?.REFERRAL_SWAP_ROUTER;
+  const routerOk = safeGetAddress(routerAddr);
+  if (!routerOk) {
+    await lockReferralUI();
+    return;
+  }
 
-  const eligible = await checkReferralEligibility(account);
-  if (eligible) {
+  // Always locked first (no “free link on connect”)
+  await lockReferralUI();
+
+  // 1) fast cache
+  const key = storageKey(active, account, routerOk);
+  if (localStorage.getItem(key) === "1") {
+    if (typeof window.enableReferralAfterPurchase === "function") {
+      window.enableReferralAfterPurchase(account);
+    }
+    return;
+  }
+
+  // 2) on-chain proof via PromoBuy event
+  const ok = await buyerHasPromoPurchase(active, routerOk, account);
+  if (ok) {
+    localStorage.setItem(key, "1");
     if (typeof window.enableReferralAfterPurchase === "function") {
       window.enableReferralAfterPurchase(account);
     }
   }
 }
 
+// ----------------------
+// Wallet events / init
+// ----------------------
+
 function hookWalletEvents() {
   if (!window.ethereum?.on) return;
 
   window.ethereum.on("accountsChanged", async (accs) => {
     const a = accs?.[0];
-    if (!a) return;
-    await updateReferralUI(a);
+    if (!a) {
+      await lockReferralUI();
+      return;
+    }
+    window.selectedAccount = a;
+    await ensureActiveConfig();
     await loadPromoStats();
+    await updateReferralUI(a);
   });
 
   window.ethereum.on("chainChanged", async () => {
+    await ensureActiveConfig();
+    await loadPromoStats();
     const a = window.selectedAccount;
     if (a) await updateReferralUI(a);
-    await loadPromoStats();
   });
 }
 
-// --- init ---
 document.addEventListener("DOMContentLoaded", async () => {
-  window.loadSaleStats = loadPromoStats; // ✅ чтобы wallet.js мог дергать, если захочет
+  await ensureActiveConfig();
+
+  window.loadSaleStats = loadPromoStats;
   window.loadPromoStats = loadPromoStats;
 
   await loadPromoStats();
 
-  const btn =
-    $("refreshStats") ||
-    $("refreshButton") ||
-    $("refresh") ||
-    document.querySelector("[data-action='refreshStats']");
-  if (btn) btn.addEventListener("click", loadPromoStats);
+  const refreshBtn = $("refreshStats") || $("refreshButton") || $("refresh");
+  if (refreshBtn) refreshBtn.addEventListener("click", loadPromoStats);
 
+  // On load: lock link (no link on connect)
+  await lockReferralUI();
+
+  // If wallet already connected
   const account = window.selectedAccount;
   if (account) await updateReferralUI(account);
 
   hookWalletEvents();
+
+  // refresh every 30s
   setInterval(loadPromoStats, 30000);
 });
