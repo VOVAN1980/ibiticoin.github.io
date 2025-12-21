@@ -158,6 +158,39 @@
     return isAddr(r) ? r : null;
   }
 
+  // Persist incoming ref for the whole tab session (so ref doesn't get lost after navigation / UI updates)
+  const REF_KEY = "ibiti_referrer";
+
+  function storeRef(ref) {
+    try {
+      if (ref && isAddr(ref)) sessionStorage.setItem(REF_KEY, ref);
+    } catch (_) {}
+  }
+
+  function loadStoredRef() {
+    try {
+      const v = (sessionStorage.getItem(REF_KEY) || "").trim();
+      return isAddr(v) ? v : null;
+    } catch (_) { return null; }
+  }
+
+  function captureIncomingRef() {
+    const r = currentRefParam();
+    if (r) storeRef(r);
+  }
+
+  function getActiveReferrer(buyerAddr) {
+    // Prefer URL param (fresh), fallback to stored session ref
+    let ref = currentRefParam() || loadStoredRef();
+    if (!ref) return null;
+
+    // no self-ref
+    if (buyerAddr && String(ref).toLowerCase() === String(buyerAddr).toLowerCase()) return null;
+
+    return ref;
+  }
+
+
   function buildMyReferralLink(addr) {
     const url = new URL(window.location.href);
     url.searchParams.set("ref", addr);
@@ -354,8 +387,9 @@
     if (!Number.isFinite(amtNum) || amtNum <= 0) throw new Error("Invalid USDT amount.");
     if (amtNum < 10) throw new Error("Minimum is 10 USDT.");
 
-    const ref = currentRefParam();
     const { signer } = await getBrowserProviderSigner();
+    const buyerAddr = await signer.getAddress();
+    const ref = getActiveReferrer(buyerAddr);
 
     const usdt = new ethers.Contract(netCfg.usdt, ERC20_ABI, signer);
     const usdtDec = await usdt.decimals();
@@ -472,6 +506,7 @@
 
   function wire() {
     setNetBadge();
+    captureIncomingRef();
     setPurchaseEnabled(false);
     setReferralUnlocked(false);
 
