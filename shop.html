@@ -31,7 +31,7 @@
     }
 
     .wrap{
-      max-width: 1180px;
+      max-width: 1100px;
       margin: 0 auto;
       padding: 28px 18px 46px;
     }
@@ -184,7 +184,8 @@
 
     /* Shop items */
     .shop-items{
-      margin-top: 22px;
+      margin: 22px auto 0;
+      max-width: 980px; /* keep item cards compact (no stretched windows) */
       display:grid;
       grid-template-columns: repeat(2, minmax(0,1fr));
       gap: 18px;
@@ -204,14 +205,14 @@
     .shop-item .image-wrapper{
       background: rgba(0,0,0,0.35);
       border-bottom: 1px solid rgba(247,208,0,0.12);
-      padding: 0;
+      padding: 10px;
+      height: 270px; /* fixed viewport so images fill the card */
       overflow: hidden;
     }
     .shop-item img{
       display:block;
       width: 100%;
-      height: auto;
-      max-height: 320px;
+      height: 100%;
       object-fit: cover;
       border-radius: 14px;
       border: 1px solid rgba(247,208,0,0.15);
