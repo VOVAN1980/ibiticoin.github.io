@@ -59,12 +59,36 @@ export async function connectWallet() {
     window.signer = signer;
 
     // ✅ выбираем сеть/адреса ПОСЛЕ подключения
-    const active = await getActiveConfig();
-    console.log("✓ Active network:", active.name, "chainId:", active.chainId);
+const active = await getActiveConfig();
+console.log("✓ Active network (config):", active.name, "chainId:", active.chainId);
 
-    await initContracts(active);
-    await initSaleContract();
-    await showIbitiBalance(true);
+// ✅ проверяем реальную сеть кошелька
+let net = await provider.getNetwork();
+if (Number(net.chainId) !== Number(active.chainId)) {
+  console.warn(`⚠️ Wallet on chainId=${net.chainId}, but page expects ${active.chainId}. Switching...`);
+
+  // пытаемся переключить сеть автоматически
+  try {
+    await config.switchWalletToActive(); // функция из нового config.js
+  } catch (e) {
+    console.error("✖ switchWalletToActive failed:", e);
+    alert(`Переключи сеть в кошельке на ${active.name} (chainId ${active.chainId})`);
+    return; // ❗ не продолжаем, иначе снова будут undefined/пустые контракты
+  }
+
+  // ⚠️ после смены сети надо пересоздать provider/signer
+  provider = new ethers.BrowserProvider(window.ethereum);
+  signer = await provider.getSigner();
+  window.signer = signer;
+
+  net = await provider.getNetwork();
+  console.log("✓ Wallet switched. Now chainId:", Number(net.chainId));
+}
+
+// ✅ только теперь инициализация контрактов и UI
+await initContracts(active);
+await initSaleContract();
+await showIbitiBalance(true);
 
     // listeners
     window.ethereum.on("accountsChanged", async (accs) => {
@@ -167,3 +191,4 @@ export async function disconnectWallet() {
   setText("walletAddress", "Disconnected");
   setText("ibitiBalance", "");
 }
+
