@@ -6,7 +6,7 @@ import { ibitiNftAbi } from "./abis/ibitiNftAbi.js";
 // something import { connectWallet, signer, selectedAccount, showIbitiBalance } from "./wallet.js";
 
 // Выбираем конфигурацию (mainnet или testnet)
-const netConfig = config.mainnet; // или config.testnet, если у вас есть testnet
+// something const netConfig = config.mainnet; // или config.testnet, если у вас есть testnet
 const IBITI_NFT_ADDRESS = netConfig.contracts.IBITINFT_ADDRESS_MAINNET || netConfig.contracts.IBITI_NFT_ADDRESS;
 
 // Хранить инстанс контракта
@@ -102,5 +102,6 @@ export async function handleNFTPurchase(discount, uri) {
     });
   }
 }
+
 
 
