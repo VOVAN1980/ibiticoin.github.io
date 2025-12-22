@@ -163,6 +163,120 @@
 .ibiti-share-top .closeX:hover{
   background: rgba(255,255,255,.10);
 }
+/* Share modal — IBITI style */
+#shareOverlay{
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(6px);
+}
+
+#shareModal{
+  background: rgba(10,10,10,.92);
+  border: 1px solid rgba(247,208,0,.28);
+  box-shadow: 0 20px 60px rgba(0,0,0,.65);
+  border-radius: 18px;
+  color: #fff;
+  max-width: 860px;
+  width: min(860px, 92vw);
+  padding: 18px 18px 16px;
+}
+
+#shareTitle{
+  color: #f7d000;
+  letter-spacing: .6px;
+  margin: 0 0 6px;
+  text-align: center;
+}
+
+#shareModal p{
+  color: rgba(255,255,255,.72);
+  margin: 0 0 14px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.share-grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 10px;
+}
+@media (min-width: 760px){
+  .share-grid{ grid-template-columns: repeat(4, minmax(0,1fr)); }
+}
+
+.share-btn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(247,208,0,.22);
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.92);
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease, border-color .12s ease;
+  user-select: none;
+}
+
+.share-btn:hover{
+  transform: translateY(-1px);
+  background: rgba(247,208,0,.10);
+  border-color: rgba(247,208,0,.40);
+}
+
+.share-btn:active{
+  transform: translateY(0px);
+}
+
+.share-btn--primary{
+  background: rgba(247,208,0,.16);
+  border-color: rgba(247,208,0,.45);
+  color: #ffd84a;
+  font-weight: 600;
+}
+
+.share-btn--danger{
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.10);
+  height: 44px;
+}
+
+.share-ico{
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.share-ico svg{
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  opacity: .95;
+}
+
+.ref-actions{
+  display:flex;
+  justify-content:center;
+  margin-top: 12px;
+}
+
+.share-main{
+  min-width: 160px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap: 10px;
+}
+.share-main .ico{
+  font-size: 18px;
+  line-height: 1;
+}
+  .share-btn:focus{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(247,208,0,.18);
+  border-color: rgba(247,208,0,.45);
+}
 `;
     (document.head || document.documentElement).appendChild(style);
   }
