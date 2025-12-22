@@ -512,6 +512,121 @@
     filter: grayscale(0.25);
   }
 
+  /* Share modal (центрированная карточка) */
+  #shareModal{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: min(520px, calc(100% - 24px));
+    background: #fff;
+    color: #111;
+    border-radius: 16px;
+    padding: 18px 18px 14px;
+    z-index: 9999;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.4);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
+  #shareModal h3{ margin: 0 0 10px; }
+  #shareModal p{ margin: 0 0 14px; color: rgba(0,0,0,0.7); }
+  #shareModal .modal-actions{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  #shareModal .modal-actions .btn{ min-width: 110px; }
+
+  /* Pancake modal (fullscreen overlay + box) */
+  #pancakeModal{
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+  }
+  #pancakeModal.open{ display:flex; }
+
+  .modal-overlay{
+    position:absolute; inset:0;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(2px);
+  }
+
+  .modal-box{
+    position:relative;
+    width: min(520px, calc(100% - 30px));
+    border-radius: 18px;
+    background: #fff;
+    color: #111;
+    padding: 18px 18px 14px;
+    box-shadow: 0 18px 48px rgba(0,0,0,0.45);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
+  .modal-box h3{
+    margin: 0 0 8px;
+    font-size: 18px;
+    text-align:center;
+  }
+  .modal-box p{
+    margin: 0 0 10px;
+    color:#333;
+    text-align:center;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .modal-steps{
+    font-size: 13px;
+    color:#333;
+    margin: 10px 0 14px;
+    line-height: 1.55;
+  }
+  .modal-steps ol{ margin: 8px 0 0 18px; }
+
+  .modal-actions{
+    display:flex;
+    gap: 10px;
+    justify-content:center;
+    flex-wrap: wrap;
+    padding-top: 10px;
+  }
+  .modal-actions a, .modal-actions button{
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .modal-actions a{
+    background: #3b82f6;
+    color:#fff;
+    text-decoration:none;
+  }
+  .modal-actions button{
+    background: #6b7280;
+    color:#fff;
+  }
+
+  .ref-locked{
+    margin: 12px auto 0;
+    max-width: 860px;
+    text-align: center;
+    color: rgba(255,255,255,0.75);
+    font-size: 14px;
+    border: 1px dashed rgba(247,208,0,0.25);
+    border-radius: 12px;
+    padding: 12px 14px;
+    background: rgba(0,0,0,0.22);
+  }
+
+  /* Disabled purchase buttons */
+  .btn:disabled, .btn-disabled{
+    opacity: 0.45;
+    cursor: not-allowed;
+    filter: grayscale(0.25);
+  }
+
   /* Share modal — IBITI style */
 #shareOverlay{
   background: rgba(0,0,0,.72);
@@ -1047,5 +1162,6 @@ if (nativeBtn) {
 <script src="js/app.js"></script>
 </body>
 </html>
+
 
 
