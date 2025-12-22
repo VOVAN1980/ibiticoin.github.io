@@ -1,7 +1,7 @@
 // js/nft.js
 
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
-import config from "./config.js";
+// something import config from "./config.js";
 import { ibitiNftAbi } from "./abis/ibitiNftAbi.js";
 import { connectWallet, signer, selectedAccount, showIbitiBalance } from "./wallet.js";
 
@@ -102,3 +102,4 @@ export async function handleNFTPurchase(discount, uri) {
     });
   }
 }
+
