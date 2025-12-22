@@ -1008,7 +1008,7 @@
     const nativeBtn = $("shareNativeBtn");
 if (nativeBtn) {
   if (!navigator.share) {
-    nativeBtn.style.display = "none";     // ← ВАЖНО: убрать кнопку на ПК
+    nativeBtn.style.display = "none";
   } else {
     nativeBtn.addEventListener("click", async () => {
       const link = linkOrUrl();
@@ -1039,6 +1039,7 @@ if (nativeBtn) {
 <script src="js/app.js"></script>
 </body>
 </html>
+
 
 
 
