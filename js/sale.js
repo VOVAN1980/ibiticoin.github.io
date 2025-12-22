@@ -1,6 +1,6 @@
 // js/sale.js (PROMO STATS + REF LINK GATE)
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
-import config from "./config.js";
+<!-- import config from "./config.js";
 
 console.log("✅ sale.js loaded (final)");
 
@@ -121,3 +121,4 @@ export async function initSaleContract() {
     window.__ibitiPromoTimer = setInterval(loadPromoStats, 20000);
   }
 }
+
