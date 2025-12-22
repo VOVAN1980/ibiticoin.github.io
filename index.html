@@ -431,32 +431,6 @@
     })();
   </script>
 
-  <!-- Share modal init -->
-  <script>
-    const shareModal = document.getElementById('shareModal');
-    const openBtn    = document.getElementById('openShareModal');
-    const closeBtn   = document.getElementById('closeShareModal');
-    const pageUrl    = encodeURIComponent(window.location.href);
-    const pageTitle  = encodeURIComponent(document.title);
-
-    document.getElementById('share-facebook').href  = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
-    document.getElementById('share-twitter').href   = `https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageTitle}`;
-    document.getElementById('share-vk').href        = `https://vk.com/share.php?url=${pageUrl}&title=${pageTitle}`;
-    document.getElementById('share-telegram').href  = `https://telegram.me/share/url?url=${pageUrl}&text=${pageTitle}`;
-    document.getElementById('share-ok').href        = `https://connect.ok.ru/offer?url=${pageUrl}`;
-    document.getElementById('share-linkedin').href  = `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`;
-    document.getElementById('share-weibo').href     = `http://service.weibo.com/share/share.php?url=${pageUrl}&title=${pageTitle}`;
-
-    openBtn.addEventListener('click', ev => {
-      ev.preventDefault();
-      shareModal.style.display = 'block';
-    });
-    closeBtn.addEventListener('click', () => shareModal.style.display = 'none');
-    window.addEventListener('click', ev => {
-      if (ev.target === shareModal) shareModal.style.display = 'none';
-    });
-  </script>
-
     <!-- Info popup: live trading status -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -678,5 +652,6 @@
 <script src="js/share-modal.js?v=3" defer></script>
 </body>
 </html>
+
 
 
