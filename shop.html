@@ -731,23 +731,39 @@
   });
 
   const nativeBtn = q("shareNativeBtn");
-  if(nativeBtn){
-    nativeBtn.addEventListener("click", async () => {
-      const link = val();
-      if (navigator.share) {
-        try { await navigator.share({ title: "IBITIcoin", text: "Referral link", url: link }); }
-        catch(e){ /* user canceled */ }
-      } else {
-        alert("System share not available here. Use buttons below.");
-      }
-    });
+const isMobile = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+if (nativeBtn) {
+  // На ПК системный шаринг часто глючит → делаем его только для мобилок
+  if (!isMobile()) {
+    nativeBtn.style.display = "none";
   }
+
+  nativeBtn.addEventListener("click", async () => {
+    const link = val();
+
+    if (!isMobile() || !navigator.share) {
+      alert("System share is available on mobile only. Use buttons below.");
+      return;
+    }
+
+    try {
+      await navigator.share({ title: "IBITIcoin", text: "Referral link", url: link });
+      // закроем модалку после успешного шаринга
+      const c = document.getElementById("shareCancelBtn");
+      if (c) c.click();
+    } catch (e) {
+      // пользователь отменил — ничего страшного
+    }
+  });
+}
 })();
 </script>
 
 <script src="js/app.js"></script>
 </body>
 </html>
+
 
 
 
