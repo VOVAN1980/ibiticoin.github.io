@@ -911,9 +911,14 @@
 
   // да, вот ЭТА функция, но с фоллбеком (на мобиле попапы часто режутся)
   function openUrl(u){
+  try {
     const w = window.open(u, "_blank", "noopener,noreferrer");
-    if (!w) location.href = u;
+    if (w) w.opener = null;
+    else window.location.assign(u);
+  } catch (e) {
+    window.location.assign(u);
   }
+}
 
   function openModal(){
     const o = $("shareOverlay");
@@ -1020,6 +1025,7 @@ if (nativeBtn) {
 <script src="js/app.js"></script>
 </body>
 </html>
+
 
 
 
