@@ -3,7 +3,7 @@
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 // something import config from "./config.js";
 import { ibitiNftAbi } from "./abis/ibitiNftAbi.js";
-import { connectWallet, signer, selectedAccount, showIbitiBalance } from "./wallet.js";
+// something import { connectWallet, signer, selectedAccount, showIbitiBalance } from "./wallet.js";
 
 // Выбираем конфигурацию (mainnet или testnet)
 const netConfig = config.mainnet; // или config.testnet, если у вас есть testnet
@@ -102,4 +102,5 @@ export async function handleNFTPurchase(discount, uri) {
     });
   }
 }
+
 
