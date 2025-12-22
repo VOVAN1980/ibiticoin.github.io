@@ -604,128 +604,115 @@
 </div>
 </div>
 <!-- Libraries -->
-<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
 
-<!-- WalletConnect (Reown) provider UMD (2 CDNs fallback) -->
-<script src="https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider/dist/index.umd.js"></script>
-<script>
-  (function() {
-    // Fallback if jsDelivr blocked
-    if (!(window.WalletConnectEthereumProvider || window.EthereumProvider)) {
-      var s = document.createElement("script");
-      s.src = "https://unpkg.com/@walletconnect/ethereum-provider/dist/index.umd.js";
-      s.onload = function(){ console.log("[WC] loaded via unpkg"); };
-      s.onerror = function(){ console.warn("[WC] failed to load from unpkg"); };
-      document.head.appendChild(s);
-    } else {
-      console.log("[WC] loaded via jsDelivr");
-    }
-  })();
-</script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
+  <script src="https://unpkg.com/@walletconnect/ethereum-provider/dist/index.umd.js"></script>
+  <script src="js/config.js"></script>
 
-<!-- Config (defines window.IBITI_CONFIG.getNet()) -->
-<script src="js/config.js"></script>
+  <script>
+    (async () => {
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.inset = '0';
+      overlay.style.zIndex = '99999';
+      overlay.style.background = 'rgba(0,0,0,0.72)';
+      overlay.style.backdropFilter = 'blur(2px)';
+      overlay.style.display = 'flex';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.padding = '18px';
+      overlay.innerHTML = `
+        <div style="max-width:520px;width:100%;border:1px solid rgba(247,208,0,0.25);border-radius:16px;padding:18px;background:rgba(0,0,0,0.85);box-shadow:0 18px 80px rgba(0,0,0,0.55);text-align:center;">
+          <div style="font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;font-weight:900;color:#f7d000;font-size:18px;margin-bottom:8px;">
+            Connect wallet (mobile)
+          </div>
+          <div style="font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;color:rgba(255,255,255,0.78);font-size:13px;line-height:1.45;margin-bottom:14px;">
+            Choose your wallet via WalletConnect. After connection, the shop will load automatically.
+          </div>
+          <button id="wcConnectBtn" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(247,208,0,0.35);background:rgba(247,208,0,0.14);color:#f7d000;font-weight:900;cursor:pointer;">
+            Connect
+          </button>
+          <div id="wcErr" style="margin-top:12px;display:none;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;color:#ffb4b4;font-size:12px;line-height:1.4;"></div>
+          <button id="wcContinueNoConnect" style="margin-top:10px;width:100%;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.06);color:#fff;font-weight:800;cursor:pointer;">
+            Continue without connect
+          </button>
+        </div>`;
+      document.body.appendChild(overlay);
 
-<!-- WC boot: provides window.ethereum via WalletConnect when injected is missing -->
-<script>
-(function() {
-  // If injected exists (MetaMask extension or in-app browser), keep it.
-  if (window.ethereum && window.ethereum.request) return;
-
-  var PROJECT_ID = "95f126f3a088cebcf781d2a1c10711fc";
-
-  function getWCGlobal() {
-    if (window.WalletConnectEthereumProvider && window.WalletConnectEthereumProvider.EthereumProvider) return window.WalletConnectEthereumProvider.EthereumProvider;
-    if (window.EthereumProvider && window.EthereumProvider.init) return window.EthereumProvider;
-    if (window.WalletConnectEthereumProvider && window.WalletConnectEthereumProvider.init) return window.WalletConnectEthereumProvider;
-    return null;
-  }
-
-  function getCfg() {
-    if (window.IBITI_CONFIG && typeof window.IBITI_CONFIG.getNet === "function") {
-      return window.IBITI_CONFIG.getNet();
-    }
-    // fallback: older config shapes
-    var u = new URL(location.href);
-    var netKey = (u.searchParams.get("net") || "mainnet").toLowerCase();
-    if (window.IBITI_CONFIG && window.IBITI_CONFIG.NETWORKS && window.IBITI_CONFIG.NETWORKS[netKey]) {
-      return window.IBITI_CONFIG.NETWORKS[netKey];
-    }
-    throw new Error("IBITI config not found (window.IBITI_CONFIG.getNet())");
-  }
-
-  var providerPromise = null;
-
-  async function ensureProvider() {
-    if (providerPromise) return providerPromise;
-
-    var WC = getWCGlobal();
-    if (!WC) {
-      // wait a bit for fallback CDN to load
-      providerPromise = new Promise(function(resolve, reject) {
-        var t0 = Date.now();
-        var timer = setInterval(function() {
-          var W = getWCGlobal();
-          if (W) {
-            clearInterval(timer);
-            resolve(W.init(buildInitOptions()));
-          } else if (Date.now() - t0 > 5000) {
-            clearInterval(timer);
-            reject(new Error("WalletConnect library not loaded"));
-          }
-        }, 60);
-      });
-      return providerPromise;
-    }
-
-    providerPromise = WC.init(buildInitOptions());
-    return providerPromise;
-  }
-
-  function buildInitOptions() {
-    var cfg = getCfg();
-    return {
-      projectId: PROJECT_ID,
-      chains: [cfg.chainIdDec],
-      showQrModal: true,
-      rpcMap: (function() {
-        var m = {};
-        if (cfg.rpcUrls && cfg.rpcUrls[0]) m[cfg.chainIdDec] = cfg.rpcUrls[0];
-        return m;
-      })(),
-      metadata: {
-        name: "IBITIcoin",
-        description: "IBITIcoin Shop",
-        url: location.origin,
-        icons: ["https://www.ibiticoin.com/img/og-image.png"]
+      function showErr(msg){
+        const el = document.getElementById('wcErr');
+        if (!el) return;
+        el.style.display = 'block';
+        el.textContent = msg;
       }
-    };
-  }
 
-  // EIP-1193 proxy: makes window.ethereum exist immediately
-  window.ethereum = {
-    isWalletConnect: true,
-    request: async function(args) {
-      var p = await ensureProvider();
-      return p.request(args);
-    },
-    on: function(event, cb) {
-      ensureProvider().then(function(p) {
-        if (p.on) p.on(event, cb);
+      async function initWalletConnect(interactive){
+        if (!window.WalletConnectEthereumProvider) {
+          throw new Error('WalletConnect library not loaded.');
+        }
+        if (!window.IBITI_CONFIG || typeof window.IBITI_CONFIG.getNet !== 'function') {
+          throw new Error('Config not loaded.');
+        }
+        const netCfg = window.IBITI_CONFIG.getNet();
+        const projectId = "95f126f3a088cebcf781d2a1c10711fc";
+
+        const provider = await window.WalletConnectEthereumProvider.EthereumProvider.init({
+          projectId,
+          chains: [netCfg.chainIdDec],
+          showQrModal: !!interactive,
+          rpcMap: { [netCfg.chainIdDec]: (netCfg.rpcUrls && netCfg.rpcUrls[0]) ? netCfg.rpcUrls[0] : undefined }
+        });
+
+        if (interactive) {
+          await provider.request({ method: 'eth_requestAccounts', params: [] });
+        }
+        // IMPORTANT: make existing app.js think we are injected MetaMask
+        window.ethereum = provider;
+        window.IBITI_WC = provider;
+      }
+
+      async function loadAppJs(){
+        // load existing app.js after provider is ready
+        const s = document.createElement('script');
+        s.src = 'js/app.js';
+        s.defer = true;
+        document.body.appendChild(s);
+      }
+
+      // If opened inside wallet browser (MetaMask/Trust), just load app.js
+      if (window.ethereum && window.ethereum.request) {
+        overlay.remove();
+        await loadAppJs();
+        return;
+      }
+
+      document.getElementById('wcContinueNoConnect')?.addEventListener('click', async () => {
+        overlay.remove();
+        await loadAppJs();
       });
-    },
-    removeListener: function(event, cb) {
-      ensureProvider().then(function(p) {
-        if (p.removeListener) p.removeListener(event, cb);
+
+      document.getElementById('wcConnectBtn')?.addEventListener('click', async () => {
+        try {
+          await initWalletConnect(true);
+          overlay.remove();
+          await loadAppJs();
+        } catch (e) {
+          console.error(e);
+          showErr((e && (e.message || e.shortMessage)) ? (e.message || e.shortMessage) : String(e));
+        }
       });
-    }
-  };
 
-  console.log("[WC] window.ethereum proxy installed");
-})();
-</script>
-
-<!-- App -->
-<script src="js/app.js"></script>
+      // Non-interactive init attempt (won't open modal). If WC session exists, it will connect silently.
+      try {
+        await initWalletConnect(false);
+        // If already has accounts, we can auto-load the shop.
+        const accs = await window.ethereum.request({ method: 'eth_accounts' });
+        if (accs && accs[0]) {
+          overlay.remove();
+          await loadAppJs();
+        }
+      } catch (_) {}
+    })();
+  </script>
 </body>
 </html>
