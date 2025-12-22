@@ -612,26 +612,26 @@
 
 <div aria-modal="true" class="modal hidden" id="shareModal" role="dialog">
   <h3 id="shareTitle">Share referral link</h3>
-  <p>Choose where to share. On mobile we will try native sharing first.</p>
+  <p>Choose where to share. On mobile we will try system sharing first.</p>
 
-  <div class="modal-actions">
-  <button class="btn btn-primary" id="shareNativeBtn">System share</button>
+  <div class="modal-actions" id="shareGrid">
+    <button class="btn btn-primary" id="shareNativeBtn">System share</button>
 
-  <button class="btn btn-primary" id="shareCopyBtn">Copy</button>
-  <button class="btn" id="shareTgBtn">Telegram</button>
-  <button class="btn" id="shareWaBtn">WhatsApp</button>
-  <button class="btn" id="shareVbBtn">Viber</button>
-  <button class="btn" id="shareVkBtn">VK</button>
-  <button class="btn" id="shareOkBtn">OK</button>
-  <button class="btn" id="shareXBtn">X</button>
-  <button class="btn" id="shareFbBtn">Facebook</button>
-  <button class="btn" id="shareLiBtn">LinkedIn</button>
-  <button class="btn" id="shareRdBtn">Reddit</button>
-  <button class="btn" id="shareWbBtn">Weibo</button>
-  <button class="btn" id="shareMailBtn">Email</button>
+    <button class="btn" id="shareCopyBtn">Copy</button>
+    <button class="btn" id="shareTgBtn">Telegram</button>
+    <button class="btn" id="shareWaBtn">WhatsApp</button>
+    <button class="btn" id="shareVbBtn">Viber</button>
+    <button class="btn" id="shareVkBtn">VK</button>
+    <button class="btn" id="shareOkBtn">OK</button>
+    <button class="btn" id="shareXBtn">X</button>
+    <button class="btn" id="shareFbBtn">Facebook</button>
+    <button class="btn" id="shareLiBtn">LinkedIn</button>
+    <button class="btn" id="shareRdBtn">Reddit</button>
+    <button class="btn" id="shareWbBtn">Weibo</button>
+    <button class="btn" id="shareMailBtn">Email</button>
 
-  <button class="btn" id="shareCancelBtn">Close</button>
-</div>
+    <button class="btn" id="shareCancelBtn">Close</button>
+  </div>
 </div>
 <footer>
       © 2025 IBITIcoin. All rights reserved.<br/>
@@ -667,102 +667,137 @@
 
 <script>
 (function(){
-  const btn = document.getElementById("connectWalletBtn");
-  if(!btn) return;
-
+  const $ = (id) => document.getElementById(id);
   const isMobile = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-  // широкий детект injected (у разных кошельков по-разному)
-  const hasInjected = () => {
-    const eth = window.ethereum;
-    return !!(eth && (typeof eth.request === "function" || typeof eth.enable === "function"));
-  };
-
-  let bypass = false;
-
-  // перехват ТОЛЬКО на мобиле и ТОЛЬКО если injected нет
-  btn.addEventListener("click", function(e){
-    if (bypass) { bypass = false; return; }
-    if (!isMobile()) return;
-
-    if (hasInjected()) return; // в MetaMask/Trust DApp browser не мешаем app.js
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    // даём шанс кошельку инжектнуться с задержкой
-    setTimeout(() => {
-      if (hasInjected()) {
-        bypass = true;
-        btn.dispatchEvent(new MouseEvent("click", { bubbles:true, cancelable:true }));
-      } else {
-        location.href = "wallet.html?redirect=" + encodeURIComponent(location.href);
-      }
-    }, 250);
-  }, true);
-})();
-</script>
-
-  <script>
-(function(){
-  function q(id){ return document.getElementById(id); }
-  function val(){ return (q("referralLink") && q("referralLink").value) ? q("referralLink").value : location.href; }
-  
-  function open(u){
-  window.open(u, "_blank", "noopener");
-  const c = document.getElementById("shareCancelBtn");
-  if (c) c.click(); // закрываем модалку
-}
-
-  const map = {
-    shareWaBtn:   () => open("https://wa.me/?text=" + encodeURIComponent(val())),
-    shareVbBtn:   () => open("viber://forward?text=" + encodeURIComponent(val())),
-    shareVkBtn:   () => open("https://vk.com/share.php?url=" + encodeURIComponent(val())),
-    shareOkBtn:   () => open("https://connect.ok.ru/offer?url=" + encodeURIComponent(val())),
-    shareLiBtn:   () => open("https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(val())),
-    shareRdBtn:   () => open("https://www.reddit.com/submit?url=" + encodeURIComponent(val())),
-    shareWbBtn:   () => open("https://service.weibo.com/share/share.php?url=" + encodeURIComponent(val())),
-    shareMailBtn: () => open("mailto:?subject=" + encodeURIComponent("IBITIcoin referral link") + "&body=" + encodeURIComponent(val())),
-  };
-
-  Object.keys(map).forEach(id => {
-    const el = q(id);
-    if(el) el.addEventListener("click", map[id]);
-  });
-
-  const nativeBtn = q("shareNativeBtn");
-const isMobile = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-if (nativeBtn) {
-  // На ПК системный шаринг часто глючит → делаем его только для мобилок
-  if (!isMobile()) {
-    nativeBtn.style.display = "none";
+  function toast(msg){
+    const el = $("toast");
+    if (!el) return alert(msg);
+    el.textContent = msg;
+    el.classList.add("show");
+    setTimeout(() => el.classList.remove("show"), 2400);
   }
 
-  nativeBtn.addEventListener("click", async () => {
-    const link = val();
+  function getLink(){
+    const inp = $("referralLink");
+    const v = inp ? String(inp.value || "").trim() : "";
+    return v || "";
+  }
 
-    if (!isMobile() || !navigator.share) {
-      alert("System share is available on mobile only. Use buttons below.");
-      return;
+  // да, вот ЭТА функция, но с фоллбеком (на мобиле попапы часто режутся)
+  function openUrl(u){
+    const w = window.open(u, "_blank", "noopener,noreferrer");
+    if (!w) location.href = u;
+  }
+
+  function openModal(){
+    const o = $("shareOverlay");
+    const m = $("shareModal");
+    if (o) o.classList.remove("hidden");
+    if (m) m.classList.remove("hidden");
+  }
+  function closeModal(){
+    const o = $("shareOverlay");
+    const m = $("shareModal");
+    if (o) o.classList.add("hidden");
+    if (m) m.classList.add("hidden");
+  }
+
+  // 1) Перехватываем кнопку "Share link" так, чтобы app.js не лез со своим navigator.share на ПК
+  //    (capture=true + stopImmediatePropagation)
+  const hookShareButton = () => {
+    const btn = $("shareReferralLink");
+    if (!btn) return;
+
+    btn.addEventListener("click", async (e) => {
+      const link = getLink();
+      if (!link) { toast("Referral link is not available yet. Make first promo purchase (>= 10 USDT)."); return; }
+
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+
+      // На мобиле сначала пробуем системный шаринг
+      if (isMobile() && navigator.share) {
+        try {
+          await navigator.share({ title: "IBITIcoin", text: "Referral link", url: link });
+          return;
+        } catch(_) { /* user canceled / failed */ }
+      }
+
+      // В остальных случаях — наша модалка
+      openModal();
+    }, true);
+  };
+
+  // 2) Вешаем кнопки модалки
+  function wireModalButtons(){
+    const linkOrUrl = () => getLink() || location.href;
+
+    const map = {
+      shareCopyBtn: async () => {
+        const v = linkOrUrl();
+        try { await navigator.clipboard.writeText(v); toast("Copied!"); }
+        catch(_) { toast("Copy failed. Long-press and copy the link."); }
+      },
+      shareTgBtn:   () => openUrl("https://t.me/share/url?url=" + encodeURIComponent(linkOrUrl())),
+      shareWaBtn:   () => openUrl("https://wa.me/?text=" + encodeURIComponent(linkOrUrl())),
+      shareVbBtn:   () => openUrl("viber://forward?text=" + encodeURIComponent(linkOrUrl())),
+      shareVkBtn:   () => openUrl("https://vk.com/share.php?url=" + encodeURIComponent(linkOrUrl())),
+      shareOkBtn:   () => openUrl("https://connect.ok.ru/offer?url=" + encodeURIComponent(linkOrUrl())),
+      shareXBtn:    () => openUrl("https://twitter.com/intent/tweet?url=" + encodeURIComponent(linkOrUrl())),
+      shareFbBtn:   () => openUrl("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(linkOrUrl())),
+      shareLiBtn:   () => openUrl("https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(linkOrUrl())),
+      shareRdBtn:   () => openUrl("https://www.reddit.com/submit?url=" + encodeURIComponent(linkOrUrl())),
+      shareWbBtn:   () => openUrl("https://service.weibo.com/share/share.php?url=" + encodeURIComponent(linkOrUrl())),
+      shareMailBtn: () => openUrl("mailto:?subject=" + encodeURIComponent("IBITIcoin referral link") + "&body=" + encodeURIComponent(linkOrUrl())),
+      shareCancelBtn: () => closeModal(),
+      shareOverlay: () => closeModal()
+    };
+
+    Object.keys(map).forEach((id) => {
+      const el = $(id);
+      if (!el) return;
+      el.addEventListener("click", (e) => { e.preventDefault(); map[id](); });
+    });
+
+    const nativeBtn = $("shareNativeBtn");
+    if (nativeBtn) {
+      nativeBtn.addEventListener("click", async () => {
+        const link = linkOrUrl();
+        if (!navigator.share) return toast("System share not available here. Use buttons below.");
+        try { await navigator.share({ title: "IBITIcoin", text: "Referral link", url: link }); }
+        catch(_) {}
+      });
     }
 
-    try {
-      await navigator.share({ title: "IBITIcoin", text: "Referral link", url: link });
-      // закроем модалку после успешного шаринга
-      const c = document.getElementById("shareCancelBtn");
-      if (c) c.click();
-    } catch (e) {
-      // пользователь отменил — ничего страшного
-    }
-  });
-}
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeModal();
+    });
+  }
+
+  // 3) Чтобы кнопки в модалке нормально помещались на мобиле (если нет CSS)
+  function injectShareCss(){
+    const css = `
+      #shareModal { max-width: 720px; width: min(720px, 92vw); max-height: 80vh; overflow:auto; }
+      #shareGrid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:10px; }
+      @media (min-width: 720px){ #shareGrid { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+    `;
+    const s = document.createElement("style");
+    s.textContent = css;
+    document.head.appendChild(s);
+  }
+
+  injectShareCss();
+  hookShareButton();
+  wireModalButtons();
 })();
 </script>
 
 <script src="js/app.js"></script>
 </body>
 </html>
+
 
 
 
