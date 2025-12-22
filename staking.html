@@ -397,5 +397,82 @@
     <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
   </footer>
 
+  <style>
+  .ibiti-modal-backdrop{
+    position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+    background:rgba(0,0,0,.72); z-index:9999; padding:18px;
+  }
+  .ibiti-modal{
+    width:min(520px,100%); border:1px solid rgba(247,208,0,0.25); border-radius:18px;
+    background:rgba(0,0,0,0.92); box-shadow:0 0 22px rgba(255,215,0,0.12);
+    padding:18px; color:#fff; font-family: Orbitron, system-ui, Arial, sans-serif;
+  }
+  .ibiti-modal h3{ margin:0 0 10px; color:#f7d000; }
+  .ibiti-modal p{ margin:0 0 10px; color:rgba(255,255,255,.82); line-height:1.55; font-size:13px; }
+  .ibiti-modal .btns{ display:flex; gap:10px; margin-top:12px; }
+  .ibiti-modal button{
+    flex:1; padding:12px 14px; border-radius:12px; cursor:pointer; font-weight:800;
+    border:1px solid rgba(247,208,0,0.25);
+    background:rgba(247,208,0,0.12); color:#f7d000;
+  }
+  .ibiti-modal button.secondary{
+    background:rgba(255,255,255,0.08); color:#fff;
+    border:1px solid rgba(255,255,255,0.12);
+  }
+</style>
+
+<div class="ibiti-modal-backdrop" id="ibitiNoticeBackdrop" role="dialog" aria-modal="true">
+  <div class="ibiti-modal">
+    <h3>Feature temporarily unavailable</h3>
+    <p>
+      This section is currently in <b>planned development</b>.
+      NFT sale and staking will go live according to the project update schedule.
+    </p>
+    <p>
+      Follow announcements only via our official website and social channels.
+      <br><b>Security:</b> admins never DM first — always verify links.
+    </p>
+    <div class="btns">
+      <button class="secondary" id="ibitiNoticeClose">OK</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const back = document.getElementById("ibitiNoticeBackdrop");
+  const closeBtn = document.getElementById("ibitiNoticeClose");
+
+  function openModal(){ back.style.display = "flex"; }
+  function closeModal(){ back.style.display = "none"; }
+
+  closeBtn?.addEventListener("click", closeModal);
+  back?.addEventListener("click", (e)=>{ if(e.target === back) closeModal(); });
+
+  // Перехват клика по кнопке Connect wallet (любое имя/разметка)
+  document.addEventListener("click", function(e){
+    const t = e.target.closest("button,a");
+    if(!t) return;
+
+    const text = (t.textContent || "").trim().toLowerCase();
+    const isConnect =
+      t.id === "connectWalletBtn" ||
+      t.id === "connectBtn" ||
+      t.classList.contains("connect-wallet") ||
+      t.hasAttribute("data-connect-wallet") ||
+      text === "connect wallet" ||
+      text === "подключить кошелёк" ||
+      text === "подключить кошелек";
+
+    if(!isConnect) return;
+
+    // стопаем любые другие обработчики, чтобы ничего не коннектилось
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    openModal();
+  }, true);
+})();
+</script>
+
 </body>
 </html>
