@@ -987,19 +987,17 @@
     });
 
     const nativeBtn = $("shareNativeBtn");
-    if (nativeBtn) {
-      nativeBtn.addEventListener("click", async () => {
-        const link = linkOrUrl();
-        if (!navigator.share) return toast("System share not available here. Use buttons below.");
-        try { await navigator.share({ title: "IBITIcoin", text: "Referral link", url: link }); }
-        catch(_) {}
-      });
-    }
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeModal();
+if (nativeBtn) {
+  if (!navigator.share) {
+    nativeBtn.style.display = "none";     // ← ВАЖНО: убрать кнопку на ПК
+  } else {
+    nativeBtn.addEventListener("click", async () => {
+      const link = linkOrUrl();
+      try { await navigator.share({ title: "IBITIcoin", text: "Referral link", url: link }); }
+      catch(_) {}
     });
   }
+}
 
   // 3) Чтобы кнопки в модалке нормально помещались на мобиле (если нет CSS)
   function injectShareCss(){
@@ -1022,6 +1020,7 @@
 <script src="js/app.js"></script>
 </body>
 </html>
+
 
 
 
