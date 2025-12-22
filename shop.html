@@ -911,8 +911,27 @@
 
   // да, вот ЭТА функция, но с фоллбеком (на мобиле попапы часто режутся)
   function openUrl(u){
-  const w = window.open(u, "_blank", "noopener,noreferrer");
-  if (!w) location.href = u;
+  if (!u || typeof u !== "string") {
+    console.warn("openUrl: empty url", u);
+    return;
+  }
+
+  // Открываем окно без url — так браузер реже ломается в about:blank
+  const w = window.open("about:blank", "_blank");
+  if (!w) {
+    // если попап заблокирован — открываем в текущей вкладке
+    window.location.assign(u);
+    return;
+  }
+
+  try {
+    w.opener = null;
+    w.location.href = u;
+    w.focus();
+  } catch (e) {
+    // на случай странных WebView
+    window.location.assign(u);
+  }
 }
 
   function openModal(){
@@ -1020,6 +1039,7 @@ if (nativeBtn) {
 <script src="js/app.js"></script>
 </body>
 </html>
+
 
 
 
