@@ -345,35 +345,11 @@
     const openWalletBtn = document.getElementById("connectWalletBtn");
     const closeWalletBtn = document.getElementById("closeWalletModal");
 
-    openWalletBtn?.addEventListener("click", async (e) => {
-      e.preventDefault();
-
-      const res = await Swal.fire({
-        icon: "info",
-        title: "Staking is coming soon",
-        html: `
-          <div style="text-align:left; line-height:1.45">
-            <p><b>IBITI Staking</b> is currently in scheduled preparation.</p>
-            <p>Wallet connection and staking actions will be enabled as part of our planned project update.</p>
-            <p style="margin:10px 0 0 0; opacity:.9">
-              Please follow announcements on <b>ibiticoin.com</b> and our official social channels.
-            </p>
-            <p style="margin:10px 0 0 0; font-size:12px; opacity:.85">
-              Security note: admins will never DM you first — always verify links via official sources.
-            </p>
-          </div>
-        `,
-        showCancelButton: true,
-        confirmButtonText: "Continue",
-        cancelButtonText: "Close",
-        allowOutsideClick: true
-      });
-
-      if (!res.isConfirmed) return;
-
+    openWalletBtn?.addEventListener("click", e => {
       const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       const hasInjected = Boolean(window.ethereum);
       if (isMobile && !hasInjected) {
+        e.preventDefault();
         Swal.fire({
           icon: "info",
           title: "Open inside your wallet",
@@ -381,10 +357,6 @@
           confirmButtonText: "OK",
           allowOutsideClick: false
         });
-        return;
-      }
-      walletModal.style.display = "flex";
-    });
         return;
       }
       walletModal.style.display = "flex";
