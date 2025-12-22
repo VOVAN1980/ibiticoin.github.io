@@ -645,39 +645,53 @@
 </div>
 </div>
 </div>
-<!-- Libraries -->
+
+  <!-- Libraries -->
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
 
-<!-- Config -->
 <script src="js/config.js"></script>
 
-<!-- Mobile-only redirect to wallet chooser (ONLY if no injected provider) -->
 <script>
 (function(){
-  function isMobile(){
-    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  }
-  function hasInjected(){
-    return window.ethereum && typeof window.ethereum.request === "function";
-  }
-
-  var btn = document.getElementById("connectWalletBtn");
+  const btn = document.getElementById("connectWalletBtn");
   if(!btn) return;
 
+  const isMobile = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  // широкий детект injected (у разных кошельков по-разному)
+  const hasInjected = () => {
+    const eth = window.ethereum;
+    return !!(eth && (typeof eth.request === "function" || typeof eth.enable === "function"));
+  };
+
+  let bypass = false;
+
+  // перехват ТОЛЬКО на мобиле и ТОЛЬКО если injected нет
   btn.addEventListener("click", function(e){
-    if(isMobile() && !hasInjected()){
-      e.preventDefault();
-      e.stopPropagation();
-      var redirect = window.location.href;
-      window.location.href = "wallet.html?redirect=" + encodeURIComponent(redirect);
-    }
+    if (bypass) { bypass = false; return; }
+    if (!isMobile()) return;
+
+    if (hasInjected()) return; // в MetaMask/Trust DApp browser не мешаем app.js
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    // даём шанс кошельку инжектнуться с задержкой
+    setTimeout(() => {
+      if (hasInjected()) {
+        bypass = true;
+        btn.dispatchEvent(new MouseEvent("click", { bubbles:true, cancelable:true }));
+      } else {
+        location.href = "wallet.html?redirect=" + encodeURIComponent(location.href);
+      }
+    }, 250);
   }, true);
 })();
 </script>
 
-<!-- App -->
 <script src="js/app.js"></script>
 </body>
 </html>
+
 
 
