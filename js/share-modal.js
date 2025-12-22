@@ -1,579 +1,458 @@
-// js/share-modal.js — IBITI Shop-style Share Modal (NO "System")
-(() => {
+/* share-modal.js — IBITIcoin (classic script, no imports)
+   - Creates a modern share modal (same vibe as shop modal)
+   - No "System" button (auto-tries navigator.share on mobile, then falls back to modal)
+   - Attaches to any element matching:
+       [data-ibiti-share], #shareBtn, #shareButton, a[href="#share"], button[aria-label*="share" i]
+*/
+
+(function () {
   "use strict";
 
-  const OPEN_BTN_ID = "openShareModal"; // твоя кнопка на главной
+  // ---------- helpers ----------
+  const $ = (sel, root=document) => root.querySelector(sel);
+  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+  const esc = (s) => (s == null ? "" : String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])));
 
-  // --- SVG icons (как в магазине: простые, моно, серые) ---
-  const ICO = {
-    copy: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7a3 3 0 0 1 3-3h8v12a3 3 0 0 1-3 3h-8V7Z"/><path d="M5 8H4a3 3 0 0 0-3 3v9h12v-1H5a2 2 0 0 1-2-2V11a3 3 0 0 1 3-3Z"/></svg>`,
-    tg:   `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 2 11l7 2 2 7 3-4 4 3 3-16ZM9 13l8-7-6 8-1 4-1-4Z"/></svg>`,
-    wa:   `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20Z"/><path d="M16.8 14.9c-.2-.1-1.3-.6-1.5-.7-.2-.1-.4-.1-.5.1l-.6.7c-.1.2-.3.2-.5.1-1-.5-1.8-1.1-2.5-2-.2-.2-.2-.4 0-.5l.5-.6c.1-.2.1-.4.1-.5l-.6-1.4c-.1-.3-.3-.3-.5-.3h-.5c-.2 0-.4.1-.5.3-.5.6-.7 1.3-.6 2.1.2 1.9 2.3 4 4.3 4.7.7.2 1.5.2 2.1-.2.2-.1.4-.3.4-.5v-.5c0-.2-.1-.4-.3-.5Z"/></svg>`,
-    vb:   `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6H9l-4 2v-4a6 6 0 0 1-2-4V9a6 6 0 0 1 4-6Zm2 5h2v2H9V8Zm4 0h2v2h-2V8Zm-4 4c.7 2 2.3 3 4 3s3.3-1 4-3h-2c-.5.9-1.3 1.4-2 1.4s-1.5-.5-2-1.4H9Z"/></svg>`,
-    vk:   `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7c2 0 3 0 3 0s1 7 5 7c1 0 1-2 1-3s-1-1 0-2c1-1 4 0 5 3c0 0 2 0 2 0S19 5 12 5C5 5 4 7 4 7Z"/></svg>`,
-    ok:   `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0-6a2 2 0 1 1-2 2 2 2 0 0 1 2-2Z"/><path d="M17.5 14.2a1 1 0 0 0-1.4.1 5.7 5.7 0 0 1-8.2 0 1 1 0 1 0-1.3 1.5 7.8 7.8 0 0 0 3.6 2l-2 2a1 1 0 0 0 1.4 1.4l2.4-2.4 2.4 2.4a1 1 0 0 0 1.4-1.4l-2-2a7.8 7.8 0 0 0 3.6-2 1 1 0 0 0 .1-1.4Z"/></svg>`,
-    x:    `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.5 3H21l-6.8 7.8L21.6 21H15l-4.1-5.4L6 21H3.5l7.4-8.5L2.6 3H9l3.7 4.9L18.5 3Z"/></svg>`,
-    fb:   `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 9h2V6h-2c-2 0-4 2-4 4v2H8v3h2v7h3v-7h2l1-3h-3v-2c0-.6.4-1 1-1Z"/></svg>`,
-    li:   `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9H3v12h3V9Zm-1.5-6A1.75 1.75 0 1 0 6.2 4.75 1.75 1.75 0 0 0 4.5 3ZM21 14c0-3-1.6-5-4.4-5a3.8 3.8 0 0 0-3.1 1.6V9H10v12h3v-6c0-1.6.3-3 2.2-3s1.9 1.7 1.9 3.1V21h3v-7Z"/></svg>`,
-    rd:   `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm4.3 9.2a1 1 0 0 1 2 0c0 1.8-1.2 3.2-3.3 3.2-.8 0-1.5-.2-2.1-.6-.4 1.1-1.6 2-3.1 2-1.9 0-3.4-1.4-3.4-3.2 0-1.9 1.5-3.4 3.4-3.4.9 0 1.7.3 2.3.8.6-.5 1.4-.8 2.3-.8 1.5 0 2.7.9 3.1 2.1.6.4 1.3.6 2.1.6 1.1 0 1.7-.6 1.7-1.7Z"/></svg>`,
-    wb:   `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6.2c.9-.2 1.8-.2 2.6 0a2.3 2.3 0 1 1-.7 2.2c-.6-.1-1.2-.1-1.8 0l-.4 1.8c2.6.5 4.4 2 4.4 3.9 0 2.3-2.9 4.1-6.6 4.1S5.4 16.4 5.4 14c0-1.9 1.8-3.4 4.4-3.9l-.4-1.8c-.6-.1-1.2-.1-1.8 0A2.3 2.3 0 1 1 7 6.2c.8-.2 1.7-.2 2.6 0l.4 2c.6-.1 1.2-.1 1.9-.1s1.3 0 1.9.1l.4-2Z"/><path d="M10 14.2a1 1 0 1 0 1 1 1 1 0 0 0-1-1Zm4 0a1 1 0 1 0 1 1 1 1 0 0 0-1-1Z"/></svg>`,
-    mail: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Zm8 7L4 8v10h16V8l-8 5Z"/></svg>`,
-    close:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3 1.4 1.4Z"/></svg>`
-  };
+  function canonicalUrl() {
+    try {
+      const u = new URL(window.location.href);
+      // clean tracking params you don't want to share
+      ["utm_source","utm_medium","utm_campaign","utm_content","utm_term"].forEach(k => u.searchParams.delete(k));
+      return u.toString();
+    } catch {
+      return String(window.location.href);
+    }
+  }
 
-  function injectStyleOnce() {
-    if (document.getElementById("ibitiShareModalStyle")) return;
+  async function copyToClipboard(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (e) {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        return true;
+      } catch {
+        return false;
+      }
+    }
+  }
 
-    const css = `
-/* Share modal — IBITI shop style (compact) */
-#shareOverlay{
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,.72);
-  backdrop-filter: blur(6px);
+  function toast(msg) {
+    let el = $("#ibitiShareToast");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "ibitiShareToast";
+      el.className = "ibiti-share-toast";
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(window.__ibitiShareToastT);
+    window.__ibitiShareToastT = setTimeout(() => el.classList.remove("show"), 1500);
+  }
+
+  // ---------- style injection ----------
+  function injectStyle() {
+    if ($("#ibitiShareModalStyle")) return;
+
+    const style = document.createElement("style");
+    style.id = "ibitiShareModalStyle";
+    style.textContent = `
+:root{
+  --ib-gold:#f7d000;
+  --ib-red:#ff3b3b;             /* "богатая" красная нотка */
+  --ib-border: rgba(247,208,0,0.22);
+  --ib-shadow: 0 0 22px rgba(255,215,0,0.10);
+  --ib-shadow2: 0 18px 60px rgba(0,0,0,0.55);
+}
+
+.ibiti-share-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.62);
+  backdrop-filter: blur(2px);
   z-index: 9998;
 }
-#shareModal{
+
+.ibiti-share-modal{
   position: fixed;
-  left: 50%; top: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(10,10,10,.92);
-  border: 1px solid rgba(247,208,0,.28);
-  box-shadow: 0 20px 60px rgba(0,0,0,.65);
-  border-radius: 18px;
-  color: #fff;
-  max-width: 720px;
-  width: min(720px, 92vw);
-  padding: 16px 16px 14px;
+  inset: 0;
+  display: grid;
+  place-items: center;
   z-index: 9999;
+  padding: 18px;
 }
-#shareTitle{
-  color: #f7d000;
-  letter-spacing: .6px;
-  margin: 0 0 6px;
+
+.ibiti-share-box{
+  width: min(720px, calc(100% - 22px));
+  background: rgba(10,10,10,0.84);
+  color: #fff;
+  border-radius: 18px;
+  box-shadow: var(--ib-shadow2);
+  border: 1px solid rgba(255,255,255,0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.ibiti-share-box:before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  border-radius: 20px;
+  padding: 2px;
+  background: linear-gradient(135deg, rgba(247,208,0,0.55), rgba(255,59,59,0.45), rgba(247,208,0,0.25));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events:none;
+}
+
+.ibiti-share-head{
+  padding: 16px 18px 10px;
   text-align: center;
+  position: relative;
+}
+
+.ibiti-share-title{
+  margin: 0;
+  font-family: Orbitron, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   font-weight: 800;
+  letter-spacing: .3px;
+  color: var(--ib-gold);
+  text-shadow: 0 0 16px rgba(247,208,0,0.25);
 }
-#shareModal p{
-  color: rgba(255,255,255,.72);
-  margin: 0 0 12px;
-  text-align: center;
+
+.ibiti-share-sub{
+  margin: 8px 0 0;
   font-size: 13px;
+  color: rgba(255,255,255,0.74);
   line-height: 1.45;
 }
-.share-grid{
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0,1fr));
-  gap: 10px;
-}
-@media (min-width: 760px){
-  .share-grid{ grid-template-columns: repeat(4, minmax(0,1fr)); }
-}
-.share-btn{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(247,208,0,.18);
-  background: rgba(255,255,255,.10); /* серые кнопки */
-  color: rgba(255,255,255,.92);
-  cursor: pointer;
-  transition: transform .12s ease, background .12s ease, border-color .12s ease, filter .12s ease;
-  user-select: none;
-  font-weight: 700;
-}
-.share-btn:hover{
-  transform: translateY(-1px);
-  background: rgba(255,255,255,.04); /* “серый уходит” как в магазине */
-  border-color: rgba(247,208,0,.38);
-  filter: brightness(1.05);
-}
-.share-btn:active{ transform: translateY(0px); }
 
-.share-btn--primary{
-  background: rgba(247,208,0,.16);
-  border-color: rgba(247,208,0,.45);
-  color: #ffd84a;
-  font-weight: 800;
-}
-.share-btn--danger{
-  background: rgba(255,255,255,.10);
-  border: 1px solid rgba(255,255,255,.14);
-  height: 44px;
-}
-.share-ico{
-  width: 18px; height: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.share-ico svg{
-  width: 18px; height: 18px;
-  fill: currentColor;
-  opacity: .95;
-}
-.share-btn:focus{
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(247,208,0,.18);
-  border-color: rgba(247,208,0,.45);
-}
-#shareTopClose{
-  position:absolute;
-  top: 10px; right: 10px;
-  border: 1px solid rgba(255,255,255,.14);
-  background: rgba(255,255,255,.08);
-  color: rgba(255,255,255,.9);
+.ibiti-share-close{
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.35);
+  color: rgba(255,255,255,0.88);
   border-radius: 10px;
-  padding: 6px 10px;
+  padding: 8px 10px;
   cursor: pointer;
+}
+
+.ibiti-share-body{ padding: 8px 18px 18px; }
+
+.ibiti-share-grid{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 8px 0 4px;
+}
+
+@media (max-width: 720px){
+  .ibiti-share-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.ibiti-share-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap: 10px;
+  padding: 10px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  user-select: none;
+
+  border: 1px solid rgba(247,208,0,0.20);
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.92);
+  box-shadow: 0 0 18px rgba(255,215,0,0.06);
   font-weight: 700;
 }
-#shareTopClose:hover{
-  background: rgba(255,255,255,.04);
-  border-color: rgba(247,208,0,.35);
+
+.ibiti-share-btn:hover{
+  border-color: rgba(247,208,0,0.42);
+  background: rgba(255,255,255,0.10);
 }
-#shareUrlBox{
-  margin-top: 12px;
+
+.ibiti-share-btn.primary{
+  border-color: rgba(247,208,0,0.45);
+  background: rgba(247,208,0,0.12);
+  color: var(--ib-gold);
+}
+
+.ibiti-share-ico{
+  width: 18px; height: 18px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.ibiti-share-ico svg{ width: 18px; height: 18px; fill: currentColor; opacity: .95; }
+
+.ibiti-share-url{
+  margin-top: 10px;
   padding: 10px 12px;
   border-radius: 12px;
-  border: 1px solid rgba(247,208,0,.22);
-  background: rgba(0,0,0,.45);
-  color: rgba(255,255,255,.88);
+  border: 1px solid rgba(247,208,0,0.22);
+  background: rgba(0,0,0,0.40);
+  color: rgba(255,255,255,0.90);
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 12px;
   word-break: break-all;
   text-align: center;
 }
-/* Share modal (центрированная карточка) */
-  #shareModal{
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-    width: min(520px, calc(100% - 24px));
-    background: #fff;
-    color: #111;
-    border-radius: 16px;
-    padding: 18px 18px 14px;
-    z-index: 9999;
-    box-shadow: 0 20px 80px rgba(0,0,0,0.4);
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  }
-  #shareModal h3{ margin: 0 0 10px; }
-  #shareModal p{ margin: 0 0 14px; color: rgba(0,0,0,0.7); }
-  #shareModal .modal-actions{
-    display:flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-  }
-  #shareModal .modal-actions .btn{ min-width: 110px; }
 
-  /* Pancake modal (fullscreen overlay + box) */
-  #pancakeModal{
-    position: fixed;
-    inset: 0;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 20;
-  }
-  #pancakeModal.open{ display:flex; }
-
-  .modal-overlay{
-    position:absolute; inset:0;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(2px);
-  }
-
-  .modal-box{
-    position:relative;
-    width: min(520px, calc(100% - 30px));
-    border-radius: 18px;
-    background: #fff;
-    color: #111;
-    padding: 18px 18px 14px;
-    box-shadow: 0 18px 48px rgba(0,0,0,0.45);
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  }
-  .modal-box h3{
-    margin: 0 0 8px;
-    font-size: 18px;
-    text-align:center;
-  }
-  .modal-box p{
-    margin: 0 0 10px;
-    color:#333;
-    text-align:center;
-    font-size: 13px;
-    line-height: 1.5;
-  }
-  .modal-steps{
-    font-size: 13px;
-    color:#333;
-    margin: 10px 0 14px;
-    line-height: 1.55;
-  }
-  .modal-steps ol{ margin: 8px 0 0 18px; }
-
-  .modal-actions{
-    display:flex;
-    gap: 10px;
-    justify-content:center;
-    flex-wrap: wrap;
-    padding-top: 10px;
-  }
-  .modal-actions a, .modal-actions button{
-    border: none;
-    border-radius: 10px;
-    padding: 10px 14px;
-    cursor: pointer;
-    font-weight: 700;
-  }
-  .modal-actions a{
-    background: #3b82f6;
-    color:#fff;
-    text-decoration:none;
-  }
-  .modal-actions button{
-    background: #6b7280;
-    color:#fff;
-  }
-
-  .ref-locked{
-    margin: 12px auto 0;
-    max-width: 860px;
-    text-align: center;
-    color: rgba(255,255,255,0.75);
-    font-size: 14px;
-    border: 1px dashed rgba(247,208,0,0.25);
-    border-radius: 12px;
-    padding: 12px 14px;
-    background: rgba(0,0,0,0.22);
-  }
-
-  /* Disabled purchase buttons */
-  .btn:disabled, .btn-disabled{
-    opacity: 0.45;
-    cursor: not-allowed;
-    filter: grayscale(0.25);
-  }
-
-  /* Share modal — IBITI style */
-#shareOverlay{
-  background: rgba(0,0,0,.72);
-  backdrop-filter: blur(6px);
-}
-
-#shareModal{
-  background: rgba(10,10,10,.92);
-  border: 1px solid rgba(247,208,0,.28);
-  box-shadow: 0 20px 60px rgba(0,0,0,.65);
-  border-radius: 18px;
+.ibiti-share-toast{
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.78);
+  border: 1px solid rgba(247,208,0,0.25);
   color: #fff;
-  max-width: 860px;
-  width: min(860px, 92vw);
-  padding: 18px 18px 16px;
-}
-
-#shareTitle{
-  color: #f7d000;
-  letter-spacing: .6px;
-  margin: 0 0 6px;
-  text-align: center;
-}
-
-#shareModal p{
-  color: rgba(255,255,255,.72);
-  margin: 0 0 14px;
-  text-align: center;
-  font-size: 14px;
-}
-
-.share-grid{
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0,1fr));
-  gap: 10px;
-}
-@media (min-width: 760px){
-  .share-grid{ grid-template-columns: repeat(4, minmax(0,1fr)); }
-}
-
-.share-btn{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 10px 12px;
+  padding: 10px 14px;
   border-radius: 12px;
-  border: 1px solid rgba(247,208,0,.22);
-  background: rgba(255,255,255,.06);
-  color: rgba(255,255,255,.92);
-  cursor: pointer;
-  transition: transform .12s ease, background .12s ease, border-color .12s ease;
-  user-select: none;
+  box-shadow: var(--ib-shadow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease;
+  z-index: 10000;
+  font-size: 13px;
 }
+.ibiti-share-toast.show{ opacity: 1; }
+    `.trim();
 
-.share-btn:hover{
-  transform: translateY(-1px);
-  background: rgba(247,208,0,.10);
-  border-color: rgba(247,208,0,.40);
-}
-
-.share-btn:active{
-  transform: translateY(0px);
-}
-
-.share-btn--primary{
-  background: rgba(247,208,0,.16);
-  border-color: rgba(247,208,0,.45);
-  color: #ffd84a;
-  font-weight: 600;
-}
-
-.share-btn--danger{
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.10);
-  height: 44px;
-}
-
-.share-ico{
-  width: 18px;
-  height: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.share-ico svg{
-  width: 18px;
-  height: 18px;
-  fill: currentColor;
-  opacity: .95;
-}
-
-.ref-actions{
-  display:flex;
-  justify-content:center;
-  margin-top: 12px;
-}
-
-.share-main{
-  min-width: 160px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap: 10px;
-}
-.share-main .ico{
-  font-size: 18px;
-  line-height: 1;
-}
-  .share-btn:focus{
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(247,208,0,.18);
-  border-color: rgba(247,208,0,.45);
-}
-.hidden{ display:none !important; }
-`;
-
-    const style = document.createElement("style");
-    style.id = "ibitiShareModalStyle";
-    style.textContent = css;
     document.head.appendChild(style);
   }
 
-  function injectModalOnce() {
-    if (document.getElementById("shareModal") && document.getElementById("shareOverlay")) return;
+  // ---------- modal building ----------
+  function icon(svgPath) {
+    return `<span class="ibiti-share-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${svgPath}"></path></svg></span>`;
+  }
+
+  const ICONS = {
+    copy: "M16 1H6a2 2 0 0 0-2 2v12h2V3h10V1zm3 4H10a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H10V7h9v14z",
+    telegram: "M9.9 14.6 9.7 19c.4 0 .6-.2.8-.4l1.9-1.8 4 2.9c.7.4 1.2.2 1.4-.7l2.6-12c.3-1.1-.4-1.6-1.2-1.3L3.5 10c-1 .4-1 1 0 1.3l4.2 1.3 9.7-6.1c.5-.3.9-.1.6.2",
+    whatsapp: "M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20z",
+    viber: "M7 3h8a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6H9l-4 2v-2.8A6 6 0 0 1 7 15V3z",
+    vk: "M4 7h3c.2 4 2.1 6 3.6 6V7h3v3.4c1.5-.1 3.1-2 3.6-3.4h3c-.5 2-2.3 4.6-3.7 5.6 1.4.7 3.4 2.8 4.1 4.4h-3.3c-.7-1.6-2.4-3.1-3.7-3.2V17h-3c-4.5 0-7.1-3.1-7.6-10z",
+    ok: "M12 12a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zm0 0c-3.9 0-6.5 2-6.5 4.1 0 1.7 1.2 3 3.1 3.9l-2.1 2.1 1.4 1.4 2.8-2.8c.4.1.9.1 1.3.1s.9 0 1.3-.1l2.8 2.8 1.4-1.4-2.1-2.1c1.9-.9 3.1-2.2 3.1-3.9C18.5 14 15.9 12 12 12z",
+    x: "M18.9 3H15l-3.3 4.2L8.2 3H3.1l6.2 8.2L3 21h3.9l4.2-5.3L15.2 21H20l-6.6-8.7L18.9 3z",
+    facebook: "M14 9h2V6h-2c-1.7 0-3 1.3-3 3v2H9v3h2v7h3v-7h2.2l.8-3H14V9c0-.6.4-1 1-1z",
+    linkedin: "M6 9H3v12h3V9zm.2-4.2a1.7 1.7 0 1 1-3.4 0 1.7 1.7 0 0 1 3.4 0zM21 14.5V21h-3v-6c0-1.4-.5-2.4-1.8-2.4-1 0-1.6.7-1.9 1.3-.1.3-.1.7-.1 1.1V21h-3s.1-10 0-12h3v1.7c.4-.7 1.2-1.8 3-1.8 2.2 0 3.8 1.5 3.8 4.6z",
+    reddit: "M20 12.3c.6.4 1 .9 1 1.6 0 1-.9 1.8-2 1.8-.2 0-.4 0-.6-.1-1 2.2-3.5 3.7-6.4 3.7s-5.4-1.5-6.4-3.7c-.2.1-.4.1-.6.1-1.1 0-2-.8-2-1.8 0-.7.4-1.2 1-1.6-.1-.4-.2-.8-.2-1.2 0-2.5 3-4.6 6.8-4.8l1.1-2.6 3.1.7c.3-.5.9-.8 1.5-.8 1 0 1.8.8 1.8 1.7 0 .9-.8 1.7-1.8 1.7-.7 0-1.3-.4-1.6-1l-2.2-.5-.8 1.9c3.8.2 6.8 2.3 6.8 4.8 0 .4-.1.8-.2 1.2z",
+    weibo: "M9.2 19c-3 0-5.5-1.5-5.5-3.9 0-2.6 3.3-6.2 8.4-6.2 2.4 0 4.5.6 5.7 1.6.8.6 1 1.3.6 1.8-.3.4-.9.6-1.7.5.6.7.8 1.5.4 2.3-1 2.1-4.2 3.9-7.9 3.9z",
+    email: "M4 6h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zm0 2v.2l8 5 8-5V8H4zm16 10V10.3l-8 5-8-5V18h16z",
+    close: "M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3z"
+  };
+
+  function buildModal() {
+    if ($("#ibitiShareOverlay") && $("#ibitiShareModal")) return;
+
+    injectStyle();
 
     const overlay = document.createElement("div");
-    overlay.id = "shareOverlay";
-    overlay.className = "hidden";
+    overlay.id = "ibitiShareOverlay";
+    overlay.className = "ibiti-share-overlay";
+    overlay.style.display = "none";
 
     const modal = document.createElement("div");
-    modal.id = "shareModal";
-    modal.className = "hidden";
-    modal.setAttribute("role", "dialog");
-    modal.setAttribute("aria-modal", "true");
-    modal.setAttribute("aria-labelledby", "shareTitle");
+    modal.id = "ibitiShareModal";
+    modal.className = "ibiti-share-modal";
+    modal.style.display = "none";
 
     modal.innerHTML = `
-      <button id="shareTopClose" type="button">Close</button>
-      <h3 id="shareTitle">Share IBITIcoin</h3>
-      <p>Choose where to share the link.</p>
+      <div class="ibiti-share-box" role="dialog" aria-modal="true" aria-labelledby="ibitiShareTitle">
+        <div class="ibiti-share-head">
+          <button class="ibiti-share-close" type="button" data-ibiti-close>${esc("Close")}</button>
+          <h3 class="ibiti-share-title" id="ibitiShareTitle">Share IBITIcoin</h3>
+          <p class="ibiti-share-sub">Choose where to share the link.</p>
+        </div>
 
-      <div class="share-grid">
-        <button class="share-btn share-btn--primary" id="shareCopyBtn" type="button">
-          <span class="share-ico">${ICO.copy}</span><span>Copy</span>
-        </button>
+        <div class="ibiti-share-body">
+          <div class="ibiti-share-grid">
+            <button class="ibiti-share-btn primary" type="button" data-ibiti-action="copy">
+              ${icon(ICONS.copy)}<span>Copy</span>
+            </button>
+            <button class="ibiti-share-btn" type="button" data-ibiti-action="telegram">
+              ${icon(ICONS.telegram)}<span>Telegram</span>
+            </button>
+            <button class="ibiti-share-btn" type="button" data-ibiti-action="whatsapp">
+              ${icon(ICONS.whatsapp)}<span>WhatsApp</span>
+            </button>
+            <button class="ibiti-share-btn" type="button" data-ibiti-action="viber">
+              ${icon(ICONS.viber)}<span>Viber</span>
+            </button>
 
-        <button class="share-btn" id="shareTgBtn" type="button">
-          <span class="share-ico">${ICO.tg}</span><span>Telegram</span>
-        </button>
+            <button class="ibiti-share-btn" type="button" data-ibiti-action="vk">
+              ${icon(ICONS.vk)}<span>VK</span>
+            </button>
+            <button class="ibiti-share-btn" type="button" data-ibiti-action="ok">
+              ${icon(ICONS.ok)}<span>OK</span>
+            </button>
+            <button class="ibiti-share-btn" type="button" data-ibiti-action="x">
+              ${icon(ICONS.x)}<span>X</span>
+            </button>
+            <button class="ibiti-share-btn" type="button" data-ibiti-action="facebook">
+              ${icon(ICONS.facebook)}<span>Facebook</span>
+            </button>
 
-        <button class="share-btn" id="shareWaBtn" type="button">
-          <span class="share-ico">${ICO.wa}</span><span>WhatsApp</span>
-        </button>
+            <button class="ibiti-share-btn" type="button" data-ibiti-action="linkedin">
+              ${icon(ICONS.linkedin)}<span>LinkedIn</span>
+            </button>
+            <button class="ibiti-share-btn" type="button" data-ibiti-action="reddit">
+              ${icon(ICONS.reddit)}<span>Reddit</span>
+            </button>
+            <button class="ibiti-share-btn" type="button" data-ibiti-action="weibo">
+              ${icon(ICONS.weibo)}<span>Weibo</span>
+            </button>
+            <button class="ibiti-share-btn" type="button" data-ibiti-action="email">
+              ${icon(ICONS.email)}<span>Email</span>
+            </button>
+          </div>
 
-        <button class="share-btn" id="shareVbBtn" type="button">
-          <span class="share-ico">${ICO.vb}</span><span>Viber</span>
-        </button>
+          <div class="ibiti-share-url" id="ibitiShareUrl">—</div>
 
-        <button class="share-btn" id="shareVkBtn" type="button">
-          <span class="share-ico">${ICO.vk}</span><span>VK</span>
-        </button>
-
-        <button class="share-btn" id="shareOkBtn" type="button">
-          <span class="share-ico">${ICO.ok}</span><span>OK</span>
-        </button>
-
-        <button class="share-btn" id="shareXBtn" type="button">
-          <span class="share-ico">${ICO.x}</span><span>X</span>
-        </button>
-
-        <button class="share-btn" id="shareFbBtn" type="button">
-          <span class="share-ico">${ICO.fb}</span><span>Facebook</span>
-        </button>
-
-        <button class="share-btn" id="shareLiBtn" type="button">
-          <span class="share-ico">${ICO.li}</span><span>LinkedIn</span>
-        </button>
-
-        <button class="share-btn" id="shareRdBtn" type="button">
-          <span class="share-ico">${ICO.rd}</span><span>Reddit</span>
-        </button>
-
-        <button class="share-btn" id="shareWbBtn" type="button">
-          <span class="share-ico">${ICO.wb}</span><span>Weibo</span>
-        </button>
-
-        <button class="share-btn" id="shareMailBtn" type="button">
-          <span class="share-ico">${ICO.mail}</span><span>Email</span>
-        </button>
-
-        <button class="share-btn share-btn--danger" id="shareCancelBtn" type="button">
-          <span class="share-ico">${ICO.close}</span><span>Close</span>
-        </button>
+          <div style="display:flex; justify-content:center; padding-top: 10px;">
+            <button class="ibiti-share-btn" type="button" data-ibiti-close>
+              ${icon(ICONS.close)}<span>Close</span>
+            </button>
+          </div>
+        </div>
       </div>
-
-      <div id="shareUrlBox">—</div>
     `;
 
     document.body.appendChild(overlay);
     document.body.appendChild(modal);
+
+    // Close handlers
+    overlay.addEventListener("click", closeModal);
+    $$("#ibitiShareModal [data-ibiti-close]").forEach(b => b.addEventListener("click", closeModal));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeModal();
+    });
+
+    // Action handlers
+    modal.addEventListener("click", async (e) => {
+      const btn = e.target.closest("[data-ibiti-action]");
+      if (!btn) return;
+
+      const action = btn.getAttribute("data-ibiti-action");
+      const url = $("#ibitiShareUrl")?.textContent || canonicalUrl();
+      const title = "IBITIcoin";
+      const text = `IBITIcoin — official website`;
+
+      const u = encodeURIComponent(url);
+      const t = encodeURIComponent(title);
+      const m = encodeURIComponent(text + "\n" + url);
+
+      const MAP = {
+        telegram: `https://t.me/share/url?url=${u}&text=${encodeURIComponent(text)}`,
+        whatsapp: `https://wa.me/?text=${m}`,
+        viber: `viber://forward?text=${m}`,
+        vk: `https://vk.com/share.php?url=${u}`,
+        ok: `https://connect.ok.ru/offer?url=${u}`,
+        x: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${u}`,
+        facebook: `https://www.facebook.com/sharer/sharer.php?u=${u}`,
+        linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${u}`,
+        reddit: `https://www.reddit.com/submit?url=${u}&title=${t}`,
+        weibo: `https://service.weibo.com/share/share.php?url=${u}&title=${encodeURIComponent(text)}`,
+        email: `mailto:?subject=${t}&body=${m}`
+      };
+
+      if (action === "copy") {
+        const ok = await copyToClipboard(url);
+        toast(ok ? "Copied!" : "Copy failed");
+        return;
+      }
+
+      const link = MAP[action];
+      if (link) window.open(link, "_blank", "noopener,noreferrer");
+    });
   }
 
-  function getShareData() {
-    const url = window.location.href;
-    const title = document.title || "IBITIcoin";
-    const text = `IBITIcoin — ${title}`;
-    return { url, title, text };
-  }
+  function openModal(urlOverride) {
+    buildModal();
+    const overlay = $("#ibitiShareOverlay");
+    const modal = $("#ibitiShareModal");
+    const urlEl = $("#ibitiShareUrl");
 
-  function openModal() {
-    const overlay = document.getElementById("shareOverlay");
-    const modal = document.getElementById("shareModal");
-    const urlBox = document.getElementById("shareUrlBox");
+    const url = urlOverride || canonicalUrl();
+    if (urlEl) urlEl.textContent = url;
 
-    const { url } = getShareData();
-    urlBox.textContent = url;
-
-    overlay.classList.remove("hidden");
-    modal.classList.remove("hidden");
+    overlay.style.display = "block";
+    modal.style.display = "grid";
   }
 
   function closeModal() {
-    document.getElementById("shareOverlay")?.classList.add("hidden");
-    document.getElementById("shareModal")?.classList.add("hidden");
+    const overlay = $("#ibitiShareOverlay");
+    const modal = $("#ibitiShareModal");
+    if (overlay) overlay.style.display = "none";
+    if (modal) modal.style.display = "none";
   }
 
-  function sharePopup(link) {
-    window.open(link, "_blank", "noopener,noreferrer,width=900,height=650");
+  async function tryNativeShare(urlOverride) {
+    const url = urlOverride || canonicalUrl();
+    if (!navigator.share) return false;
+    try {
+      await navigator.share({ title: "IBITIcoin", text: "IBITIcoin — official website", url });
+      return true;
+    } catch {
+      return false;
+    }
   }
 
-  function initHandlers() {
-    const openBtn = document.getElementById(OPEN_BTN_ID);
-    if (!openBtn) return;
+  // ---------- attach to existing buttons ----------
+  function attach() {
+    const candidates = [
+      ...$$('[data-ibiti-share]'),
+      ...$$('#shareBtn, #shareButton'),
+      ...$$('a[href="#share"], button[aria-label*="share" i], button[title*="share" i]'),
+      ...$$('button, a')
+        .filter(el => (el.textContent || "").trim().toLowerCase() === "делиться" || (el.textContent || "").trim().toLowerCase() === "поделиться")
+    ];
 
-    openBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      openModal();
+    const uniq = Array.from(new Set(candidates)).filter(Boolean);
+
+    uniq.forEach(el => {
+      if (el.__ibitiShareBound) return;
+      el.__ibitiShareBound = true;
+
+      el.addEventListener("click", async (e) => {
+        // do not follow links like "#"
+        if (el.tagName === "A") e.preventDefault();
+
+        const urlOverride = el.getAttribute("data-share-url") || null;
+
+        // no "System" button, but we can still try native share first (mobile-friendly)
+        const usedNative = await tryNativeShare(urlOverride);
+        if (!usedNative) openModal(urlOverride);
+      });
     });
-
-    // close handlers
-    document.getElementById("shareOverlay").addEventListener("click", closeModal);
-    document.getElementById("shareCancelBtn").addEventListener("click", closeModal);
-    document.getElementById("shareTopClose").addEventListener("click", closeModal);
-    window.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
-
-    // actions
-    const { url, title, text } = getShareData();
-    const u = encodeURIComponent(url);
-    const t = encodeURIComponent(title);
-    const tx = encodeURIComponent(text);
-
-    document.getElementById("shareCopyBtn").addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(url);
-      } catch {
-        const ta = document.createElement("textarea");
-        ta.value = url;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        document.body.removeChild(ta);
-      }
-    });
-
-    document.getElementById("shareTgBtn").addEventListener("click", () =>
-      sharePopup(`https://t.me/share/url?url=${u}&text=${tx}`)
-    );
-
-    document.getElementById("shareWaBtn").addEventListener("click", () =>
-      sharePopup(`https://api.whatsapp.com/send?text=${tx}%20${u}`)
-    );
-
-    document.getElementById("shareVbBtn").addEventListener("click", () =>
-      sharePopup(`viber://forward?text=${tx}%20${url}`)
-    );
-
-    document.getElementById("shareVkBtn").addEventListener("click", () =>
-      sharePopup(`https://vk.com/share.php?url=${u}&title=${t}`)
-    );
-
-    document.getElementById("shareOkBtn").addEventListener("click", () =>
-      sharePopup(`https://connect.ok.ru/offer?url=${u}`)
-    );
-
-    document.getElementById("shareXBtn").addEventListener("click", () =>
-      sharePopup(`https://twitter.com/intent/tweet?url=${u}&text=${tx}`)
-    );
-
-    document.getElementById("shareFbBtn").addEventListener("click", () =>
-      sharePopup(`https://www.facebook.com/sharer/sharer.php?u=${u}`)
-    );
-
-    document.getElementById("shareLiBtn").addEventListener("click", () =>
-      sharePopup(`https://www.linkedin.com/sharing/share-offsite/?url=${u}`)
-    );
-
-    document.getElementById("shareRdBtn").addEventListener("click", () =>
-      sharePopup(`https://www.reddit.com/submit?url=${u}&title=${t}`)
-    );
-
-    document.getElementById("shareWbBtn").addEventListener("click", () =>
-      sharePopup(`https://service.weibo.com/share/share.php?url=${u}&title=${t}`)
-    );
-
-    document.getElementById("shareMailBtn").addEventListener("click", () =>
-      (window.location.href = `mailto:?subject=${t}&body=${tx}%0A%0A${u}`)
-    );
   }
 
-  // boot
-  document.addEventListener("DOMContentLoaded", () => {
-    injectStyleOnce();
-    injectModalOnce();
-    initHandlers();
-  });
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", attach);
+  } else {
+    attach();
+  }
+
+  // expose minimal API (optional)
+  window.IBITI_SHARE = {
+    open: openModal,
+    close: closeModal
+  };
 })();
