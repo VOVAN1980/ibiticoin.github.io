@@ -15,19 +15,6 @@
     if (unlockedBox) unlockedBox.classList.toggle("hidden", !unlocked);
   }
 
-  function setPurchaseEnabled(enabled) {
-    const ids = ["promoBuyButton", "buyPancakeBtn", "buyNftBtn"];
-    ids.forEach((id) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.disabled = !enabled;
-      el.classList.toggle("btn-disabled", !enabled);
-      if (!enabled) el.title = "Connect wallet first";
-      else el.title = "";
-    });
-  }
-
-
   async function hasConnectedAccount() {
     if (!window.ethereum) return false;
     const accs = await window.ethereum.request({ method: "eth_accounts" });
@@ -107,7 +94,7 @@
     "function approve(address spender, uint256 value) returns (bool)"
   ];
 
-    // PromoRouter ABI (only what we use)
+  // PromoRouter ABI (only what we use)
   const PROMO_ABI = [
     "function promoActive() view returns (bool)",
     "function promoEndTime() view returns (uint256)",
@@ -115,13 +102,7 @@
     "function minPaymentAmount() view returns (uint256)",
     "function getStats() view returns (uint256 bonusPoolTotal, uint256 bonusSpent, uint256 refSpent)",
     "function poolRemaining() view returns (uint256)",
-    "function swapPath(uint256) view returns (address)",
-    "function buyWithReferral(uint256 paymentAmount, address referrer, uint256 minIbitiOut) external"
-  ];
-
-// Pancake/Uniswap v2 router (quote only)
-  const DEX_ROUTER_ABI = [
-    "function getAmountsOut(uint256 amountIn, address[] path) view returns (uint256[] amounts)"
+    "function buyWithReferral(uint256 usdtAmount, address referrer) external"
   ];
 
   function net() {
@@ -157,39 +138,6 @@
     const r = (url.searchParams.get("ref") || "").trim();
     return isAddr(r) ? r : null;
   }
-
-  // Persist incoming ref for the whole tab session (so ref doesn't get lost after navigation / UI updates)
-  const REF_KEY = "ibiti_referrer";
-
-  function storeRef(ref) {
-    try {
-      if (ref && isAddr(ref)) sessionStorage.setItem(REF_KEY, ref);
-    } catch (_) {}
-  }
-
-  function loadStoredRef() {
-    try {
-      const v = (sessionStorage.getItem(REF_KEY) || "").trim();
-      return isAddr(v) ? v : null;
-    } catch (_) { return null; }
-  }
-
-  function captureIncomingRef() {
-    const r = currentRefParam();
-    if (r) storeRef(r);
-  }
-
-  function getActiveReferrer(buyerAddr) {
-    // Prefer URL param (fresh), fallback to stored session ref
-    let ref = currentRefParam() || loadStoredRef();
-    if (!ref) return null;
-
-    // no self-ref
-    if (buyerAddr && String(ref).toLowerCase() === String(buyerAddr).toLowerCase()) return null;
-
-    return ref;
-  }
-
 
   function buildMyReferralLink(addr) {
     const url = new URL(window.location.href);
@@ -251,10 +199,38 @@
     return { bp, signer };
   }
 
+  // ===== Mobile browsers without injected wallet =====
+  function isMobileUA() {
+    const ua = navigator.userAgent || "";
+    return /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+  }
+
+  function gotoWalletChooser() {
+    // Opens wallet.html (same folder) and preserves current query (?net=...&ref=...)
+    try {
+      const cur = new URL(location.href);
+      const currentPage = (cur.pathname.split("/").pop() || "shop.html");
+      cur.pathname = cur.pathname.replace(/[^/]*$/, "wallet.html");
+      if (!cur.searchParams.get("to")) cur.searchParams.set("to", currentPage);
+      location.href = cur.toString();
+    } catch (e) {
+      location.href = "wallet.html";
+    }
+  }
+
+
+
   async function connectWallet() {
+    if (!window.ethereum || !window.ethereum.request) {
+      if (isMobileUA()) {
+        gotoWalletChooser();
+        return null;
+      }
+      throw new Error("No injected wallet found. Install MetaMask or open this site inside a wallet browser.");
+    }
     await ensureChain();
     const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-    const addr = accounts && accounts[0] ? accounts[0] : null;
+const addr = accounts && accounts[0] ? accounts[0] : null;
     if (!addr) throw new Error("No account returned by wallet.");
 
     const addrEl = $("walletAddress");
@@ -270,8 +246,6 @@
 
     // referral link field (unlocks after first promo buy)
     await updateReferralUI(addr);
-
-    setPurchaseEnabled(true);
 
     toast("Wallet connected.");
   }
@@ -387,9 +361,8 @@
     if (!Number.isFinite(amtNum) || amtNum <= 0) throw new Error("Invalid USDT amount.");
     if (amtNum < 10) throw new Error("Minimum is 10 USDT.");
 
+    const ref = currentRefParam();
     const { signer } = await getBrowserProviderSigner();
-    const buyerAddr = await signer.getAddress();
-    const ref = getActiveReferrer(buyerAddr);
 
     const usdt = new ethers.Contract(netCfg.usdt, ERC20_ABI, signer);
     const usdtDec = await usdt.decimals();
@@ -402,32 +375,11 @@
 
     // buy
     const promo = new ethers.Contract(netCfg.promoRouter, PROMO_ABI, signer);
-    // buy (with slippage protection)
-    const dex = new ethers.Contract(netCfg.pancakeRouter, DEX_ROUTER_ABI, signer);
-    let minOut = 0n;
-    try {
-      // read swapPath from promo (public array)
-      const path = [];
-      for (let i = 0; i < 6; i++) {
-        try { path.push(await promo.swapPath(i)); } catch (_) { break; }
-      }
-      if (path.length >= 2) {
-        const amounts = await dex.getAmountsOut(amount, path);
-        const boughtEst = amounts[amounts.length - 1];
-        const slBps = Number(netCfg.slippageBps || 300); // default 3%
-        const keepBps = BigInt(Math.max(0, 10000 - slBps));
-        minOut = (boughtEst * keepBps) / 10000n;
-      }
-    } catch (e) {
-      // if quote fails, fallback to 0 (will still work, just less protected)
-      minOut = 0n;
-    }
-
     toast("Buying with +10% bonus…");
-    const txB = await promo.buyWithReferral(amount, ref ? ref : ethers.ZeroAddress, minOut);
+    const txB = await promo.buyWithReferral(amount, ref ? ref : ethers.ZeroAddress);
     await txB.wait();
 
-// mark referral unlocked (after first successful promo purchase)
+    // mark referral unlocked (after first successful promo purchase)
     try {
       const acc = await currentAccount();
       if (acc) localStorage.setItem(lsKey(net().chainIdDec, acc), "1");
@@ -506,8 +458,6 @@
 
   function wire() {
     setNetBadge();
-    captureIncomingRef();
-    setPurchaseEnabled(false);
     setReferralUnlocked(false);
 
     const btnConnect = $("connectWalletBtn");
@@ -520,8 +470,7 @@
     if (btnBuy) btnBuy.addEventListener("click", async () => {
       if (!(await hasConnectedAccount())) {
         toast("Please connect your wallet first.");
-        try { await connectWallet(); } catch (e) { return; }
-        if (!(await hasConnectedAccount())) return;
+        await connectWallet();
       }
       return buyPromo().catch(e => { console.error(e); toast(e?.shortMessage || e?.message || "Buy failed."); });
     });
@@ -596,27 +545,11 @@
 
     const overlay = $("pancakeOverlay");
     if (overlay) overlay.addEventListener("click", closePancakeModal);
-    // Init UI if wallet already connected (no popups)
+
+    // Init referral link if wallet already connected
     window.ethereum?.request({ method: "eth_accounts" })
-      .then(async (accs) => {
-        if (!accs || !accs[0]) return;
-        const addr = accs[0];
-
-        const addrEl = $("walletAddress");
-        if (addrEl) addrEl.textContent = addr;
-
-        setPurchaseEnabled(true);
-
-        try {
-          const { signer } = await getBrowserProviderSigner();
-          const token = new ethers.Contract(net().ibiti, ERC20_ABI, signer);
-          const dec = await token.decimals();
-          const bal = await token.balanceOf(addr);
-          const balEl = $("ibitiBalance");
-          if (balEl) balEl.textContent = `${fmt(bal, dec, 8)} IBITI`;
-        } catch (_) {}
-
-        updateReferralUI(addr).catch(() => {});
+      .then((accs) => {
+        if (accs && accs[0]) updateReferralUI(accs[0]).catch(() => {});
       })
       .catch(() => {});
 
