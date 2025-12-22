@@ -1,718 +1,147 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>IBITIcoin Shop</title>
-<!-- Keep your existing global theme -->
-<link href="css/style.css" rel="stylesheet"/>
-<!-- Orbitron font (same vibe as the site) -->
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
-<style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Open in Wallet — IBITIcoin</title>
+  <link href="css/style.css" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
     :root{
-      --ib-bg: #060606;
-      --ib-gold: #f7d000;
-      --ib-gold2: #ffe889;
-      --ib-panel: rgba(0,0,0,0.28);
+      --ib-gold:#f7d000;
       --ib-border: rgba(247,208,0,0.22);
-      --ib-radius: 18px;
       --ib-shadow: 0 0 22px rgba(255, 215, 0, 0.10);
-      --ib-text: #eaeaea;
-      --ib-muted:#a0a0a0;
     }
-
-    body {
+    body{
+      margin:0;
       background: radial-gradient(circle at 50% 0%, #151515 0%, #050505 50%, #000 100%);
-      color: var(--ib-text);
+      color:#eaeaea;
       font-family: Orbitron, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      margin: 0;
+      display:flex;
+      min-height:100vh;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
     }
-
-    .wrap{
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 28px 18px 46px;
-    }
-
-    .badge{
-      position: fixed;
-      top: 16px;
-      left: 16px;
-      z-index: 5;
-      padding: 10px 14px;
-      border-radius: 14px;
-      border: 1px solid var(--ib-border);
-      background: rgba(0,0,0,0.55);
-      color: var(--ib-gold);
+    .box{
+      width:min(560px, 100%);
+      border:1px solid var(--ib-border);
+      border-radius:18px;
+      background: rgba(0,0,0,0.45);
       box-shadow: var(--ib-shadow);
-      letter-spacing: 0.8px;
-      font-weight: 800;
-      font-size: 13px;
-      display: none;
+      padding:18px;
     }
-
-    header{
+    h2{
+      margin:0 0 8px;
+      color:var(--ib-gold);
       text-align:center;
-      padding-top: 16px;
-    }
-    h1{
-      margin: 10px 0 8px;
-      font-size: 44px;
-      color: var(--ib-gold);
       text-shadow: 0 0 16px rgba(247, 208, 0, 0.25);
     }
-    .subtitle{
-      margin: 0 auto 18px;
-      max-width: 860px;
-      color: #cfcfcf;
-      font-size: 14px;
-      line-height: 1.6;
+    p{
+      margin:0 0 14px;
+      color:rgba(255,255,255,0.78);
+      font-size:13px;
+      line-height:1.55;
+      text-align:center;
     }
-
     .btn{
-      display:inline-flex;
+      width:100%;
+      display:flex;
       align-items:center;
       justify-content:center;
-      gap:8px;
-      padding: 11px 18px;
-      border-radius: 12px;
-      border: 1px solid var(--ib-border);
-      background: rgba(0,0,0,0.35);
+      gap:10px;
+      padding:14px 14px;
+      border-radius:12px;
+      border:1px solid var(--ib-border);
+      background: rgba(247,208,0,0.12);
       color: var(--ib-gold);
       cursor:pointer;
-      font-weight: 800;
-      text-decoration: none;
-      box-shadow: var(--ib-shadow);
-      transition: transform .12s ease, box-shadow .12s ease;
-      user-select: none;
-    }
-    .btn:hover{ transform: translateY(-1px); box-shadow: 0 0 28px rgba(255,215,0,0.16); }
-    .btn-primary{
-      background: rgba(247,208,0,0.12);
-    }
-
-    .wallet-line{
-      margin-top: 10px;
-      font-size: 12px;
-      color: var(--ib-muted);
-      word-break: break-all;
-    }
-    .wallet-line strong{ color: var(--ib-gold); }
-
-    /* Promo header card */
-    .promo-hero{
-      margin: 18px auto 10px;
-      max-width: 860px;
-      padding: 18px;
-      border-radius: var(--ib-radius);
-      border: 1px solid var(--ib-border);
-      background: var(--ib-panel);
-      box-shadow: var(--ib-shadow);
-    }
-    .promo-title{
-      color: var(--ib-gold);
-      font-weight: 900;
-      font-size: 18px;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-    .promo-text{
-      color:#e8e8e8;
-      font-size: 13px;
-      line-height: 1.55;
-      margin-bottom: 14px;
-    }
-    .promo-actions{
-      display:flex;
-      gap:12px;
-      justify-content:center;
-      flex-wrap: wrap;
-    }
-
-    /* Promo controls: FIXED sizing + centered label */
-    .promo-wrapper{
-      margin: 12px auto 0;
-      max-width: 860px;
-      padding: 14px;
-      border-radius: var(--ib-radius);
-      border: 1px solid var(--ib-border);
-      background: rgba(0,0,0,0.22);
-      box-shadow: var(--ib-shadow);
-    }
-    .promo-row{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-    .promo-controls{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap: 10px;
-      flex-wrap: wrap;
-      text-align:center;
-      min-width: 260px;
-    }
-    .promo-controls label{
-      color: var(--ib-gold);
-      font-weight: 800;
-      font-size: 13px;
-      text-align:center;
-      white-space: nowrap;
-    }
-    .promo-controls input{
-      width: 120px;
-      padding: 9px 10px;
-      border-radius: 10px;
-      border: 1px solid rgba(247,208,0,0.35);
-      background: rgba(0,0,0,0.55);
-      color: #fff;
-      outline: none;
-      text-align: center;
-      font-weight: 800;
-    }
-    #minPayInfo{
-      margin-top: 10px;
-      text-align: center;
-      color: #bdbdbd;
-      font-size: 12px;
-    }
-
-    /* Shop items */
-    .shop-items{
-      margin-top: 22px;
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 18px;
-    }
-    @media (max-width: 860px){
-      .shop-items{ grid-template-columns: 1fr; }
-      h1{ font-size: 36px; }
-    }
-
-    .shop-item{
-      border: 1px solid var(--ib-border);
-      border-radius: var(--ib-radius);
-      background: rgba(0,0,0,0.22);
-      box-shadow: var(--ib-shadow);
-      overflow:hidden;
-    }
-    .shop-item .image-wrapper{
-      background: rgba(0,0,0,0.35);
-      border-bottom: 1px solid rgba(247,208,0,0.12);
-      padding: 0;
-      overflow: hidden;
-    }
-    .shop-item img{
-      display:block;
-      width: 100%;
-      height: auto;
-      max-height: 320px;
-      object-fit: cover;
-      border-radius: 14px;
-      border: 1px solid rgba(247,208,0,0.15);
-    }
-    .shop-item .content{
-      padding: 14px 16px 16px;
-      text-align:center;
-    }
-    .shop-item h3{
-      margin: 6px 0 8px;
-      color: var(--ib-gold);
-      font-size: 18px;
-    }
-    .shop-item p{
-      margin: 0 0 14px;
-      color: #cfcfcf;
-      font-size: 13px;
-      line-height: 1.55;
-    }
-
-    /* Stats card */
-    .card{
-      margin-top: 22px;
-      border: 1px solid var(--ib-border);
-      border-radius: var(--ib-radius);
-      background: rgba(0,0,0,0.22);
-      box-shadow: var(--ib-shadow);
-      padding: 18px;
-    }
-    .card-head{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-    .card-title{
-      color: var(--ib-gold);
-      font-size: 20px;
-      font-weight: 900;
-      margin: 0;
-    }
-
-    /* Progress bar (requested) */
-    .progress-container{
-      width: 100%;
-      max-width: 420px;
-      height: 10px;
-      border-radius: 999px;
-      overflow: hidden;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(247,208,0,0.20);
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.55);
-    }
-    .progress-bar{
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--ib-gold), var(--ib-gold2));
-      box-shadow: 0 0 18px rgba(247,208,0,0.22);
-      transition: width .35s ease;
-    }
-    .sold-line{
-      color:#cfcfcf;
-      font-size: 12px;
-      margin-top: 6px;
-      text-align:right;
-      width: 100%;
-    }
-    .sold-line strong{ color: var(--ib-gold); }
-
-    .stats-table{
-      margin-top: 14px;
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-    .stats-table td{
-      padding: 10px 6px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-    .stats-table td:first-child{
-      color: #d6d6d6;
-    }
-    .stats-table td:last-child{
-      text-align:right;
-      color: var(--ib-gold);
-      font-weight: 900;
-    }
-
-    .meta{
-      margin-top: 10px;
-      font-size: 12px;
-      color: #bcbcbc;
-      text-align:center;
-      word-break: break-all;
-    }
-
-    /* Referral */
-    .ref-text{
-      margin-top: 10px;
-      color:#d9d9d9;
-      font-size: 13px;
-      line-height: 1.6;
-      text-align:center;
-    }
-    .ref-input{
-      margin: 12px auto 0;
-      width: min(860px, 100%);
-      display:flex;
-      justify-content:center;
-    }
-    .ref-input input{
-      width: 100%;
-      max-width: 820px;
-      padding: 12px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(247,208,0,0.30);
-      background: rgba(0,0,0,0.55);
-      color: #fff;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 12px;
-    }
-    .ref-actions{
-      margin-top: 12px;
-      display:flex;
-      justify-content:center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    footer{
-      margin-top: 26px;
-      padding-top: 18px;
-      border-top: 1px solid rgba(247,208,0,0.12);
-      text-align:center;
-      color:#bdbdbd;
-      font-size: 12px;
-    }
-    footer a{ color: var(--ib-gold); text-decoration:none; }
-
-    /* Simple toast */
-    #toast{
-      position: fixed;
-      bottom: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.78);
-      border: 1px solid rgba(247,208,0,0.25);
-      color: #fff;
-      padding: 10px 14px;
-      border-radius: 12px;
-      box-shadow: var(--ib-shadow);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .18s ease;
-      z-index: 9;
-      font-size: 13px;
-    }
-    #toast.show{ opacity: 1; }
-
-    /* Pancake modal */
-    .modal{
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 20;
-    }
-    .modal.open{ display:flex; }
-    .modal-overlay{
-      position:absolute; inset:0;
-      background: rgba(0,0,0,0.55);
-      backdrop-filter: blur(2px);
-    }
-    .modal-box{
-      position:relative;
-      width: min(520px, calc(100% - 30px));
-      border-radius: 18px;
-      background: #fff;
-      color: #111;
-      padding: 18px 18px 14px;
-      box-shadow: 0 18px 48px rgba(0,0,0,0.45);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-    .modal-box h3{
-      margin: 0 0 8px;
-      font-size: 18px;
-      text-align:center;
-    }
-    .modal-box p{
-      margin: 0 0 10px;
-      color:#333;
-      text-align:center;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-    .modal-steps{
-      font-size: 13px;
-      color:#333;
-      margin: 10px 0 14px;
-      line-height: 1.55;
-    }
-    .modal-steps ol{ margin: 8px 0 0 18px; }
-    .modal-actions{
-      display:flex;
-      gap: 10px;
-      justify-content:center;
-      flex-wrap: wrap;
-      padding-top: 10px;
-    }
-    .modal-actions a, .modal-actions button{
-      border: none;
-      border-radius: 10px;
-      padding: 10px 14px;
-      cursor: pointer;
-      font-weight: 700;
-    }
-    .modal-actions a{
-      background: #3b82f6;
-      color:#fff;
+      font-weight:800;
       text-decoration:none;
+      box-shadow: var(--ib-shadow);
+      margin-top:10px;
+      user-select:none;
     }
-    .modal-actions button{
-      background: #6b7280;
+    .btn.secondary{
+      background: rgba(0,0,0,0.35);
       color:#fff;
     }
-  
-
-    .ref-locked{
-      margin: 12px auto 0;
-      max-width: 860px;
-      text-align: center;
-      color: rgba(255,255,255,0.75);
-      font-size: 14px;
-      border: 1px dashed rgba(247,208,0,0.25);
-      border-radius: 12px;
-      padding: 12px 14px;
-      background: rgba(0,0,0,0.22);
+    .mono{
+      margin-top:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(247,208,0,0.30);
+      background: rgba(0,0,0,0.55);
+      color:#fff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:12px;
+      word-break:break-all;
     }
-    .hidden{ display:none !important; }
-    .overlay{
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 9998;
-    }
-    .modal{
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%,-50%);
-      width: min(520px, calc(100% - 24px));
-      background: #fff;
-      color: #111;
-      border-radius: 16px;
-      padding: 18px 18px 14px;
-      z-index: 9999;
-      box-shadow: 0 20px 80px rgba(0,0,0,0.4);
-    }
-    .modal h3{ margin: 0 0 10px; }
-    .modal p{ margin: 0 0 14px; color: rgba(0,0,0,0.7); }
-    .modal-actions{
-      display:flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-    }
-    .modal-actions .btn{ min-width: 110px; }
-</style>
+    .row{ display:flex; gap:10px; margin-top:10px; }
+    .row .btn{ margin-top:0; }
+    .hint{ margin-top:12px; font-size:12px; color:rgba(255,255,255,0.65); line-height:1.5; }
+  </style>
 </head>
 <body>
-<div class="badge" id="netBadge">TESTNET MODE</div>
-<div class="wrap">
-<header>
-<h1>IBITIcoin Shop</h1>
-<div class="subtitle">Get exclusive items and utilities connected with IBITIcoin.</div>
-<button class="btn btn-primary" id="connectWalletBtn">Connect wallet</button>
-<div class="wallet-line">
-        Wallet: <strong><span id="walletAddress">—</span></strong> ·
-        IBITI balance: <strong><span id="ibitiBalance">—</span></strong>
-</div>
-<div class="promo-hero">
-<div class="promo-title">NEW YEAR IBITI BONUS</div>
-<div class="promo-text">
-          Buy from <strong>$10</strong> in USDT and get <strong>+10% IBITI</strong> + your personal referral link.
-        </div>
-<div class="promo-actions">
-<button class="btn" id="addTokenBtn">Add IBITI to wallet</button>
-</div>
-</div>
-<!-- Promo controls (fixed size + centered, requested) -->
-<section aria-label="Promo purchase" class="promo-wrapper" id="promo-section">
-<div class="promo-row">
-<div class="promo-controls">
-<label for="promoUsdtAmount">Promo amount (USDT):</label>
-<input id="promoUsdtAmount" inputmode="decimal" min="10" step="1" type="number" value="10"/>
-</div>
-<button class="btn btn-primary" id="promoBuyButton">Buy IBITI +10% bonus</button>
-</div>
-<div id="minPayInfo"></div>
-</section>
-</header>
-<!-- Items (same images/paths as old style) -->
-<section aria-label="Shop items" class="shop-items">
-<div class="shop-item">
-<div class="image-wrapper">
-<img alt="IBITIcoin" src="img/IBITIcoin.webp"/>
-</div>
-<div class="content">
-<h3>Item 1 (IBITIcoin)</h3>
-<p>Regular purchase via PancakeSwap (no bonus). A safe redirect with instructions.</p>
-<button class="btn" id="buyPancakeBtn">Buy</button>
-</div>
-</div>
-<div class="shop-item">
-<div class="image-wrapper">
-<img alt="NFT" src="img/NFT.webp"/>
-</div>
-<div class="content">
-<h3>Item 2 (NFT)</h3>
-<p>Go to the NFT Gallery page.</p>
-<button class="btn" id="buyNftBtn">Purchase: NFT</button>
-</div>
-</div>
-</section>
-<!-- Stats (with progress bar) -->
-<section aria-label="Token sale statistics" class="card">
-<div class="card-head">
-<h2 class="card-title">Token sale statistics</h2>
-<div style="min-width: 260px; width: 420px; max-width: 100%;">
-<div class="progress-container"><div class="progress-bar" id="salesProgress"></div></div>
-<div class="sold-line">Sold: <strong><span id="soldPercent">—</span></strong></div>
-</div>
-</div>
-<table class="stats-table">
-<tr><td>Total on contract</td><td id="statTotal">—</td></tr>
-<tr><td>Spent (bonus + referral)</td><td id="statSpent">—</td></tr>
-<tr><td>Remaining for promo</td><td id="statRemaining">—</td></tr>
-<tr><td>Bonus pool total</td><td id="statBonusPool">—</td></tr>
-</table>
-<div class="ref-actions" style="margin-top: 14px;">
-<button class="btn btn-primary" id="refreshStatsBtn">Refresh</button>
-</div>
-<div class="meta">
-<div id="lastUpdated">—</div>
-<div>Promo router: <span id="routerAddr">—</span></div>
-</div>
-</section>
-<!-- Referral -->
-<section aria-label="Referral program" class="card">
-<h2 class="card-title" style="text-align:center;">Referral program</h2>
-<div class="ref-text">
-        Buy at least <strong>$10 (USDT)</strong> and get <strong>+10% IBITI</strong> as a bonus.<br/>
-        After your first purchase you will receive a personal referral link.<br/>
-        Share it — for each friend who buys tokens, you get an extra <strong>+1 IBITI</strong> (once per buyer).<br/>
-        Logic is handled automatically by the promo router; no registration required.
-      </div><div id="refLocked"><div class="ref-locked">Your referral link will appear after your first promo purchase of at least $10 USDT.</div></div><div id="refUnlocked"><div class="ref-input">
-<input id="referralLink" readonly="readonly" type="text" value=""/>
-</div><div class="ref-actions">
-<button class="btn btn-primary" disabled="disabled" id="copyMyReferralLink">Copy my link</button>
-<button class="btn" disabled="disabled" id="shareReferralLink">Share link</button>
-</div></div>
-</section>
-<footer>
-      © 2025 IBITIcoin. All rights reserved.<br/>
-<a href="index.html">Back to home</a>
-</footer>
-</div>
-<div class="overlay hidden" id="shareOverlay"></div><div aria-modal="true" class="modal hidden" id="shareModal" role="dialog"><h3 id="shareTitle">Share referral link</h3><p>Choose where to share. If native sharing is available, we will use it.</p><div class="modal-actions"><button class="btn btn-primary" id="shareCopyBtn">Copy</button><button class="btn" id="shareTgBtn">Telegram</button><button class="btn" id="shareXBtn">X</button><button class="btn" id="shareFbBtn">Facebook</button><button class="btn" id="shareCancelBtn">Close</button></div></div><div id="toast"></div>
-<!-- PancakeSwap purchase modal -->
-<div aria-labelledby="pancakeTitle" aria-modal="true" class="modal" id="pancakeModal" role="dialog">
-<div class="modal-overlay" id="pancakeOverlay"></div>
-<div class="modal-box">
-<h3 id="pancakeTitle">Purchase via PancakeSwap</h3>
-<p>We never take custody of your funds. The purchase is made directly on PancakeSwap.</p>
-<div class="modal-steps">
-        Next steps:
-        <ol>
-<li>In the new tab connect your wallet to <strong>BNB Smart Chain</strong>.</li>
-<li>Make sure the pair is <strong>USDT → IBITI</strong> (it will be filled automatically).</li>
-<li>Enter the amount in USDT (for example, <strong>10</strong>) and click <strong>Swap</strong>.</li>
-<li>Confirm the transaction in your wallet — IBITI will appear in your balance.</li>
-</ol>
-</div>
-<div class="modal-actions">
-<a href="#" id="pancakeOpenLink" rel="noopener" target="_blank">Open PancakeSwap</a>
-<button id="pancakeCancelBtn" type="button">Cancel</button>
-</div>
-</div>
-</div>
-<!-- Libraries -->
+  <div class="box">
+    <h2>Open IBITI Shop in your wallet</h2>
+    <p>
+      Mobile browsers usually don’t have a Web3 wallet inside.<br/>
+      Choose a wallet to open the shop in its built‑in DApp browser.
+    </p>
 
-  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
-  <script src="https://unpkg.com/@walletconnect/ethereum-provider/dist/index.umd.js"></script>
-  <script src="js/config.js"></script>
+    <a id="mmLink" class="btn" href="#">Open in MetaMask</a>
+    <a id="twLink" class="btn" href="#">Open in Trust Wallet</a>
 
-  <script>
-    (async () => {
-      const overlay = document.createElement('div');
-      overlay.style.position = 'fixed';
-      overlay.style.inset = '0';
-      overlay.style.zIndex = '99999';
-      overlay.style.background = 'rgba(0,0,0,0.72)';
-      overlay.style.backdropFilter = 'blur(2px)';
-      overlay.style.display = 'flex';
-      overlay.style.alignItems = 'center';
-      overlay.style.justifyContent = 'center';
-      overlay.style.padding = '18px';
-      overlay.innerHTML = `
-        <div style="max-width:520px;width:100%;border:1px solid rgba(247,208,0,0.25);border-radius:16px;padding:18px;background:rgba(0,0,0,0.85);box-shadow:0 18px 80px rgba(0,0,0,0.55);text-align:center;">
-          <div style="font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;font-weight:900;color:#f7d000;font-size:18px;margin-bottom:8px;">
-            Connect wallet (mobile)
-          </div>
-          <div style="font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;color:rgba(255,255,255,0.78);font-size:13px;line-height:1.45;margin-bottom:14px;">
-            Choose your wallet via WalletConnect. After connection, the shop will load automatically.
-          </div>
-          <button id="wcConnectBtn" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(247,208,0,0.35);background:rgba(247,208,0,0.14);color:#f7d000;font-weight:900;cursor:pointer;">
-            Connect
-          </button>
-          <div id="wcErr" style="margin-top:12px;display:none;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;color:#ffb4b4;font-size:12px;line-height:1.4;"></div>
-          <button id="wcContinueNoConnect" style="margin-top:10px;width:100%;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.14);background:rgba(255,255,255,0.06);color:#fff;font-weight:800;cursor:pointer;">
-            Continue without connect
-          </button>
-        </div>`;
-      document.body.appendChild(overlay);
+    <div class="row">
+      <button id="copyBtn" class="btn secondary" type="button">Copy shop link</button>
+      <a id="openShop" class="btn secondary" href="#">Open in browser</a>
+    </div>
 
-      function showErr(msg){
-        const el = document.getElementById('wcErr');
-        if (!el) return;
-        el.style.display = 'block';
-        el.textContent = msg;
-      }
+    <div class="mono" id="shopUrl">—</div>
 
-      async function initWalletConnect(interactive){
-        if (!window.WalletConnectEthereumProvider) {
-          throw new Error('WalletConnect library not loaded.');
-        }
-        if (!window.IBITI_CONFIG || typeof window.IBITI_CONFIG.getNet !== 'function') {
-          throw new Error('Config not loaded.');
-        }
-        const netCfg = window.IBITI_CONFIG.getNet();
-        const projectId = "95f126f3a088cebcf781d2a1c10711fc";
+    <div class="hint">
+      Tip for Binance Wallet: open Binance App → Web3 Wallet → DApps → paste the copied link and open it there.
+    </div>
+  </div>
 
-        const provider = await window.WalletConnectEthereumProvider.EthereumProvider.init({
-          projectId,
-          chains: [netCfg.chainIdDec],
-          showQrModal: !!interactive,
-          rpcMap: { [netCfg.chainIdDec]: (netCfg.rpcUrls && netCfg.rpcUrls[0]) ? netCfg.rpcUrls[0] : undefined }
-        });
+<script>
+(function () {
+  // target shop URL (keep ?net=...&ref=... etc.)
+  var u = new URL(window.location.href);
+  u.pathname = "/shop.html";
+  var shopUrl = u.toString();
 
-        if (interactive) {
-          await provider.request({ method: 'eth_requestAccounts', params: [] });
-        }
-        // IMPORTANT: make existing app.js think we are injected MetaMask
-        window.ethereum = provider;
-        window.IBITI_WC = provider;
-      }
+  document.getElementById("shopUrl").textContent = shopUrl;
+  document.getElementById("openShop").href = shopUrl;
 
-      async function loadAppJs(){
-        // load existing app.js after provider is ready
-        const s = document.createElement('script');
-        s.src = 'js/app.js';
-        s.defer = true;
-        document.body.appendChild(s);
-      }
+  // MetaMask official deeplink: https://link.metamask.io/dapp/{dappUrl}
+  // where dappUrl is without protocol, e.g. app.uniswap.org/path
+  var dappNoProto = shopUrl.replace(/^https?:\/\//i, "");
+  document.getElementById("mmLink").href = "https://link.metamask.io/dapp/" + encodeURIComponent(dappNoProto);
 
-      // If opened inside wallet browser (MetaMask/Trust), just load app.js
-      if (window.ethereum && window.ethereum.request) {
-        overlay.remove();
-        await loadAppJs();
-        return;
-      }
+  // Trust Wallet deeplink open_url (coin_id helps to open inside dApp browser)
+  document.getElementById("twLink").href =
+    "https://link.trustwallet.com/open_url?coin_id=60&url=" + encodeURIComponent(shopUrl);
 
-      document.getElementById('wcContinueNoConnect')?.addEventListener('click', async () => {
-        overlay.remove();
-        await loadAppJs();
-      });
-
-      document.getElementById('wcConnectBtn')?.addEventListener('click', async () => {
-        try {
-          await initWalletConnect(true);
-          overlay.remove();
-          await loadAppJs();
-        } catch (e) {
-          console.error(e);
-          showErr((e && (e.message || e.shortMessage)) ? (e.message || e.shortMessage) : String(e));
-        }
-      });
-
-      // Non-interactive init attempt (won't open modal). If WC session exists, it will connect silently.
-      try {
-        await initWalletConnect(false);
-        // If already has accounts, we can auto-load the shop.
-        const accs = await window.ethereum.request({ method: 'eth_accounts' });
-        if (accs && accs[0]) {
-          overlay.remove();
-          await loadAppJs();
-        }
-      } catch (_) {}
-    })();
-  </script>
+  document.getElementById("copyBtn").addEventListener("click", async function () {
+    try {
+      await navigator.clipboard.writeText(shopUrl);
+      alert("Copied:\n" + shopUrl);
+    } catch (e) {
+      // fallback
+      var ta = document.createElement("textarea");
+      ta.value = shopUrl;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      alert("Copied:\n" + shopUrl);
+    }
+  });
+})();
+</script>
 </body>
 </html>
