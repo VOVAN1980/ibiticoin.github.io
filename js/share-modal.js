@@ -2,7 +2,7 @@
    - Creates a modern share modal (same vibe as shop modal)
    - No "System" button (auto-tries navigator.share on mobile, then falls back to modal)
    - Attaches to any element matching:
-       [data-ibiti-share], #shareBtn, #shareButton, a[href="#share"], button[aria-label*="share" i]
+       [data-ibiti-share], #openShareModal, #shareBtn, #shareButton, a[href="#share"], button[aria-label*="share" i]
 */
 
 (function () {
@@ -419,10 +419,14 @@
   function attach() {
     const candidates = [
       ...$$('[data-ibiti-share]'),
+      ...$$('#openShareModal'),
       ...$$('#shareBtn, #shareButton'),
       ...$$('a[href="#share"], button[aria-label*="share" i], button[title*="share" i]'),
       ...$$('button, a')
-        .filter(el => (el.textContent || "").trim().toLowerCase() === "делиться" || (el.textContent || "").trim().toLowerCase() === "поделиться")
+        .filter(el => {
+          const t = (el.textContent || "").trim().toLowerCase();
+          return t === "делиться" || t === "поделиться" || t === "share";
+        })
     ];
 
     const uniq = Array.from(new Set(candidates)).filter(Boolean);
