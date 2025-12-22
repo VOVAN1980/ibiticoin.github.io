@@ -276,8 +276,8 @@
   </script>
 
   <!-- Staking + wallet scripts -->
-  <script type="module" src="js/staking.js"></script>
-  <script type="module" src="js/wallet.js"></script>
+  !--<script type="module" src="js/staking.js"></script>
+  !--<script type="module" src="js/wallet.js"></script>
   <script>
     if (window.afterWalletConnected) {
       window.afterWalletConnected();
@@ -345,32 +345,11 @@
     const openWalletBtn = document.getElementById("connectWalletBtn");
     const closeWalletBtn = document.getElementById("closeWalletModal");
 
-    openWalletBtn?.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      Swal.fire({
-        icon: "info",
-        title: "Staking is temporarily unavailable",
-        html: `<div style="text-align:left; line-height:1.45">
-  <p><b>Wallet connection and staking</b> are temporarily disabled on this page.</p>
-  <p>IBITI Staking will go live as part of a planned project update.</p>
-  <p style="margin:10px 0 0 0; opacity:.9">
-    Follow announcements on <b>ibiticoin.com</b> and our official social channels.
-  </p>
-  <p style="margin:10px 0 0 0; font-size:12px; opacity:.85">
-    Security note: admins will never DM you first — always verify links via official sources.
-  </p>
-</div>`,
-        confirmButtonText: "OK",
-        allowOutsideClick: true
-      });
-    }, true);
-
-if (!res.isConfirmed) return;
-
+    openWalletBtn?.addEventListener("click", e => {
       const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       const hasInjected = Boolean(window.ethereum);
       if (isMobile && !hasInjected) {
+        e.preventDefault();
         Swal.fire({
           icon: "info",
           title: "Open inside your wallet",
@@ -378,10 +357,6 @@ if (!res.isConfirmed) return;
           confirmButtonText: "OK",
           allowOutsideClick: false
         });
-        return;
-      }
-      walletModal.style.display = "flex";
-    });
         return;
       }
       walletModal.style.display = "flex";
