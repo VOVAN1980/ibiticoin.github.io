@@ -707,8 +707,12 @@
 (function(){
   function q(id){ return document.getElementById(id); }
   function val(){ return (q("referralLink") && q("referralLink").value) ? q("referralLink").value : location.href; }
-
-  function open(u){ window.open(u, "_blank", "noopener"); }
+  
+  function open(u){
+  window.open(u, "_blank", "noopener");
+  const c = document.getElementById("shareCancelBtn");
+  if (c) c.click(); // закрываем модалку
+}
 
   const map = {
     shareWaBtn:   () => open("https://wa.me/?text=" + encodeURIComponent(val())),
@@ -744,6 +748,7 @@
 <script src="js/app.js"></script>
 </body>
 </html>
+
 
 
 
