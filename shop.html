@@ -511,6 +511,43 @@
     cursor: not-allowed;
     filter: grayscale(0.25);
   }
+
+  .wmodal.hidden{ display:none !important; }
+.wmodal{ position:fixed; inset:0; z-index:99999; display:flex; align-items:center; justify-content:center; }
+.wmodal__overlay{ position:absolute; inset:0; background:rgba(0,0,0,.65); backdrop-filter: blur(2px); }
+.wmodal__box{
+  position:relative;
+  width:min(520px, calc(100% - 24px));
+  border-radius:16px;
+  border:1px solid rgba(247,208,0,0.25);
+  background: rgba(0,0,0,0.92);
+  color:#fff;
+  padding:16px;
+  box-shadow: 0 20px 80px rgba(0,0,0,0.55);
+}
+.wmodal__title{ font-weight:900; color:#f7d000; font-size:18px; text-align:center; margin-bottom:6px; }
+.wmodal__subtitle{ text-align:center; font-size:13px; color:rgba(255,255,255,0.75); margin-bottom:12px; }
+.wmodal__grid{ display:grid; grid-template-columns:1fr; gap:10px; margin-top:10px; }
+.wmodal__item{
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid rgba(247,208,0,0.22);
+  background: rgba(247,208,0,0.10);
+  color:#fff;
+  font-weight:900;
+  cursor:pointer;
+}
+.wmodal__item:hover{ background: rgba(247,208,0,0.16); }
+.wmodal__close{
+  margin-top:12px;
+  width:100%;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.08);
+  color:#fff;
+  cursor:pointer;
+}
 </style>
 </head>
 <body>
@@ -656,6 +693,7 @@
 </div>
 </body>
 </html>
+
 
 
 
