@@ -1,7 +1,7 @@
 // js/wallet.js (CLEAN, TESTNET SAFE)
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
-import config from "./config.js";
-import { initSaleContract } from "./sale.js";
+// something import config from "./config.js";
+// something import { initSaleContract } from "./sale.js";
 
 console.log("✅ wallet.js loaded (clean)");
 
@@ -94,3 +94,4 @@ export async function connectWallet() {
 }
 
 window.connectWallet = connectWallet;
+
