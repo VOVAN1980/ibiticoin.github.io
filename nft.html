@@ -18,25 +18,53 @@
       font-family:'Orbitron',sans-serif;
     }
 
-    header { text-align:center; padding:20px; }
-    header h1 { margin:0; color:gold; font-size:2.5rem; }
-    header p  { margin:10px auto 0; color:#ccc; max-width:900px; line-height:1.4; }
+    /* Header */
+    header {
+      text-align:center;
+      padding:20px;
+    }
+    header h1 {
+      margin:0;
+      color:gold;
+      font-size:2.5rem;
+    }
+    header p  {
+      margin:10px auto 0;
+      color:#ccc;
+      max-width:900px;
+      line-height:1.4;
+    }
 
-    .wallet-section { text-align:center; margin:20px auto; }
+    /* Wallet section */
+    .wallet-section {
+      text-align:center;
+      margin:20px auto;
+    }
     .wallet-section button{
-      appearance:none; -webkit-appearance:none;
-      background:gold; color:#000; border:0;
-      padding:10px 24px; border-radius:6px;
-      font-weight:700; cursor:pointer;
+      appearance:none;
+      -webkit-appearance:none;
+      background:gold;
+      color:#000;
+      border:0;
+      padding:10px 24px;
+      border-radius:6px;
+      font-weight:700;
+      cursor:pointer;
       transition:background .25s;
     }
     .wallet-section button:hover{ background:#c0a000; }
-    #walletAddress{ margin-top:10px; color:gold; font-weight:700; word-break:break-all; }
+    #walletAddress{
+      margin-top:10px;
+      color:gold;
+      font-weight:700;
+      word-break:break-all;
+    }
 
     /* Wallet modal */
     .wallet-modal{
       display:none;
-      position:fixed; inset:0;
+      position:fixed;
+      inset:0;
       background:rgba(0,0,0,.6);
       z-index:3000;
       align-items:center;
@@ -54,8 +82,16 @@
       max-width:420px;
       box-shadow:0 8px 24px rgba(0,0,0,.5);
     }
-    .wallet-title{ margin:0 0 10px; font-size:18px; text-align:center; }
-    .wallet-actions{ display:flex; flex-direction:column; gap:10px; }
+    .wallet-title{
+      margin:0 0 10px;
+      font-size:18px;
+      text-align:center;
+    }
+    .wallet-actions{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
     .btn-injected{
       padding:10px 14px;
       border:1px solid #10b981;
@@ -77,7 +113,8 @@
     .wallet-close{
       all:unset;
       position:absolute;
-      top:8px; right:10px;
+      top:8px;
+      right:10px;
       color:#fff;
       font-size:18px;
       line-height:1;
@@ -105,9 +142,16 @@
       transition:transform .3s;
     }
     .nft-item:hover{ transform:scale(1.02); }
-    .nft-item img{ width:100%; display:block; border-bottom:1px solid gold; }
+    .nft-item img{
+      width:100%;
+      display:block;
+      border-bottom:1px solid gold;
+    }
     .rarity-label{
-      position:absolute; left:0; right:0; bottom:0;
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
       background:rgba(0,0,0,.7);
       color:gold;
       font-weight:700;
@@ -115,9 +159,11 @@
     }
     .buy-button{
       position:absolute;
-      top:10px; left:50%;
+      top:10px;
+      left:50%;
       transform:translateX(-50%);
-      background:gold; color:#000;
+      background:gold;
+      color:#000;
       padding:8px 18px;
       border-radius:6px;
       font-weight:700;
@@ -195,7 +241,10 @@
       color:gold;
       border-top:1px solid gold;
     }
-    footer a { color:gold; text-decoration:none; }
+    footer a {
+      color:gold;
+      text-decoration:none;
+    }
     footer a:hover { text-decoration:underline; }
 
     @media (max-width:640px){
@@ -204,21 +253,44 @@
       .wallet-section button{width:80%}
       .nft-gallery{padding:20px 10px; gap:12px}
     }
+    /* --- Share modal polish (premium, no drama) --- */
+  .share-btn{
+  height: 44px;                 /* ровная сетка */
+  border: 1px solid rgba(255,255,255,.10);  /* меньше “желтизны” */
+  background: rgba(255,255,255,.07);
+}
 
-    /* Share modal polish (premium, no drama) */
-    .share-btn{ height:44px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.07); }
-    .share-btn:hover{ background:rgba(255,255,255,.10); border-color:rgba(247,208,0,.35); }
-    .share-btn:focus{ outline:none; box-shadow:0 0 0 3px rgba(247,208,0,.18); border-color:rgba(247,208,0,.45); }
-    #shareModal{ backdrop-filter: blur(10px); }
-    #shareModal p{ font-size:13px; opacity:.85; }
-    @media (max-width: 520px){
-      .share-grid{ gap: 8px; }
-      .share-btn{ padding: 10px; border-radius: 12px; }
-    }
+.share-btn:hover{
+  background: rgba(255,255,255,.10);
+  border-color: rgba(247,208,0,.35);        /* золото только на hover */
+}
+
+.share-btn:focus{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(247,208,0,.18);
+  border-color: rgba(247,208,0,.45);
+}
+
+/* сама модалка — чуть “дороже” */
+#shareModal{
+  backdrop-filter: blur(10px);
+}
+
+#shareModal p{
+  font-size: 13px;
+  opacity: .85;
+}
+
+/* на мобиле больше воздуха */
+@media (max-width: 520px){
+  .share-grid{ gap: 8px; }
+  .share-btn{ padding: 10px; border-radius: 12px; }
+}
   </style>
 </head>
 <body>
 
+  <!-- Header -->
   <header>
     <h1>IBITIcoin NFT Gallery</h1>
     <p>
@@ -228,13 +300,15 @@
     </p>
   </header>
 
+  <!-- Wallet connect -->
   <section class="wallet-section">
     <button id="openWalletModal">Connect wallet</button>
     <div id="walletAddress">Wallet: not connected</div>
   </section>
 
+  <!-- NFT Gallery -->
   <section class="nft-gallery">
-    <!-- same items as your current page -->
+
     <div class="nft-item" data-discount="1" data-uri="ipfs://bafybeihspxi4unlwtlel7zcwsij7u763t5nil6pfv3s442drctpej326ea/Creation_1">
       <img src="img/Creation.webp" alt="Creation 1%" />
       <div class="rarity-label">Creation – 1% discount</div>
@@ -333,12 +407,15 @@
         View price
       </button>
     </div>
+
   </section>
 
+  <!-- Wallet modal -->
   <div id="walletModal" class="wallet-modal" aria-hidden="true">
     <div class="wallet-card">
       <span class="wallet-close" id="closeWalletModal" aria-label="Close">✕</span>
       <h3 class="wallet-title">Choose a wallet</h3>
+
       <div class="wallet-actions">
         <button class="btn-injected" id="btnInjected">MetaMask / Trust Wallet</button>
         <button class="btn-coinbase"  id="btnCoinbase">Coinbase Wallet</button>
@@ -346,6 +423,7 @@
     </div>
   </div>
 
+  <!-- NFT mint modal -->
   <div id="mintModal" class="modal" aria-hidden="true">
     <div class="modal-content">
       <span class="close" onclick="closeMintModal()">&times;</span>
@@ -362,11 +440,13 @@
     </div>
   </div>
 
+  <!-- Navigation -->
   <div class="nft-footer-buttons">
     <a href="index.html" class="btn-small">← Home</a>
     <a href="shop.html" class="btn-small">Shop</a>
   </div>
 
+  <!-- Footer -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p>
@@ -382,18 +462,21 @@
     <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
   </footer>
 
+  <!-- Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk@4.3.3/dist/CoinbaseWalletSDK.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
   <script>AOS.init({ once:true });</script>
 
+  <!-- Modules -->
   <script type="module" src="js/config.js"></script>
   <script type="module" src="js/sale.js"></script>
   <script type="module" src="js/wallet.js"></script>
   <script type="module" src="js/nft.js"></script>
   <script type="module" src="js/shop.js"></script>
 
+  <!-- Wallet modal logic (same behavior as shop) -->
   <script type="module">
     import { connectWallet, connectViaCoinbase } from "./js/wallet.js";
 
@@ -403,32 +486,7 @@
     const btnInj    = document.getElementById("btnInjected");
     const btnCb     = document.getElementById("btnCoinbase");
 
-    openBtn?.addEventListener("click", async (e) => {
-      e.preventDefault();
-
-      const res = await Swal.fire({
-        icon: "info",
-        title: "NFT sale is coming soon",
-        html: `
-          <div style="text-align:left; line-height:1.45">
-            <p><b>NFT minting and sales</b> are temporarily disabled.</p>
-            <p>The IBITI NFT collection will be released and integrated into the project as part of our planned update.</p>
-            <p style="margin:10px 0 0 0; opacity:.9">
-              Please follow announcements on <b>ibiticoin.com</b> and our official social channels.
-            </p>
-            <p style="margin:10px 0 0 0; font-size:12px; opacity:.85">
-              Security note: admins will never DM you first — always verify links via official sources.
-            </p>
-          </div>
-        `,
-        showCancelButton: true,
-        confirmButtonText: "Continue",
-        cancelButtonText: "Close",
-        allowOutsideClick: true
-      });
-
-      if (!res.isConfirmed) return;
-
+    openBtn?.addEventListener("click", () => {
       const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       if (isMobile && !window.ethereum) {
         Swal.fire({
@@ -469,8 +527,9 @@
     });
   </script>
 
+  <!-- NFT mint modal behaviour -->
   <script type="module">
-    import { initNFTModule } from "./js/nft.js";
+    import { initNFTModule, handleNFTPurchase } from "./js/nft.js";
 
     window.openMintModal = async function(discount, title, uri) {
       if (!window.selectedAccount) {
@@ -526,6 +585,8 @@
       try {
         document.getElementById("mintStatus").innerText =
           "❌ NFT sale is temporarily disabled.\n\nThe collection and discount mechanics are in preparation. Please follow our announcements on the website and social media.";
+        // When you enable real mint:
+        // await handleNFTPurchase(window._currentNFTdiscount, window._currentNFTuri);
       } finally {
         _buyLock = false;
       }
@@ -534,3 +595,6 @@
   </script>
 </body>
 </html>
+
+
+
