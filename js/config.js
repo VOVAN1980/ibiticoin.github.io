@@ -9,6 +9,7 @@
       chainIdHex: "0x38",
       chainName: "BNB Smart Chain",
       rpcUrls: ["https://bsc-dataseed.binance.org/"],
+      reownProjectId: "95f126f3a088cebcf781d2a1c10711fc",
       blockExplorerUrls: ["https://bscscan.com"],
       nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
 
@@ -25,6 +26,7 @@
       chainIdHex: "0x61",
       chainName: "BNB Smart Chain Testnet",
       rpcUrls: ["https://data-seed-prebsc-1-s1.binance.org:8545/"],
+      reownProjectId: "95f126f3a088cebcf781d2a1c10711fc",
       blockExplorerUrls: ["https://testnet.bscscan.com"],
       nativeCurrency: { name: "tBNB", symbol: "tBNB", decimals: 18 },
 
@@ -71,3 +73,4 @@
     getNet
   };
 })();
+
