@@ -9,74 +9,30 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&display=swap" rel="stylesheet"/>
   <style>
-    :root{
-      --ib-gold:#f7d000;
-      --ib-border: rgba(247,208,0,0.22);
-      --ib-shadow: 0 0 22px rgba(255, 215, 0, 0.10);
-    }
+    :root{ --ib-gold:#f7d000; --ib-border:rgba(247,208,0,0.22); --ib-shadow:0 0 22px rgba(255,215,0,0.10); }
     body{
-      margin:0;
+      margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:18px;
       background: radial-gradient(circle at 50% 0%, #151515 0%, #050505 50%, #000 100%);
-      color:#eaeaea;
-      font-family: Orbitron, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      display:flex;
-      min-height:100vh;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
+      color:#eaeaea; font-family: Orbitron, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
     .box{
-      width:min(560px, 100%);
-      border:1px solid var(--ib-border);
-      border-radius:18px;
-      background: rgba(0,0,0,0.45);
-      box-shadow: var(--ib-shadow);
-      padding:18px;
+      width:min(560px,100%); border:1px solid var(--ib-border); border-radius:18px;
+      background: rgba(0,0,0,0.45); box-shadow: var(--ib-shadow); padding:18px;
     }
-    h2{
-      margin:0 0 8px;
-      color:var(--ib-gold);
-      text-align:center;
-      text-shadow: 0 0 16px rgba(247, 208, 0, 0.25);
-    }
-    p{
-      margin:0 0 14px;
-      color:rgba(255,255,255,0.78);
-      font-size:13px;
-      line-height:1.55;
-      text-align:center;
-    }
+    h2{ margin:0 0 8px; color:var(--ib-gold); text-align:center; text-shadow:0 0 16px rgba(247,208,0,0.25); }
+    p{ margin:0 0 14px; color:rgba(255,255,255,0.78); font-size:13px; line-height:1.55; text-align:center; }
     .btn{
-      width:100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      padding:14px 14px;
-      border-radius:12px;
-      border:1px solid var(--ib-border);
-      background: rgba(247,208,0,0.12);
-      color: var(--ib-gold);
-      cursor:pointer;
-      font-weight:800;
-      text-decoration:none;
-      box-shadow: var(--ib-shadow);
-      margin-top:10px;
-      user-select:none;
+      width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
+      padding:14px; border-radius:12px; border:1px solid var(--ib-border);
+      background: rgba(247,208,0,0.12); color:var(--ib-gold);
+      cursor:pointer; font-weight:800; text-decoration:none; box-shadow: var(--ib-shadow);
+      margin-top:10px; user-select:none;
     }
-    .btn.secondary{
-      background: rgba(0,0,0,0.35);
-      color:#fff;
-    }
+    .btn.secondary{ background: rgba(0,0,0,0.35); color:#fff; }
     .mono{
-      margin-top:12px;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid rgba(247,208,0,0.30);
-      background: rgba(0,0,0,0.55);
-      color:#fff;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size:12px;
+      margin-top:12px; padding:10px 12px; border-radius:12px;
+      border:1px solid rgba(247,208,0,0.30); background: rgba(0,0,0,0.55);
+      color:#fff; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12px;
       word-break:break-all;
     }
     .row{ display:flex; gap:10px; margin-top:10px; }
@@ -87,10 +43,7 @@
 <body>
   <div class="box">
     <h2>Open IBITI Shop in your wallet</h2>
-    <p>
-      Mobile browsers usually don’t have a Web3 wallet inside.<br/>
-      Choose a wallet to open the shop in its built‑in DApp browser.
-    </p>
+    <p>Choose a wallet to open the shop in its built-in DApp browser.</p>
 
     <a id="mmLink" class="btn" href="#">Open in MetaMask</a>
     <a id="twLink" class="btn" href="#">Open in Trust Wallet</a>
@@ -103,26 +56,38 @@
     <div class="mono" id="shopUrl">—</div>
 
     <div class="hint">
-      Tip for Binance Wallet: open Binance App → Web3 Wallet → DApps → paste the copied link and open it there.
+      Binance Wallet: open Binance App → Web3 Wallet → DApps → paste the copied link.
     </div>
   </div>
 
 <script>
 (function () {
-  // target shop URL (keep ?net=...&ref=... etc.)
-  var u = new URL(window.location.href);
-  u.pathname = "/shop.html";
-  var shopUrl = u.toString();
+  // берём redirect из ?redirect=..., иначе берём текущий домен + /shop.html + query
+  var p = new URLSearchParams(location.search);
+  var redirect = p.get("redirect");
+
+  var shopUrl;
+  if (redirect) {
+    shopUrl = redirect;
+  } else {
+    var u = new URL(location.href);
+    u.pathname = "/shop.html";
+    shopUrl = u.toString();
+  }
 
   document.getElementById("shopUrl").textContent = shopUrl;
   document.getElementById("openShop").href = shopUrl;
 
-  // MetaMask official deeplink: https://link.metamask.io/dapp/{dappUrl}
-  // where dappUrl is without protocol, e.g. app.uniswap.org/path
-  var dappNoProto = shopUrl.replace(/^https?:\/\//i, "");
-  document.getElementById("mmLink").href = "https://link.metamask.io/dapp/" + encodeURIComponent(dappNoProto);
+  // MetaMask deeplink: ВАЖНО! нельзя оставлять ? и & неэнкоденными, иначе MetaMask теряет параметры.
+  function mmSafeEncode(s){
+    // encodeURIComponent всё кодит, но нам удобно вернуть "/" назад, чтобы путь читался нормально
+    return encodeURIComponent(s).replace(/%2F/gi, "/");
+  }
 
-  // Trust Wallet deeplink open_url (coin_id helps to open inside dApp browser)
+  var dappNoProto = shopUrl.replace(/^https?:\/\//i, "");
+  document.getElementById("mmLink").href = "https://link.metamask.io/dapp/" + mmSafeEncode(dappNoProto);
+
+  // Trust Wallet
   document.getElementById("twLink").href =
     "https://link.trustwallet.com/open_url?coin_id=60&url=" + encodeURIComponent(shopUrl);
 
@@ -131,7 +96,6 @@
       await navigator.clipboard.writeText(shopUrl);
       alert("Copied:\n" + shopUrl);
     } catch (e) {
-      // fallback
       var ta = document.createElement("textarea");
       ta.value = shopUrl;
       document.body.appendChild(ta);
