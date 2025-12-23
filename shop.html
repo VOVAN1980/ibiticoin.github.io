@@ -741,58 +741,57 @@
   box-shadow: 0 0 0 3px rgba(247,208,0,.18);
   border-color: rgba(247,208,0,.45);
 }
-  /* === Promo status block === */
+  /* === Promo status block (FULL WIDTH, NO FRAME) === */
 .promo-status-wrap{
   position: relative;
-  margin: 14px auto 0;
+  margin: 12px auto 0;
 
-  /* место под сундуки слева/справа */
-  padding: 14px 110px 16px;
+  /* главное: на всю ширину promo-wrapper, без рамки */
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
 
-  max-width: 680px;
-  border: 1px solid rgba(255, 215, 0, 0.35);
-  border-radius: 12px;
-  background: rgba(0,0,0,0.35);
-  overflow: hidden;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+
+  /* главное: не режем сундуки */
+  overflow: visible;
+}
+
+/* текст/цифры всегда поверх сундуков */
+.promo-status-line,
+.promo-status-countdown,
+.promo-status-time{
+  text-align:center;
+  position: relative;
+  z-index: 2;
 }
 
 .promo-status-line{
-  text-align:center;
   font-weight: 800;
   letter-spacing: 1px;
   color: #ffd700;
   text-transform: uppercase;
   font-size: 14px;
-  position: relative;
-  z-index: 2;
 }
 
 .promo-status-countdown{
   margin-top: 6px;
-  text-align:center;
   font-weight: 900;
   font-size: 28px;
   color: #fff;
   text-shadow: 0 0 18px rgba(255,215,0,0.25);
-  position: relative;
-  z-index: 2;
 }
 
 .promo-status-time{
   margin-top: 6px;
-  text-align:center;
   font-size: 12px;
   color: rgba(255,255,255,0.75);
-  position: relative;
-  z-index: 2;
 }
 
-.promo-live .promo-status-line{
-  color: #00ff95;
-}
-.promo-live .promo-status-countdown{
-  display:none;
-}
+.promo-live .promo-status-line{ color: #00ff95; }
+.promo-live .promo-status-countdown{ display:none; }
 
 /* Disable state for buy button */
 #buyPromoBtn.is-locked{
@@ -801,23 +800,25 @@
   filter: grayscale(20%);
 }
 
-/* === Chests === */
+/* === Chests (TRUE EDGES) === */
 .promo-chest{
   position:absolute;
   top: 50%;
+  transform: translateY(-50%);
   width: 64px;
   height: 54px;
-  transform: translateY(-50%);
+
   pointer-events:none;
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.45));
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,0.55));
   animation: chestBounce 1.35s ease-in-out infinite;
-  z-index: 1; /* ниже текста */
+
+  z-index: 1;
   opacity: 0.95;
 }
 
-/* сундуки чуть наружу за рамку */
-.promo-chest-left{ left: -10px; }
-.promo-chest-right{ right: -10px; animation-delay: .25s; }
+/* по краям (и чуть наружу) */
+.promo-chest-left{ left: -22px; }
+.promo-chest-right{ right: -22px; animation-delay: .25s; }
 
 .promo-chest .chest-box{
   position:absolute;
@@ -854,7 +855,6 @@
   animation: lidWiggle 1.35s ease-in-out infinite;
 }
 
-/* little sparkle gifts */
 .promo-chest .gift{
   position:absolute;
   width: 6px;
@@ -889,12 +889,11 @@
   100% { opacity: 0; transform: translateX(-50%) translateY(-24px) scale(0.6); }
 }
 
-/* Small screens: сундуки не прячем, а уменьшаем и чуть ближе */
+/* Mobile: уменьшаем и чуть меньше “наружу” */
 @media (max-width: 520px){
-  .promo-status-wrap{ padding: 14px 78px 16px; }
   .promo-chest{ width: 48px; height: 40px; }
-  .promo-chest-left{ left: -6px; }
-  .promo-chest-right{ right: -6px; }
+  .promo-chest-left{ left: -14px; }
+  .promo-chest-right{ right: -14px; }
 }
 </style>
 </head>
@@ -1343,6 +1342,7 @@ if (nativeBtn) {
 <script src="js/xmas.js"></script>
 </body>
 </html>
+
 
 
 
