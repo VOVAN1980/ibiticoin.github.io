@@ -894,97 +894,57 @@
   .promo-chest-left{ left: 28px; }
   .promo-chest-right{ right: 28px; }
 }
-  /* ===== CHESTS: make them look REAL ===== */
+  /* ==============================
+   REAL Xmas CHESTS (no HTML edits)
+   Replaces .chest-box/.chest-lid with SVG images
+   ============================== */
 
-/* общий объем + легкая 3D перспектива */
-.promo-chest{
-  transform: translateY(-50%) perspective(600px) rotateX(10deg);
-}
-
-/* НИЖНЯЯ ЧАСТЬ: дерево + ободы */
-.promo-chest .chest-box{
-  height: 38px;
-  border-radius: 10px;
-  background:
-    linear-gradient(180deg, rgba(255,205,70,.95), rgba(140,95,0,.95)),
-    repeating-linear-gradient(
-      90deg,
-      rgba(0,0,0,.18) 0px,
-      rgba(0,0,0,.18) 2px,
-      rgba(255,255,255,.06) 2px,
-      rgba(255,255,255,.06) 6px
-    );
-  border: 2px solid rgba(0,0,0,0.65);
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,.25),
-    inset 0 -10px 18px rgba(0,0,0,.35);
-}
-
-/* убираем центральную полоску, вместо неё — замок */
-.promo-chest .chest-box:before{
-  content:"";
-  position:absolute;
-  left:50%;
-  top: 10px;
-  width: 16px;
-  height: 20px;
-  transform: translateX(-50%);
-  border-radius: 4px;
-  background: linear-gradient(180deg, rgba(40,40,40,.9), rgba(0,0,0,.9));
-  border: 1px solid rgba(255,215,0,.35);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
-}
-
-/* отверстие замка */
-.promo-chest .chest-box:after{
-  content:"";
-  position:absolute;
-  left:50%;
-  top: 18px;
-  width: 6px;
-  height: 8px;
-  transform: translateX(-50%);
-  border-radius: 3px;
-  background: rgba(255,215,0,.85);
-  box-shadow: 0 0 6px rgba(255,215,0,.25);
-}
-
-/* КРЫШКА: округлая, с бликом и толщиной */
-.promo-chest .chest-lid{
-  height: 24px;
-  border-radius: 12px;
-  background:
-    radial-gradient(circle at 30% 30%, rgba(255,255,255,.35), rgba(255,255,255,0) 45%),
-    linear-gradient(180deg, rgba(255,235,140,.98), rgba(190,135,0,.95));
-  border: 2px solid rgba(0,0,0,0.65);
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,.22),
-    inset 0 -6px 10px rgba(0,0,0,.25);
-}
-
-/* металлические боковые ободы на крышке */
-.promo-chest .chest-lid:before,
-.promo-chest .chest-lid:after{
-  content:"";
-  position:absolute;
-  top: 0;
-  width: 8px;
-  height: 100%;
-  background: rgba(0,0,0,.25);
-  border-left: 1px solid rgba(255,255,255,.10);
-  border-right: 1px solid rgba(0,0,0,.45);
-  opacity: .9;
-}
-.promo-chest .chest-lid:before{ left: 10px; border-radius: 10px; }
-.promo-chest .chest-lid:after{ right: 10px; border-radius: 10px; }
-
-/* подарки — чуть крупнее и ярче */
+/* 1) Спрятать старые “недосундуки” внутри */
+.promo-chest .chest-box,
+.promo-chest .chest-lid,
 .promo-chest .gift{
-  width: 8px;
-  height: 8px;
-  border-radius: 3px;
-  background: rgba(255,255,255,0.95);
-  box-shadow: 0 0 10px rgba(255,215,0,.20);
+  display: none !important;
+}
+
+/* 2) Два состояния сундука (закрыт / приоткрыт) через pseudo-elements */
+.promo-chest{
+  position: absolute;
+  pointer-events: none;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,0.55));
+  animation: chestBounce 1.35s ease-in-out infinite;
+}
+
+/* CLOSED */
+.promo-chest::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: center/contain no-repeat url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20200%20160'%3E%3Cdefs%3E%3ClinearGradient%20id='w'%20x1='0'%20x2='0'%20y1='0'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%238a5423'/%3E%3Cstop%20offset='1'%20stop-color='%23512d10'/%3E%3C/linearGradient%3E%3ClinearGradient%20id='g'%20x1='0'%20x2='0'%20y1='0'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%23ffe39a'/%3E%3Cstop%20offset='1'%20stop-color='%23b88310'/%3E%3C/linearGradient%3E%3ClinearGradient%20id='s'%20x1='0'%20x2='1'%20y1='0'%20y2='0'%3E%3Cstop%20offset='0'%20stop-color='%23ffffff'%20stop-opacity='.35'/%3E%3Cstop%20offset='1'%20stop-color='%23ffffff'%20stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20x='18'%20y='62'%20width='164'%20height='78'%20rx='14'%20fill='url(%23w)'%20stroke='%232a1608'%20stroke-width='4'/%3E%3Crect%20x='18'%20y='58'%20width='164'%20height='18'%20rx='10'%20fill='url(%23g)'%20stroke='%232a1608'%20stroke-width='4'/%3E%3Crect%20x='22'%20y='88'%20width='156'%20height='10'%20rx='5'%20fill='url(%23g)'%20opacity='.95'/%3E%3Crect%20x='22'%20y='116'%20width='156'%20height='10'%20rx='5'%20fill='url(%23g)'%20opacity='.85'/%3E%3Crect%20x='93'%20y='58'%20width='14'%20height='82'%20rx='6'%20fill='%23c4122f'/%3E%3Crect%20x='76'%20y='84'%20width='48'%20height='20'%20rx='8'%20fill='%23120b08'%20opacity='.9'/%3E%3Ccircle%20cx='100'%20cy='94'%20r='5'%20fill='url(%23g)'/%3E%3Cpath%20d='M30%2066%20h140'%20stroke='url(%23s)'%20stroke-width='6'%20stroke-linecap='round'/%3E%3Ccircle%20cx='44'%20cy='56'%20r='5'%20fill='%23ffffff'%20opacity='.25'/%3E%3Ccircle%20cx='158'%20cy='56'%20r='4'%20fill='%23ffffff'%20opacity='.18'/%3E%3C/svg%3E");
+}
+
+/* OPEN (overlay, fades in/out) */
+.promo-chest::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  opacity: 0;
+  background: center/contain no-repeat url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20200%20160'%3E%3Cdefs%3E%3ClinearGradient%20id='w'%20x1='0'%20x2='0'%20y1='0'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%238a5423'/%3E%3Cstop%20offset='1'%20stop-color='%23512d10'/%3E%3C/linearGradient%3E%3ClinearGradient%20id='g'%20x1='0'%20x2='0'%20y1='0'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%23ffe39a'/%3E%3Cstop%20offset='1'%20stop-color='%23b88310'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20x='18'%20y='68'%20width='164'%20height='72'%20rx='14'%20fill='url(%23w)'%20stroke='%232a1608'%20stroke-width='4'/%3E%3Crect%20x='22'%20y='92'%20width='156'%20height='10'%20rx='5'%20fill='url(%23g)'%20opacity='.95'/%3E%3Crect%20x='22'%20y='118'%20width='156'%20height='10'%20rx='5'%20fill='url(%23g)'%20opacity='.85'/%3E%3Crect%20x='93'%20y='68'%20width='14'%20height='72'%20rx='6'%20fill='%23c4122f'/%3E%3Crect%20x='76'%20y='90'%20width='48'%20height='20'%20rx='8'%20fill='%23120b08'%20opacity='.9'/%3E%3Ccircle%20cx='100'%20cy='100'%20r='5'%20fill='url(%23g)'/%3E%3Cg%20transform='translate(0,-6)'%3E%3Cpath%20d='M24%2068%20L176%2068%20L166%2040%20L34%2040%20Z'%20fill='url(%23g)'%20stroke='%232a1608'%20stroke-width='4'/%3E%3Cpath%20d='M34%2040%20Q100%2012%20166%2040'%20fill='none'%20stroke='%232a1608'%20stroke-width='4'/%3E%3C/g%3E%3Crect%20x='74'%20y='40'%20width='52'%20height='20'%20rx='6'%20fill='%23c4122f'/%3E%3Crect%20x='52'%20y='54'%20width='18'%20height='18'%20rx='4'%20fill='%23ffffff'%20opacity='.95'/%3E%3Crect%20x='130'%20y='54'%20width='18'%20height='18'%20rx='4'%20fill='%23ffffff'%20opacity='.85'/%3E%3Ccircle%20cx='62'%20cy='54'%20r='3'%20fill='%23c4122f'/%3E%3Ccircle%20cx='140'%20cy='54'%20r='3'%20fill='%2300b36b'/%3E%3Ccircle%20cx='156'%20cy='46'%20r='4'%20fill='%23ffffff'%20opacity='.35'/%3E%3Ccircle%20cx='44'%20cy='46'%20r='5'%20fill='%23ffffff'%20opacity='.25'/%3E%3C/svg%3E");
+  animation: chestPeek 1.35s ease-in-out infinite;
+}
+
+/* 3) “Крышка вот-вот откроется” */
+@keyframes chestPeek{
+  0%{ opacity: 0; }
+  30%{ opacity: .0; }
+  45%{ opacity: 1; }
+  65%{ opacity: 1; }
+  100%{ opacity: 0; }
+}
+
+/* 4) Прыжок (оставляем твой, но под новый transform) */
+@keyframes chestBounce{
+  0%, 100% { transform: translateY(-50%) perspective(600px) rotateX(10deg) translateY(0); }
+  50%      { transform: translateY(-50%) perspective(600px) rotateX(10deg) translateY(-10px); }
 }
 </style>
 </head>
@@ -1433,6 +1393,7 @@ if (nativeBtn) {
 <script src="js/xmas.js"></script>
 </body>
 </html>
+
 
 
 
