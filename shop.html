@@ -1301,83 +1301,9 @@ if (nativeBtn) {
 
 <script src="js/app.js"></script>
 <script src="js/xmas.js"></script>
-
-  <script>
-(function(){
-  // Launch moment: 24.12.2025 01:00 Berlin == 24.12.2025 00:00 UTC
-  const LAUNCH_UTC_MS = Date.UTC(2025, 11, 24, 0, 0, 0);
-
-  const wrap = document.getElementById("promoStatusWrap");
-  const line = document.getElementById("promoStatusLine");
-  const cd   = document.getElementById("promoCountdown");
-  const times= document.getElementById("promoTimes");
-  const buyBtn = document.getElementById("buyPromoBtn");
-
-  if (!wrap || !line || !cd || !times) return;
-
-  function fmtTime(tz){
-    try{
-      return new Intl.DateTimeFormat("en-GB", {
-        timeZone: tz,
-        year:"numeric", month:"2-digit", day:"2-digit",
-        hour:"2-digit", minute:"2-digit",
-        hourCycle:"h23"
-      }).format(new Date(LAUNCH_UTC_MS));
-    }catch(e){
-      // fallback, if Intl timeZone not supported
-      return "24/12/2025 01:00 (Berlin) / 02:00 (Kyiv)";
-    }
-  }
-
-  function pad(n){ return String(n).padStart(2,"0"); }
-
-  function tick(){
-    const now = Date.now();
-    const diff = LAUNCH_UTC_MS - now;
-
-    // show launch times always
-    times.textContent = `Launch time: Berlin ${fmtTime("Europe/Berlin")} • Kyiv ${fmtTime("Europe/Kyiv")}`;
-
-    if (diff <= 0){
-      wrap.classList.add("promo-live");
-      line.textContent = "PROMO IS LIVE ✅";
-      if (buyBtn){
-        buyBtn.classList.remove("is-locked");
-        buyBtn.disabled = false;
-        buyBtn.title = "";
-      }
-      return;
-    }
-
-    // countdown mode
-    wrap.classList.remove("promo-live");
-    line.textContent = "PROMO STARTS IN";
-
-    const totalSec = Math.floor(diff / 1000);
-    const d = Math.floor(totalSec / 86400);
-    const h = Math.floor((totalSec % 86400) / 3600);
-    const m = Math.floor((totalSec % 3600) / 60);
-    const s = totalSec % 60;
-
-    cd.textContent = (d > 0)
-      ? `${d}d ${pad(h)}:${pad(m)}:${pad(s)}`
-      : `${pad(h)}:${pad(m)}:${pad(s)}`;
-
-    // lock buy button before launch
-    if (buyBtn){
-      buyBtn.classList.add("is-locked");
-      buyBtn.disabled = true;
-      buyBtn.title = "Promo not started yet";
-    }
-  }
-
-  tick();
-  setInterval(tick, 250);
-})();
-</script>
-
 </body>
 </html>
+
 
 
 
