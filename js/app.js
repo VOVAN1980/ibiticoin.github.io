@@ -129,15 +129,25 @@
   }
 
   function setNetBadge() {
-    const badge = $("netBadge");
-    if (!badge) return;
-    if (net().key === "testnet") {
-      badge.textContent = "TESTNET MODE";
-      badge.style.display = "inline-block";
-    } else {
-      badge.style.display = "none";
-    }
+  const badge = $("netBadge");
+  if (!badge) return;
+
+  const k = net().key;
+
+  badge.style.display = "inline-block";
+  badge.textContent = (k === "testnet") ? "TESTNET MODE" : "MAINNET MODE";
+
+  // Цвета/стиль: testnet = холодный, mainnet = “боевой” зелёный
+  if (k === "testnet") {
+    badge.style.color = "#8bd3ff";
+    badge.style.borderColor = "rgba(139, 211, 255, 0.35)";
+    badge.style.background = "rgba(0,0,0,0.55)";
+  } else {
+    badge.style.color = "#7CFFB2";
+    badge.style.borderColor = "rgba(124, 255, 178, 0.35)";
+    badge.style.background = "rgba(0,0,0,0.55)";
   }
+}
 
   function fmt(n, decimals = 8, maxFrac = 8) {
     const f = Number(ethers.formatUnits(n, decimals));
