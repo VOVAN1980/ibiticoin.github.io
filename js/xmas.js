@@ -112,7 +112,7 @@
   const elCd = document.getElementById("promoCountdown");
   if (!wrap || !elLine || !elCd) return;
 
-  const launchTs = new Date("2025-12-24T01:00:00+01:00").getTime();
+  const launchTs = new Date("2025-12-25T01:00:00+01:00").getTime(); // Berlin
 
   const pad = (n) => String(n).padStart(2, "0");
   const fmt = (ms) => {
@@ -145,3 +145,4 @@
   tick();
   setInterval(tick, 1000);
 })();
+
