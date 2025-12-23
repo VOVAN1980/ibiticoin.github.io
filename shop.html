@@ -894,6 +894,98 @@
   .promo-chest-left{ left: 28px; }
   .promo-chest-right{ right: 28px; }
 }
+  /* ===== CHESTS: make them look REAL ===== */
+
+/* общий объем + легкая 3D перспектива */
+.promo-chest{
+  transform: translateY(-50%) perspective(600px) rotateX(10deg);
+}
+
+/* НИЖНЯЯ ЧАСТЬ: дерево + ободы */
+.promo-chest .chest-box{
+  height: 38px;
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(255,205,70,.95), rgba(140,95,0,.95)),
+    repeating-linear-gradient(
+      90deg,
+      rgba(0,0,0,.18) 0px,
+      rgba(0,0,0,.18) 2px,
+      rgba(255,255,255,.06) 2px,
+      rgba(255,255,255,.06) 6px
+    );
+  border: 2px solid rgba(0,0,0,0.65);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.25),
+    inset 0 -10px 18px rgba(0,0,0,.35);
+}
+
+/* убираем центральную полоску, вместо неё — замок */
+.promo-chest .chest-box:before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top: 10px;
+  width: 16px;
+  height: 20px;
+  transform: translateX(-50%);
+  border-radius: 4px;
+  background: linear-gradient(180deg, rgba(40,40,40,.9), rgba(0,0,0,.9));
+  border: 1px solid rgba(255,215,0,.35);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
+}
+
+/* отверстие замка */
+.promo-chest .chest-box:after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top: 18px;
+  width: 6px;
+  height: 8px;
+  transform: translateX(-50%);
+  border-radius: 3px;
+  background: rgba(255,215,0,.85);
+  box-shadow: 0 0 6px rgba(255,215,0,.25);
+}
+
+/* КРЫШКА: округлая, с бликом и толщиной */
+.promo-chest .chest-lid{
+  height: 24px;
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.35), rgba(255,255,255,0) 45%),
+    linear-gradient(180deg, rgba(255,235,140,.98), rgba(190,135,0,.95));
+  border: 2px solid rgba(0,0,0,0.65);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.22),
+    inset 0 -6px 10px rgba(0,0,0,.25);
+}
+
+/* металлические боковые ободы на крышке */
+.promo-chest .chest-lid:before,
+.promo-chest .chest-lid:after{
+  content:"";
+  position:absolute;
+  top: 0;
+  width: 8px;
+  height: 100%;
+  background: rgba(0,0,0,.25);
+  border-left: 1px solid rgba(255,255,255,.10);
+  border-right: 1px solid rgba(0,0,0,.45);
+  opacity: .9;
+}
+.promo-chest .chest-lid:before{ left: 10px; border-radius: 10px; }
+.promo-chest .chest-lid:after{ right: 10px; border-radius: 10px; }
+
+/* подарки — чуть крупнее и ярче */
+.promo-chest .gift{
+  width: 8px;
+  height: 8px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 0 10px rgba(255,215,0,.20);
+}
 </style>
 </head>
 <body>
@@ -1341,6 +1433,7 @@ if (nativeBtn) {
 <script src="js/xmas.js"></script>
 </body>
 </html>
+
 
 
 
