@@ -19,7 +19,7 @@
       ibiti: "0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb",
       usdt:  "0x55d398326f99059fF775485246999027B3197955",
       pancakeRouter: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
-      promoRouter:   "",
+      promoRouter: "0xEbC727AF27a055691368F5335dB4AB8bCDec3309",
       slippageBps: 300
     },
 
@@ -98,4 +98,5 @@
     clearSavedMode
   };
 })();
+
 
