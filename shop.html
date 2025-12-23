@@ -910,6 +910,31 @@
 <label for="promoUsdtAmount">Promo amount (USDT):</label>
 <input id="promoUsdtAmount" inputmode="decimal" min="10" step="1" type="number" value="10"/>
 </div>
+  <!-- Promo countdown + chests -->
+<div class="promo-status-wrap" id="promoStatus">
+  <div class="promo-chest promo-chest-left" aria-hidden="true">
+    <div class="chest-lid"></div>
+    <div class="chest-box"></div>
+    <div class="gift g1"></div>
+    <div class="gift g2"></div>
+    <div class="gift g3"></div>
+  </div>
+
+  <div class="promo-chest promo-chest-right" aria-hidden="true">
+    <div class="chest-lid"></div>
+    <div class="chest-box"></div>
+    <div class="gift g1"></div>
+    <div class="gift g2"></div>
+    <div class="gift g3"></div>
+  </div>
+
+  <div class="promo-status-line" id="promoStatusLine">LAUNCH IN</div>
+  <div class="promo-status-countdown" id="promoCountdown">—</div>
+  <div class="promo-status-time" id="promoTimeZones">
+    Berlin: <span id="berlinTime">24.12.2025 01:00</span> ·
+    Kyiv: <span id="kyivTime">24.12.2025 02:00</span>
+  </div>
+</div>
 <button class="btn btn-primary" id="promoBuyButton">Buy IBITI +10% bonus</button>
 </div>
 <div id="minPayInfo"></div>
@@ -1303,6 +1328,7 @@ if (nativeBtn) {
 <script src="js/xmas.js"></script>
 </body>
 </html>
+
 
 
 
