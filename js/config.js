@@ -2,6 +2,9 @@
 (function () {
   "use strict";
 
+  const PROD_HOSTS = new Set(["ibiticoin.com", "www.ibiticoin.com"]);
+  const LS_KEY = "ibiti_net";
+
   const NETWORKS = {
     mainnet: {
       key: "mainnet",
@@ -16,7 +19,7 @@
       ibiti: "0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb",
       usdt:  "0x55d398326f99059fF775485246999027B3197955",
       pancakeRouter: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
-      promoRouter: "0xEbC727AF27a055691368F5335dB4AB8bCDec3309",
+      promoRouter:   "0xEbC727AF27a055691368F5335dB4AB8bCDec3309",
       slippageBps: 300
     },
 
@@ -30,48 +33,68 @@
       blockExplorerUrls: ["https://testnet.bscscan.com"],
       nativeCurrency: { name: "tBNB", symbol: "tBNB", decimals: 18 },
 
-      // ✅ current testnet deployment from your logs
       usdt:  "0x25F48F48bFfc6D9901d32Dc6c76A2C4486C4E55d",
       ibiti: "0x8975221CCceF486DBCcC4CCa282662e36280577D",
       pancakeRouter: "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
-      promoRouter:  "0x131f8AC959e5D27105485397a63F614F4c5c2aA5",
+      promoRouter:   "0x131f8AC959e5D27105485397a63F614F4c5c2aA5",
       slippageBps: 300
     }
   };
 
   function getQueryParam(name) {
-    const u = new URL(window.location.href);
-    return u.searchParams.get(name);
+    return new URL(window.location.href).searchParams.get(name);
   }
 
-  function detectMode() {
-    const q = (getQueryParam("net") || "").toLowerCase();
+  function normalizeMode(v) {
+    const q = String(v || "").toLowerCase().trim();
     if (q === "testnet" || q === "t" || q === "97") return "testnet";
     if (q === "mainnet" || q === "m" || q === "56") return "mainnet";
+    return null;
+  }
 
-    // optional sticky mode for dev
-    const saved = (localStorage.getItem("ibiti_net") || "").toLowerCase();
-    if (saved === "testnet" || saved === "mainnet") return saved;
+  function isProdHost() {
+    return PROD_HOSTS.has(String(location.hostname || "").toLowerCase());
+  }
+
+  // ✅ идеальная логика для прода:
+  // - URL ?net=... всегда имеет приоритет
+  // - на prod без ?net=... всегда mainnet (игнорируем localStorage, чтобы никто не “залипал” в testnet)
+  // - на dev можно “запоминать” localStorage
+  function detectMode() {
+    const fromUrl = normalizeMode(getQueryParam("net"));
+    if (fromUrl) return fromUrl;
+
+    if (isProdHost()) return "mainnet";
+
+    let saved = null;
+    try { saved = normalizeMode(localStorage.getItem(LS_KEY)); } catch (_) {}
+    if (saved) return saved;
 
     return "mainnet";
   }
 
+  // setMode сохраняем для dev/ручного переключения,
+  // на prod оно не влияет без ?net=... (и это хорошо)
   function setMode(mode) {
-    if (mode !== "mainnet" && mode !== "testnet") return;
-    localStorage.setItem("ibiti_net", mode);
+    const m = normalizeMode(mode);
+    if (!m) return;
+    try { localStorage.setItem(LS_KEY, m); } catch (_) {}
   }
 
   function getNet() {
-    const mode = detectMode();
-    return NETWORKS[mode];
+    return NETWORKS[detectMode()] || NETWORKS.mainnet;
+  }
+
+  // опционально: удобный хелпер для тестов (не обязателен)
+  function clearSavedMode() {
+    try { localStorage.removeItem(LS_KEY); } catch (_) {}
   }
 
   window.IBITI_CONFIG = {
     NETWORKS,
     detectMode,
     setMode,
-    getNet
+    getNet,
+    clearSavedMode
   };
 })();
-
-
