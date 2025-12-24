@@ -894,9 +894,71 @@
   .promo-chest-left{ left: 28px; }
   .promo-chest-right{ right: 28px; }
 }
+  /* === PROMO PAUSED OVERLAY === */
+.ib-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.78);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.ib-overlay-card{
+  width: min(760px, 96vw);
+  max-height: 80vh;
+  overflow: auto;
+  border: 1px solid rgba(247,208,0,.25);
+  border-radius: 18px;
+  background: rgba(0,0,0,.55);
+  box-shadow: 0 0 28px rgba(255,215,0,.12);
+  padding: 22px 18px;
+  text-align: center;
+}
+
+.ib-overlay-card h2{
+  margin: 0 0 10px;
+  color: #f7d000;
+  text-shadow: 0 0 16px rgba(247,208,0,.25);
+}
+
+.ib-overlay-card p{
+  margin: 0 0 10px;
+  color: rgba(255,255,255,.82);
+  line-height: 1.55;
+  font-size: 14px;
+}
+
+.ib-overlay-btn{
+  margin-top: 12px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(247,208,0,.25);
+  background: rgba(247,208,0,.14);
+  color: #f7d000;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 0 22px rgba(255,215,0,.10);
+}
 </style>
 </head>
 <body>
+  <!-- PROMO PAUSED OVERLAY -->
+<div id="promoPausedOverlay" class="ib-overlay" style="display:none;">
+  <div class="ib-overlay-card">
+    <h2>Promo Temporarily Paused</h2>
+    <p>
+      The IBITI New Year promo is temporarily suspended due to technical maintenance.
+      Purchases and bonus issuance are currently disabled.
+    </p>
+    <p style="opacity:.8;">
+      Please check back soon. Thank you for your understanding.
+    </p>
+    <button id="promoPausedOk" class="ib-overlay-btn" type="button">OK</button>
+  </div>
+</div>
 <div class="badge" id="netBadge">TESTNET MODE</div>
 <div class="wrap">
 <header>
@@ -1341,6 +1403,7 @@ if (nativeBtn) {
 <script src="js/xmas.js"></script>
 </body>
 </html>
+
 
 
 
