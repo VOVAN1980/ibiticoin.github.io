@@ -393,8 +393,10 @@
 
    const amtEl = $("promoUsdtAmount");
 const amtStr = amtEl ? String(amtEl.value || "").trim() : "";
-const amtNum = Math.round(Number(amtStr) * 100) / 100;
 
+if (!/^\d+$/.test(amtStr)) throw new Error("Please enter a whole number (10–100).");
+
+const amtNum = parseInt(amtStr, 10);
 if (!Number.isFinite(amtNum) || amtNum <= 0) throw new Error("Invalid USDT amount.");
 if (amtNum < 10) throw new Error("Minimum is 10 USDT.");
 if (amtNum > 100) throw new Error("Maximum is 100 USDT.");
