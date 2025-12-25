@@ -1400,29 +1400,35 @@ if (nativeBtn) {
 
 <script src="js/app.js"></script>
 <script src="js/xmas.js"></script>
+
+  <script>
+(function(){
+  window.ensureIbitiReceipt = window.ensureIbitiReceipt || function(){
+    if (window.IBITI_RECEIPT && window.IBITI_RECEIPT.ready) return Promise.resolve();
+
+    return fetch("/receipt-widget.html", { cache: "no-store" })
+      .then(r => r.text())
+      .then(html => {
+        const tpl = document.createElement("template");
+        tpl.innerHTML = html.trim();
+
+        const nodes = Array.from(tpl.content.childNodes);
+        for (const node of nodes) {
+          if (node.nodeName === "SCRIPT") {
+            const s = document.createElement("script");
+            s.text = node.textContent || "";
+            document.body.appendChild(s);
+          } else {
+            document.body.appendChild(node);
+          }
+        }
+      });
+  };
+
+  window.ensureIbitiReceipt().catch(()=>{});
+})();
+</script>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
