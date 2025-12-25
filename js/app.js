@@ -391,11 +391,13 @@
       throw new Error("Promo router not set on this network.");
     }
 
-    const amtEl = $("promoUsdtAmount");
-    const amtStr = amtEl ? String(amtEl.value || "").trim() : "";
-    const amtNum = Number(amtStr);
-    if (!Number.isFinite(amtNum) || amtNum <= 0) throw new Error("Invalid USDT amount.");
-    if (amtNum < 10) throw new Error("Minimum is 10 USDT.");
+   const amtEl = $("promoUsdtAmount");
+const amtStr = amtEl ? String(amtEl.value || "").trim() : "";
+const amtNum = Math.round(Number(amtStr) * 100) / 100;
+
+if (!Number.isFinite(amtNum) || amtNum <= 0) throw new Error("Invalid USDT amount.");
+if (amtNum < 10) throw new Error("Minimum is 10 USDT.");
+if (amtNum > 100) throw new Error("Maximum is 100 USDT.");
 
     const { signer } = await getBrowserProviderSigner();
     const buyerAddr = await signer.getAddress();
