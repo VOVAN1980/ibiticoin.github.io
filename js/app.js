@@ -373,27 +373,17 @@
     setText("lastUpdated", `Updated: ${nowStr()}`);
 
     // promo info line
-const active = await promo.promoActive();
-const bonusBps = await promo.bonusBps();
+    const active = await promo.promoActive();
+    const bonusBps = await promo.bonusBps();
+    const minPay = await promo.minPaymentAmount();
+    const usdt = new ethers.Contract(netCfg.usdt, ERC20_ABI, rp);
+    const usdtDec = await usdt.decimals();
 
-let minPay = null;
-try {
-  // если функция существует — покажем реальное значение с контракта
-  minPay = await promo.minPaymentAmount();
-} catch (_) {
-  // если функции нет — не падаем, просто покажем 10
-  minPay = null;
-}
-
-const usdt = new ethers.Contract(netCfg.usdt, ERC20_ABI, rp);
-const usdtDec = await usdt.decimals();
-
-const infoEl = $("minPayInfo");
-if (infoEl) {
-  const minText = (minPay === null) ? "10" : fmt(minPay, usdtDec, 2);
-  infoEl.textContent =
-    `Min: ${minText} USDT · Bonus: ${(Number(bonusBps) / 100).toFixed(2)}% · Active: ${active}`;
-}
+    const infoEl = $("minPayInfo");
+    if (infoEl) {
+      infoEl.textContent = `Min: ${fmt(minPay, usdtDec, 2)} USDT · Bonus: ${(Number(bonusBps) / 100).toFixed(2)}% · Active: ${active}`;
+    }
+  }
 
   async function buyPromo() {
     const netCfg = net();
