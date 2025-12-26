@@ -1402,215 +1402,354 @@ if (nativeBtn) {
 <script src="js/xmas.js"></script>
 
   <script>
-/* IBITI Receipt Widget (WHITE PAPER, NO FETCH, NO DRAMA) */
+/* =========================
+   IBITI WHITE RECEIPT WIDGET (ONE-FILE)
+   ========================= */
 (function () {
   "use strict";
 
-  // ---- already loaded? ----
-  if (window.IBITI_RECEIPT && window.IBITI_RECEIPT.ready) return;
-
-  // ---- ensure ethers available for decoding ----
-  // (referralSwap.js already does window.ethers = ethers; but keep safe)
-  if (!window.ethers) window.ethers = null;
-
-  // ---- inject CSS once ----
-  const CSS_ID = "ibiti-receipt-css";
-  if (!document.getElementById(CSS_ID)) {
-    const style = document.createElement("style");
-    style.id = CSS_ID;
-    style.textContent = `
-:root{--paper:#fff;--ink:#111;--muted:#666;--line:#e6e6e6;--mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;--sans:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
-#ibitiReceiptOverlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.55);z-index:999999;}
-#ibitiReceiptOverlay.open{display:flex;}
-#ibitiReceiptCard{width:min(520px,100%);background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 60px rgba(0,0,0,.35);overflow:hidden;}
-#ibitiReceiptHead{display:flex;justify-content:space-between;gap:12px;padding:18px 18px 10px;border-bottom:1px solid var(--line);}
-#ibitiReceiptTitle b{font-family:var(--sans);font-size:18px;}
-#ibitiReceiptTitle div{margin-top:3px;font-family:var(--sans);font-size:12px;color:var(--muted);}
-#ibitiReceiptClose{border:0;background:transparent;font-size:22px;cursor:pointer;color:#222;padding:2px 6px;line-height:1;}
-#ibitiReceiptBody{padding:14px 18px 16px;font-family:var(--sans);font-size:13px;}
-.ibRow{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px dashed #ddd;}
-.ibRow:last-child{border-bottom:0;}
-.ibK{color:var(--muted);}
-.ibV{font-family:var(--mono);text-align:right;word-break:break-all;}
-.ibSec{margin:12px 0 6px;font-weight:700;font-size:12px;letter-spacing:.3px;text-transform:uppercase;color:#222;}
-.ibLine{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0 6px;border-bottom:1px solid var(--line);}
-.ibLine a{font-family:var(--mono);font-size:12px;color:#111;text-decoration:underline;word-break:break-all;}
-#ibitiReceiptActions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;padding:14px 18px 18px;border-top:1px solid var(--line);}
-.ibBtn{border:1px solid #111;background:#111;color:#fff;font-family:var(--sans);padding:10px 12px;border-radius:10px;cursor:pointer;font-size:13px;}
-.ibBtn.secondary{background:#fff;color:#111;}
-#ibitiStampWrap{position:relative;height:90px;margin-top:12px;}
-#ibitiStamp{position:absolute;right:0;bottom:0;width:92px;height:92px;transform:rotate(-12deg);opacity:.9;pointer-events:none;}
-#ibitiFine{margin-top:10px;font-size:11px;color:var(--muted);line-height:1.35;}
-@media print{
-  html,body{background:#fff !important;color:#000 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  #ibitiReceiptOverlay{position:static !important;display:block !important;background:transparent !important;padding:0 !important;}
-  #ibitiReceiptCard{box-shadow:none !important;border-radius:0 !important;width:100% !important;max-width:86mm;margin:0 auto;border:1px solid #000 !important;}
-  #ibitiReceiptActions,#ibitiReceiptClose{display:none !important;}
-}
-`;
-    document.head.appendChild(style);
+  // ethers должен быть доступен (у тебя он есть в module import). Мы подхватим window.ethers.
+  function mustEthers() {
+    if (!window.ethers) throw new Error("window.ethers not found. Set: window.ethers = ethers (from module).");
+    return window.ethers;
   }
 
-  // ---- inject HTML once ----
-  const WRAP_ID = "ibitiReceiptWrap";
-  if (!document.getElementById(WRAP_ID)) {
-    const wrap = document.createElement("div");
-    wrap.id = WRAP_ID;
-    wrap.innerHTML = `
-<div id="ibitiReceiptOverlay" role="dialog" aria-modal="true">
-  <div id="ibitiReceiptCard">
-    <div id="ibitiReceiptHead">
-      <div id="ibitiReceiptTitle">
-        <b>IBITI Receipt</b>
-        <div>Official transaction summary</div>
+  // UI (white receipt)
+  const css = `
+  .ibiti-rx-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:99999;padding:14px}
+  .ibiti-rx{width:min(520px,96vw);background:#fff;color:#111;border-radius:14px;box-shadow:0 20px 80px rgba(0,0,0,.35);overflow:hidden;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+  .ibiti-rx-h{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #eee}
+  .ibiti-rx-title{font-weight:800;letter-spacing:.3px}
+  .ibiti-rx-sub{font-size:12px;color:#666;margin-top:2px}
+  .ibiti-rx-x{border:0;background:#f3f3f3;border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:18px;line-height:36px}
+  .ibiti-rx-b{padding:14px 16px}
+  .ibiti-rx-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+  .ibiti-rx-row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed #e8e8e8;padding:8px 0}
+  .ibiti-rx-k{font-size:12px;color:#666}
+  .ibiti-rx-v{font-size:12px;font-weight:700;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px}
+  .ibiti-rx-sec{margin-top:12px;padding-top:10px;border-top:1px solid #eee}
+  .ibiti-rx-label{font-size:11px;color:#666;margin-bottom:6px;font-weight:700;letter-spacing:.5px}
+  .ibiti-rx-box{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fafafa;border:1px solid #eee;border-radius:10px;padding:10px}
+  .ibiti-rx-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;color:#111;word-break:break-all}
+  .ibiti-rx-btn{border:1px solid #ddd;background:#fff;border-radius:10px;padding:8px 10px;cursor:pointer;font-weight:700;font-size:12px}
+  .ibiti-rx-btn:active{transform:translateY(1px)}
+  .ibiti-rx-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px}
+  .ibiti-rx-stamp{width:86px;height:86px;border:2px solid #111;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative}
+  .ibiti-rx-stamp b{font-size:12px;letter-spacing:2px}
+  .ibiti-rx-stamp:before{content:"OFFICIAL";position:absolute;top:10px;left:0;right:0;text-align:center;font-size:9px;letter-spacing:1.5px}
+  .ibiti-rx-stamp:after{content:"IBITI";position:absolute;bottom:10px;left:0;right:0;text-align:center;font-size:11px;letter-spacing:1.5px;font-weight:900}
+  .ibiti-rx-note{font-size:11px;color:#666;line-height:1.35}
+  .ibiti-rx-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
+  .ibiti-rx-pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;background:#111;color:#fff}
+  `;
+
+  const html = `
+  <div class="ibiti-rx-overlay" id="ibitiRxOverlay" role="dialog" aria-modal="true">
+    <div class="ibiti-rx" id="ibitiRxCard">
+      <div class="ibiti-rx-h">
+        <div>
+          <div class="ibiti-rx-title">IBITI Receipt</div>
+          <div class="ibiti-rx-sub">Official transaction summary</div>
+        </div>
+        <button class="ibiti-rx-x" id="ibitiRxClose" aria-label="Close">×</button>
       </div>
-      <button id="ibitiReceiptClose" aria-label="Close">×</button>
-    </div>
 
-    <div id="ibitiReceiptBody">
-      <div class="ibRow"><div class="ibK">Date</div><div class="ibV" id="rDate">—</div></div>
-      <div class="ibRow"><div class="ibK">Buyer</div><div class="ibV" id="rBuyer">—</div></div>
-      <div class="ibRow"><div class="ibK">Network</div><div class="ibV" id="rNet">—</div></div>
-      <div class="ibRow"><div class="ibK">Receipt ID</div><div class="ibV" id="rId">—</div></div>
+      <div class="ibiti-rx-b">
+        <div class="ibiti-rx-grid">
+          <div class="ibiti-rx-row"><span class="ibiti-rx-k">Date</span><span class="ibiti-rx-v" id="rxDate">—</span></div>
+          <div class="ibiti-rx-row"><span class="ibiti-rx-k">Network</span><span class="ibiti-rx-v" id="rxNet">—</span></div>
 
-      <div class="ibSec">Purchase</div>
-      <div class="ibRow"><div class="ibK">Paid (USDT)</div><div class="ibV" id="rPaid">—</div></div>
-      <div class="ibRow"><div class="ibK">Market amount (IBITI)</div><div class="ibV" id="rBase">—</div></div>
-      <div class="ibRow"><div class="ibK">Promo bonus (IBITI)</div><div class="ibV" id="rBonus">—</div></div>
-      <div class="ibRow"><div class="ibK"><b>Total received (IBITI)</b></div><div class="ibV" id="rTotal"><b>—</b></div></div>
-      <div class="ibRow"><div class="ibK">Effective price (USDT/IBITI)</div><div class="ibV" id="rPrice">—</div></div>
+          <div class="ibiti-rx-row"><span class="ibiti-rx-k">Buyer</span><span class="ibiti-rx-v" id="rxBuyer">—</span></div>
+          <div class="ibiti-rx-row"><span class="ibiti-rx-k">Receipt ID</span><span class="ibiti-rx-v" id="rxId">—</span></div>
+        </div>
 
-      <div class="ibSec">Transaction</div>
-      <div class="ibLine">
-        <a id="rTxLink" href="#" target="_blank" rel="noreferrer">—</a>
-        <button class="ibBtn secondary" id="btnCopyTx">Copy</button>
-      </div>
+        <div class="ibiti-rx-sec">
+          <div class="ibiti-rx-label">PURCHASE</div>
+          <div class="ibiti-rx-row"><span class="ibiti-rx-k">Paid (USDT)</span><span class="ibiti-rx-v" id="rxPaid">Pending…</span></div>
+          <div class="ibiti-rx-row"><span class="ibiti-rx-k">Market amount (IBITI)</span><span class="ibiti-rx-v" id="rxMarket">Pending…</span></div>
+          <div class="ibiti-rx-row"><span class="ibiti-rx-k">Promo bonus (IBITI)</span><span class="ibiti-rx-v" id="rxBonus">Pending…</span></div>
+          <div class="ibiti-rx-row"><span class="ibiti-rx-k">Total received (IBITI)</span><span class="ibiti-rx-v" id="rxTotal">Pending…</span></div>
+          <div class="ibiti-rx-row"><span class="ibiti-rx-k">Effective price (USDT/IBITI)</span><span class="ibiti-rx-v" id="rxPrice">Pending…</span></div>
+        </div>
 
-      <div class="ibSec">Referral link</div>
-      <div class="ibLine">
-        <a id="rRefLink" href="#" target="_blank" rel="noreferrer">—</a>
-        <button class="ibBtn secondary" id="btnCopyRef">Copy</button>
-      </div>
+        <div class="ibiti-rx-sec">
+          <div class="ibiti-rx-label">TRANSACTION</div>
+          <div class="ibiti-rx-box">
+            <div class="ibiti-rx-mono" id="rxTx">—</div>
+            <button class="ibiti-rx-btn" id="rxCopyTx">Copy</button>
+          </div>
+        </div>
 
-      <div id="ibitiStampWrap">
-        <div id="ibitiStamp" aria-hidden="true">
-          <svg viewBox="0 0 100 100" width="92" height="92">
-            <circle cx="50" cy="50" r="46" fill="none" stroke="#111" stroke-width="3"/>
-            <circle cx="50" cy="50" r="36" fill="none" stroke="#111" stroke-width="1.8" stroke-dasharray="3 3"/>
-            <text x="50" y="54" text-anchor="middle" font-family="ui-monospace, monospace" font-size="18" fill="#111" font-weight="700">IBITI</text>
-            <text x="50" y="70" text-anchor="middle" font-family="ui-monospace, monospace" font-size="8.5" fill="#111">OFFICIAL</text>
-          </svg>
+        <div class="ibiti-rx-sec">
+          <div class="ibiti-rx-label">REFERRAL LINK</div>
+          <div class="ibiti-rx-box">
+            <div class="ibiti-rx-mono" id="rxRef">—</div>
+            <button class="ibiti-rx-btn" id="rxCopyRef">Copy</button>
+          </div>
+        </div>
+
+        <div class="ibiti-rx-foot">
+          <div class="ibiti-rx-note">
+            <span class="ibiti-rx-pill" id="rxStatus">PENDING</span><br>
+            Base amount is the executed on-chain swap result. Bonus is added on top.
+          </div>
+          <div class="ibiti-rx-stamp"><b>IBITI</b></div>
+        </div>
+
+        <div class="ibiti-rx-actions">
+          <button class="ibiti-rx-btn" id="rxPrint">Print / Save PDF</button>
         </div>
       </div>
-
-      <div id="ibitiFine">
-        Base amount is the executed on-chain swap result. Promo bonus is added on top.
-      </div>
     </div>
+  </div>`;
 
-    <div id="ibitiReceiptActions">
-      <button class="ibBtn secondary" id="btnPrint">Print / Save PDF</button>
-    </div>
-  </div>
-</div>`;
-    document.body.appendChild(wrap);
+  function inject() {
+    if (document.getElementById("ibitiRxOverlay")) return;
+    const s = document.createElement("style");
+    s.textContent = css;
+    document.head.appendChild(s);
+
+    const wrap = document.createElement("div");
+    wrap.innerHTML = html;
+    document.body.appendChild(wrap.firstElementChild);
+
+    const $ = (id) => document.getElementById(id);
+    $("ibitiRxClose").addEventListener("click", close);
+    $("ibitiRxOverlay").addEventListener("click", (e) => { if (e.target.id === "ibitiRxOverlay") close(); });
+
+    $("rxCopyTx").addEventListener("click", () => copyText($("rxTx").textContent));
+    $("rxCopyRef").addEventListener("click", () => copyText($("rxRef").textContent));
+    $("rxPrint").addEventListener("click", () => printReceipt());
   }
 
-  // ---- dom helpers ----
-  const $ = (id) => document.getElementById(id);
-  const overlay = $("ibitiReceiptOverlay");
+  function open() { inject(); document.getElementById("ibitiRxOverlay").style.display = "flex"; }
+  function close() { const o = document.getElementById("ibitiRxOverlay"); if (o) o.style.display = "none"; }
 
-  function open(){ overlay.classList.add("open"); }
-  function close(){ overlay.classList.remove("open"); }
-
-  $("ibitiReceiptClose").onclick = close;
-  overlay.addEventListener("click", (e)=>{ if (e.target === overlay) close(); });
-
-  function net() {
-    try { return window.IBITI_CONFIG?.getNet?.() || null; } catch(_) { return null; }
+  function copyText(v) {
+    try { navigator.clipboard.writeText(String(v || "")); } catch (_) {}
   }
-  function explorerTx(txHash){
-    const n = net();
-    const base = (n?.blockExplorerUrls?.[0] || "https://bscscan.com").replace(/\/+$/,"");
-    return base + "/tx/" + txHash;
+
+  function fmtDate(tsSec) {
+    try {
+      const d = new Date(Number(tsSec) * 1000);
+      const pad = (n) => String(n).padStart(2, "0");
+      return `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    } catch { return "—"; }
   }
-  function buildRefLink(buyer){
+
+  function shortHash(h) {
+    if (!h || typeof h !== "string") return "—";
+    return h.slice(0, 10).toUpperCase();
+  }
+
+  function safeAddr(a) {
+    if (!a) return "—";
+    const s = String(a);
+    return s.length > 18 ? (s.slice(0, 8) + "…" + s.slice(-6)) : s;
+  }
+
+  function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+
+  function currentNetLabel() {
+    const net = window.IBITI_CONFIG?.getNet?.();
+    if (!net) return "—";
+    return `${net.chainName || "Network"}${net.key ? " ("+net.key+")" : ""}`;
+  }
+
+  function getReferralLink(buyer) {
     const u = new URL(location.href);
-    u.pathname = "/shop.html";
-    u.searchParams.set("ref", buyer);
+    if (buyer) u.searchParams.set("ref", buyer);
     return u.toString();
   }
-  function setText(id, v){ const el=$(id); if(el) el.textContent = (v ?? "—"); }
 
-  $("btnCopyTx").onclick = async ()=> {
-    const a = $("rTxLink"); if(!a || !a.href || a.href==="#") return;
-    try { await navigator.clipboard.writeText(a.href); } catch(_){}
-  };
-  $("btnCopyRef").onclick = async ()=> {
-    const a = $("rRefLink"); if(!a || !a.href || a.href==="#") return;
-    try { await navigator.clipboard.writeText(a.href); } catch(_){}
-  };
+  // Parse receipt: USDT paid + IBITI received from logs (simple but reliable)
+  async function parseFromReceipt(receipt, buyer) {
+    const ethers = mustEthers();
+    const net = window.IBITI_CONFIG?.getNet?.() || {};
+    const usdtAddr = (net.usdt || net.USDT || "").toLowerCase();
+    const ibitiAddr = (net.ibiti || net.IBITI || "").toLowerCase();
 
-  // Print: чистая печать (отдельное окно)
-  $("btnPrint").onclick = ()=> {
-    const card = $("ibitiReceiptCard");
-    const w = window.open("", "_blank", "width=480,height=720");
-    if(!w) return;
-    const css = Array.from(document.styleSheets).map(s=>{
-      try { return Array.from(s.cssRules).map(r=>r.cssText).join("\n"); } catch(_) { return ""; }
-    }).join("\n");
+    const rpcUrl = (net.rpcUrls && net.rpcUrls[0]) ? net.rpcUrls[0] : null;
+    const rpc = rpcUrl ? new ethers.JsonRpcProvider(rpcUrl) : null;
+
+    // decimals
+    const erc20 = [
+      "function decimals() view returns (uint8)"
+    ];
+    let usdtDec = 18, ibitiDec = 8;
+    try {
+      if (rpc && usdtAddr) usdtDec = Number(await (new ethers.Contract(usdtAddr, erc20, rpc)).decimals());
+    } catch (_) {}
+    try {
+      if (rpc && ibitiAddr) ibitiDec = Number(await (new ethers.Contract(ibitiAddr, erc20, rpc)).decimals());
+    } catch (_) {}
+
+    const buyerLc = String(buyer || "").toLowerCase();
+
+    // Transfer(address,address,uint256)
+    const transferTopic = ethers.id("Transfer(address,address,uint256)");
+
+    let paidUsdt = 0n;
+    let ibitiToBuyer = [];
+
+    for (const log of (receipt.logs || [])) {
+      const addr = String(log.address || "").toLowerCase();
+      if (!log.topics || log.topics.length < 3) continue;
+      if (log.topics[0] !== transferTopic) continue;
+
+      // topics[1]=from, topics[2]=to (padded)
+      const from = ethers.getAddress("0x" + log.topics[1].slice(26)).toLowerCase();
+      const to   = ethers.getAddress("0x" + log.topics[2].slice(26)).toLowerCase();
+      const value = BigInt(log.data);
+
+      if (addr === usdtAddr && from === buyerLc) {
+        if (value > paidUsdt) paidUsdt = value;
+      }
+
+      if (addr === ibitiAddr && to === buyerLc) {
+        ibitiToBuyer.push(value);
+      }
+    }
+
+    ibitiToBuyer.sort((a,b)=> (a>b ? -1 : a<b ? 1 : 0));
+    const market = ibitiToBuyer[0] || 0n;
+    const bonus = ibitiToBuyer.slice(1).reduce((s,v)=>s+v,0n);
+    const total = market + bonus;
+
+    return { usdtDec, ibitiDec, paidUsdt, market, bonus, total };
+  }
+
+  function formatUnits(value, dec) {
+    const ethers = mustEthers();
+    try { return ethers.formatUnits(value, dec); } catch { return "0"; }
+  }
+
+  function toFixedSmart(s, digits=6) {
+    const n = Number(s);
+    if (!isFinite(n)) return String(s);
+    return n.toFixed(digits).replace(/\.?0+$/,"");
+  }
+
+  async function showFromTxHash({ txHash, buyer }) {
+    open();
+    setText("rxStatus", "PENDING");
+    setText("rxTx", txHash || "—");
+    setText("rxRef", getReferralLink(buyer));
+
+    setText("rxBuyer", safeAddr(buyer));
+    setText("rxNet", currentNetLabel());
+    setText("rxId", "IBITI-" + shortHash(txHash).replace("0X",""));
+    setText("rxDate", "—");
+
+    setText("rxPaid", "Pending…");
+    setText("rxMarket", "Pending…");
+    setText("rxBonus", "Pending…");
+    setText("rxTotal", "Pending…");
+    setText("rxPrice", "Pending…");
+
+    // try fetch receipt via public RPC
+    const ethers = mustEthers();
+    const net = window.IBITI_CONFIG?.getNet?.() || {};
+    const rpcUrl = (net.rpcUrls && net.rpcUrls[0]) ? net.rpcUrls[0] : null;
+    if (!rpcUrl || !txHash) return;
+
+    try {
+      const rpc = new ethers.JsonRpcProvider(rpcUrl);
+      const rc = await rpc.waitForTransaction(txHash, 1, 120000);
+      if (rc) await showFromReceipt({ receipt: rc, txHash, buyer });
+    } catch (_) {}
+  }
+
+  async function showFromReceipt({ receipt, txHash, buyer }) {
+    open();
+    const ethers = mustEthers();
+    setText("rxStatus", "DONE");
+
+    const net = window.IBITI_CONFIG?.getNet?.() || {};
+    const rpcUrl = (net.rpcUrls && net.rpcUrls[0]) ? net.rpcUrls[0] : null;
+
+    // block timestamp
+    try {
+      if (rpcUrl && receipt.blockNumber) {
+        const rpc = new ethers.JsonRpcProvider(rpcUrl);
+        const b = await rpc.getBlock(receipt.blockNumber);
+        if (b && b.timestamp) setText("rxDate", fmtDate(b.timestamp));
+      }
+    } catch (_) {}
+
+    setText("rxTx", txHash || receipt.hash || "—");
+    setText("rxRef", getReferralLink(buyer));
+    setText("rxBuyer", safeAddr(buyer));
+    setText("rxNet", currentNetLabel());
+    setText("rxId", "IBITI-" + shortHash(txHash || receipt.hash).replace("0X",""));
+
+    try {
+      const p = await parseFromReceipt(receipt, buyer);
+
+      const paid = toFixedSmart(formatUnits(p.paidUsdt, p.usdtDec), 6);
+      const market = toFixedSmart(formatUnits(p.market, p.ibitiDec), 6);
+      const bonus  = toFixedSmart(formatUnits(p.bonus,  p.ibitiDec), 6);
+      const total  = toFixedSmart(formatUnits(p.total,  p.ibitiDec), 6);
+
+      setText("rxPaid",  paid);
+      setText("rxMarket", market);
+      setText("rxBonus", bonus);
+      setText("rxTotal", total);
+
+      // price = paid / market (base). if market=0 -> —
+      const m = Number(market);
+      const pr = (m > 0) ? (Number(paid) / m) : NaN;
+      setText("rxPrice", isFinite(pr) ? toFixedSmart(String(pr), 10) : "—");
+    } catch (e) {
+      // если не распарсили — всё равно чек покажем
+    }
+  }
+
+  function printReceipt() {
+    // печатаем в отдельном окне, чтобы НИЧЕГО не налезало
+    const overlay = document.getElementById("ibitiRxOverlay");
+    const card = document.getElementById("ibitiRxCard");
+    if (!overlay || !card) return;
+
+    const w = window.open("", "_blank", "width=720,height=900");
+    if (!w) return;
+
+    const cardHtml = card.outerHTML
+      .replace('id="ibitiRxCard"', 'id="ibitiRxCard" style="box-shadow:none;border:1px solid #ddd;border-radius:12px"');
 
     w.document.open();
-    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>IBITI Receipt</title><style>${css}</style></head><body>
-    <div id="ibitiReceiptOverlay" class="open" style="background:transparent;padding:0;position:static;display:block;">
-      ${card.outerHTML}
-    </div>
-    <script>
-      const x = document.getElementById("ibitiReceiptClose"); if (x) x.remove();
-      const acts = document.getElementById("ibitiReceiptActions"); if (acts) acts.remove();
-      window.onload = ()=>window.print();
-    <\/script></body></html>`);
+    w.document.write(`
+      <!doctype html>
+      <html>
+      <head>
+        <meta charset="utf-8"/>
+        <title>IBITI Receipt</title>
+        <style>
+          body{margin:0;padding:18px;background:#fff}
+          ${css}
+          .ibiti-rx-overlay{display:block;position:static;inset:auto;background:#fff;padding:0}
+          .ibiti-rx{margin:0 auto}
+          @page { margin: 12mm; }
+        </style>
+      </head>
+      <body>
+        <div class="ibiti-rx-overlay" style="display:block">
+          ${cardHtml}
+        </div>
+        <script>setTimeout(()=>{ window.focus(); window.print(); }, 80);<\/script>
+      </body>
+      </html>
+    `);
     w.document.close();
-  };
+  }
 
-  // ---- Public API ----
-  window.ensureIbitiReceipt = function(){ return Promise.resolve(true); };
-
+  // Public API
   window.IBITI_RECEIPT = {
     ready: true,
-    open, close,
-
-    // Минимальная функция: показать хоть что-то сразу (чтоб не бесить)
-    async showFromTxHash({ txHash, buyer, usdtDecimals }) {
-      const n = net();
-      open();
-      setText("rDate", new Date().toLocaleString());
-      setText("rBuyer", buyer || "—");
-      setText("rNet", (n?.chainIdDec==97 || n?.key==="testnet") ? "BNB Smart Chain Testnet" : "BNB Smart Chain");
-      setText("rId", "IBITI-" + String(txHash||"").slice(2,10).toUpperCase());
-
-      const txUrl = txHash ? explorerTx(txHash) : "#";
-      const aTx = $("rTxLink");
-      aTx.textContent = txHash || "—";
-      aTx.href = txUrl;
-
-      const aRef = $("rRefLink");
-      if (buyer) { const rl = buildRefLink(buyer); aRef.textContent = rl; aRef.href = rl; }
-      else { aRef.textContent="—"; aRef.href="#"; }
-
-      setText("rPaid", "Pending…");
-      setText("rBase", "Pending…");
-      setText("rBonus", "Pending…");
-      setText("rTotal", "Pending…");
-      setText("rPrice", "Pending…");
-    },
-
-    // Полный вариант: если передали receipt — сюда уже можно допилить декод событий.
-    async showFromReceipt({ receipt, txHash, buyer, usdtDecimals }) {
-      // Пока: просто обновим tx/buyer/date. (декод событий добавим, когда ты скажешь какие event имена 100%)
-      await this.showFromTxHash({ txHash: txHash || receipt?.hash, buyer, usdtDecimals });
-    }
+    open,
+    close,
+    showFromTxHash,
+    showFromReceipt
   };
 })();
 </script>
@@ -1639,6 +1778,7 @@ if (nativeBtn) {
 
 </body>
 </html>
+
 
 
 
