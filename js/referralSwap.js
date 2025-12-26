@@ -1,8 +1,8 @@
-// js/referralSwap.js (FINAL BUY + RECEIPT, STABLE)
+// js/referralSwap.js (FINAL BUY + RECEIPT, REALLY STABLE)
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
 import config from "./config.js";
 
-// ✅ отдаём ethers в window, чтобы receipt-виджет мог декодить логи
+// чтобы receipt-виджет мог декодить логи
 window.ethers = window.ethers || ethers;
 
 const SWAP_ABI = [
@@ -26,17 +26,44 @@ function getRefFromUrl() {
   try { return ethers.getAddress(ref); } catch { return ethers.ZeroAddress; }
 }
 
-function getPublicRpcUrl(active) {
-  // берём из твоего IBITI_CONFIG (он у тебя уже в shop.html),
-  // иначе — из active, если вдруг есть
-  const net = window.IBITI_CONFIG?.getNet?.();
-  return (
-    net?.rpcUrls?.[0] ||
-    active?.rpcUrls?.[0] ||
-    active?.rpcUrl ||
-    active?.RPC_URL ||
-    null
-  );
+// ждём пока window.IBITI_RECEIPT реально готов
+async function waitReceiptWidget(timeoutMs = 6000) {
+  const t0 = Date.now();
+  while (Date.now() - t0 < timeoutMs) {
+    if (window.IBITI_RECEIPT?.ready) return true;
+    await new Promise(r => setTimeout(r, 50));
+  }
+  return false;
+}
+
+// собираем список RPC (не один!)
+function getRpcUrls(active) {
+  const net = window.IBITI_CONFIG?.getNet?.() || {};
+  const fromNet = Array.isArray(net.rpcUrls) ? net.rpcUrls : [];
+  const fromActive = Array.isArray(active?.rpcUrls) ? active.rpcUrls : [];
+  const single =
+    active?.rpcUrl || active?.RPC_URL || active?.rpc || net.rpcUrl || net.RPC_URL || null;
+
+  const urls = [...fromNet, ...fromActive, ...(single ? [single] : [])]
+    .filter(Boolean)
+    .map(String);
+
+  // удаляем дубли
+  return [...new Set(urls)];
+}
+
+// ждём receipt через публичные RPC по очереди (MetaMask может кидать -32603)
+async function waitReceiptViaAnyRpc(txHash, rpcUrls, confirmations = 1, timeoutMs = 120000) {
+  for (const url of rpcUrls) {
+    try {
+      const rp = new ethers.JsonRpcProvider(url);
+      const rc = await rp.waitForTransaction(txHash, confirmations, timeoutMs);
+      if (rc) return rc;
+    } catch (e) {
+      console.warn("RPC failed:", url, e?.message || e);
+    }
+  }
+  return null;
 }
 
 export async function buyPromo(usdtHuman) {
@@ -83,44 +110,36 @@ export async function buyPromo(usdtHuman) {
   // buy
   const tx = await promo.buyWithReferral(amountIn, ref, minOut);
 
-  // ✅ чек показываем сразу (pending), потом обновим реальным receipt
-  try {
-    if (window.IBITI_RECEIPT?.showFromTxHash) {
+  // 1) покажем чек сразу в режиме Pending (если виджет готов)
+  await waitReceiptWidget();
+  if (window.IBITI_RECEIPT?.showFromTxHash) {
+    try {
       await window.IBITI_RECEIPT.showFromTxHash({
         txHash: tx.hash,
         buyer: user,
         usdtDecimals: usdtDec
       });
+    } catch (e) {
+      console.warn("showFromTxHash failed:", e);
     }
-  } catch (_) {}
-
-  // ✅ ждём receipt через публичный RPC (MetaMask иногда кидает -32603)
-  const rpcUrl = getPublicRpcUrl(active);
-  let receipt = null;
-
-  try {
-    if (rpcUrl) {
-      const rpc = new ethers.JsonRpcProvider(rpcUrl);
-      receipt = await rpc.waitForTransaction(tx.hash, 1, 120000);
-    } else {
-      receipt = await tx.wait();
-    }
-  } catch (e) {
-    console.warn("waitForTransaction failed:", e);
   }
 
-  // ✅ финально обновляем чек реальным receipt
-  if (receipt) {
+  // 2) достанем реальный receipt через RPC-список
+  const rpcUrls = getRpcUrls(active);
+  const receipt = await waitReceiptViaAnyRpc(tx.hash, rpcUrls, 1, 120000);
+
+  // 3) обновим чек реальным receipt
+  if (receipt && window.IBITI_RECEIPT?.showFromReceipt) {
     try {
-      if (window.IBITI_RECEIPT?.showFromReceipt) {
-        await window.IBITI_RECEIPT.showFromReceipt({
-          receipt,
-          txHash: tx.hash,
-          buyer: user,
-          usdtDecimals: usdtDec
-        });
-      }
-    } catch (_) {}
+      await window.IBITI_RECEIPT.showFromReceipt({
+        receipt,
+        txHash: tx.hash,
+        buyer: user,
+        usdtDecimals: usdtDec
+      });
+    } catch (e) {
+      console.warn("showFromReceipt failed:", e);
+    }
   }
 
   if (typeof window.enableReferralAfterPurchase === "function") window.enableReferralAfterPurchase(user);
