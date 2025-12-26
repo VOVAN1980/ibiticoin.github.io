@@ -1403,32 +1403,34 @@ if (nativeBtn) {
 
   <script>
 (function(){
-  window.ensureIbitiReceipt = window.ensureIbitiReceipt || function(){
-    if (window.IBITI_RECEIPT && window.IBITI_RECEIPT.ready) return Promise.resolve();
+  window.ensureIbitiReceipt = window.ensureIbitiReceipt || async function(){
+    if (window.IBITI_RECEIPT && window.IBITI_RECEIPT.ready) return;
 
-    return fetch("/receipt-widget.html", { cache: "no-store" })
-      .then(r => r.text())
-      .then(html => {
-        const tpl = document.createElement("template");
-        tpl.innerHTML = html.trim();
+    const html = await fetch("/receipt-widget.html", { cache: "no-store" }).then(r => r.text());
+    const tpl = document.createElement("template");
+    tpl.innerHTML = html.trim();
 
-        const nodes = Array.from(tpl.content.childNodes);
-        for (const node of nodes) {
-          if (node.nodeName === "SCRIPT") {
-            const s = document.createElement("script");
-            s.text = node.textContent || "";
-            document.body.appendChild(s);
-          } else {
-            document.body.appendChild(node);
-          }
-        }
-      });
+    // Вставляем только element nodes (DIV/STYLE/SCRIPT), игнорируем текст/переносы
+    const els = Array.from(tpl.content.children);
+
+    for (const el of els) {
+      if (el.tagName === "SCRIPT") {
+        const s = document.createElement("script");
+        // перенесём атрибуты если появятся (на будущее)
+        for (const a of Array.from(el.attributes)) s.setAttribute(a.name, a.value);
+        s.text = el.textContent || "";
+        document.body.appendChild(s);
+      } else {
+        document.body.appendChild(el);
+      }
+    }
   };
 
+  // заранее подгружаем
   window.ensureIbitiReceipt().catch(()=>{});
 })();
 </script>
-
 </body>
 </html>
+
 
