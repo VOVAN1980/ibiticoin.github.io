@@ -1,6 +1,9 @@
-// js/referralSwap.js (FINAL BUY)
+// js/referralSwap.js (FINAL BUY + RECEIPT)
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
 import config from "./config.js";
+
+// чтобы receipt-widget мог парсить/форматировать
+window.ethers = window.ethers || ethers;
 
 const SWAP_ABI = [
   "function buyWithReferral(uint256 paymentAmount,address referrer,uint256 minIbitiOut) external",
@@ -27,7 +30,7 @@ export async function buyPromo(usdtHuman) {
   const active = await config.getActive();
   config.active = active;
 
-  // ✅ принудительно сеть
+  // сеть
   await config.ensureWalletOnActive();
 
   if (!window.ethereum) throw new Error("No wallet");
@@ -38,13 +41,17 @@ export async function buyPromo(usdtHuman) {
   const USDT = active.contracts.USDT_TOKEN;
   const IBITI = active.contracts.IBITI_TOKEN;
   const SWAP = active.contracts.REFERRAL_SWAP_ROUTER;
-  const PAN = active.contracts.PANCAKESWAP_ROUTER;
+  const PAN  = active.contracts.PANCAKESWAP_ROUTER;
 
   if (!SWAP) throw new Error("Promo router not set");
 
+  // заранее подгружаем чек (чтобы точно был готов после tx)
+  if (typeof window.ensureIbitiReceipt === "function") {
+    try { await window.ensureIbitiReceipt(); } catch (_) {}
+  }
+
   const usdt = new ethers.Contract(USDT, ERC20_ABI, signer);
   const usdtDec = Number(await usdt.decimals().catch(() => 18));
-
   const amountIn = ethers.parseUnits(String(usdtHuman), usdtDec);
 
   const promo = new ethers.Contract(SWAP, SWAP_ABI, signer);
@@ -53,7 +60,7 @@ export async function buyPromo(usdtHuman) {
     throw new Error("Минимум по акции: 10 USDT");
   }
 
-    // minOut через Pancake (3% slippage)
+  // minOut через Pancake (3% slippage)
   let minOut = 0n;
   try {
     const r = new ethers.Contract(PAN, ROUTER_ABI, provider);
@@ -65,12 +72,14 @@ export async function buyPromo(usdtHuman) {
   let ref = getRefFromUrl();
   if (ref && ref.toLowerCase() === user.toLowerCase()) ref = ethers.ZeroAddress;
 
+  // approve
   await (await usdt.approve(SWAP, amountIn)).wait();
 
-  // Покупка + receipt
-    const tx = await promo.buyWithReferral(amountIn, ref, minOut);
+  // buy
+  const tx = await promo.buyWithReferral(amountIn, ref, minOut);
   const receipt = await tx.wait();
 
+  // чек
   let receiptShown = false;
   try {
     if (typeof window.ensureIbitiReceipt === "function") {
@@ -88,6 +97,7 @@ export async function buyPromo(usdtHuman) {
     console.warn("Receipt UI failed:", e);
   }
 
+  // остальная логика
   if (typeof window.enableReferralAfterPurchase === "function") {
     window.enableReferralAfterPurchase(user);
   }
@@ -98,6 +108,7 @@ export async function buyPromo(usdtHuman) {
   if (!receiptShown) {
     alert("✅ Покупка по акции выполнена");
   }
+}
 
 export function initPromoButton() {
   const btn = document.getElementById("promoBuyButton");
