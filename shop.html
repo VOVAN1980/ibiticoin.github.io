@@ -1754,30 +1754,9 @@ if (nativeBtn) {
 })();
 </script>
 
-  <script>
-(function(){
-  // глобальный хук: любой код может дернуть window.IBITI_SHOW_RECEIPT(txHash, buyer)
-  window.IBITI_SHOW_RECEIPT = async function(txHash, buyer){
-    try{
-      if (typeof window.ensureIbitiReceipt === "function") await window.ensureIbitiReceipt();
-      if (window.IBITI_RECEIPT?.showFromTxHash){
-        await window.IBITI_RECEIPT.showFromTxHash({
-          txHash,
-          buyer,
-          usdtDecimals: 8
-        });
-        return true;
-      }
-    }catch(e){
-      console.warn("IBITI_SHOW_RECEIPT fail:", e);
-    }
-    return false;
-  };
-})();
-</script>
-
 </body>
 </html>
+
 
 
 
