@@ -400,11 +400,6 @@ const amtNum = parseInt(amtStr, 10);
 if (!Number.isFinite(amtNum) || amtNum <= 0) throw new Error("Invalid USDT amount.");
 if (amtNum < 10) throw new Error("Minimum is 10 USDT.");
 if (amtNum > 100) throw new Error("Maximum is 100 USDT.");
-    // ✅ готовим окно чека заранее (иначе попап-блокер может не дать открыть позже)
-let receiptWin = null;
-try {
-  receiptWin = window.open("about:blank", "_blank", "noopener,noreferrer");
-} catch (_) {}
 
     const { signer } = await getBrowserProviderSigner();
     const buyerAddr = await signer.getAddress();
