@@ -420,47 +420,62 @@ try {
     await txA.wait();
 
     // buy
-    const promo = new ethers.Contract(netCfg.promoRouter, PROMO_ABI, signer);
-    // buy (with slippage protection)
-    const dex = new ethers.Contract(netCfg.pancakeRouter, DEX_ROUTER_ABI, signer);
-    let minOut = 0n;
-    try {
-      // read swapPath from promo (public array)
-      const path = [];
-      for (let i = 0; i < 6; i++) {
-        try { path.push(await promo.swapPath(i)); } catch (_) { break; }
-      }
-      if (path.length >= 2) {
-        const amounts = await dex.getAmountsOut(amount, path);
-        const boughtEst = amounts[amounts.length - 1];
-        const slBps = Number(netCfg.slippageBps || 300); // default 3%
-        const keepBps = BigInt(Math.max(0, 10000 - slBps));
-        minOut = (boughtEst * keepBps) / 10000n;
-      }
-    } catch (e) {
-      // if quote fails, fallback to 0 (will still work, just less protected)
-      minOut = 0n;
-    }
+const promo = new ethers.Contract(netCfg.promoRouter, PROMO_ABI, signer);
 
-   toast("Buying with +10% bonus…");
-const txB = await promo.buyWithReferral(amount, ref ? ref : ethers.ZeroAddress, minOut);
+// buy (with slippage protection)
+const dex = new ethers.Contract(netCfg.pancakeRouter, DEX_ROUTER_ABI, signer);
 
-// ✅ открыть чек отдельной страницей (не мешает покупке)
+let minOut = 0n;
 try {
-  const netKey = (net().key === "testnet") ? "testnet" : "mainnet";
-  const url = `/receipt.html?net=${encodeURIComponent(netKey)}&tx=${txB.hash}&buyer=${buyerAddr}&paid=${encodeURIComponent(String(amtNum))}`;
-
-  // пробуем открыть сразу, чтобы браузер не заблокировал
-  const w = window.open(url, "_blank", "noopener,noreferrer");
-  if (!w) {
-    // fallback (если попапы заблокированы) — откроется по клику/разрешению
-    console.warn("Popup blocked: receipt window not opened");
+  // read swapPath from promo (public array)
+  const path = [];
+  for (let i = 0; i < 6; i++) {
+    try { path.push(await promo.swapPath(i)); } catch (_) { break; }
   }
-} catch (e) {
-  console.warn("Open receipt failed:", e);
+
+  if (path.length >= 2) {
+    const amounts = await dex.getAmountsOut(amount, path);
+    const boughtEst = amounts[amounts.length - 1];
+    const slBps = Number(netCfg.slippageBps || 300); // default 3%
+    const keepBps = BigInt(Math.max(0, 10000 - slBps));
+    minOut = (boughtEst * keepBps) / 10000n;
+  }
+} catch (_) {
+  // if quote fails, fallback to 0 (will still work, just less protected)
+  minOut = 0n;
 }
 
-await txB.wait();
+toast("Buying with +10% bonus…");
+
+// 1) отправляем транзу
+const txB = await promo.buyWithReferral(
+  amount,
+  ref ? ref : ethers.ZeroAddress,
+  minOut
+);
+
+// 2) ждём подтверждение (и только потом чек)
+toast("Waiting confirmation…");
+const receipt = await txB.wait();
+
+// 3) показываем чек в модалке (iframe на receipt.html)
+try {
+  // твой net() оставляем как есть
+  const netKey = (net().key === "testnet") ? "testnet" : "mainnet";
+
+  // buyerAddr/amtNum у тебя уже есть выше по коду
+  const url =
+    `/receipt.html?net=${encodeURIComponent(netKey)}` +
+    `&tx=${encodeURIComponent(txB.hash)}` +
+    `&buyer=${encodeURIComponent(buyerAddr)}` +
+    `&paid=${encodeURIComponent(String(amtNum))}`;
+
+  openReceiptModal(url);
+} catch (e) {
+  console.warn("Show receipt failed:", e);
+}
+
+toast("Done!");
 
 // mark referral unlocked (after first successful promo purchase)
     try {
