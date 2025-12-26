@@ -1403,34 +1403,53 @@ if (nativeBtn) {
 
   <script>
 (function(){
-  window.ensureIbitiReceipt = window.ensureIbitiReceipt || async function(){
-    if (window.IBITI_RECEIPT && window.IBITI_RECEIPT.ready) return;
+  // один раз грузим, без дублей и без гонок
+  window.ensureIbitiReceipt = window.ensureIbitiReceipt || function(){
+    if (window.IBITI_RECEIPT && window.IBITI_RECEIPT.ready) return Promise.resolve();
+    if (window.__IBITI_RECEIPT_LOADING) return window.__IBITI_RECEIPT_LOADING;
 
-    const html = await fetch("/receipt-widget.html", { cache: "no-store" }).then(r => r.text());
-    const tpl = document.createElement("template");
-    tpl.innerHTML = html.trim();
+    window.__IBITI_RECEIPT_LOADING = (async () => {
+      // ✅ важно: грузим ОТНОСИТЕЛЬНО текущей страницы, а не “/”
+      const url = new URL("receipt-widget.html", location.href).toString();
+      const html = await fetch(url, { cache: "no-store" }).then(r => {
+        if (!r.ok) throw new Error("receipt-widget.html not found: " + r.status);
+        return r.text();
+      });
 
-    // Вставляем только element nodes (DIV/STYLE/SCRIPT), игнорируем текст/переносы
-    const els = Array.from(tpl.content.children);
+      const tpl = document.createElement("template");
+      tpl.innerHTML = String(html || "").trim();
 
-    for (const el of els) {
-      if (el.tagName === "SCRIPT") {
+      // ✅ сначала все НЕ-SCRIPT, потом SCRIPT (чтобы DOM уже был)
+      const nodes = Array.from(tpl.content.children);
+      const scripts = [];
+
+      for (const el of nodes) {
+        if (el.tagName === "SCRIPT") scripts.push(el);
+        else document.body.appendChild(el);
+      }
+
+      for (const el of scripts) {
         const s = document.createElement("script");
-        // перенесём атрибуты если появятся (на будущее)
         for (const a of Array.from(el.attributes)) s.setAttribute(a.name, a.value);
         s.text = el.textContent || "";
         document.body.appendChild(s);
-      } else {
-        document.body.appendChild(el);
       }
-    }
+    })().catch((e) => {
+      console.warn("ensureIbitiReceipt failed:", e);
+      // чтобы не зависло навсегда
+      window.__IBITI_RECEIPT_LOADING = null;
+      throw e;
+    });
+
+    return window.__IBITI_RECEIPT_LOADING;
   };
 
-  // заранее подгружаем
+  // можно предзагрузить (не обязательно, но приятно)
   window.ensureIbitiReceipt().catch(()=>{});
 })();
 </script>
 </body>
 </html>
+
 
 
