@@ -1402,54 +1402,44 @@ if (nativeBtn) {
 <script src="js/xmas.js"></script>
 
   <script>
-(function(){
-  // ✅ один раз, глобально
-  if (typeof window.ensureIbitiReceipt === "function") return;
+(function () {
+  const WIDGET_URL = "/receipt-widget.html";
+  let loading = null;
 
-  let loadingPromise = null;
-
-  window.ensureIbitiReceipt = function ensureIbitiReceipt(){
+  window.ensureIbitiReceipt = window.ensureIbitiReceipt || function () {
     if (window.IBITI_RECEIPT && window.IBITI_RECEIPT.ready) return Promise.resolve();
-    if (loadingPromise) return loadingPromise;
+    if (loading) return loading;
 
-    loadingPromise = fetch("/receipt-widget.html", { cache: "no-store" })
-      .then(r => {
-        if (!r.ok) throw new Error("receipt-widget.html not found: " + r.status);
-        return r.text();
-      })
+    loading = fetch(WIDGET_URL, { cache: "no-store" })
+      .then(r => r.text())
       .then(html => {
         const tpl = document.createElement("template");
-        tpl.innerHTML = html;
+        tpl.innerHTML = html.trim();
 
-        // добавляем всё кроме <script>
-        const scripts = [];
-        for (const node of Array.from(tpl.content.childNodes)) {
-          if (node.nodeName === "SCRIPT") scripts.push(node);
-          else document.body.appendChild(node);
-        }
-
-        // скрипты — отдельно (чтобы выполнились)
-        for (const sc of scripts) {
-          const s = document.createElement("script");
-          if (sc.src) s.src = sc.src;
-          s.text = sc.textContent || "";
-          document.body.appendChild(s);
+        const nodes = Array.from(tpl.content.childNodes);
+        for (const node of nodes) {
+          if (node.nodeName === "SCRIPT") {
+            const s = document.createElement("script");
+            // ВАЖНО: textContent, не .text (так стабильнее)
+            s.textContent = node.textContent || "";
+            document.body.appendChild(s);
+          } else {
+            document.body.appendChild(node);
+          }
         }
       })
-      .finally(() => { loadingPromise = null; });
+      .catch(err => { loading = null; throw err; });
 
-    return loadingPromise;
+    return loading;
   };
 
-  // ✅ можно автоподгрузить сразу
-  window.addEventListener("DOMContentLoaded", () => {
-    window.ensureIbitiReceipt().catch(console.warn);
-  });
+  // подгружаем сразу
+  window.ensureIbitiReceipt().catch(console.warn);
 })();
 </script>
-
 </body>
 </html>
+
 
 
 
