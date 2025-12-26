@@ -53,7 +53,7 @@ export async function buyPromo(usdtHuman) {
     throw new Error("Минимум по акции: 10 USDT");
   }
 
-  // minOut через Pancake (3% slippage)
+    // minOut через Pancake (3% slippage)
   let minOut = 0n;
   try {
     const r = new ethers.Contract(PAN, ROUTER_ABI, provider);
@@ -63,10 +63,27 @@ export async function buyPromo(usdtHuman) {
   } catch {}
 
   let ref = getRefFromUrl();
-  if (ref.toLowerCase() === user.toLowerCase()) ref = ethers.ZeroAddress;
+  if (ref && ref.toLowerCase() === user.toLowerCase()) ref = ethers.ZeroAddress;
 
   await (await usdt.approve(SWAP, amountIn)).wait();
-  await (await promo.buyWithReferral(amountIn, ref, minOut)).wait();
+
+  // Покупка + receipt
+  const tx = await promo.buyWithReferral(amountIn, ref, minOut);
+  const receipt = await tx.wait();
+
+  // Показать чек (если виджет подключен)
+  let receiptShown = false;
+  try {
+    if (typeof window.ensureIbitiReceipt === "function") {
+      await window.ensureIbitiReceipt();
+    }
+    if (window.IBITI_RECEIPT?.showFromReceipt) {
+      await window.IBITI_RECEIPT.showFromReceipt({ receipt, buyer: user });
+      receiptShown = true;
+    }
+  } catch (e) {
+    console.warn("Receipt UI failed:", e);
+  }
 
   if (typeof window.enableReferralAfterPurchase === "function") {
     window.enableReferralAfterPurchase(user);
@@ -74,8 +91,10 @@ export async function buyPromo(usdtHuman) {
   if (typeof window.loadPromoStats === "function") {
     window.loadPromoStats();
   }
-  alert("✅ Покупка по акции выполнена");
-}
+
+  if (!receiptShown) {
+    alert("✅ Покупка по акции выполнена");
+  }
 
 export function initPromoButton() {
   const btn = document.getElementById("promoBuyButton");
