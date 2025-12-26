@@ -1,8 +1,8 @@
-// js/referralSwap.js (FINAL BUY + RECEIPT, REALLY STABLE)
+// js/referralSwap.js (FINAL BUY + AUTO WHITE RECEIPT)
 import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
 import config from "./config.js";
 
-// чтобы receipt-виджет мог декодить логи
+// отдаём ethers в window (если понадобится дальше)
 window.ethers = window.ethers || ethers;
 
 const SWAP_ABI = [
@@ -26,33 +26,18 @@ function getRefFromUrl() {
   try { return ethers.getAddress(ref); } catch { return ethers.ZeroAddress; }
 }
 
-// ждём пока window.IBITI_RECEIPT реально готов
-async function waitReceiptWidget(timeoutMs = 6000) {
-  const t0 = Date.now();
-  while (Date.now() - t0 < timeoutMs) {
-    if (window.IBITI_RECEIPT?.ready) return true;
-    await new Promise(r => setTimeout(r, 50));
-  }
-  return false;
-}
-
-// собираем список RPC (не один!)
-function getRpcUrls(active) {
+function getPublicRpcUrls(active) {
   const net = window.IBITI_CONFIG?.getNet?.() || {};
-  const fromNet = Array.isArray(net.rpcUrls) ? net.rpcUrls : [];
-  const fromActive = Array.isArray(active?.rpcUrls) ? active.rpcUrls : [];
-  const single =
-    active?.rpcUrl || active?.RPC_URL || active?.rpc || net.rpcUrl || net.RPC_URL || null;
+  const urls = [
+    ...(Array.isArray(net.rpcUrls) ? net.rpcUrls : []),
+    ...(Array.isArray(active?.rpcUrls) ? active.rpcUrls : []),
+    net.rpcUrl, net.RPC_URL,
+    active?.rpcUrl, active?.RPC_URL, active?.rpc
+  ].filter(Boolean).map(String);
 
-  const urls = [...fromNet, ...fromActive, ...(single ? [single] : [])]
-    .filter(Boolean)
-    .map(String);
-
-  // удаляем дубли
   return [...new Set(urls)];
 }
 
-// ждём receipt через публичные RPC по очереди (MetaMask может кидать -32603)
 async function waitReceiptViaAnyRpc(txHash, rpcUrls, confirmations = 1, timeoutMs = 120000) {
   for (const url of rpcUrls) {
     try {
@@ -84,13 +69,20 @@ export async function buyPromo(usdtHuman) {
 
   if (!SWAP) throw new Error("Promo router not set");
 
+  // чек-виджет гарантированно существует (мы его вшили в shop.html)
+  if (typeof window.ensureIbitiReceipt === "function") {
+    await window.ensureIbitiReceipt();
+  }
+
   const usdt = new ethers.Contract(USDT, ERC20_ABI, signer);
   const usdtDec = Number(await usdt.decimals().catch(() => 18));
   const amountIn = ethers.parseUnits(String(usdtHuman), usdtDec);
 
   const promo = new ethers.Contract(SWAP, SWAP_ABI, signer);
   const minPay = await promo.minPaymentAmount().catch(() => 0n);
-  if (minPay > 0n && amountIn < minPay) throw new Error("Минимум по акции: 10 USDT");
+  if (minPay > 0n && amountIn < minPay) {
+    throw new Error("Минимум по акции: 10 USDT");
+  }
 
   // minOut через Pancake (3% slippage)
   let minOut = 0n;
@@ -110,40 +102,50 @@ export async function buyPromo(usdtHuman) {
   // buy
   const tx = await promo.buyWithReferral(amountIn, ref, minOut);
 
-  // 1) покажем чек сразу в режиме Pending (если виджет готов)
-  await waitReceiptWidget();
-  if (window.IBITI_RECEIPT?.showFromTxHash) {
-    try {
-      await window.IBITI_RECEIPT.showFromTxHash({
-        txHash: tx.hash,
-        buyer: user,
-        usdtDecimals: usdtDec
-      });
-    } catch (e) {
-      console.warn("showFromTxHash failed:", e);
-    }
+  // 1) показываем чек сразу (Pending)
+  try {
+    await window.IBITI_RECEIPT?.showFromTxHash?.({
+      txHash: tx.hash,
+      buyer: user,
+      usdtDecimals: usdtDec,
+      ibitiDecimals: 8,
+      paidHuman: usdtHuman
+    });
+  } catch (e) {
+    console.warn("showFromTxHash failed:", e);
   }
 
-  // 2) достанем реальный receipt через RPC-список
-  const rpcUrls = getRpcUrls(active);
-  const receipt = await waitReceiptViaAnyRpc(tx.hash, rpcUrls, 1, 120000);
+  // 2) ждём receipt через публичные RPC (без кошелькового RPC-цирка)
+  const rpcUrls = getPublicRpcUrls(active);
+  let receipt = await waitReceiptViaAnyRpc(tx.hash, rpcUrls, 1, 120000);
 
-  // 3) обновим чек реальным receipt
-  if (receipt && window.IBITI_RECEIPT?.showFromReceipt) {
+  // fallback на кошелёк если всё совсем плохо
+  if (!receipt) {
+    try { receipt = await tx.wait(); } catch (_) {}
+  }
+
+  // 3) обновляем чек реальным receipt
+  if (receipt) {
     try {
-      await window.IBITI_RECEIPT.showFromReceipt({
+      await window.IBITI_RECEIPT?.showFromReceipt?.({
         receipt,
         txHash: tx.hash,
         buyer: user,
-        usdtDecimals: usdtDec
+        usdtDecimals: usdtDec,
+        ibitiDecimals: 8
       });
     } catch (e) {
       console.warn("showFromReceipt failed:", e);
     }
   }
 
-  if (typeof window.enableReferralAfterPurchase === "function") window.enableReferralAfterPurchase(user);
-  if (typeof window.loadPromoStats === "function") window.loadPromoStats();
+  // остальная логика
+  if (typeof window.enableReferralAfterPurchase === "function") {
+    window.enableReferralAfterPurchase(user);
+  }
+  if (typeof window.loadPromoStats === "function") {
+    window.loadPromoStats();
+  }
 }
 
 export function initPromoButton() {
