@@ -399,15 +399,15 @@
 
     // ✅ PRINT / SAVE PDF: print PNG render (no layout bugs)
     const printBtn = document.getElementById("rcptPrintBtn");
-    if (printBtn) printBtn.onclick = async () => {
-      const dataUrl = await renderReceiptPngDataUrl();
-      if (!dataUrl) return;
+if (printBtn) printBtn.onclick = async () => {
+  const dataUrl = await renderReceiptPngDataUrl();
+  if (!dataUrl) return;
 
-      const w = window.open("", "_blank");
-      if (!w) return;
+  const w = window.open("", "_blank");
+  if (!w) return;
 
-      w.document.open();
-      w.document.write(`<!doctype html>
+  w.document.open();
+  w.document.write(`<!doctype html>
 <html><head><meta charset="utf-8"/><title>IBITI Receipt</title>
 <style>
   @page { size: A4; margin: 10mm; }
@@ -422,10 +422,10 @@
     const img=document.getElementById('r');
     img.onload=()=>{ window.focus(); window.print(); };
     window.onafterprint=()=>{ try{ window.close(); }catch(e){} };
-  </script>
+  <\/script>
 </body></html>`);
-      w.document.close();
-    };
+  w.document.close();
+};
 
     // ✅ DOWNLOAD PNG: same render for consistent output
     const dlBtn = document.getElementById("rcptDownloadBtn");
