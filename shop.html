@@ -1400,8 +1400,57 @@ if (nativeBtn) {
 
 <script src="js/app.js"></script>
 <script src="js/xmas.js"></script>
+
+  <script>
+(function(){
+  // ✅ один раз, глобально
+  if (typeof window.ensureIbitiReceipt === "function") return;
+
+  let loadingPromise = null;
+
+  window.ensureIbitiReceipt = function ensureIbitiReceipt(){
+    if (window.IBITI_RECEIPT && window.IBITI_RECEIPT.ready) return Promise.resolve();
+    if (loadingPromise) return loadingPromise;
+
+    loadingPromise = fetch("/receipt-widget.html", { cache: "no-store" })
+      .then(r => {
+        if (!r.ok) throw new Error("receipt-widget.html not found: " + r.status);
+        return r.text();
+      })
+      .then(html => {
+        const tpl = document.createElement("template");
+        tpl.innerHTML = html;
+
+        // добавляем всё кроме <script>
+        const scripts = [];
+        for (const node of Array.from(tpl.content.childNodes)) {
+          if (node.nodeName === "SCRIPT") scripts.push(node);
+          else document.body.appendChild(node);
+        }
+
+        // скрипты — отдельно (чтобы выполнились)
+        for (const sc of scripts) {
+          const s = document.createElement("script");
+          if (sc.src) s.src = sc.src;
+          s.text = sc.textContent || "";
+          document.body.appendChild(s);
+        }
+      })
+      .finally(() => { loadingPromise = null; });
+
+    return loadingPromise;
+  };
+
+  // ✅ можно автоподгрузить сразу
+  window.addEventListener("DOMContentLoaded", () => {
+    window.ensureIbitiReceipt().catch(console.warn);
+  });
+})();
+</script>
+
 </body>
 </html>
+
 
 
 
