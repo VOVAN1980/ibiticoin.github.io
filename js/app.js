@@ -400,6 +400,11 @@ const amtNum = parseInt(amtStr, 10);
 if (!Number.isFinite(amtNum) || amtNum <= 0) throw new Error("Invalid USDT amount.");
 if (amtNum < 10) throw new Error("Minimum is 10 USDT.");
 if (amtNum > 100) throw new Error("Maximum is 100 USDT.");
+    // ✅ готовим окно чека заранее (иначе попап-блокер может не дать открыть позже)
+let receiptWin = null;
+try {
+  receiptWin = window.open("about:blank", "_blank", "noopener,noreferrer");
+} catch (_) {}
 
     const { signer } = await getBrowserProviderSigner();
     const buyerAddr = await signer.getAddress();
@@ -437,9 +442,25 @@ if (amtNum > 100) throw new Error("Maximum is 100 USDT.");
       minOut = 0n;
     }
 
-    toast("Buying with +10% bonus…");
-    const txB = await promo.buyWithReferral(amount, ref ? ref : ethers.ZeroAddress, minOut);
-    await txB.wait();
+   toast("Buying with +10% bonus…");
+const txB = await promo.buyWithReferral(amount, ref ? ref : ethers.ZeroAddress, minOut);
+
+// ✅ открыть чек отдельной страницей (не мешает покупке)
+try {
+  const netKey = (net().key === "testnet") ? "testnet" : "mainnet";
+  const url = `/receipt.html?net=${encodeURIComponent(netKey)}&tx=${txB.hash}&buyer=${buyerAddr}&paid=${encodeURIComponent(String(amtNum))}`;
+
+  // пробуем открыть сразу, чтобы браузер не заблокировал
+  const w = window.open(url, "_blank", "noopener,noreferrer");
+  if (!w) {
+    // fallback (если попапы заблокированы) — откроется по клику/разрешению
+    console.warn("Popup blocked: receipt window not opened");
+  }
+} catch (e) {
+  console.warn("Open receipt failed:", e);
+}
+
+await txB.wait();
 
 // mark referral unlocked (after first successful promo purchase)
     try {
