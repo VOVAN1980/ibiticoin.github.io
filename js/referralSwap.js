@@ -68,17 +68,20 @@ export async function buyPromo(usdtHuman) {
   await (await usdt.approve(SWAP, amountIn)).wait();
 
   // Покупка + receipt
-  const tx = await promo.buyWithReferral(amountIn, ref, minOut);
+    const tx = await promo.buyWithReferral(amountIn, ref, minOut);
   const receipt = await tx.wait();
 
-  // Показать чек (если виджет подключен)
   let receiptShown = false;
   try {
     if (typeof window.ensureIbitiReceipt === "function") {
       await window.ensureIbitiReceipt();
     }
     if (window.IBITI_RECEIPT?.showFromReceipt) {
-      await window.IBITI_RECEIPT.showFromReceipt({ receipt, buyer: user });
+      await window.IBITI_RECEIPT.showFromReceipt({
+        receipt,
+        buyer: user,
+        usdtDecimals: usdtDec
+      });
       receiptShown = true;
     }
   } catch (e) {
