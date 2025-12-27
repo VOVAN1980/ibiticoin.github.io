@@ -1,159 +1,175 @@
-/* js/wallet.js — PROD SAFE for current shop.html (no imports, no new IDs) */
+// js/wallet.js (PROD-safe, no imports)
+// - If no window.ethereum on mobile -> redirect to /wallet.html (your HTML wallet picker)
+// - Keeps existing globals: selectedAccount, provider, signer, connectWallet
+
 (function () {
   "use strict";
 
+  // anti-double-load
+  if (window.__IBITI_WALLET_JS_LOADED__) return;
+  window.__IBITI_WALLET_JS_LOADED__ = true;
+
   console.log("✅ wallet.js loaded (prod)");
 
-  // ---- hard requirements from your prod page
-  if (!window.ethers) {
-    console.error("❌ ethers not found. Load ethers.umd.min.js BEFORE wallet.js");
-    return;
-  }
-  if (!window.IBITI_CONFIG || typeof window.IBITI_CONFIG.getNet !== "function") {
-    console.error("❌ IBITI_CONFIG.getNet() not found. Load js/config.js BEFORE wallet.js");
-    return;
-  }
+  // ---- KEEP GLOBALS (so other scripts won't break) ----
+  window.selectedAccount = window.selectedAccount || null;
+  window.provider = window.provider || null;
+  window.signer = window.signer || null;
 
-  const { ethers } = window;
+  // ---- CONFIG COMPAT LAYER ----
+  // Your config is now classic: window.IBITI_CONFIG.getNet()
+  // Some old code may expect window.config.getActive() / ensureWalletOnActive()
+  if (!window.config) window.config = {};
 
-  // ---- helpers
-  const $ = (id) => document.getElementById(id);
-  const isMobile = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || "");
-  const safeAddr = (a) => { try { return ethers.getAddress(a); } catch { return null; } };
+  window.config.getActive = window.config.getActive || (async function () {
+    if (window.IBITI_CONFIG && typeof window.IBITI_CONFIG.getNet === "function") {
+      return window.IBITI_CONFIG.getNet();
+    }
+    return {};
+  });
 
-  function setText(id, t) { const el = $(id); if (el) el.textContent = t; }
+  window.config.ensureWalletOnActive = window.config.ensureWalletOnActive || (async function () {
+    if (!window.ethereum || !window.ethereum.request) return;
 
-  function getActiveNet() {
-    // uses your existing config.js
-    return window.IBITI_CONFIG.getNet(); // { chainIdHex, chainName, rpcUrls, blockExplorerUrls, nativeCurrency, ibiti, ... }
-  }
+    const active = await window.config.getActive();
+    const chainIdHex = active.chainIdHex || active.chainIdHex;
+    if (!chainIdHex) return;
 
-  async function ensureWalletOnActive(active) {
-    if (!window.ethereum) return;
-
-    let chainId = null;
-    try { chainId = await window.ethereum.request({ method: "eth_chainId" }); } catch (_) {}
-
-    const target = String(active.chainIdHex || "").toLowerCase();
-    if (chainId && String(chainId).toLowerCase() === target) return;
-
-    // try switch
     try {
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
-        params: [{ chainId: active.chainIdHex }]
+        params: [{ chainId: chainIdHex }],
       });
-      return;
     } catch (e) {
-      // if unknown chain -> add then switch
-      const code = e?.code ?? e?.data?.originalError?.code;
-      const msg = String(e?.message || "").toLowerCase();
-      const unknown = code === 4902 || msg.includes("4902") || msg.includes("unrecognized chain");
-
-      if (!unknown) throw e;
-
-      await window.ethereum.request({
-        method: "wallet_addEthereumChain",
-        params: [{
-          chainId: active.chainIdHex,
-          chainName: active.chainName,
-          rpcUrls: active.rpcUrls,
-          blockExplorerUrls: active.blockExplorerUrls,
-          nativeCurrency: active.nativeCurrency
-        }]
-      });
-
-      await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: active.chainIdHex }]
-      });
+      // 4902 = chain not added
+      if (e && (e.code === 4902 || String(e.message || "").includes("4902"))) {
+        try {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [{
+              chainId: active.chainIdHex,
+              chainName: active.chainName,
+              rpcUrls: active.rpcUrls,
+              blockExplorerUrls: active.blockExplorerUrls,
+              nativeCurrency: active.nativeCurrency
+            }],
+          });
+        } catch (addErr) {
+          console.warn("wallet_addEthereumChain failed:", addErr);
+        }
+      } else {
+        console.warn("wallet_switchEthereumChain failed:", e);
+      }
     }
+  });
+
+  // ---- HELPERS ----
+  function $(id) { return document.getElementById(id); }
+
+  function setText(id, t) {
+    const el = $(id);
+    if (el) el.textContent = t;
   }
 
-  // ---- globals expected by other scripts
-  window.provider = null;
-  window.signer = null;
-  window.selectedAccount = null;
+  function isMobileLike() {
+    const ua = (navigator.userAgent || "").toLowerCase();
+    return /android|iphone|ipad|ipod|mobile/.test(ua);
+  }
 
-  const ERC20_ABI = [
-    "function balanceOf(address) view returns (uint256)",
-    "function decimals() view returns (uint8)"
-  ];
+  function buildShopUrl() {
+    // keep current URL incl query/hash, but ensure path is /shop.html
+    const u = new URL(location.href);
+    u.pathname = "/shop.html";
+    return u.toString();
+  }
+
+  function openWalletPicker() {
+    // ✅ IMPORTANT: set this to your real file name if different
+    const WALLET_PICKER_PATH = "/wallet.html"; // <-- change ONLY this if your file is named differently
+
+    const shopUrl = buildShopUrl();
+    const u = new URL(location.origin + WALLET_PICKER_PATH);
+    u.searchParams.set("redirect", shopUrl);
+    location.href = u.toString();
+  }
 
   async function showIbitiBalance(active) {
     try {
-      const token = safeAddr(active.ibiti);
-      const acc = window.selectedAccount;
-      const signer = window.signer;
-      if (!token || !acc || !signer) return;
+      const ethers = window.ethers;
+      if (!ethers || !window.signer || !window.selectedAccount) return;
 
-      const c = new ethers.Contract(token, ERC20_ABI, signer);
+      // support both formats: active.ibiti OR active.contracts.IBITI_TOKEN
+      const tokenAddr =
+        (active && active.contracts && active.contracts.IBITI_TOKEN) ||
+        (active && active.ibiti) ||
+        null;
+
+      if (!tokenAddr) return;
+
+      const ERC20_ABI = [
+        "function balanceOf(address) view returns (uint256)",
+        "function decimals() view returns (uint8)",
+      ];
+
+      const c = new ethers.Contract(tokenAddr, ERC20_ABI, window.signer);
+
       let dec = 8;
       try { dec = Number(await c.decimals()); } catch (_) {}
-      const bal = await c.balanceOf(acc);
-      setText("ibitiBalance", ethers.formatUnits(bal, dec));
+
+      const bal = await c.balanceOf(window.selectedAccount);
+      const txt = ethers.formatUnits(bal, dec);
+
+      setText("ibitiBalance", `Ваш баланс IBITI: ${txt}`);
     } catch (e) {
       console.warn("showIbitiBalance:", e);
     }
   }
 
-  function paintNetBadge() {
-    const badge = $("netBadge");
-    if (!badge) return;
-    const mode = (window.IBITI_CONFIG.detectMode && window.IBITI_CONFIG.detectMode()) || "mainnet";
-    if (mode === "testnet") {
-      badge.style.display = "block";
-      badge.textContent = "TESTNET MODE";
-    } else {
-      badge.style.display = "none";
-    }
-  }
-
   async function initAfterConnect() {
-    const active = getActiveNet();
-    window.IBITI_ACTIVE = active; // optional, doesn't break anything
+    const ethers = window.ethers;
+    if (!ethers) throw new Error("ethers not found (check ethers.umd include)");
 
-    paintNetBadge();
-    await ensureWalletOnActive(active);
+    const active = await window.config.getActive();
+    window.config.active = active;
 
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    const signer = await provider.getSigner();
-    const account = await signer.getAddress();
+    // ensure correct chain
+    await window.config.ensureWalletOnActive();
 
-    window.provider = provider;
-    window.signer = signer;
-    window.selectedAccount = account;
+    window.provider = new ethers.BrowserProvider(window.ethereum);
+    window.signer = await window.provider.getSigner();
+    window.selectedAccount = await window.signer.getAddress();
 
-    setText("walletAddress", account);
+    setText("walletAddress", window.selectedAccount);
+
+    console.log(`✅ Active network: ${(active && active.chainName) || (active && active.key) || "unknown"} chainId: ${(active && active.chainIdDec) || "?"}`);
 
     await showIbitiBalance(active);
 
-    // don't invent new functions — just call existing if they exist
-    try { if (typeof window.initSaleContract === "function") await window.initSaleContract(); } catch (_) {}
-    try { if (typeof window.loadPromoStats === "function") window.loadPromoStats(); } catch (_) {}
+    // keep your existing hooks (do not rename)
+    if (typeof window.initSaleContract === "function") {
+      await window.initSaleContract();
+    }
+    if (typeof window.loadPromoStats === "function") {
+      window.loadPromoStats();
+    }
   }
 
-  let listenersBound = false;
-
+  // ---- MAIN ENTRY (KEEP NAME) ----
   async function connectWallet() {
     try {
-      // Mobile обычный браузер -> отправляем на твою existing страницу выбора кошелька
+      // If not in wallet browser -> open wallet picker page (mobile + desktop too, safer)
       if (!window.ethereum) {
-        if (isMobile()) {
-          const u = new URL("/open-in-wallet.html", location.origin);
-          u.searchParams.set("redirect", location.href);
-          location.href = u.toString();
-          return;
-        }
-        alert("Wallet not found. Open this page inside MetaMask/Trust wallet browser.");
+        // on mobile this is the expected path
+        openWalletPicker();
         return;
       }
 
       await window.ethereum.request({ method: "eth_requestAccounts" });
       await initAfterConnect();
 
-      if (!listenersBound) {
-        listenersBound = true;
+      // events
+      if (!window.__IBITI_WALLET_EVENTS_BOUND__) {
+        window.__IBITI_WALLET_EVENTS_BOUND__ = true;
 
         window.ethereum.on("accountsChanged", async (accs) => {
           if (!accs || !accs.length) return;
@@ -164,53 +180,13 @@
           await initAfterConnect();
         });
       }
+
     } catch (e) {
       console.error("connectWallet:", e);
-      alert(e?.message || "Wallet connect error");
+      alert((e && e.message) ? e.message : "Ошибка подключения кошелька");
     }
   }
 
-  // expose exact name
   window.connectWallet = connectWallet;
 
-  // Bind to your existing buttons/IDs (no new names)
-  function wireUI() {
-    paintNetBadge();
-
-    const btn = $("connectWalletBtn");
-    if (btn) btn.addEventListener("click", connectWallet);
-
-    const addBtn = $("addTokenBtn");
-    if (addBtn) {
-      addBtn.addEventListener("click", async () => {
-        try {
-          if (!window.ethereum) return alert("Open inside wallet browser first.");
-          const active = getActiveNet();
-          const token = safeAddr(active.ibiti);
-          if (!token) return alert("Token address not set.");
-
-          await window.ethereum.request({
-            method: "wallet_watchAsset",
-            params: {
-              type: "ERC20",
-              options: {
-                address: token,
-                symbol: "IBITI",
-                decimals: 8
-              }
-            }
-          });
-        } catch (e) {
-          console.warn("addToken:", e);
-          alert("Failed to add token");
-        }
-      });
-    }
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", wireUI);
-  } else {
-    wireUI();
-  }
 })();
