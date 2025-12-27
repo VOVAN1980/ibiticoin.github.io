@@ -426,7 +426,7 @@
   }
 
   // UI init
-  $("network").textContent = net.name + (netKey==="testnet" ? " (testnet)" : "");
+  $("network").textContent = net.name;
   $("buyer").textContent = buyer || "—";
   $("txhash").textContent = tx || "—";
   $("rid").textContent = tx ? ("IBITI-" + tx.slice(2,10).toUpperCase()) : "—";
