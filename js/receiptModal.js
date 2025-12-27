@@ -1,87 +1,67 @@
-// js/receiptModal.js (classic) — SINGLE CLEAN MODAL (no extra header/frame)
+// js/receiptModal.js (classic, for app.js) — NO header, NO extra buttons.
+// Close is controlled by receipt.html (postMessage) + ESC + click outside.
 (function () {
   let overlayEl = null;
-  let panelEl = null;
+  let frameWrapEl = null;
   let iframeEl = null;
-  let lastFocusEl = null;
 
   function closeReceiptModal() {
     if (!overlayEl) return;
-
     overlayEl.style.display = "none";
     if (iframeEl) iframeEl.src = "about:blank";
 
-    // вернуть скролл страницы
-    try { document.body.style.overflow = ""; } catch (_) {}
-
-    // вернуть фокус
-    try { lastFocusEl?.focus?.(); } catch (_) {}
-    lastFocusEl = null;
+    // вернуть фокус на кнопку покупки
+    try { document.getElementById("promoBuyButton")?.focus(); } catch (_) {}
   }
 
   function openReceiptModal(url) {
-    // запоминаем фокус до открытия
-    try { lastFocusEl = document.activeElement; } catch (_) {}
-
     if (!overlayEl) {
       overlayEl = document.createElement("div");
       overlayEl.id = "ibiti-receipt-overlay";
       overlayEl.style.cssText =
         "position:fixed;inset:0;z-index:999999;" +
-        "background:rgba(0,0,0,0.65);" +
+        "background:rgba(0,0,0,0.55);" +
         "display:none;align-items:center;justify-content:center;" +
-        "padding:18px;";
+        "padding:16px;";
 
-      panelEl = document.createElement("div");
-      panelEl.id = "ibiti-receipt-panel";
-      panelEl.style.cssText =
-        "position:relative;" +
-        "width:min(980px,96vw);" +
+      frameWrapEl = document.createElement("div");
+      frameWrapEl.style.cssText =
+        "width:min(760px,96vw);" +
         "height:min(92vh,980px);" +
-        "border-radius:16px;" +
+        "border-radius:14px;" +
         "overflow:hidden;" +
-        "box-shadow:0 30px 90px rgba(0,0,0,0.45);" +
-        "background:transparent;"; // <-- важно: без белой “второй” рамки
+        "box-shadow:0 25px 80px rgba(0,0,0,0.35);" +
+        "background:#fff;";
 
       iframeEl = document.createElement("iframe");
-      iframeEl.id = "ibiti-receipt-iframe";
-      iframeEl.style.cssText =
-        "border:0;width:100%;height:100%;" +
-        "background:#fff;" +
-        "border-radius:16px;"; // один “лист”, без двойных окон
+      iframeEl.style.cssText = "border:0;width:100%;height:100%;background:#fff;";
       iframeEl.allow = "clipboard-read; clipboard-write";
 
-      const closeBtn = document.createElement("button");
-      closeBtn.type = "button";
-      closeBtn.setAttribute("aria-label", "Close");
-      closeBtn.textContent = "✕";
-      closeBtn.style.cssText =
-        "position:absolute;top:10px;right:10px;" +
-        "width:40px;height:40px;" +
-        "border-radius:12px;" +
-        "border:1px solid rgba(0,0,0,0.15);" +
-        "background:rgba(255,255,255,0.92);" +
-        "cursor:pointer;" +
-        "font-size:18px;font-weight:900;line-height:1;" +
-        "z-index:2;";
-      closeBtn.onclick = closeReceiptModal;
+      frameWrapEl.appendChild(iframeEl);
+      overlayEl.appendChild(frameWrapEl);
+      document.body.appendChild(overlayEl);
 
+      // клик по затемнению — закрыть
       overlayEl.addEventListener("click", (e) => {
         if (e.target === overlayEl) closeReceiptModal();
       });
 
+      // ESC — закрыть
       window.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && overlayEl?.style.display !== "none") closeReceiptModal();
+        if (e.key === "Escape" && overlayEl && overlayEl.style.display !== "none") {
+          closeReceiptModal();
+        }
       });
 
-      panelEl.appendChild(iframeEl);
-      panelEl.appendChild(closeBtn);
-      overlayEl.appendChild(panelEl);
-      document.body.appendChild(overlayEl);
+      // ✅ Close из receipt.html (через postMessage)
+      window.addEventListener("message", (e) => {
+        try {
+          if (e.origin !== window.location.origin) return;
+          const d = e.data || {};
+          if (d && d.type === "IBITI_RECEIPT_CLOSE") closeReceiptModal();
+        } catch (_) {}
+      });
     }
-
-    // блокируем скролл заднего фона
-    try { document.body.style.overflow = "hidden"; } catch (_) {}
 
     iframeEl.src = url;
     overlayEl.style.display = "flex";
