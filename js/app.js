@@ -5,9 +5,34 @@
   const $ = (id) => document.getElementById(id);
   const isAddr = (a) => typeof a === "string" && /^0x[a-fA-F0-9]{40}$/.test(a);
 
-  // =========================
-  // Referral unlock storage
-  // =========================
+  // ===== toast (NO alerts; auto-create element if missing) =====
+  function ensureToastEl() {
+    let el = $("toast");
+    if (el) return el;
+
+    el = document.createElement("div");
+    el.id = "toast";
+    el.style.cssText =
+      "position:fixed;left:50%;bottom:18px;transform:translateX(-50%);" +
+      "z-index:1000000;background:rgba(0,0,0,0.86);color:#fff;" +
+      "padding:10px 14px;border-radius:12px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;" +
+      "font-weight:700;font-size:13px;max-width:min(92vw,520px);" +
+      "text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.35);" +
+      "opacity:0;pointer-events:none;transition:opacity .18s ease;";
+    document.body.appendChild(el);
+    return el;
+  }
+
+  let toastTimer = null;
+  function toast(msg, ms = 2200) {
+    const el = ensureToastEl();
+    el.textContent = String(msg || "");
+    el.style.opacity = "1";
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.style.opacity = "0"; }, ms);
+  }
+
+  // ===== referral unlock storage =====
   const LS_PREFIX = "ibiti_promo_purchased_v1";
   function lsKey(chainIdDec, account) {
     return `${LS_PREFIX}:${chainIdDec}:${String(account || "").toLowerCase()}`;
@@ -31,57 +56,6 @@
     });
   }
 
-  // =========================
-  // Toast (NO alert/confirm)
-  // =========================
-  let __toastEl = null;
-  let __toastTimer = null;
-
-  function toast(msg, opts) {
-    const sticky = !!(opts && opts.sticky);
-
-    // Если у тебя есть #toast в HTML — используем его.
-    const legacy = $("toast");
-    if (legacy) {
-      legacy.textContent = msg || "";
-      legacy.classList.add("show");
-      if (__toastTimer) clearTimeout(__toastTimer);
-      if (!sticky) {
-        __toastTimer = setTimeout(() => legacy.classList.remove("show"), 2400);
-      }
-      return;
-    }
-
-    // Иначе создадим нормальный toast сверху
-    if (!__toastEl) {
-      __toastEl = document.createElement("div");
-      __toastEl.id = "ibiti-toast";
-      __toastEl.style.cssText =
-        "position:fixed;top:18px;left:50%;transform:translateX(-50%);" +
-        "z-index:1000000;max-width:min(720px,92vw);" +
-        "padding:12px 14px;border-radius:12px;" +
-        "background:rgba(20,20,20,0.92);color:#fff;" +
-        "font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;" +
-        "font-size:14px;font-weight:700;letter-spacing:.2px;" +
-        "box-shadow:0 20px 60px rgba(0,0,0,.35);" +
-        "display:none;";
-      document.body.appendChild(__toastEl);
-    }
-
-    __toastEl.textContent = msg || "";
-    __toastEl.style.display = "block";
-
-    if (__toastTimer) clearTimeout(__toastTimer);
-    if (!sticky) {
-      __toastTimer = setTimeout(() => {
-        if (__toastEl) __toastEl.style.display = "none";
-      }, 2200);
-    }
-  }
-
-  // =========================
-  // Wallet helpers
-  // =========================
   async function hasConnectedAccount() {
     if (!window.ethereum) return false;
     const accs = await window.ethereum.request({ method: "eth_accounts" });
@@ -94,9 +68,7 @@
     return accs && accs[0] ? accs[0] : null;
   }
 
-  // =========================
-  // ABIs
-  // =========================
+  // ===== ABI =====
   const ERC20_ABI = [
     "function decimals() view returns (uint8)",
     "function symbol() view returns (string)",
@@ -105,6 +77,7 @@
     "function approve(address spender, uint256 value) returns (bool)"
   ];
 
+  // PromoRouter ABI (only what we use)
   const PROMO_ABI = [
     "function promoActive() view returns (bool)",
     "function promoEndTime() view returns (uint256)",
@@ -113,16 +86,14 @@
     "function getStats() view returns (uint256 bonusPoolTotal, uint256 bonusSpent, uint256 refSpent)",
     "function poolRemaining() view returns (uint256)",
     "function swapPath(uint256) view returns (address)",
-    "function buyWithReferral(uint256 paymentAmount, address referrer, uint256 minIbitiOut) external",
+    "function buyWithReferral(uint256 paymentAmount, address referrer, uint256 minIbitiOut) external"
   ];
 
+  // Pancake/Uniswap v2 router (quote only)
   const DEX_ROUTER_ABI = [
     "function getAmountsOut(uint256 amountIn, address[] path) view returns (uint256[] amounts)"
   ];
 
-  // =========================
-  // Net/config
-  // =========================
   function net() {
     return window.IBITI_CONFIG.getNet();
   }
@@ -132,7 +103,6 @@
     if (!badge) return;
 
     const k = net().key;
-
     badge.style.display = "inline-block";
     badge.textContent = (k === "testnet") ? "TESTNET MODE" : "MAINNET MODE";
 
@@ -159,9 +129,7 @@
     return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
   }
 
-  // =========================
-  // Ref param/session
-  // =========================
+  // ===== referral capture (session) =====
   function currentRefParam() {
     const url = new URL(window.location.href);
     const r = (url.searchParams.get("ref") || "").trim();
@@ -169,29 +137,12 @@
   }
 
   const REF_KEY = "ibiti_referrer";
-
-  function storeRef(ref) {
-    try {
-      if (ref && isAddr(ref)) sessionStorage.setItem(REF_KEY, ref);
-    } catch (_) {}
-  }
-
-  function loadStoredRef() {
-    try {
-      const v = (sessionStorage.getItem(REF_KEY) || "").trim();
-      return isAddr(v) ? v : null;
-    } catch (_) {
-      return null;
-    }
-  }
-
-  function captureIncomingRef() {
-    const r = currentRefParam();
-    if (r) storeRef(r);
-  }
+  function storeRef(ref) { try { if (ref && isAddr(ref)) sessionStorage.setItem(REF_KEY, ref); } catch (_) {} }
+  function loadStoredRef() { try { const v = (sessionStorage.getItem(REF_KEY) || "").trim(); return isAddr(v) ? v : null; } catch (_) { return null; } }
+  function captureIncomingRef() { const r = currentRefParam(); if (r) storeRef(r); }
 
   function getActiveReferrer(buyerAddr) {
-    const ref = currentRefParam() || loadStoredRef();
+    let ref = currentRefParam() || loadStoredRef();
     if (!ref) return null;
     if (buyerAddr && String(ref).toLowerCase() === String(buyerAddr).toLowerCase()) return null;
     return ref;
@@ -205,9 +156,7 @@
     return url.toString();
   }
 
-  // =========================
-  // Providers
-  // =========================
+  // ===== provider helpers =====
   function getReadProvider() {
     const rpc = net().rpcUrls && net().rpcUrls[0] ? net().rpcUrls[0] : null;
     if (!rpc) throw new Error("RPC not set in config for this network.");
@@ -216,7 +165,6 @@
 
   async function ensureChain() {
     if (!window.ethereum) throw new Error("No wallet detected (MetaMask/Trust Wallet/Binance Wallet).");
-
     const target = net();
     const chainId = await window.ethereum.request({ method: "eth_chainId" });
     if (chainId && chainId.toLowerCase() === target.chainIdHex.toLowerCase()) return;
@@ -251,9 +199,7 @@
     return { bp, signer };
   }
 
-  // =========================
-  // On-chain purchased check (for old buyers)
-  // =========================
+  // ===== on-chain purchase detect (logs) =====
   async function checkPurchasedOnchain(account) {
     const netCfg = net();
     if (!netCfg.promoRouter || !isAddr(netCfg.promoRouter) || !account) return false;
@@ -287,16 +233,10 @@
 
     setReferralUnlocked(false);
     if (input) input.value = "";
-    if (copyBtn) copyBtn.disabled = true;
-    if (shareBtn) shareBtn.disabled = true;
-
     if (!account) return;
 
     let purchased = false;
-
-    try {
-      purchased = localStorage.getItem(lsKey(netCfg.chainIdDec, account)) === "1";
-    } catch (_) {}
+    try { purchased = localStorage.getItem(lsKey(netCfg.chainIdDec, account)) === "1"; } catch (_) {}
 
     if (!purchased) {
       try {
@@ -312,28 +252,15 @@
       if (input) input.value = buildMyReferralLink(account);
       if (copyBtn) copyBtn.disabled = false;
       if (shareBtn) shareBtn.disabled = false;
+    } else {
+      if (copyBtn) copyBtn.disabled = true;
+      if (shareBtn) shareBtn.disabled = true;
     }
   }
 
-  // =========================
-  // Wallet UI update
-  // =========================
-  async function updateBalance(addr) {
-    try {
-      const { signer } = await getBrowserProviderSigner();
-      const token = new ethers.Contract(net().ibiti, ERC20_ABI, signer);
-      const dec = await token.decimals();
-      const bal = await token.balanceOf(addr);
-
-      const balEl = $("ibitiBalance");
-      if (balEl) balEl.textContent = `${fmt(bal, dec, 8)} IBITI`;
-    } catch (_) {}
-  }
-
+  // ===== wallet connect =====
   async function connectWallet() {
     await ensureChain();
-
-    // connect request (this is the ONLY place we request accounts)
     const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
     const addr = accounts && accounts[0] ? accounts[0] : null;
     if (!addr) throw new Error("No account returned by wallet.");
@@ -341,7 +268,14 @@
     const addrEl = $("walletAddress");
     if (addrEl) addrEl.textContent = addr;
 
-    await updateBalance(addr);
+    const { signer } = await getBrowserProviderSigner();
+    const token = new ethers.Contract(net().ibiti, ERC20_ABI, signer);
+    const dec = await token.decimals();
+    const bal = await token.balanceOf(addr);
+
+    const balEl = $("ibitiBalance");
+    if (balEl) balEl.textContent = `${fmt(bal, dec, 8)} IBITI`;
+
     await updateReferralUI(addr);
 
     setPurchaseEnabled(true);
@@ -350,27 +284,22 @@
 
   async function addTokenToWallet() {
     if (!window.ethereum) throw new Error("No wallet detected.");
-    const tokenAddress = net().ibiti;
-
     await window.ethereum.request({
       method: "wallet_watchAsset",
       params: {
         type: "ERC20",
         options: {
-          address: tokenAddress,
+          address: net().ibiti,
           symbol: "IBITI",
           decimals: 8,
           image: "https://ibiticoin.com/img/IBITI-512.png"
         }
       }
     });
-
     toast("Token request sent to wallet.");
   }
 
-  // =========================
-  // Stats/progress
-  // =========================
+  // ===== stats/progress =====
   function updateProgress(percent) {
     const bar = $("salesProgress");
     const p = $("soldPercent");
@@ -412,11 +341,8 @@
     const spentTotal = bonusSpent + refSpent;
 
     let remaining;
-    try {
-      remaining = await promo.poolRemaining();
-    } catch {
-      remaining = routerBal;
-    }
+    try { remaining = await promo.poolRemaining(); }
+    catch { remaining = routerBal; }
 
     let pct = NaN;
     if (bonusPoolTotal > 0n) {
@@ -436,20 +362,16 @@
     const active = await promo.promoActive();
     const bonusBps = await promo.bonusBps();
     const minPay = await promo.minPaymentAmount();
-
     const usdt = new ethers.Contract(netCfg.usdt, ERC20_ABI, rp);
     const usdtDec = await usdt.decimals();
 
     const infoEl = $("minPayInfo");
     if (infoEl) {
-      infoEl.textContent =
-        `Min: ${fmt(minPay, usdtDec, 2)} USDT · Bonus: ${(Number(bonusBps) / 100).toFixed(2)}% · Active: ${active}`;
+      infoEl.textContent = `Min: ${fmt(minPay, usdtDec, 2)} USDT · Bonus: ${(Number(bonusBps) / 100).toFixed(2)}% · Active: ${active}`;
     }
   }
 
-  // =========================
-  // PROMO BUY (approve only if needed + slippage + receipt modal)
-  // =========================
+  // ===== BUY PROMO =====
   async function buyPromo() {
     const netCfg = net();
     if (!netCfg.promoRouter || !isAddr(netCfg.promoRouter)) {
@@ -458,7 +380,6 @@
 
     const amtEl = $("promoUsdtAmount");
     const amtStr = amtEl ? String(amtEl.value || "").trim() : "";
-
     if (!/^\d+$/.test(amtStr)) throw new Error("Please enter a whole number (10–100).");
 
     const amtNum = parseInt(amtStr, 10);
@@ -474,24 +395,26 @@
     const usdtDec = await usdt.decimals();
     const amount = ethers.parseUnits(String(amtNum), usdtDec);
 
-    // 1) approve only if allowance < amount
-    let allowance = 0n;
-    try {
-      allowance = await usdt.allowance(buyerAddr, netCfg.promoRouter);
-    } catch (_) {
-      allowance = 0n;
-    }
+    // ✅ approve ONLY if needed (cuts confirmations)
+    const needApprove = async () => {
+      try {
+        const cur = await usdt.allowance(buyerAddr, netCfg.promoRouter);
+        return cur < amount;
+      } catch (_) {
+        return true;
+      }
+    };
 
-    if (allowance < amount) {
-      toast("Approve USDT in wallet…", { sticky: true });
-      const txA = await usdt.approve(netCfg.promoRouter, amount);
+    if (await needApprove()) {
+      toast("Approve USDT…");
+      const approveValue = netCfg.approveMax ? ethers.MaxUint256 : amount;
+      const txA = await usdt.approve(netCfg.promoRouter, approveValue);
       await txA.wait();
-      toast("USDT approved");
     }
 
-    // 2) minOut slippage (optional protection)
     const promo = new ethers.Contract(netCfg.promoRouter, PROMO_ABI, signer);
 
+    // slippage protection (optional)
     let minOut = 0n;
     try {
       if (netCfg.pancakeRouter && isAddr(netCfg.pancakeRouter)) {
@@ -506,7 +429,7 @@
           const amounts = await dex.getAmountsOut(amount, path);
           const boughtEst = amounts[amounts.length - 1];
 
-          const slBps = Number(netCfg.slippageBps || 300); // 3%
+          const slBps = Number(netCfg.slippageBps || 300); // 3% default
           const keepBps = BigInt(Math.max(0, 10000 - slBps));
           minOut = (boughtEst * keepBps) / 10000n;
         }
@@ -515,27 +438,17 @@
       minOut = 0n;
     }
 
-    // 3) buy
-    toast("Confirm purchase in wallet…", { sticky: true });
+    toast("Buying with +10% bonus…");
     const txB = await promo.buyWithReferral(
       amount,
       ref ? ref : ethers.ZeroAddress,
       minOut
     );
 
-    toast("Waiting confirmation…", { sticky: true });
+    toast("Waiting confirmation…");
     await txB.wait();
 
-    // mark referral unlocked
-    try {
-      localStorage.setItem(lsKey(netCfg.chainIdDec, buyerAddr), "1");
-    } catch (_) {}
-
-    await updateReferralUI(buyerAddr);
-    await updateBalance(buyerAddr);
-    await refreshStats().catch(() => {});
-
-    // 4) receipt modal (NO new tabs)
+    // show receipt in modal (ONE screen)
     try {
       const netKey = (net().key === "testnet") ? "testnet" : "mainnet";
       const url =
@@ -543,22 +456,24 @@
         `&tx=${encodeURIComponent(txB.hash)}` +
         `&buyer=${encodeURIComponent(buyerAddr)}` +
         `&paid=${encodeURIComponent(String(amtNum))}`;
-
-      if (typeof window.openReceiptModal === "function") {
-        window.openReceiptModal(url);
-      } else {
-        console.warn("openReceiptModal not found. Did you include receiptModal.js before app.js?");
-      }
+      window.openReceiptModal && window.openReceiptModal(url);
     } catch (e) {
       console.warn("Show receipt failed:", e);
     }
 
+    // mark referral unlocked
+    try {
+      const acc = await currentAccount();
+      if (acc) localStorage.setItem(lsKey(net().chainIdDec, acc), "1");
+      await updateReferralUI(acc);
+    } catch (_) {}
+
     toast("Done!");
+    // ❌ НЕ дергаем connectWallet() снова — это и давало лишние запросы/окна
+    await refreshStats().catch(() => {});
   }
 
-  // =========================
-  // Pancake modal (no bonus)
-  // =========================
+  // ===== Regular buy (Pancake modal) =====
   async function openPancakeModal() {
     if (!(await hasConnectedAccount())) {
       toast("Please connect your wallet first.");
@@ -585,9 +500,6 @@
     window.location.href = url;
   }
 
-  // =========================
-  // Referral copy/share
-  // =========================
   async function copyMyLink() {
     const input = $("referralLink");
     const v = input ? String(input.value || "") : "";
@@ -602,7 +514,6 @@
     if (overlay) overlay.classList.remove("hidden");
     if (modal) modal.classList.remove("hidden");
   }
-
   function closeShareModal() {
     const overlay = $("shareOverlay");
     const modal = $("shareModal");
@@ -621,13 +532,9 @@
         return;
       } catch (_) {}
     }
-
     openShareModal();
   }
 
-  // =========================
-  // Wire UI
-  // =========================
   function wire() {
     setNetBadge();
     captureIncomingRef();
@@ -635,38 +542,37 @@
     setReferralUnlocked(false);
 
     const btnConnect = $("connectWalletBtn");
-    if (btnConnect) btnConnect.addEventListener("click", () =>
-      connectWallet().catch((e) => { console.error(e); toast("Connect failed."); })
-    );
+    if (btnConnect) btnConnect.addEventListener("click", () => {
+      connectWallet().catch((e) => { console.error(e); toast("Connect failed."); });
+    });
 
     const btnAdd = $("addTokenBtn");
-    if (btnAdd) btnAdd.addEventListener("click", () =>
-      addTokenToWallet().catch((e) => { console.error(e); toast("Add token failed."); })
-    );
+    if (btnAdd) btnAdd.addEventListener("click", () => {
+      addTokenToWallet().catch((e) => { console.error(e); toast("Add token failed."); });
+    });
 
     const btnBuy = $("promoBuyButton");
     if (btnBuy) btnBuy.addEventListener("click", async () => {
-      try {
-        if (!(await hasConnectedAccount())) {
-          toast("Please connect your wallet first.");
-          await connectWallet();
-        }
-        await buyPromo();
-      } catch (e) {
+      if (!(await hasConnectedAccount())) {
+        toast("Please connect your wallet first.");
+        try { await connectWallet(); } catch (e) { return; }
+        if (!(await hasConnectedAccount())) return;
+      }
+      return buyPromo().catch((e) => {
         console.error(e);
         toast(e?.shortMessage || e?.message || "Buy failed.");
-      }
+      });
     });
 
     const btnRefresh = $("refreshStatsBtn");
-    if (btnRefresh) btnRefresh.addEventListener("click", () =>
-      refreshStats().catch((e) => { console.error(e); toast("Refresh failed."); })
-    );
+    if (btnRefresh) btnRefresh.addEventListener("click", () => {
+      refreshStats().catch((e) => { console.error(e); toast("Refresh failed."); });
+    });
 
     const copyBtn = $("copyMyReferralLink");
-    if (copyBtn) copyBtn.addEventListener("click", () =>
-      copyMyLink().catch((e) => { console.error(e); toast("Copy failed."); })
-    );
+    if (copyBtn) copyBtn.addEventListener("click", () => {
+      copyMyLink().catch((e) => { console.error(e); toast("Copy failed."); });
+    });
 
     const shareBtn = $("shareReferralLink");
     if (shareBtn) shareBtn.addEventListener("click", shareLink);
@@ -736,50 +642,31 @@
     window.ethereum?.request({ method: "eth_accounts" })
       .then(async (accs) => {
         if (!accs || !accs[0]) return;
-
         const addr = accs[0];
+
         const addrEl = $("walletAddress");
         if (addrEl) addrEl.textContent = addr;
 
         setPurchaseEnabled(true);
 
-        await updateBalance(addr);
-        await updateReferralUI(addr);
+        try {
+          const { signer } = await getBrowserProviderSigner();
+          const token = new ethers.Contract(net().ibiti, ERC20_ABI, signer);
+          const dec = await token.decimals();
+          const bal = await token.balanceOf(addr);
+          const balEl = $("ibitiBalance");
+          if (balEl) balEl.textContent = `${fmt(bal, dec, 8)} IBITI`;
+        } catch (_) {}
+
+        updateReferralUI(addr).catch(() => {});
       })
       .catch(() => {});
-
-    // react to wallet changes
-    if (window.ethereum) {
-      window.ethereum.on?.("accountsChanged", async (accs) => {
-        const addr = accs && accs[0] ? accs[0] : null;
-        if (!addr) {
-          setPurchaseEnabled(false);
-          setReferralUnlocked(false);
-          const addrEl = $("walletAddress");
-          if (addrEl) addrEl.textContent = "—";
-          const balEl = $("ibitiBalance");
-          if (balEl) balEl.textContent = "—";
-          return;
-        }
-        setPurchaseEnabled(true);
-        const addrEl = $("walletAddress");
-        if (addrEl) addrEl.textContent = addr;
-        await updateBalance(addr);
-        await updateReferralUI(addr);
-      });
-
-      window.ethereum.on?.("chainChanged", () => {
-        // Перезагрузка — самый надёжный вариант на проде.
-        window.location.reload();
-      });
-    }
 
     refreshStats().catch(() => {});
   }
 
   document.addEventListener("DOMContentLoaded", wire);
 
-  // Public API (if you use it somewhere)
   window.IBITI_APP = {
     connectWallet,
     refreshStats,
