@@ -1,5 +1,5 @@
-// js/receiptModal.js (classic, for app.js) — CLEAN (no extra window/frame)
-// Modal = only backdrop + iframe. Close by click outside / ESC / from receipt.html via parent.closeReceiptModal()
+// js/receiptModal.js — ULTRA CLEAN (no “second window”)
+// overlay (dark) + iframe (transparent, no shadow, no white background)
 
 (function () {
   let overlayEl = null;
@@ -9,8 +9,6 @@
     if (!overlayEl) return;
     overlayEl.style.display = "none";
     if (iframeEl) iframeEl.src = "about:blank";
-
-    // вернуть фокус на кнопку покупки
     try { document.getElementById("promoBuyButton")?.focus(); } catch (_) {}
   }
 
@@ -20,29 +18,29 @@
       overlayEl.id = "ibiti-receipt-overlay";
       overlayEl.style.cssText =
         "position:fixed;inset:0;z-index:999999;" +
-        "background:rgba(0,0,0,0.65);" +
+        "background:rgba(0,0,0,0.70);" +
         "display:none;align-items:center;justify-content:center;" +
-        "padding:14px;";
+        "padding:12px;";
 
       iframeEl = document.createElement("iframe");
       iframeEl.id = "ibiti-receipt-iframe";
+
+      // ✅ ВАЖНО: iframe БЕЗ фона/тени/рамки — чтобы не было “второго окна”
       iframeEl.style.cssText =
         "width:min(640px, 96vw);" +
         "height:min(92vh, 980px);" +
         "border:0;" +
-        "border-radius:16px;" +
-        "background:#fff;" +
-        "box-shadow:0 30px 90px rgba(0,0,0,0.45);" +
-        "overflow:hidden;";
+        "background:transparent;" +
+        "box-shadow:none;" +
+        "border-radius:0;" +
+        "display:block;";
 
       iframeEl.allow = "clipboard-read; clipboard-write";
 
-      // клик по фону — закрыть
       overlayEl.addEventListener("click", (e) => {
         if (e.target === overlayEl) closeReceiptModal();
       });
 
-      // ESC — закрыть
       window.addEventListener("keydown", (e) => {
         if (e.key === "Escape" && overlayEl.style.display !== "none") closeReceiptModal();
       });
@@ -55,7 +53,6 @@
     overlayEl.style.display = "flex";
   }
 
-  // global
   window.openReceiptModal = openReceiptModal;
   window.closeReceiptModal = closeReceiptModal;
 })();
