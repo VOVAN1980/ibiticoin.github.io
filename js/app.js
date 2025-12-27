@@ -259,45 +259,76 @@
   }
 
   // ===== wallet connect =====
-  async function connectWallet() {
-    await ensureChain();
-    const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-    const addr = accounts && accounts[0] ? accounts[0] : null;
-    if (!addr) throw new Error("No account returned by wallet.");
-
-    const addrEl = $("walletAddress");
-    if (addrEl) addrEl.textContent = addr;
-
-    const { signer } = await getBrowserProviderSigner();
-    const token = new ethers.Contract(net().ibiti, ERC20_ABI, signer);
-    const dec = await token.decimals();
-    const bal = await token.balanceOf(addr);
-
-    const balEl = $("ibitiBalance");
-    if (balEl) balEl.textContent = `${fmt(bal, dec, 8)} IBITI`;
-
-    await updateReferralUI(addr);
-
-    setPurchaseEnabled(true);
-    toast("Wallet connected.");
+async function connectWallet() {
+  // ✅ Mobile / no-injected-wallet path: отправляем в твой wallet.html
+  if (!window.ethereum) {
+    const isMobile = /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent || "");
+    if (isMobile) {
+      const u = new URL("/wallet.html", location.origin); // НЕ переименовываем: wallet.html
+      u.searchParams.set("redirect", location.href);      // вернёмся на эту же страницу/с параметрами
+      location.href = u.toString();
+      return;
+    }
+    throw new Error("No wallet detected. Open in MetaMask/Trust Wallet browser.");
   }
 
-  async function addTokenToWallet() {
-    if (!window.ethereum) throw new Error("No wallet detected.");
-    await window.ethereum.request({
-      method: "wallet_watchAsset",
-      params: {
-        type: "ERC20",
-        options: {
-          address: net().ibiti,
-          symbol: "IBITI",
-          decimals: 8,
-          image: "https://ibiticoin.com/img/IBITI-512.png"
-        }
+  // ✅ Normal path (desktop MetaMask / wallet in-app browser)
+  await ensureChain();
+
+  const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+  const addr = accounts && accounts[0] ? accounts[0] : null;
+  if (!addr) throw new Error("No account returned by wallet.");
+
+  const addrEl = $("walletAddress");
+  if (addrEl) addrEl.textContent = addr;
+
+  const { signer } = await getBrowserProviderSigner();
+
+  // token balance
+  const token = new ethers.Contract(net().ibiti, ERC20_ABI, signer);
+
+  let dec = 8;
+  try { dec = await token.decimals(); } catch (_) {}
+
+  const bal = await token.balanceOf(addr);
+
+  const balEl = $("ibitiBalance");
+  if (balEl) balEl.textContent = `${fmt(bal, dec, 8)} IBITI`;
+
+  await updateReferralUI(addr);
+
+  setPurchaseEnabled(true);
+  toast("Wallet connected.");
+}
+
+async function addTokenToWallet() {
+  // ✅ если не внутри кошелька — на мобиле перекинем в wallet.html
+  if (!window.ethereum) {
+    const isMobile = /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent || "");
+    if (isMobile) {
+      const u = new URL("/wallet.html", location.origin);
+      u.searchParams.set("redirect", location.href);
+      location.href = u.toString();
+      return;
+    }
+    throw new Error("No wallet detected. Open in MetaMask/Trust Wallet browser.");
+  }
+
+  await window.ethereum.request({
+    method: "wallet_watchAsset",
+    params: {
+      type: "ERC20",
+      options: {
+        address: net().ibiti,
+        symbol: "IBITI",
+        decimals: 8,
+        image: "https://ibiticoin.com/img/IBITI-512.png"
       }
-    });
-    toast("Token request sent to wallet.");
-  }
+    }
+  });
+
+  toast("Token request sent to wallet.");
+}
 
   // ===== stats/progress =====
   function updateProgress(percent) {
