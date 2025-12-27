@@ -2,26 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0 hookup"/>
   <title>IBITI Receipt</title>
+
   <style>
     :root{
       --paper:#fff; --ink:#111; --muted:#666; --line:#e6e6e6;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
+
+    /* IMPORTANT: в iframe нам не нужен “серый фон”, иначе ощущение второго окна */
     body{
-      margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
-      background:#f2f2f2; padding:18px; font-family:var(--sans); color:var(--ink);
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:transparent;
+      padding:12px;
+      font-family:var(--sans);
+      color:var(--ink);
     }
+
     .card{
       width:min(560px, 100%);
       background:var(--paper);
       border:1px solid var(--line);
-      border-radius:14px;
-      box-shadow:0 18px 70px rgba(0,0,0,.18);
+      border-radius:16px;
+      box-shadow:0 18px 70px rgba(0,0,0,.20);
       overflow:hidden;
     }
+
     .head{
       padding:16px 18px;
       border-bottom:1px dashed #ddd;
@@ -30,43 +42,56 @@
     .title{font-weight:900; font-size:18px; letter-spacing:.2px;}
     .sub{margin-top:4px; font-size:12px; color:var(--muted); line-height:1.35;}
     .pill{display:inline-block; font-size:11px; padding:3px 8px; border-radius:999px; background:#111; color:#fff; font-weight:800; letter-spacing:.4px;}
+
     .body{padding:14px 18px 16px;}
     .grid{display:grid; grid-template-columns:1fr 1fr; gap:10px 14px;}
     .row{display:flex; justify-content:space-between; gap:12px; padding:7px 0; border-bottom:1px dotted #e6e6e6;}
     .row:last-child{border-bottom:0;}
     .k{color:var(--muted); font-size:12px;}
     .v{font-family:var(--mono); font-size:12px; font-weight:800; text-align:right; word-break:break-all;}
+
     .sec{margin-top:12px; padding-top:10px; border-top:1px dashed #ddd;}
     .secTitle{font-size:12px; font-weight:900; letter-spacing:.6px; margin-bottom:8px;}
+
     .box{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
-      background:#fafafa; border:1px solid #eee; border-radius:10px; padding:10px;
+      background:#fafafa; border:1px solid #eee; border-radius:12px; padding:10px;
       margin-top:8px;
     }
     .mono{font-family:var(--mono); font-size:11px; word-break:break-all;}
+
     .btn{
       border:1px solid #111; background:#111; color:#fff;
-      padding:10px 12px; border-radius:10px; cursor:pointer;
+      padding:10px 12px; border-radius:12px; cursor:pointer;
       font-weight:900; font-size:12px;
     }
     .btn.alt{background:#fff; color:#111; border-color:#ddd;}
     .btn.small{padding:7px 10px; font-size:12px; border-color:#ddd; background:#fff; color:#111;}
+
     .actions{display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; margin-top:12px;}
+
     .foot{
       padding:12px 18px;
       border-top:1px dashed #ddd;
       display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
     }
     .note{font-size:11px; color:var(--muted); line-height:1.35;}
+
+    /* более “печать”, без прямоугольного ощущения */
     .stamp{
-      width:92px; height:92px; border:2px solid #111; border-radius:999px;
-      display:flex; align-items:center; justify-content:center; position:relative;
+      width:92px; height:92px;
+      border-radius:999px;
+      position:relative;
       transform: rotate(-10deg);
+      display:flex; align-items:center; justify-content:center;
+      background: radial-gradient(circle at 30% 30%, rgba(0,0,0,0.06), transparent 55%);
+      border:2px solid #111;
+      box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 4px #111;
     }
     .stamp:before{
-      content:"OFFICIAL";
+      content:"VERIFIED";
       position:absolute; top:10px; left:0; right:0; text-align:center;
-      font-family:var(--mono); font-size:9px; letter-spacing:1.2px; font-weight:800;
+      font-family:var(--mono); font-size:9px; letter-spacing:1.6px; font-weight:900;
     }
     .stamp:after{
       content:"IBITI";
@@ -74,14 +99,17 @@
       font-family:var(--mono); font-size:12px; letter-spacing:2px; font-weight:900;
     }
     .stamp b{font-family:var(--mono); font-size:14px; letter-spacing:1px;}
+
     .err{color:#b00020; font-weight:900;}
+
     @media print{
       body{background:#fff; padding:0;}
-      .card{box-shadow:none; border-radius:0; width:86mm; max-width:86mm; margin:0 auto; border:1px solid #000;}
       .actions{display:none !important;}
+      .card{box-shadow:none; border-radius:0; width:86mm; max-width:86mm; margin:0 auto; border:1px solid #000;}
     }
   </style>
 </head>
+
 <body>
   <div class="card" id="card">
     <div class="head">
@@ -126,7 +154,10 @@
         </div>
 
         <div class="actions">
-          <button class="btn alt" id="print">Print / Save PDF</button>
+          <!-- ✅ по умолчанию: сохранить картинкой -->
+          <button class="btn" id="saveImg">Save image</button>
+          <!-- печать оставим отдельно, но это не “главная” -->
+          <button class="btn alt" id="print">Print</button>
           <button class="btn alt" id="close">Close</button>
         </div>
 
@@ -145,6 +176,7 @@
 
 <script type="module">
   import { ethers } from "https://cdn.jsdelivr.net/npm/ethers@6.13.5/+esm";
+  import * as htmlToImage from "https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/+esm";
 
   const $ = (id) => document.getElementById(id);
   const qs = new URLSearchParams(location.search);
@@ -154,7 +186,6 @@
   const netKey = (qs.get("net") || "mainnet").toLowerCase();
   const paidHint = (qs.get("paid") || "").trim(); // optional
 
-  // ✅ network config (сразу правильные адреса/рпц)
   const NETS = {
     mainnet: {
       name: "BNB Smart Chain",
@@ -187,7 +218,6 @@
     return `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
   }
 
-  // ERC20 Transfer topic
   const TRANSFER_TOPIC = ethers.id("Transfer(address,address,uint256)");
 
   function topicToAddr(topic){
@@ -204,14 +234,12 @@
   }
 
   function split10(total){
-    // base = total / 1.1 = total*100/110 (integer)
     const base = (total * 100n) / 110n;
     const bonus = total - base;
     return { base, bonus, total };
   }
 
   function buildReferralLink(buyerAddr){
-    // ссылка на shop.html с ref, сохраняем net если тест
     const u = new URL(location.origin + "/shop.html");
     if (netKey === "testnet") u.searchParams.set("net","testnet");
     if (buyerAddr) u.searchParams.set("ref", buyerAddr);
@@ -258,12 +286,8 @@
       const to = topicToAddr(log.topics[2])?.toLowerCase();
       const val = BigInt(log.data);
 
-      if (addr === u && from === b){
-        paid += val;
-      }
-      if (addr === i && to === b){
-        ibitiIn.push(val);
-      }
+      if (addr === u && from === b) paid += val;
+      if (addr === i && to === b) ibitiIn.push(val);
     }
 
     ibitiIn.sort((a,b)=> (a>b ? -1 : a<b ? 1 : 0));
@@ -278,8 +302,6 @@
       const sp = split10(total);
       market = sp.base;
       bonus = sp.bonus;
-    } else {
-      total = 0n; market = 0n; bonus = 0n;
     }
 
     const paidStr = smartTrim(ethers.formatUnits(paid, usdtDec), 6);
@@ -290,7 +312,6 @@
     let priceStr = "—";
     try{
       if (market > 0n){
-        // price ~ paid/market (scaled 1e8)
         const scaled = (paid * 100000000n) / market;
         priceStr = smartTrim(ethers.formatUnits(scaled, 8), 10);
       }
@@ -311,22 +332,49 @@
 
   $("copyTx").onclick = async ()=>{ try{ await navigator.clipboard.writeText(txUrl); }catch(_){} };
   $("copyRef").onclick = async ()=>{ try{ await navigator.clipboard.writeText($("refLink").textContent); }catch(_){} };
-  $("print").onclick = ()=>window.print();
-  $("close").onclick = ()=>{ try{ window.close(); }catch(_){ location.href="/shop.html"; } };
+
+  // ✅ Close: если открыто в iframe модалке — закрываем родителя, иначе пытаемся закрыть вкладку
+  $("close").onclick = ()=> {
+    try {
+      if (window.parent && window.parent.closeReceiptModal) return window.parent.closeReceiptModal();
+    } catch(_) {}
+    try { window.close(); } catch(_) { location.href="/shop.html"; }
+  };
+
+  // Print оставили, но это отдельная кнопка (и да — это всегда “печать”, так устроен браузер)
+  $("print").onclick = ()=> window.print();
+
+  // ✅ Save as Image (PNG)
+  $("saveImg").onclick = async ()=> {
+    try{
+      const node = $("card");
+      const dataUrl = await htmlToImage.toPng(node, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: "#ffffff"
+      });
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      const rid = ($("rid")?.textContent || "IBITI-RECEIPT").replace(/[^a-zA-Z0-9-_]/g,"");
+      a.download = `${rid}.png`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }catch(e){
+      // fallback
+      setErr("Save image failed in this browser. Use Print button or take a screenshot.");
+    }
+  };
 
   if (paidHint) $("paid").textContent = paidHint;
 
+  // validate
   if (!tx || !/^0x[0-9a-fA-F]{64}$/.test(tx)) {
     setStatus("ERROR");
     setErr("Missing or invalid tx hash in URL (?tx=0x...)");
     throw new Error("bad tx");
   }
-  if (!buyer || !/^0x[0-9a-fA-F]{40}$/.test(buyer)) {
-    // buyer не критично — просто отметим
-    $("buyer").textContent = buyer || "—";
-  }
 
-  // Load receipt
   setStatus("PENDING");
   const provider = new ethers.JsonRpcProvider(net.rpc);
 
@@ -337,7 +385,6 @@
   if (!receipt) {
     setStatus("PENDING");
     setErr("Transaction is not confirmed yet. Refresh this page in a moment.");
-    // оставляем pending
   } else {
     setStatus("DONE");
     try{
@@ -346,20 +393,21 @@
     }catch(_){}
 
     try{
-      const amounts = await decodeAmounts(receipt, (buyer||"0x0000000000000000000000000000000000000000"), net.usdt, net.ibiti, usdtDec, ibitiDec);
+      const amounts = await decodeAmounts(
+        receipt,
+        (buyer||"0x0000000000000000000000000000000000000000"),
+        net.usdt, net.ibiti,
+        usdtDec, ibitiDec
+      );
       $("paid").textContent = amounts.paidStr;
       $("market").textContent = amounts.marketStr;
       $("bonus").textContent = amounts.bonusStr;
       $("total").textContent = amounts.totalStr;
       $("price").textContent = amounts.priceStr;
-    }catch(e){
+    }catch(_){
       setErr("Receipt loaded, but amounts decoding failed.");
     }
   }
-
-  // optional auto-print
-  if (qs.get("print") === "1") setTimeout(()=>window.print(), 200);
-
 </script>
 </body>
 </html>
