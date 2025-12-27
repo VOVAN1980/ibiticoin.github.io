@@ -15,7 +15,6 @@
       --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
 
-    /* ✅ ВАЖНО: фон страницы ПРОЗРАЧНЫЙ, без белой подложки */
     html, body{
       margin:0;
       padding:0;
@@ -24,7 +23,6 @@
       color:var(--ink);
     }
 
-    /* Центрируем “один чек” */
     body{
       display:flex;
       align-items:center;
@@ -34,7 +32,6 @@
       box-sizing:border-box;
     }
 
-    /* ✅ ЭТО И ЕСТЬ ЕДИНСТВЕННОЕ “ОКНО” */
     .receipt{
       width:min(560px, 100%);
       background:var(--paper);
@@ -52,8 +49,10 @@
       justify-content:space-between;
       gap:12px;
     }
+
     .title{font-weight:900; font-size:18px;}
     .sub{margin-top:4px; font-size:12px; color:var(--muted); line-height:1.35;}
+
     .pill{
       display:inline-block;
       font-size:11px;
@@ -63,10 +62,21 @@
       color:#fff;
       font-weight:900;
       letter-spacing:.3px;
+      margin-right:6px;
     }
+
+    /* ✅ BIG MAINNET/TESTNET badge */
+    .env{
+      font-size:12px;
+      padding:4px 10px;
+      letter-spacing:.8px;
+    }
+    .env.testnet{ background:#111; }
+    .env.mainnet{ background:#111; }
 
     .body{padding:14px 18px 14px;}
     .grid{display:grid; grid-template-columns:1fr 1fr; gap:10px 14px;}
+
     .row{
       display:flex;
       justify-content:space-between;
@@ -75,7 +85,17 @@
       border-bottom:1px dotted #e6e6e6;
     }
     .row:last-child{border-bottom:0;}
+
     .k{color:var(--muted); font-size:12px;}
+    .k small{
+      display:block;
+      margin-top:2px;
+      font-size:10px;
+      color:#888;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+
     .v{
       font-family:var(--mono);
       font-size:12px;
@@ -142,7 +162,6 @@
     .note{font-size:11px; color:var(--muted); line-height:1.35;}
     .err{color:#b00020; font-weight:900;}
 
-    /* ✅ ПРОСТОЙ ШТАМП (без уродства) */
     .stamp{
       width:86px;
       height:44px;
@@ -191,6 +210,7 @@
         <div class="title">IBITI Receipt</div>
         <div class="sub">
           Official transaction summary<br/>
+          <span class="pill env" id="env">MAINNET</span>
           <span class="pill" id="status">LOADING</span>
         </div>
       </div>
@@ -207,7 +227,12 @@
 
       <div class="sec">
         <div class="secTitle">PURCHASE</div>
-        <div class="row"><div class="k">Paid (USDT)</div><div class="v" id="paid">Pending…</div></div>
+
+        <div class="row">
+          <div class="k">Paid (USDT)<small>Approved: exact amount</small></div>
+          <div class="v" id="paid">Pending…</div>
+        </div>
+
         <div class="row"><div class="k">Market amount (IBITI)</div><div class="v" id="market">Pending…</div></div>
         <div class="row"><div class="k">Promo bonus (IBITI)</div><div class="v" id="bonus">Pending…</div></div>
         <div class="row"><div class="k">Total received (IBITI)</div><div class="v" id="total">Pending…</div></div>
@@ -284,6 +309,15 @@
   function setStatus(s){ $("status").textContent = s; }
   function setErr(s){ $("error").innerHTML = s ? `<span class="err">${s}</span>` : ""; }
 
+  // ✅ MAINNET/TESTNET big badge
+  const env = $("env");
+  if (env) {
+    const isTest = netKey === "testnet";
+    env.textContent = isTest ? "TESTNET" : "MAINNET";
+    env.classList.toggle("testnet", isTest);
+    env.classList.toggle("mainnet", !isTest);
+  }
+
   function fmtDate(tsSec){
     const d = new Date(Number(tsSec) * 1000);
     const pad = (n)=>String(n).padStart(2,"0");
@@ -291,7 +325,6 @@
   }
 
   const TRANSFER_TOPIC = ethers.id("Transfer(address,address,uint256)");
-
   function topicToAddr(topic){
     if(!topic || topic.length < 66) return null;
     return ethers.getAddress("0x" + topic.slice(-40));
@@ -306,7 +339,7 @@
   }
 
   function split10(total){
-    const base = (total * 100n) / 110n;
+    const base = (total * 100n) / 110n; // floor => 1 satoshi difference possible
     const bonus = total - base;
     return { base, bonus, total };
   }
@@ -384,7 +417,7 @@
     let priceStr = "—";
     try{
       if (market > 0n){
-        const scaled = (paid * 100000000n) / market;
+        const scaled = (paid * 100000000n) / market; // 8-dec fixed
         priceStr = smartTrim(ethers.formatUnits(scaled, 8), 10);
       }
     }catch(_){}
@@ -414,6 +447,7 @@
 
   $("print").onclick = ()=> window.print();
 
+  // ✅ Save image: NEVER print. If download blocked → open image tab.
   $("saveImg").onclick = async ()=> {
     try{
       const node = $("card");
@@ -422,15 +456,26 @@
         pixelRatio: 2,
         backgroundColor: "#ffffff"
       });
-      const a = document.createElement("a");
-      a.href = dataUrl;
+
       const rid = ($("rid")?.textContent || "IBITI-RECEIPT").replace(/[^a-zA-Z0-9-_]/g,"");
-      a.download = `${rid}.png`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+      const filename = `${rid}.png`;
+
+      // try download
+      try{
+        const a = document.createElement("a");
+        a.href = dataUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        return;
+      } catch(_) {}
+
+      // fallback: open image in new tab (mobile save)
+      window.open(dataUrl, "_blank", "noopener,noreferrer");
+      setErr("Opened image in a new tab. Long-press to save on mobile.");
     }catch(e){
-      setErr("Save image failed in this browser. Use Print or screenshot.");
+      setErr("Save image failed in this browser. Use screenshot or Print.");
     }
   };
 
