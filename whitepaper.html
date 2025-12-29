@@ -243,11 +243,6 @@
                 <li><a href="#goals">1) Goals & Design Principles</a></li>
                 <li><a href="#addresses">2) On-chain Addresses (Mainnet)</a></li>
                 <li><a href="#token">3) IBITI Token</a></li>
-                <a href="#tokenomics">Tokenomics & Supply</a>
-                <a href="#initial-allocation">Initial Allocation</a>
-                <a href="#team-vesting">Team Vesting</a>
-                <a href="#treasury-liquidity">Treasury & Liquidity</a>
-
                 <li><a href="#market">4) Market & Price Reference</a></li>
                 <li><a href="#promo">5) Website Cash Promo + Referral Router (UUPS)</a></li>
                 <li><a href="#staking">6) Staking (Periods, Rewards, Expiry Rules)</a></li>
@@ -341,28 +336,40 @@
         </section>
 
         <section class="card" id="token" data-wp="token ibiti decimals supply cap mint founder wallet treasury alias">
-          <h2>3) IBITI Token (What it is)</h2>
+  <h2>3) IBITI Token (What it is)</h2>
 
-          <div class="grid2">
-            <div class="kv">
-              <b>Core properties</b>
-              <ul>
-                <li>Network: BNB Smart Chain</li>
-                <li>Decimals: <b>8</b></li>
-                <li>Max supply cap: <b>100,000,000 IBITI</b> (with 8 decimals on-chain)</li>
-                <li>Token address: <code>0x47F2...B9bb</code></li>
-              </ul>
-            </div>
-            <div class="kv">
-              <b>What the token is for</b>
-              <ul>
-                <li>Medium of value inside IBITI ecosystem modules</li>
-                <li>Staking collateral (time-based rewards)</li>
-                <li>NFT purchase & discount mechanisms</li>
-                <li>Governance participation via DAO module</li>
-              </ul>
-            </div>
-          </div>
+  <div class="grid2">
+    <div class="kv">
+      <b>Core properties</b>
+      <ul>
+        <li>Network: BNB Smart Chain</li>
+        <li>Decimals: <b>8</b></li>
+        <li>Max supply cap: <b>100,000,000 IBITI</b> (with 8 decimals on-chain)</li>
+        <li>Token address: <code>0x47F2...B9bb</code></li>
+      </ul>
+    </div>
+    <div class="kv">
+      <b>What the token is for</b>
+      <ul>
+        <li>Medium of value inside IBITI ecosystem modules</li>
+        <li>Staking collateral (time-based rewards)</li>
+        <li>NFT purchase & discount mechanisms</li>
+        <li>Governance participation via DAO module</li>
+      </ul>
+    </div>
+  </div>
+
+  <details>
+    <summary><span>Technical details</span> (reviewer view)</summary>
+    <ul class="small">
+      <li>Initial supply is minted at deployment up to the cap.</li>
+      <li>The system integrates modular contracts (fees, user status, bridge, staking, DAO, NFT discounts).</li>
+      <li>Key security pattern: sensitive actions are owner-gated; emergency pausing exists where implemented.</li>
+    </ul>
+  </details>
+</section>
+
+<!-- NOW paste these 4 sections here (tokenomics / initial-allocation / team-vesting / treasury-liquidity) -->
 
           <section class="card" id="tokenomics" data-wp="tokenomics supply cap treasury founderWallet address(this) frozen treasurySend reserve wallet liquidity marketing">
   <h2>3.1 Tokenomics & Supply Management</h2>
