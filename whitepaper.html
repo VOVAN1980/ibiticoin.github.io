@@ -369,6 +369,176 @@
           </details>
         </section>
 
+            <section class="card" id="tokenomics" data-wp="tokenomics supply cap treasury founderWallet address(this) frozen treasurySend reserve wallet liquidity marketing">
+  <h2>3.1 Tokenomics & Supply Management</h2>
+
+  <p class="lead">
+    IBITI has a fixed maximum supply of <b>100,000,000 IBITI</b> (8 decimals) on BNB Smart Chain.
+    The supply is minted at deployment to the token contract itself (the on-chain <b>Treasury</b>),
+    and then distributed via explicit treasury operations.
+  </p>
+
+  <div class="grid2">
+    <div class="kv">
+      <b>Total Supply</b>
+      <ul>
+        <li>Max supply cap: <b>100,000,000 IBITI</b></li>
+        <li>Decimals: <b>8</b></li>
+        <li>Token address: <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></li>
+      </ul>
+    </div>
+
+    <div class="kv">
+      <b>Where tokens are held (on-chain)</b>
+      <ul>
+        <li><b>Treasury</b> = the IBITI token contract itself (minted supply is held here).</li>
+        <li>Treasury is <b>frozen for normal transfers</b> (cannot be drained via standard transfer/transferFrom paths).</li>
+        <li>Project can move IBITI out of Treasury only via an explicit admin function:
+          <code>treasurySend(to, amount)</code>.
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <b>Policy note (important):</b> technically, <code>treasurySend</code> can send to any address (owner-controlled).
+    The project policy is to use Treasury releases primarily to the <b>Reserve Wallet</b> to support liquidity,
+    promotions inventory, and future marketing operations. This policy is public and should be monitored on-chain.
+  </div>
+
+  <details>
+    <summary><span>Why mint to Treasury (contract) instead of minting gradually?</span></summary>
+    <p class="small">
+      Minting everything at deployment with a hard cap removes “future mint surprise”. Users can always verify the total supply.
+      Holding supply in the contract Treasury makes distribution operations auditable.
+    </p>
+  </details>
+</section>
+
+<section class="card" id="initial-allocation" data-wp="initial allocation 10 million vesting team treasury reserve marketing liquidity">
+  <h2>3.2 Initial Allocation (Genesis distribution)</h2>
+
+  <p class="lead">
+    At launch, <b>10,000,000 IBITI</b> were allocated into the Team Vesting flow.
+    The remaining <b>90,000,000 IBITI</b> stayed in the on-chain Treasury to be released operationally to the Reserve wallet
+    for liquidity support and ecosystem needs.
+  </p>
+
+  <div class="grid2">
+    <div class="kv">
+      <b>Genesis allocation (high level)</b>
+      <ul>
+        <li><b>Team vesting allocation:</b> 10,000,000 IBITI</li>
+        <li><b>Treasury operational inventory:</b> 90,000,000 IBITI</li>
+      </ul>
+      <p class="small">
+        Note: amounts are expressed in human units (IBITI). On-chain the token uses 8 decimals.
+      </p>
+    </div>
+
+    <div class="kv">
+      <b>Operational role of the 90M Treasury inventory</b>
+      <ul>
+        <li>Funding liquidity operations (via Reserve wallet)</li>
+        <li>Funding promo inventories / reward pools when required</li>
+        <li>Future ecosystem and marketing use (transparent transfers)</li>
+      </ul>
+    </div>
+  </div>
+
+  <details>
+    <summary><span>On-chain clarity</span> — what reviewers can verify</summary>
+    <ul class="small">
+      <li>Treasury balance is visible on the token contract address.</li>
+      <li>Any Treasury releases via <code>treasurySend</code> are on-chain transactions and can be tracked publicly.</li>
+      <li>Team vesting schedule is enforced by the TeamVesting contract.</li>
+    </ul>
+  </details>
+</section>
+
+
+<section class="card" id="team-vesting" data-wp="team vesting 20% immediate 30% 6 months 50% linear 3 year cliff 180 days beneficiary release schedule">
+  <h2>3.3 Team Vesting (on-chain schedule)</h2>
+
+  <p class="lead">
+    Team allocation is governed by the TeamVesting contract with a strict release schedule:
+    <b>20% immediately</b> after start, <b>30% after 6 months</b>, and the remaining <b>50% linearly</b>
+    over <b>180 days</b> after a <b>3-year cliff</b>.
+  </p>
+
+  <div class="kv">
+    <b>TeamVesting address</b>
+    <div class="small mono"><code>0xae6fA65adede487e46ABCE1b3570063D02510d5d</code></div>
+  </div>
+
+  <h3>Schedule breakdown (for 10,000,000 IBITI allocation)</h3>
+  <table>
+    <tr><th>Milestone</th><th>Vested %</th><th>Amount (IBITI)</th><th>When</th></tr>
+    <tr><td>TGE / Start</td><td>20%</td><td>2,000,000</td><td>Immediately at start timestamp</td></tr>
+    <tr><td>+ 6 months</td><td>+30%</td><td>3,000,000</td><td>180 days after start</td></tr>
+    <tr><td>After 3-year cliff</td><td>+ up to 50%</td><td>up to 5,000,000</td><td>Linear over 180 days after 3 years</td></tr>
+    <tr><td>Fully vested</td><td>100%</td><td>10,000,000</td><td>~3.5 years after start</td></tr>
+  </table>
+
+  <details>
+    <summary><span>How release works</span> (mechanics)</summary>
+    <ul class="small">
+      <li>Tokens must be deposited into the vesting contract (up to the allocation).</li>
+      <li><code>releasableAmount()</code> shows what is currently unlocked.</li>
+      <li><code>release()</code> transfers unlocked tokens to the beneficiary.</li>
+      <li>Contract is pausable (emergency control) and nonReentrant-protected.</li>
+    </ul>
+  </details>
+</section>
+
+
+<section class="card" id="treasury-liquidity" data-wp="liquidity reserve wallet usdt from users forwarded immediately add liquidity pancake swap direct buys reserve policy">
+  <h2>3.4 Treasury & Liquidity Policy</h2>
+
+  <p class="lead">
+    Liquidity is supported primarily through the <b>Reserve Wallet</b>. The Reserve wallet receives USDT from website purchases
+    (forwarded in the same transaction by the Promo Router) and may also receive funds from direct PancakeSwap market activity.
+  </p>
+
+  <div class="grid2">
+    <div class="kv">
+      <b>Reserve wallet (operations)</b>
+      <div class="small mono"><code>0x9d8dd8b2cff7a17967fa0ef19ed5c0b3ebefde41</code></div>
+      <ul class="small">
+        <li>Receives USDT from website promo buys immediately.</li>
+        <li>Used to add liquidity and support operational needs.</li>
+      </ul>
+    </div>
+
+    <div class="kv">
+      <b>Liquidity approach (practical)</b>
+      <ul class="small">
+        <li>When USDT arrives to Reserve, liquidity can be added promptly (policy: “as funds arrive”).</li>
+        <li>Liquidity is also supported indirectly via open market trading on PancakeSwap.</li>
+        <li>IBITI inventory for liquidity can be released from Treasury to Reserve when needed.</li>
+      </ul>
+    </div>
+  </div>
+
+  <details>
+    <summary><span>Website buy vs Pancake buy</span> — what’s the difference?</summary>
+    <ul class="small">
+      <li><b>PancakeSwap buy:</b> standard AMM swap, price determined by pool reserves, subject to slippage.</li>
+      <li><b>Website promo buy:</b> user pays USDT, USDT forwarded to Reserve, IBITI paid from router inventory plus promo bonus and optional referral reward.</li>
+      <li>Both are on-chain and publicly verifiable. The website flow is an on-chain UX layer for promotions and referrals.</li>
+    </ul>
+  </details>
+
+  <details>
+    <summary><span>Liquidity risk note</span></summary>
+    <p class="small">
+      Liquidity operations and reserve-based quoting depend on the depth of the IBITI/USDT pool.
+      Low liquidity increases slippage and makes reserve manipulation attacks cheaper.
+      The promo router includes limits and buyer-side slippage protection (<code>minIbitiOut</code>).
+    </p>
+  </details>
+</section>
+
         <section class="card" id="market" data-wp="market price reference pair reserves pancake v2 quote">
           <h2>4) Market & Price Reference</h2>
           <p class="lead">
