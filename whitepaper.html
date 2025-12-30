@@ -596,14 +596,14 @@ Promo Router ── transfer ─► Referrer: IBITI    (fixed reward, if eligibl
     </ul>
   </div>
 
-  <h3>5.2 What users see (incl. Receipt)</h3>
-  <ul>
-    <li>Connect wallet → choose “Promo Buy” → enter USDT amount (and optional referrer)</li>
-    <li>One on-chain transaction executes</li>
-    <li>User receives IBITI + promo bonus (if promo is active and within limits)</li>
-    <li>Referrer receives +1 IBITI (if eligibility rules pass)</li>
-    <li><b>After confirmation the website generates an “IBITI Receipt” (purchase check)</b></li>
-  </ul>
+  <h3>5.2 What users see (MetaMask confirmations)</h3>
+<ul>
+  <li>Connect wallet → choose “Promo Buy” → enter USDT amount (and optional referrer)</li>
+  <li><b>MetaMask may ask for 2 confirmations:</b></li>
+  <li class="small"><b>1) USDT Approve</b> — one-time (or when allowance is insufficient). It grants the router permission to spend your USDT.</li>
+  <li class="small"><b>2) Purchase</b> — the actual buy transaction. In this transaction USDT is forwarded to the Reserve Wallet and IBITI is delivered (base + bonus, and referral if eligible).</li>
+  <li>After confirmation the website generates an <b>IBITI Receipt</b> (purchase check) with the tx hash and links to BscScan.</li>
+</ul>
 
   <details>
     <summary><span>IBITI Receipt (purchase check)</span> — what it contains</summary>
