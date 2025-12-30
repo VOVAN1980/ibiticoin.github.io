@@ -231,6 +231,28 @@
       font-size: 0.8rem;
       color: #9aa3d0;
     }
+
+      /* === Contrast fix: black text on yellow === */
+.btn,
+.topbar-nav a,
+.tab.active,
+.step-number {
+  color: #000 !important;
+}
+
+/* Если внутри жёлтых кнопок/табов есть вложенные span/badge */
+.btn * ,
+.topbar-nav a * ,
+.tab.active * {
+  color: #000 !important;
+}
+
+/* На всякий — убрать тени, если они делают текст "мыльным" */
+.btn,
+.topbar-nav a,
+.tab.active {
+  text-shadow: none !important;
+}
     footer a { color: var(--accent); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
   </style>
