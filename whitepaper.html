@@ -565,74 +565,99 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
           </details>
         </section>
 
-        <section class="card" id="promo" data-wp="promo router uups proxy cashflow reserve wallet liquidity add liquidity pancake v2 pair quote mode fee bps referral bonus pool min max limits minOut transparency">
+        <section class="card" id="promo" data-wp="promo router uups proxy cashflow reserve wallet liquidity pancake v2 pair quote mode fee bps referral bonus pool inventory receipt min max limits minOut transparency bscscan">
   <h2>5) Website Cash Promo + Referral Router (UUPS)</h2>
 
   <p class="lead">
-    The website buy flow is executed by an on-chain contract (behind a UUPS proxy). It provides a simple UX for
-    promo bonuses and referrals while keeping the money flow transparent and auditable.
+    IBITIcoin website purchases are executed by an on-chain smart contract (behind a UUPS proxy).
+    The router enables promo bonuses and referrals while keeping the payment flow transparent and auditable.
   </p>
 
   <div class="callout">
-    <b>Core rule (non-custodial USDT):</b> when you buy on the website, your USDT is forwarded to the <b>Reserve Wallet</b>
-    <b>in the same transaction</b>. The promo router is designed to end website buys with ~0 USDT balance.
-    IBITI rewards (base + bonus + referral) are paid from the router’s funded IBITI inventory.
+    <b>Non-custodial USDT rule:</b> when you buy on the website, your USDT is forwarded to the <b>Reserve Wallet</b>
+    <b>in the same transaction</b>. The router is designed to end buys with ~0 USDT balance.
+    IBITI payouts are delivered from the router’s funded IBITI inventory (promo pool / inventory).
   </div>
 
-  <h3>5.1 Money flow (what happens on-chain)</h3>
+  <h3>5.1 Money flow (single purchase transaction)</h3>
   <div class="monoBlock"><pre>
-(1) Buyer -> Promo Router: USDT (transferFrom)
-(2) Promo Router -> Reserve Wallet: USDT (immediate forward)
-(3) Promo Router -> Buyer: IBITI (base amount + promo bonus)
-(4) Promo Router -> Referrer: IBITI (fixed reward, if eligible)
+User USDT ── transferFrom ─► Promo Router (UUPS Proxy)
+Promo Router ── transfer ─► Reserve Wallet     (immediate forward)
+Promo Router ── transfer ─► Buyer: IBITI       (base amount + promo bonus)
+Promo Router ── transfer ─► Referrer: IBITI    (fixed reward, if eligible)
 </pre></div>
 
   <div class="kv">
-    <b>Practical reviewer check</b>
-    <p class="small">
-      After a website buy: <b>Reserve Wallet USDT increases</b>; <b>router USDT stays near 0</b>; router IBITI decreases by
-      <b>(base + bonus + referral)</b>. This can be verified on-chain (BscScan transfers).
-    </p>
+    <b>What this guarantees</b>
+    <ul class="small">
+      <li>USDT is <b>not stored</b> on the router after a buy (it is forwarded immediately).</li>
+      <li>IBITI is paid from a <b>pre-funded</b> router inventory (bonus pool/inventory).</li>
+      <li>All transfers are visible on-chain (token transfers per transaction hash).</li>
+    </ul>
   </div>
 
-  <h3>5.2 How the router computes your IBITI amount</h3>
+  <h3>5.2 What users see (incl. Receipt)</h3>
+  <ul>
+    <li>Connect wallet → choose “Promo Buy” → enter USDT amount (and optional referrer)</li>
+    <li>One on-chain transaction executes</li>
+    <li>User receives IBITI + promo bonus (if promo is active and within limits)</li>
+    <li>Referrer receives +1 IBITI (if eligibility rules pass)</li>
+    <li><b>After confirmation the website generates an “IBITI Receipt” (purchase check)</b></li>
+  </ul>
+
+  <details>
+    <summary><span>IBITI Receipt (purchase check)</span> — what it contains</summary>
+    <p class="small">
+      After a successful on-chain purchase, the website shows an <b>IBITI Receipt</b> (receipt modal) with a human-friendly
+      summary and direct links to verification sources.
+    </p>
+    <ul class="small">
+      <li><b>Network</b> (Mainnet/Testnet) and <b>timestamp</b></li>
+      <li><b>Buyer address</b> and <b>transaction hash</b></li>
+      <li><b>Paid (USDT)</b></li>
+      <li><b>Market amount (IBITI)</b> + <b>Promo bonus (IBITI)</b> + <b>Total received (IBITI)</b></li>
+      <li><b>Effective price</b> (USDT per IBITI)</li>
+      <li><b>Links:</b> BscScan transaction + shareable receipt link</li>
+      <li>Options to <b>copy</b>, <b>save image</b>, or <b>print</b> the receipt</li>
+    </ul>
+    <p class="small">
+      Receipt values are derived from on-chain transfer logs and executed transaction data. The blockchain transaction is
+      the ultimate source of truth.
+    </p>
+  </details>
+
+  <h3>5.3 How the router determines your IBITI amount (pricing & quote)</h3>
   <p class="small">
-    The router uses the IBITI/USDT pair reserves as a price reference (AMM-style quote), then applies promo bonus and
-    optional referral reward. The goal is to mirror real market mechanics while keeping promo logic explicit on-chain.
+    The router uses the IBITI/USDT PancakeSwap pair reserves as a market reference (AMM-style quoting).
+    A buyer-provided <code>minIbitiOut</code> works as a slippage guard: if the expected IBITI output is below that value,
+    the transaction reverts.
   </p>
 
   <details>
-    <summary><span>Reserve-based quoting</span> (AMM-style)</summary>
+    <summary><span>Reserve-based quote (AMM-style)</span></summary>
     <div class="monoBlock"><pre>
 amountInWithFee = amountIn * (10000 - feeBps)
 amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
 </pre></div>
     <p class="small">
-      Fee and quote mode are explicit parameters. Buyer can provide <code>minIbitiOut</code> as a slippage guard.
+      <code>quoteMode</code> and <code>feeBps</code> make the quoting rule explicit. The goal is transparent, on-chain pricing
+      aligned with the pool reserves, not a “manual price”.
     </p>
   </details>
-
-  <h3>5.3 User experience (what you see)</h3>
-  <ul>
-    <li>Connect wallet → choose “Promo Buy” → enter USDT amount</li>
-    <li>One on-chain transaction executes</li>
-    <li>You receive IBITI + promo bonus (if promo is active and within limits)</li>
-    <li>Your referrer receives +1 IBITI (if eligibility rules pass)</li>
-  </ul>
 
   <h3>5.4 Where your USDT goes after the buy (Reserve → Liquidity policy)</h3>
   <p class="small">
     The promo router itself does <b>not</b> add liquidity. It forwards USDT to the <b>Reserve Wallet</b> immediately.
-    Then, liquidity can be added by the Reserve Wallet via PancakeSwap operations.
+    Liquidity is added by the Reserve Wallet via PancakeSwap as a <b>separate on-chain transaction</b>.
   </p>
 
   <div class="grid2">
     <div class="kv">
-      <b>Step A — Always on-chain (same transaction)</b>
+      <b>Step A — Guaranteed (same transaction)</b>
       <ul class="small">
-        <li>Your USDT is forwarded to the <b>Reserve Wallet</b>.</li>
-        <li>Router is designed to hold ~0 USDT after buys.</li>
-        <li>This step is deterministic and verifiable per transaction hash.</li>
+        <li>USDT is forwarded to the <b>Reserve Wallet</b> immediately.</li>
+        <li>Router remains near <b>0 USDT</b> after buys by design.</li>
+        <li>Anyone can verify this in token transfer logs per transaction.</li>
       </ul>
     </div>
 
@@ -640,7 +665,7 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
       <b>Step B — Operational (separate transaction)</b>
       <ul class="small">
         <li>Reserve Wallet can use received USDT to <b>add liquidity</b> to the IBITI/USDT pool on PancakeSwap.</li>
-        <li>This happens as an <b>additional on-chain transaction</b> initiated by operations.</li>
+        <li>This happens as an <b>additional on-chain action</b> initiated by operations.</li>
         <li>Policy goal: add liquidity promptly “as funds arrive”, but it is not an automatic on-chain guarantee.</li>
       </ul>
     </div>
@@ -649,13 +674,27 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
   <details>
     <summary><span>Why liquidity is not added inside the buy transaction</span></summary>
     <p class="small">
-      Keeping the buy transaction focused (forward USDT + deliver IBITI) reduces complexity and failure modes.
-      Liquidity operations require separate approvals, slippage settings, and timing decisions, so they are executed
-      as separate, fully traceable on-chain actions from the Reserve Wallet.
+      Liquidity operations require separate approvals, slippage settings, and timing decisions (pool state changes every block).
+      Keeping the buy transaction focused (forward USDT + deliver IBITI) reduces complexity and failure modes, while still keeping
+      liquidity additions fully traceable on-chain when performed by the Reserve Wallet.
     </p>
   </details>
 
-  <h3>5.5 Key parameters (read from the UUPS proxy)</h3>
+  <h3>5.5 Promo inventory (bonus pool) and accounting</h3>
+  <p class="small">
+    IBITI payouts are limited by the router’s available IBITI inventory. The router maintains accounting counters so the website
+    can show “remaining promo pool” transparently and so anyone can monitor promo spending on-chain.
+  </p>
+
+  <details>
+    <summary><span>Bonus pool accounting</span> (why UI numbers match reality)</summary>
+    <p class="small">
+      The router can track totals (e.g., pool total, spent counters) so the UI can display remaining promo inventory.
+      Regardless of accounting variables, IBITI transfers are always limited by the router’s actual IBITI token balance.
+    </p>
+  </details>
+
+  <h3>5.6 Key on-chain parameters (read from proxy)</h3>
   <div class="grid2">
     <div class="kv">
       <b>Promo controls</b>
@@ -664,9 +703,9 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
         <li><code>promoEndTime</code> (optional end)</li>
         <li><code>bonusBps</code> (e.g. 1000 = 10%)</li>
         <li><code>refReward</code> (fixed IBITI reward)</li>
-        <li><code>bonusPoolTotal</code>, <code>bonusSpent</code>, <code>refSpent</code>, <code>poolRemaining()</code></li>
       </ul>
     </div>
+
     <div class="kv">
       <b>Safety controls</b>
       <ul>
@@ -679,12 +718,20 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
     </div>
   </div>
 
+  <h3>5.7 UUPS upgrade boundary (what can be upgraded)</h3>
+  <p class="small">
+    The router is upgradeable via a UUPS proxy to patch critical issues. The proxy address stays the same, while the implementation
+    can be upgraded by an authorized account. Upgrade transactions are visible on-chain and can be monitored.
+  </p>
+
   <details>
-    <summary><span>Upgrade boundary (UUPS)</span> — what can change</summary>
-    <p class="small">
-      The promo router is upgradeable via UUPS to patch critical issues. The proxy address stays the same; implementation
-      can change via authorized upgrade. Upgrade transactions are visible on-chain and can be monitored.
-    </p>
+    <summary><span>Transparency checklist (quick verification)</span></summary>
+    <ul class="small">
+      <li>Open the transaction hash in BscScan and review token transfers.</li>
+      <li>Confirm USDT moved to the <b>Reserve Wallet</b> in the same transaction.</li>
+      <li>Confirm IBITI transfers to the buyer (and referrer if applicable).</li>
+      <li>Confirm router USDT balance remains near 0 after the buy.</li>
+    </ul>
   </details>
 </section>
 
@@ -1028,17 +1075,21 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
           </details>
 
          <details>
-          <summary><span>Where does my USDT go when I buy on the website?</span></summary>
-           <p class="small">
-          Your USDT is forwarded to the <b>Reserve Wallet</b> <b>in the same transaction</b>. The promo router is designed
-         <b>not to custody USDT</b>, so its USDT balance should remain near 0 after buys.
-       </p>
-        <p class="small">
-         After the USDT reaches the Reserve Wallet, it can be used for liquidity operations (e.g., adding liquidity to the
-        IBITI/USDT pool on PancakeSwap). This liquidity step is typically executed as a <b>separate on-chain transaction</b>
-        from the Reserve Wallet and is fully traceable on-chain.
-      </p>
-       </details>
+  <summary><span>15) Where do my USDT go after buying on the website?</span></summary>
+  <p class="small">
+    Your USDT is forwarded to the <b>Reserve Wallet</b> <b>in the same transaction</b>. The promo router is designed not to
+    custody USDT, so after buys its USDT balance should remain near 0.
+  </p>
+  <p class="small">
+    After the USDT reaches the Reserve Wallet, it can be used for liquidity operations (e.g., adding liquidity to the
+    IBITI/USDT pool on PancakeSwap). This liquidity step is typically executed as a <b>separate on-chain transaction</b>
+    from the Reserve Wallet and is fully traceable on-chain.
+  </p>
+  <p class="small">
+    <b>Receipt:</b> after a successful purchase the website shows an <b>IBITI Receipt</b> (a “check”) with transaction hash,
+    paid USDT, received IBITI (base + bonus), effective price, and direct links to BscScan.
+  </p>
+</details>
 
           <details>
             <summary><span>What happens if I forget to unstake?</span></summary>
