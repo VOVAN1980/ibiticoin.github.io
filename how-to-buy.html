@@ -232,26 +232,40 @@
       color: #9aa3d0;
     }
 
-      /* === Contrast fix: black text on yellow === */
-.btn,
-.topbar-nav a,
-.tab.active,
+     /* === Contrast fix (safe): black text ONLY on yellow-filled elements === */
+
+/* Yellow-filled buttons */
+.btn:not(.btn-outline) {
+  color: #000 !important;
+  text-shadow: none !important;
+}
+
+/* Top navbar "Home" (yellow filled), but NOT the outline "Whitepaper" */
+.topbar-nav a:not(.secondary) {
+  color: #000 !important;
+  text-shadow: none !important;
+}
+
+/* Active tab is yellow-filled */
+.tab.active {
+  color: #000 !important;
+  text-shadow: none !important;
+}
+
+/* Step circles are yellow-filled */
 .step-number {
   color: #000 !important;
 }
 
-/* Если внутри жёлтых кнопок/табов есть вложенные span/badge */
-.btn * ,
-.topbar-nav a * ,
-.tab.active * {
-  color: #000 !important;
+/* Keep OUTLINE buttons readable (yellow text on dark) */
+.btn-outline,
+.topbar-nav a.secondary {
+  color: var(--accent) !important;
 }
 
-/* На всякий — убрать тени, если они делают текст "мыльным" */
-.btn,
-.topbar-nav a,
-.tab.active {
-  text-shadow: none !important;
+/* If badge text ever becomes unreadable */
+.badge { color: #000 !important; }
+.badge.red { color: #000 !important; }
 }
     footer a { color: var(--accent); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
