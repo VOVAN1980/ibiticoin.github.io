@@ -573,6 +573,11 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
     The router enables promo bonuses and referrals while keeping the payment flow transparent and auditable.
   </p>
 
+ <div class="callout">
+  <b>Promo is temporary:</b> the website promo can be turned off on-chain (promoActive=false or promoEndTime reached).
+  If promo is inactive, users can always buy IBITI directly on PancakeSwap.
+</div>
+
   <div class="callout">
     <b>Non-custodial USDT rule:</b> when you buy on the website, your USDT is forwarded to the <b>Reserve Wallet</b>
     <b>in the same transaction</b>. The router is designed to end buys with ~0 USDT balance.
