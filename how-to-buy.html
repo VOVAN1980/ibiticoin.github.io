@@ -13,21 +13,18 @@
       --text-main: #f8f8f8;
       --text-muted: #c4d4c4;
       --border: #2e4b2f;
+      --danger: #ff6b6b;
     }
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: radial-gradient(circle at top, #151515 0, #050505 60%);
       color: var(--text-main);
     }
 
-    a {
-      color: var(--accent);
-      text-decoration: none;
-    }
+    a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
 
     /* ---- TOP BAR (Home + Whitepaper) ---- */
@@ -40,17 +37,11 @@
       justify-content: space-between;
       font-size: 0.9rem;
     }
-    .topbar-left {
-      font-weight: 700;
-      letter-spacing: 0.06em;
-    }
+    .topbar-left { font-weight: 700; letter-spacing: 0.06em; }
     .topbar-left span:first-child { color: #ffffff; }
     .topbar-left span:last-child  { color: var(--accent); }
 
-    .topbar-nav {
-      display: flex;
-      gap: 8px;
-    }
+    .topbar-nav { display: flex; gap: 8px; }
     .topbar-nav a {
       padding: 6px 14px;
       border-radius: 999px;
@@ -66,26 +57,11 @@
       color: var(--accent);
       font-weight: 600;
     }
-    .topbar-nav a:hover {
-      text-decoration: none;
-      filter: brightness(1.05);
-    }
+    .topbar-nav a:hover { text-decoration: none; filter: brightness(1.05); }
 
-    header {
-      text-align: center;
-      padding: 6px 12px 10px;
-    }
-
-    header h1 {
-      margin: 8px 0 6px;
-      font-size: 1.9rem;
-    }
-
-    header p {
-      margin: 0;
-      color: var(--text-muted);
-      font-size: 0.95rem;
-    }
+    header { text-align: center; padding: 6px 12px 10px; }
+    header h1 { margin: 8px 0 6px; font-size: 1.9rem; }
+    header p { margin: 0; color: var(--text-muted); font-size: 0.95rem; }
 
     .pill {
       display: inline-block;
@@ -98,12 +74,7 @@
       color: var(--accent);
     }
 
-    .container {
-      max-width: 900px;
-      margin: 0 auto 40px;
-      padding: 0 12px 28px;
-    }
-
+    .container { max-width: 900px; margin: 0 auto 40px; padding: 0 12px 28px; }
     .panel {
       background: var(--panel);
       border-radius: 22px;
@@ -112,31 +83,10 @@
       box-shadow: 0 16px 30px rgba(0,0,0,0.7);
     }
 
-    h2 {
-      margin: 0 0 12px;
-      text-align: center;
-      font-size: 1.4rem;
-    }
-
-    h3 {
-      margin: 18px 0 6px;
-      font-size: 1.05rem;
-      color: var(--accent2);
-    }
-
-    p {
-      margin: 4px 0 8px;
-      font-size: 0.95rem;
-      color: var(--text-muted);
-    }
-
-    ul {
-      margin: 4px 0 10px 20px;
-      padding: 0;
-      color: var(--text-muted);
-      font-size: 0.93rem;
-    }
-
+    h2 { margin: 0 0 12px; text-align: center; font-size: 1.4rem; }
+    h3 { margin: 18px 0 6px; font-size: 1.05rem; color: var(--accent2); }
+    p { margin: 4px 0 8px; font-size: 0.95rem; color: var(--text-muted); }
+    ul { margin: 4px 0 10px 20px; padding: 0; color: var(--text-muted); font-size: 0.93rem; }
     li { margin-bottom: 4px; }
 
     .step-number {
@@ -159,6 +109,7 @@
       border-radius: 4px;
       font-size: 0.86rem;
       color: #ffeaa0;
+      word-break: break-all;
     }
 
     .warning {
@@ -171,6 +122,23 @@
       font-size: 0.9rem;
     }
 
+    .callout {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,216,0,0.35);
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+    .callout b { color: #fff; }
+
+    .callout-danger {
+      border-color: rgba(255, 107, 107, 0.45);
+      background: rgba(255, 107, 107, 0.08);
+    }
+    .callout-danger b { color: #fff; }
+
     .token-box {
       margin-top: 14px;
       padding: 10px 12px;
@@ -178,8 +146,8 @@
       background: rgba(0,0,0,0.4);
       border: 1px solid rgba(255,255,255,0.15);
       font-size: 0.9rem;
+      color: var(--text-muted);
     }
-
     .token-box div { margin-bottom: 4px; }
 
     .btn-row {
@@ -201,12 +169,9 @@
       font-weight: 700;
       text-decoration: none;
       box-shadow: 0 0 16px rgba(255,216,0,0.5);
+      cursor: pointer;
     }
-
-    .btn:hover {
-      filter: brightness(1.05);
-      text-decoration: none;
-    }
+    .btn:hover { filter: brightness(1.05); text-decoration: none; }
 
     .btn-outline {
       background: transparent;
@@ -215,23 +180,64 @@
       box-shadow: none;
     }
 
+    /* ---- MODE TABS ---- */
+    .mode-tabs {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 6px 0 14px;
+      flex-wrap: wrap;
+    }
+    .tab {
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,216,0,0.55);
+      background: rgba(255,216,0,0.10);
+      color: var(--accent);
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+    }
+    .tab.active {
+      background: var(--accent);
+      border-color: #000;
+      color: #000;
+      box-shadow: 0 0 16px rgba(255,216,0,0.35);
+    }
+    .badge {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      border: 1px solid rgba(255,216,0,0.55);
+      background: rgba(255,216,0,0.10);
+      color: var(--accent);
+      vertical-align: middle;
+      font-weight: 700;
+    }
+    .badge.red {
+      border-color: rgba(255,107,107,0.55);
+      background: rgba(255,107,107,0.10);
+      color: #ffb3b3;
+    }
+
+    .mode { display: none; }
+    .mode.active { display: block; }
+
     footer {
       text-align: center;
       padding: 16px 0 24px;
       font-size: 0.8rem;
       color: #9aa3d0;
     }
-    footer a {
-      color: var(--accent);
-      text-decoration: none;
-    }
+    footer a { color: var(--accent); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
   </style>
 </head>
-<body>
 
+<body>
 <header>
-  <!-- TOP BAR -->
   <div class="topbar">
     <div class="topbar-left">
       <span>IBITI</span><span>coin</span>
@@ -242,129 +248,199 @@
     </nav>
   </div>
 
-  <!-- PAGE TITLE -->
   <h1>How to Buy IBITIcoin (IBITI)</h1>
-  <p>Step-by-step guide to buying IBITI on BNB Smart Chain using PancakeSwap.</p>
-  <div class="pill">Network: BNB Smart Chain • DEX: PancakeSwap v2 • Pair: IBITI / USDT</div>
+  <p>Choose your purchase route: limited-time Website Promo (with bonus/referral) or PancakeSwap (open market).</p>
+  <div class="pill">Network: BNB Smart Chain • Pair: IBITI / USDT • Token: 0x47F2…B9bb</div>
 </header>
 
 <div class="container">
   <div class="panel">
-    <h2>Quick Steps</h2>
+    <h2>Choose a Purchase Method</h2>
 
-    <h3><span class="step-number">1</span>Prepare a Web3 wallet</h3>
-    <p>
-      Install a non-custodial wallet that supports BNB Smart Chain (BSC):
-    </p>
-    <ul>
-      <li>MetaMask (browser &amp; mobile)</li>
-      <li>Trust Wallet</li>
-      <li>Binance Web3 Wallet or any WalletConnect compatible wallet</li>
-    </ul>
-    <p>
-      Create a new wallet or import your existing one and save your seed phrase securely.
-      Nobody from IBITI will ever ask for your seed phrase.
-    </p>
-
-    <h3><span class="step-number">2</span>Switch to BNB Smart Chain</h3>
-    <p>
-      In your wallet, select the <strong>BNB Smart Chain / BSC</strong> network.
-      If you use MetaMask and don’t have BSC yet, you can add it via “Add network”
-      or through a helper like Chainlist.
-    </p>
-
-    <h3><span class="step-number">3</span>Fund your wallet (USDT + BNB for gas)</h3>
-    <p>
-      To buy IBITI you need:
-    </p>
-    <ul>
-      <li><strong>USDT (BEP-20)</strong> – the token you swap into IBITI.</li>
-      <li><strong>BNB</strong> – a small amount to pay gas fees on BSC.</li>
-    </ul>
-    <p>
-      You can withdraw USDT and BNB from a centralized exchange (Binance, etc.)
-      to your wallet address using the <strong>BNB Smart Chain / BEP-20</strong> network.
-    </p>
-
-    <h3><span class="step-number">4</span>Open PancakeSwap and connect wallet</h3>
-    <p>
-      Go to the official PancakeSwap website:
-      <a href="https://pancakeswap.finance/swap" target="_blank">pancakeswap.finance</a>
-      and click <strong>Connect Wallet</strong>. Choose your wallet (MetaMask, WalletConnect, etc.).
-    </p>
-
-    <h3><span class="step-number">5</span>Import the IBITI token</h3>
-    <p>
-      In the swap interface:
-    </p>
-    <ul>
-      <li>In the bottom token field click on the token selector.</li>
-      <li>Paste the IBITI contract address:<br>
-        <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code>
-      </li>
-      <li>Confirm the import. Always double-check the address.</li>
-    </ul>
-
-    <div class="token-box">
-      <div><strong>Official IBITI token details:</strong></div>
-      <div>Network: BNB Smart Chain (BEP-20)</div>
-      <div>Name: IBITIcoin</div>
-      <div>Symbol: IBITI</div>
-      <div>Decimals: 8</div>
-      <div>Contract: <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></div>
+    <div class="mode-tabs" role="tablist" aria-label="Purchase modes">
+      <div class="tab active" role="tab" aria-selected="true" data-mode="promo">
+        Website Promo <span class="badge red">Limited-time</span>
+      </div>
+      <div class="tab" role="tab" aria-selected="false" data-mode="pancake">
+        PancakeSwap <span class="badge">Always available</span>
+      </div>
     </div>
 
-    <h3><span class="step-number">6</span>Swap USDT to IBITI</h3>
-    <p>
-      Now you can swap:
-    </p>
-    <ul>
-      <li>Top token: <strong>USDT</strong></li>
-      <li>Bottom token: <strong>IBITI</strong></li>
-    </ul>
-    <p>
-      Enter the amount of USDT you want to spend. Start small for your first trade
-      (for example 1–5 USDT) to test everything.
-    </p>
-    <p>
-      If PancakeSwap shows price impact warnings, reduce the trade size
-      or wait for more liquidity.
-    </p>
+    <!-- ========== PROMO MODE ========== -->
+    <div class="mode active" id="mode-promo">
+      <div class="callout">
+        <b>What is Website Promo?</b><br/>
+        You buy IBITI directly on the official IBITIcoin website using an on-chain promo router (UUPS proxy).
+        It can provide a <b>bonus</b> and <b>referral reward</b> while keeping the USDT cashflow transparent on-chain.
+      </div>
 
-    <h3><span class="step-number">7</span>Confirm the transaction in your wallet</h3>
-    <p>
-      Click <strong>Swap</strong>, then confirm in your wallet (MetaMask, Trust Wallet, etc.).
-      Once the transaction is confirmed on BSC, you will receive IBITI in your wallet.
-    </p>
+      <div class="callout callout-danger">
+        <b>Promo is temporary:</b> the promo can be disabled on-chain (promoActive=false or promoEndTime reached).
+        If promo is inactive, you can always buy IBITI via PancakeSwap (switch the tab above).
+      </div>
 
-    <h3><span class="step-number">8</span>Add IBITI to your wallet view</h3>
-    <p>
-      If you don’t see IBITI in the token list, add it manually:
-    </p>
-    <ul>
-      <li>Token contract: <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></li>
-      <li>Name: <code>IBITIcoin</code></li>
-      <li>Symbol: <code>IBITI</code></li>
-      <li>Decimals: <code>8</code></li>
-    </ul>
+      <h3><span class="step-number">1</span>Prepare a Web3 wallet</h3>
+      <p>Install a non-custodial wallet that supports BNB Smart Chain (BSC):</p>
+      <ul>
+        <li>MetaMask (browser &amp; mobile)</li>
+        <li>Trust Wallet</li>
+        <li>Binance Web3 Wallet or any WalletConnect compatible wallet</li>
+      </ul>
+      <p>Save your seed phrase securely. Nobody from IBITI will ever ask for your seed phrase.</p>
 
-    <div class="warning">
-      <strong>Important:</strong><br>
-      Always verify you are on the official PancakeSwap website and that the IBITI
-      contract address exactly matches the one above. There may be fake tokens with
-      a similar name.
+      <h3><span class="step-number">2</span>Switch to BNB Smart Chain</h3>
+      <p>In your wallet, select the <strong>BNB Smart Chain / BSC</strong> network.</p>
+
+      <h3><span class="step-number">3</span>Fund your wallet (USDT + BNB for gas)</h3>
+      <p>To buy via promo you need:</p>
+      <ul>
+        <li><strong>USDT (BEP-20)</strong> — payment token.</li>
+        <li><strong>BNB</strong> — a small amount for gas fees.</li>
+      </ul>
+
+      <h3><span class="step-number">4</span>Open the official website and connect wallet</h3>
+      <p>
+        Go to the official IBITIcoin website and open the promo buy flow. Connect your wallet and choose <b>Promo Buy</b>.
+        (Always double-check the domain and links.)
+      </p>
+
+      <h3><span class="step-number">5</span>Enter USDT amount (and optional referrer)</h3>
+      <p>
+        Enter the amount of USDT you want to spend. Optionally paste a referrer address/link if you have one.
+        The router uses the IBITI/USDT pair as a market reference and applies promo rules on-chain.
+      </p>
+
+      <h3><span class="step-number">6</span>Confirm in MetaMask (usually 2 confirmations)</h3>
+      <ul>
+        <li><b>1) USDT Approve</b> — one-time (or when allowance is insufficient). This grants the router permission to spend your USDT.</li>
+        <li><b>2) Purchase</b> — the actual buy transaction.</li>
+      </ul>
+      <p>
+        Note: Approve and Purchase are separate confirmations. Bonus/referral payouts are executed as token transfers during the
+        <b>purchase transaction</b> (same tx hash).
+      </p>
+
+      <h3><span class="step-number">7</span>Receipt (purchase check)</h3>
+      <p>
+        After the purchase is confirmed, the website shows an <b>IBITI Receipt</b> with your transaction hash and a summary
+        (paid USDT, received IBITI incl. bonus, effective price) plus direct verification links.
+      </p>
+
+      <div class="callout">
+        <b>Where does my USDT go?</b><br/>
+        In the purchase transaction your USDT is forwarded to the <b>Reserve Wallet</b>.
+        Liquidity additions (if performed) are done by Reserve Wallet as a <b>separate on-chain transaction</b>.
+      </div>
+
+      <div class="token-box">
+        <div><strong>Official token details:</strong></div>
+        <div>Network: BNB Smart Chain (BEP-20)</div>
+        <div>Name: IBITIcoin</div>
+        <div>Symbol: IBITI</div>
+        <div>Decimals: 8</div>
+        <div>Contract: <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></div>
+      </div>
+
+      <div class="warning">
+        <strong>Important:</strong><br>
+        Only use official IBITIcoin links. Always verify the IBITI contract address. Fake tokens with similar names may exist.
+      </div>
+
+      <div class="btn-row">
+        <a class="btn" href="index.html" title="Open official website">Open IBITIcoin Website</a>
+        <a class="btn btn-outline" href="whitepaper.html">Read Whitepaper</a>
+      </div>
     </div>
 
-    <div class="btn-row">
-      <a class="btn"
-   href="https://pancakeswap.finance/swap?outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb"
-   target="_blank">
-  Open PancakeSwap with IBITI
-    </a>
-      <a class="btn btn-outline" href="whitepaper.html">
-        Read IBITI Whitepaper
-      </a>
+    <!-- ========== PANCAKE MODE ========== -->
+    <div class="mode" id="mode-pancake">
+      <div class="callout">
+        <b>PancakeSwap = open market.</b><br/>
+        This route is always available. You swap USDT → IBITI directly on PancakeSwap v2 at the market price (pool reserves).
+      </div>
+
+      <h3><span class="step-number">1</span>Prepare a Web3 wallet</h3>
+      <p>Install a non-custodial wallet that supports BNB Smart Chain (BSC):</p>
+      <ul>
+        <li>MetaMask (browser &amp; mobile)</li>
+        <li>Trust Wallet</li>
+        <li>Binance Web3 Wallet or any WalletConnect compatible wallet</li>
+      </ul>
+
+      <h3><span class="step-number">2</span>Switch to BNB Smart Chain</h3>
+      <p>In your wallet, select the <strong>BNB Smart Chain / BSC</strong> network.</p>
+
+      <h3><span class="step-number">3</span>Fund your wallet (USDT + BNB for gas)</h3>
+      <p>To buy on PancakeSwap you need:</p>
+      <ul>
+        <li><strong>USDT (BEP-20)</strong></li>
+        <li><strong>BNB</strong> (gas)</li>
+      </ul>
+
+      <h3><span class="step-number">4</span>Open PancakeSwap and connect wallet</h3>
+      <p>
+        Go to the official PancakeSwap website and click <strong>Connect Wallet</strong>:
+        <a href="https://pancakeswap.finance/swap" target="_blank" rel="noopener">pancakeswap.finance</a>
+      </p>
+
+      <h3><span class="step-number">5</span>Import the IBITI token</h3>
+      <ul>
+        <li>In the token selector, paste the IBITI contract address:</li>
+        <li><code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></li>
+        <li>Confirm the import. Always double-check the address.</li>
+      </ul>
+
+      <div class="token-box">
+        <div><strong>Official IBITI token details:</strong></div>
+        <div>Network: BNB Smart Chain (BEP-20)</div>
+        <div>Name: IBITIcoin</div>
+        <div>Symbol: IBITI</div>
+        <div>Decimals: 8</div>
+        <div>Contract: <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></div>
+      </div>
+
+      <h3><span class="step-number">6</span>Swap USDT to IBITI</h3>
+      <p>Set:</p>
+      <ul>
+        <li>Top token: <strong>USDT</strong></li>
+        <li>Bottom token: <strong>IBITI</strong></li>
+      </ul>
+      <p>
+        Start small for your first trade (e.g., 1–5 USDT). If PancakeSwap shows price impact warnings,
+        reduce the trade size or wait for more liquidity.
+      </p>
+
+      <h3><span class="step-number">7</span>Confirm in your wallet</h3>
+      <p>
+        Click <strong>Swap</strong>, then confirm in your wallet. Your first swap may also require a USDT <b>Approve</b>.
+        Once confirmed on BSC, you will receive IBITI.
+      </p>
+
+      <h3><span class="step-number">8</span>Add IBITI to your wallet view</h3>
+      <p>If you don’t see IBITI in your wallet token list, add it manually:</p>
+      <ul>
+        <li>Token contract: <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></li>
+        <li>Name: <code>IBITIcoin</code></li>
+        <li>Symbol: <code>IBITI</code></li>
+        <li>Decimals: <code>8</code></li>
+      </ul>
+
+      <div class="warning">
+        <strong>Important:</strong><br>
+        Always verify you are on the official PancakeSwap website and that the IBITI contract address exactly matches the one above.
+        There may be fake tokens with a similar name.
+      </div>
+
+      <div class="btn-row">
+        <a class="btn"
+          href="https://pancakeswap.finance/swap?outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb"
+          target="_blank" rel="noopener">
+          Open PancakeSwap with IBITI
+        </a>
+        <a class="btn btn-outline" href="whitepaper.html">Read Whitepaper</a>
+      </div>
     </div>
+
   </div>
 </div>
 
@@ -375,6 +451,37 @@
   &nbsp;|&nbsp;
   <a href="terms.html">Terms of Use</a>
 </footer>
+
+<script>
+  // Tabs: promo / pancake
+  (function () {
+    const tabs = Array.from(document.querySelectorAll(".tab"));
+    const promo = document.getElementById("mode-promo");
+    const pancake = document.getElementById("mode-pancake");
+
+    function setMode(mode) {
+      const isPromo = mode === "promo";
+      promo.classList.toggle("active", isPromo);
+      pancake.classList.toggle("active", !isPromo);
+
+      tabs.forEach(t => {
+        const active = t.dataset.mode === mode;
+        t.classList.toggle("active", active);
+        t.setAttribute("aria-selected", active ? "true" : "false");
+      });
+
+      try { localStorage.setItem("ibiti_buy_mode", mode); } catch (_) {}
+    }
+
+    tabs.forEach(t => t.addEventListener("click", () => setMode(t.dataset.mode)));
+
+    // Restore last mode
+    let saved = "promo";
+    try { saved = localStorage.getItem("ibiti_buy_mode") || "promo"; } catch (_) {}
+    setMode(saved === "pancake" ? "pancake" : "promo");
+  })();
+</script>
+
 <script src="/js/xmas.js"></script>
 </body>
 </html>
