@@ -1,94 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>IBITIcoin Investment Calculator</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css" />
 
-  <!-- Local styles for this page -->
   <style>
-    body {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .hero-header {
-      margin-top: 20px;
-      padding-top: 10px;
-      padding-bottom: 10px;
-      text-align: center;
-    }
-
-    .hero-header img {
-      width: 190px;          /* bigger logo */
-      display: block;
-      margin: 0 auto 6px;
-    }
-
-    .hero-header h1 {
-      font-size: 2.2rem;
-      margin: 4px 0 0;
-    }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    .hero-header { margin-top: 20px; padding: 10px 0; text-align: center; }
+    .hero-header img { width: 190px; display: block; margin: 0 auto 6px; }
+    .hero-header h1 { font-size: 2.2rem; margin: 4px 0 0; }
 
     .calculator {
-      max-width: 480px;
-      margin: 30px auto 50px;
+      max-width: 560px;
+      margin: 24px auto 50px;
       text-align: center;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
+      padding: 0 14px;
     }
 
-    .calculator p {
-      margin-bottom: 12px;
+    .card {
+      border: 1px solid rgba(255, 215, 0, 0.35);
+      border-radius: 14px;
+      padding: 16px 14px;
+      background: rgba(0,0,0,0.45);
+      box-shadow: 0 0 22px rgba(0,0,0,0.25);
+      margin-top: 14px;
     }
 
-    .calculator input,
-    .calculator button {
+    .muted { opacity: .85; font-size: .95rem; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    @media (max-width: 520px) { .row { grid-template-columns: 1fr; } }
+
+    label { display:block; text-align:left; margin: 10px 0 6px; }
+    input, button {
       width: 100%;
-      padding: 12px 16px;
-      margin-top: 10px;
+      padding: 12px 14px;
       font-size: 1rem;
       box-sizing: border-box;
+      border-radius: 10px;
+      border: 1px solid rgba(255,215,0,0.25);
+      background: rgba(10,10,10,0.55);
+      color: #fff;
+      outline: none;
+    }
+    input::placeholder { color: rgba(255,255,255,0.55); }
+    button { cursor: pointer; }
+    button:hover { filter: brightness(1.07); }
+
+    .pill {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,215,0,0.35);
+      font-size: .92rem;
+      margin: 6px 6px 0 0;
     }
 
-    #result {
-      margin-top: 14px;
-      font-weight: 600;
+    .result {
+      margin-top: 12px;
+      font-weight: 650;
+      line-height: 1.35;
+      word-break: break-word;
     }
 
-    footer {
-      margin-top: auto; /* sticks footer to the bottom */
-    }
+    .error { color: #ffb3b3; }
+    .ok { color: #e8ffcf; }
+
+    footer { margin-top: auto; }
   </style>
 </head>
+
 <body>
 
   <!-- Corner buttons -->
   <div class="corner-box corner-box-left">
-    <a href="index.html">Home</a>
+    <a href="index.html" id="navHome">Home</a>
   </div>
   <div class="corner-box corner-box-right">
-    <a href="roadmap.html">Roadmap</a> |
-    <a href="?lang=ru">RU</a> |
-    <a href="?lang=en">EN</a>
+    <a href="roadmap.html" id="navRoadmap">Roadmap</a> |
+    <a href="?lang=ru" id="navRU">RU</a> |
+    <a href="?lang=en" id="navEN">EN</a>
   </div>
 
-  <!-- Header with logo -->
+  <!-- Header -->
   <header class="hero-header">
-    <img src="img/logo.png" alt="IBITIcoin Logo">
-    <h1>IBITIcoin Investment Calculator</h1>
+    <img src="img/logo.png" alt="IBITIcoin Logo" />
+    <h1 id="title">IBITIcoin Investment Calculator</h1>
+    <div class="muted" id="subtitle">Live price from PancakeSwap (pair reserves)</div>
   </header>
 
-  <!-- Calculator -->
   <section class="calculator">
-    <p>Enter the amount you plan to invest (USD):</p>
-    <input type="number" id="investment" placeholder="Amount in USD">
-    <button onclick="calculate()">Calculate</button>
-    <p id="result"></p>
+
+    <div class="card">
+      <div>
+        <span class="pill" id="pricePill">Price: —</span>
+        <span class="pill" id="updatedPill">Updated: —</span>
+      </div>
+      <div class="muted" style="margin-top:8px;" id="sourceLine">Source: IBITI/USDT on PancakeSwap v2 (spot price)</div>
+      <div class="muted" style="margin-top:6px;" id="reservesLine">Reserves: —</div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <label for="usdInput" id="lblUsd">Amount in USD (USDT):</label>
+          <input type="number" id="usdInput" placeholder="10" min="0" step="any" />
+        </div>
+        <div>
+          <label for="ibitiInput" id="lblIbiti">Amount in IBITI:</label>
+          <input type="number" id="ibitiInput" placeholder="0" min="0" step="any" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="slippage" id="lblSlip">Slippage buffer (%):</label>
+          <input type="number" id="slippage" value="1" min="0" max="20" step="0.1" />
+          <div class="muted" id="slipHint" style="text-align:left; margin-top:6px;">
+            Shows conservative “min received” estimate.
+          </div>
+        </div>
+        <div style="display:flex; align-items:end; gap:10px;">
+          <button id="btnUsdToIbiti">USD → IBITI</button>
+          <button id="btnIbitiToUsd">IBITI → USD</button>
+        </div>
+      </div>
+
+      <div class="result" id="result"></div>
+      <div class="muted" style="margin-top:10px; text-align:left;" id="note">
+        Note: this is a spot estimate from pool reserves. Real swap depends on price impact + fee.
+      </div>
+
+      <div class="row" style="margin-top:12px;">
+        <button id="btnRefresh">Refresh price</button>
+        <button id="btnClear">Clear</button>
+      </div>
+
+      <div class="muted" style="margin-top:10px; text-align:left;" id="corsTip"></div>
+    </div>
+
   </section>
 
-  <!-- Footer -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p>
@@ -101,29 +155,353 @@
       <a href="https://instagram.com/IBITIcoin_official" target="_blank">Instagram</a> |
       <a href="https://facebook.com/IBITIcoin" target="_blank">Facebook</a>
     </p>
-    <p>
-      <a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a>
-    </p>
+    <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
   </footer>
 
-  <script>
-    function calculate() {
-      const value = parseFloat(document.getElementById('investment').value);
-      const resultEl = document.getElementById('result');
+  <!-- ethers (UMD) -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
 
-      if (isNaN(value) || value <= 0) {
-        resultEl.innerText = "Please enter a valid amount greater than 0.";
+  <script>
+    // =========================
+    // CONFIG (BSC MAINNET)
+    // =========================
+    const CFG = {
+      // IBITI/USDT Pair (PancakeSwap v2)
+      PAIR:  "0xADfb9F0f810311e9c01C27B380909A5FfC104Be0",
+      USDT:  "0x55d398326f99059fF775485246999027B3197955",
+      IBITI: "0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb",
+
+      USDT_DECIMALS: 18,
+      IBITI_DECIMALS: 8,
+
+      // Public RPCs (try several; some block browser CORS)
+      RPC_URLS: [
+        "https://bsc-rpc.publicnode.com",        // часто дружит с браузером
+        "https://rpc.ankr.com/bsc",              // бывает лимит/политики, но часто ок
+        "https://bsc-dataseed.binance.org/",     // иногда CORS капризный
+        "https://bsc-dataseed1.binance.org/",
+        "https://bsc-dataseed2.binance.org/"
+      ],
+
+      AUTO_REFRESH_MS: 30000
+    };
+
+    const PAIR_ABI = [
+      "function token0() view returns (address)",
+      "function token1() view returns (address)",
+      "function getReserves() view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)"
+    ];
+
+    // =========================
+    // i18n (RU/EN)
+    // =========================
+    const I18N = {
+      en: {
+        title: "IBITIcoin Investment Calculator",
+        subtitle: "Live price from PancakeSwap (pair reserves)",
+        home: "Home",
+        roadmap: "Roadmap",
+        lblUsd: "Amount in USD (USDT):",
+        lblIbiti: "Amount in IBITI:",
+        lblSlip: "Slippage buffer (%):",
+        slipHint: "Shows conservative “min received” estimate.",
+        btnUsdToIbiti: "USD → IBITI",
+        btnIbitiToUsd: "IBITI → USD",
+        btnRefresh: "Refresh price",
+        btnClear: "Clear",
+        sourceLine: "Source: IBITI/USDT on PancakeSwap v2 (spot price)",
+        note: "Note: this is a spot estimate from pool reserves. Real swap depends on price impact + fee.",
+        price: "Price",
+        updated: "Updated",
+        reserves: "Reserves",
+        errFetch: "Could not fetch live price.",
+        tipCors: "If you see CORS/RPC errors: use a tiny backend proxy (Cloudflare Worker/Netlify Function) and fetch price from there."
+      },
+      ru: {
+        title: "Калькулятор IBITIcoin",
+        subtitle: "Живая цена из PancakeSwap (по резервам пары)",
+        home: "Home",
+        roadmap: "Roadmap",
+        lblUsd: "Сумма в USD (USDT):",
+        lblIbiti: "Сумма в IBITI:",
+        lblSlip: "Запас на слиппедж (%):",
+        slipHint: "Показывает консервативный вариант “минимум получите”.",
+        btnUsdToIbiti: "USD → IBITI",
+        btnIbitiToUsd: "IBITI → USD",
+        btnRefresh: "Обновить цену",
+        btnClear: "Очистить",
+        sourceLine: "Источник: IBITI/USDT на PancakeSwap v2 (spot-цена)",
+        note: "Примечание: это оценка по резервам. Реальный свап зависит от price impact + комиссии.",
+        price: "Цена",
+        updated: "Обновлено",
+        reserves: "Резервы",
+        errFetch: "Не удалось получить живую цену.",
+        tipCors: "Если вылезают CORS/RPC ошибки: делаем крошечный прокси (Cloudflare Worker/Netlify Function) и берём цену через него."
+      }
+    };
+
+    function getLang() {
+      const url = new URL(window.location.href);
+      const lang = (url.searchParams.get("lang") || "en").toLowerCase();
+      return (lang === "ru") ? "ru" : "en";
+    }
+
+    const lang = getLang();
+    const T = I18N[lang];
+
+    function $(id) { return document.getElementById(id); }
+
+    function applyI18n() {
+      document.documentElement.lang = lang;
+      $("title").innerText = T.title;
+      $("subtitle").innerText = T.subtitle;
+      $("navHome").innerText = T.home;
+      $("navRoadmap").innerText = T.roadmap;
+
+      $("lblUsd").innerText = T.lblUsd;
+      $("lblIbiti").innerText = T.lblIbiti;
+      $("lblSlip").innerText = T.lblSlip;
+      $("slipHint").innerText = T.slipHint;
+
+      $("btnUsdToIbiti").innerText = T.btnUsdToIbiti;
+      $("btnIbitiToUsd").innerText = T.btnIbitiToUsd;
+      $("btnRefresh").innerText = T.btnRefresh;
+      $("btnClear").innerText = T.btnClear;
+
+      $("sourceLine").innerText = T.sourceLine;
+      $("note").innerText = T.note;
+    }
+
+    // =========================
+    // Price engine
+    // =========================
+    const state = {
+      provider: null,
+      rpcIndex: 0,
+      priceUSDTperIBITI_1e18: null, // BigInt, USDT per 1 IBITI * 1e18
+      reserves: null,
+      updatedAt: 0
+    };
+
+    async function getProvider() {
+      if (state.provider) return state.provider;
+
+      let lastErr = null;
+      for (let i = 0; i < CFG.RPC_URLS.length; i++) {
+        const url = CFG.RPC_URLS[i];
+        try {
+          const p = new ethers.JsonRpcProvider(url);
+          await p.getBlockNumber();
+          state.provider = p;
+          state.rpcIndex = i;
+          return p;
+        } catch (e) {
+          lastErr = e;
+        }
+      }
+      throw new Error(lastErr?.message || "No RPC available");
+    }
+
+    function nowTimeStr() {
+      const d = new Date();
+      return d.toLocaleString(lang === "ru" ? "ru-RU" : "en-US");
+    }
+
+    function formatSmart(numStr) {
+      const n = Number(numStr);
+      if (!Number.isFinite(n)) return numStr;
+      if (n >= 1) return n.toFixed(6);
+      if (n >= 0.01) return n.toFixed(8);
+      return n.toPrecision(8);
+    }
+
+    async function fetchLivePrice() {
+      const provider = await getProvider();
+      const pair = new ethers.Contract(CFG.PAIR, PAIR_ABI, provider);
+
+      const [t0, t1, reserves] = await Promise.all([
+        pair.token0(),
+        pair.token1(),
+        pair.getReserves()
+      ]);
+
+      const token0 = t0.toLowerCase();
+      const token1 = t1.toLowerCase();
+      const r0 = BigInt(reserves[0]);
+      const r1 = BigInt(reserves[1]);
+
+      const usdt = CFG.USDT.toLowerCase();
+      const ibiti = CFG.IBITI.toLowerCase();
+
+      let reserveUSDT, reserveIBITI;
+
+      if (token0 === usdt && token1 === ibiti) {
+        reserveUSDT = r0; reserveIBITI = r1;
+      } else if (token0 === ibiti && token1 === usdt) {
+        reserveUSDT = r1; reserveIBITI = r0;
+      } else {
+        throw new Error("Pair tokens mismatch (not USDT/IBITI).");
+      }
+
+      if (reserveUSDT === 0n || reserveIBITI === 0n) {
+        throw new Error("Pair reserves are zero.");
+      }
+
+      // price1e18 = (USDT/IBITI) * 1e18
+      // = reserveUSDT * 10^IBITI_DEC * 1e18 / (reserveIBITI * 10^USDT_DEC)
+      const price1e18 =
+        reserveUSDT *
+        (10n ** BigInt(CFG.IBITI_DECIMALS)) *
+        (10n ** 18n) /
+        (reserveIBITI * (10n ** BigInt(CFG.USDT_DECIMALS)));
+
+      state.priceUSDTperIBITI_1e18 = price1e18;
+      state.reserves = { reserveUSDT, reserveIBITI };
+      state.updatedAt = Date.now();
+
+      renderTopLine();
+      return price1e18;
+    }
+
+    function renderTopLine() {
+      const priceStr = ethers.formatUnits(state.priceUSDTperIBITI_1e18, 18);
+      $("pricePill").innerText = `${T.price}: $${formatSmart(priceStr)}`;
+      $("updatedPill").innerText = `${T.updated}: ${nowTimeStr()}`;
+
+      if (state.reserves) {
+        const usdtStr = ethers.formatUnits(state.reserves.reserveUSDT, CFG.USDT_DECIMALS);
+        const ibitiStr = ethers.formatUnits(state.reserves.reserveIBITI, CFG.IBITI_DECIMALS);
+        $("reservesLine").innerText = `${T.reserves}: ${formatSmart(usdtStr)} USDT  |  ${formatSmart(ibitiStr)} IBITI`;
+      }
+    }
+
+    async function ensureFreshPrice() {
+      if (state.priceUSDTperIBITI_1e18 && (Date.now() - state.updatedAt) < 15000) {
+        return state.priceUSDTperIBITI_1e18;
+      }
+      return await fetchLivePrice();
+    }
+
+    function getSlippageFactorBps() {
+      const v = Number($("slippage").value);
+      const pct = (Number.isFinite(v) && v >= 0) ? v : 0;
+      // convert percent to bps (1% = 100 bps)
+      return Math.round(pct * 100);
+    }
+
+    function setResult(text, ok=true) {
+      const el = $("result");
+      el.className = "result " + (ok ? "ok" : "error");
+      el.innerText = text;
+    }
+
+    async function calcUsdToIbiti() {
+      const usdStr = $("usdInput").value?.trim();
+      if (!usdStr || Number(usdStr) <= 0) {
+        setResult(lang === "ru" ? "Введи сумму USD больше 0." : "Enter USD amount > 0.", false);
         return;
       }
 
-      // Example: 10% projected return
-      const profit = value * 0.10;
-      resultEl.innerText = 'Estimated profit: $' + profit.toFixed(2);
+      setResult(lang === "ru" ? "Считаю по текущей цене Pancake…" : "Calculating from live Pancake price…", true);
+
+      const price1e18 = await ensureFreshPrice();
+      const usdRaw = ethers.parseUnits(usdStr, CFG.USDT_DECIMALS);
+
+      // tokensRaw = usd / price
+      // = usdRaw * 1e18 * 10^IBITI_DEC / (10^USDT_DEC * price1e18)
+      const tokensRaw =
+        (usdRaw * (10n ** 18n) * (10n ** BigInt(CFG.IBITI_DECIMALS))) /
+        ((10n ** BigInt(CFG.USDT_DECIMALS)) * price1e18);
+
+      const slipBps = getSlippageFactorBps();
+      const minTokensRaw = (tokensRaw * BigInt(10000 - slipBps)) / 10000n;
+
+      const tokens = ethers.formatUnits(tokensRaw, CFG.IBITI_DECIMALS);
+      const minTokens = ethers.formatUnits(minTokensRaw, CFG.IBITI_DECIMALS);
+
+      setResult(
+        (lang === "ru")
+          ? `≈ ${formatSmart(tokens)} IBITI\nМинимум (со слиппеджем): ≈ ${formatSmart(minTokens)} IBITI`
+          : `≈ ${formatSmart(tokens)} IBITI\nMin (with slippage): ≈ ${formatSmart(minTokens)} IBITI`,
+        true
+      );
     }
+
+    async function calcIbitiToUsd() {
+      const ibitiStr = $("ibitiInput").value?.trim();
+      if (!ibitiStr || Number(ibitiStr) <= 0) {
+        setResult(lang === "ru" ? "Введи сумму IBITI больше 0." : "Enter IBITI amount > 0.", false);
+        return;
+      }
+
+      setResult(lang === "ru" ? "Считаю по текущей цене Pancake…" : "Calculating from live Pancake price…", true);
+
+      const price1e18 = await ensureFreshPrice();
+      const ibitiRaw = ethers.parseUnits(ibitiStr, CFG.IBITI_DECIMALS);
+
+      // usdRaw = ibiti * price
+      // usdRaw(USDT decimals) = ibitiRaw * price1e18 * 10^USDT_DEC / (10^IBITI_DEC * 1e18)
+      const usdRaw =
+        (ibitiRaw * price1e18 * (10n ** BigInt(CFG.USDT_DECIMALS))) /
+        ((10n ** BigInt(CFG.IBITI_DECIMALS)) * (10n ** 18n));
+
+      const slipBps = getSlippageFactorBps();
+      const minUsdRaw = (usdRaw * BigInt(10000 - slipBps)) / 10000n;
+
+      const usd = ethers.formatUnits(usdRaw, CFG.USDT_DECIMALS);
+      const minUsd = ethers.formatUnits(minUsdRaw, CFG.USDT_DECIMALS);
+
+      setResult(
+        (lang === "ru")
+          ? `≈ $${formatSmart(usd)}\nМинимум (со слиппеджем): ≈ $${formatSmart(minUsd)}`
+          : `≈ $${formatSmart(usd)}\nMin (with slippage): ≈ $${formatSmart(minUsd)}`,
+        true
+      );
+    }
+
+    function clearAll() {
+      $("usdInput").value = "";
+      $("ibitiInput").value = "";
+      setResult("", true);
+    }
+
+    async function refresh() {
+      $("corsTip").innerText = "";
+      try {
+        await fetchLivePrice();
+        setResult(lang === "ru" ? "Цена обновлена." : "Price refreshed.", true);
+      } catch (e) {
+        console.error(e);
+        setResult(T.errFetch + " " + (e?.message || ""), false);
+        $("corsTip").innerText = T.tipCors;
+      }
+    }
+
+    // =========================
+    // Init
+    // =========================
+    applyI18n();
+
+    $("btnUsdToIbiti").addEventListener("click", () => calcUsdToIbiti().catch(err => {
+      console.error(err);
+      setResult(T.errFetch + " " + (err?.message || ""), false);
+      $("corsTip").innerText = T.tipCors;
+    }));
+
+    $("btnIbitiToUsd").addEventListener("click", () => calcIbitiToUsd().catch(err => {
+      console.error(err);
+      setResult(T.errFetch + " " + (err?.message || ""), false);
+      $("corsTip").innerText = T.tipCors;
+    }));
+
+    $("btnRefresh").addEventListener("click", () => refresh());
+    $("btnClear").addEventListener("click", () => clearAll());
+
+    // Auto refresh price
+    refresh();
+    setInterval(() => refresh(), CFG.AUTO_REFRESH_MS);
   </script>
-  
-<script src="js/xmas.js"></script>
+
+  <script src="js/xmas.js"></script>
 </body>
 </html>
-
-
