@@ -3,130 +3,163 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>IBITIcoin Sale & Public Launch</title>
+  <title>IBITIcoin — Public Launch & Trading</title>
+
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
   <style>
-    body { background: #000; color: gold; font-family: Arial, sans-serif; }
-    .gold-section { max-width: 900px; margin: 40px auto; padding: 0 20px; }
-    h1, h2 { color: gold; text-align: center; }
-    ul.buy-steps { list-style: none; padding-left: 0; }
-    ul.buy-steps li { margin: 10px 0; padding-left: 1em; position: relative; }
-    ul.buy-steps li::before { content: "🔸"; position: absolute; left: 0; }
-    p { line-height: 1.6; }
-    .btn-small.launch-return-btn {
-      display: inline-block;
-      background: gold;
-      color: #000;
-      font-weight: bold;
-      padding: 10px 20px;
-      border-radius: 6px;
-      text-decoration: none;
-      text-align: center;
+    body { background:#000; color:gold; font-family: Arial, sans-serif; }
+    .gold-section { max-width: 980px; margin: 40px auto; padding: 0 20px; }
+    h1, h2 { color: gold; text-align:center; }
+    p { line-height: 1.7; color: rgba(255,255,255,0.88); }
+    code { color: #ffd84a; }
+    .box {
+      background:#111; border:1px solid rgba(255,215,0,0.45);
+      border-radius:10px; padding:18px; margin:16px 0;
     }
+    ul.buy-steps { list-style:none; padding-left:0; margin: 12px 0 0; }
+    ul.buy-steps li { margin:10px 0; padding-left:1.2em; position:relative; color: rgba(255,255,255,0.88); }
+    ul.buy-steps li::before { content:"🔸"; position:absolute; left:0; }
+    .btn-small.launch-btn {
+      display:inline-block; background:gold; color:#000; font-weight:800;
+      padding:10px 18px; border-radius:8px; text-decoration:none; text-align:center;
+    }
+    .btn-small.launch-btn:hover { background:#c0a000; }
+    .muted { color: rgba(255,255,255,0.65); font-size: 0.95em; }
+    .center { text-align:center; }
     footer {
-      text-align: center;
-      padding: 20px;
-      background: #111;
-      color: gold;
-      border-top: 1px solid gold;
+      text-align:center; padding:20px; background:#111; color:gold;
+      border-top:1px solid rgba(255,215,0,0.35);
     }
-    footer a { color: gold; text-decoration: none; }
+    footer a { color: gold; text-decoration:none; }
     footer a:hover { text-decoration: underline; }
   </style>
 </head>
+
 <body>
   <header class="hero-header">
-    <h1>IBITIcoin Public Launch & Trading</h1>
-    <p>Current status of IBITI: live trading, liquidity, NFT utilities and what comes next.</p>
+    <h1>IBITIcoin — Public Launch & Trading</h1>
+    <p class="muted">Live trading via AMM liquidity pool. Transparent, on-chain, no “hidden sale phases”.</p>
   </header>
 
-  <!-- 1. Current trading status -->
+  <!-- 1. Trading status -->
   <section class="gold-section" data-aos="fade-up">
-    <h2>📅 From 10.12.2025: Open trading on PancakeSwap</h2>
-    <p>
-      As of <strong>10 December 2025</strong>, IBITIcoin is publicly tradable on
-      <strong>BNB Smart Chain</strong> in the official <strong>IBITI/USDT</strong> pool on PancakeSwap (v2).
-      There are no more pre-sale phases – only open market trading through the liquidity pool.
-    </p>
-    <ul class="buy-steps">
-      <li><strong>Network:</strong> BNB Smart Chain (BEP-20)</li>
-      <li><strong>Token:</strong> IBITIcoin (IBITI)</li>
-      <li><strong>Token contract:</strong> <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></li>
-      <li><strong>Official trading pair:</strong> IBITI / USDT on PancakeSwap (v2)</li>
-    </ul>
-    <p>
-      Direct link to the official pool:
-    </p>
-    <p style="text-align:center;">
+    <h2>✅ Open trading on PancakeSwap (IBITI/USDT)</h2>
+
+    <div class="box">
+      <p>
+        IBITIcoin is publicly tradable on <strong>BNB Smart Chain</strong> via the official
+        <strong>IBITI / USDT</strong> pool on PancakeSwap (v2).
+      </p>
+
+      <ul class="buy-steps">
+        <li><strong>Network:</strong> BNB Smart Chain (BEP-20)</li>
+        <li><strong>Token:</strong> IBITIcoin (IBITI)</li>
+        <li><strong>Token contract:</strong> <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></li>
+        <li><strong>Pair:</strong> IBITI / USDT (PancakeSwap v2)</li>
+      </ul>
+
+      <p class="muted" style="margin-top:12px;">
+        Price is determined by the AMM liquidity pool (market), not by fixed “admin prices”.
+      </p>
+    </div>
+
+    <p class="center" style="margin-top:14px;">
       <a
         href="https://pancakeswap.finance/swap?chain=bsc&amp;outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&amp;inputCurrency=0x55d398326f99059fF775485246999027B3197955"
-        class="btn-small launch-return-btn"
-        target="_blank"
-        rel="noopener noreferrer"
+        class="btn-small launch-btn"
+        target="_blank" rel="noopener noreferrer"
       >
         Open IBITI/USDT on PancakeSwap
       </a>
     </p>
   </section>
 
-  <!-- 2. How to buy IBITI now -->
+  <!-- 2. How to buy -->
   <section class="gold-section" data-aos="fade-up">
-    <h2>🪙 How to buy IBITI now</h2>
-    <p>There are no fixed phases or fixed sale prices anymore. IBITI is bought and sold directly through the liquidity pool. A simple path for new users:</p>
-    <ul class="buy-steps">
-      <li>1. Add <strong>BNB Smart Chain (BEP-20)</strong> network to your wallet (MetaMask, Trust Wallet, etc.).</li>
-      <li>2. Deposit BNB or USDT (BEP-20) to your wallet.</li>
-      <li>3. Open the official IBITI/USDT pool on PancakeSwap via the button above.</li>
-      <li>4. Make sure the token address matches <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code>.</li>
-      <li>5. Swap USDT → IBITI (or other tokens routed through USDT by PancakeSwap).</li>
-      <li>6. Always double-check the contract address and your slippage settings, especially while liquidity is still growing.</li>
-    </ul>
-    <p>
-      Price is now determined by the AMM (automated market maker) model based on liquidity and trades in the pool – not by pre-defined phases.
-    </p>
+    <h2>🪙 How to buy IBITI</h2>
+
+    <div class="box">
+      <ul class="buy-steps">
+        <li>1) Use a wallet with BSC support: MetaMask / Trust Wallet / Binance Wallet.</li>
+        <li>2) Add BNB Smart Chain network (if needed) and fund your wallet with BNB (gas) + USDT (BEP-20) for the swap.</li>
+        <li>3) Open the official PancakeSwap link above.</li>
+        <li>4) Double-check the token contract matches: <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></li>
+        <li>5) Swap USDT → IBITI. Use reasonable slippage (especially while liquidity grows).</li>
+      </ul>
+
+      <p class="muted" style="margin-top:12px;">
+        Security reminder: scammers love making “clone tokens”. Always verify the contract address.
+      </p>
+    </div>
   </section>
 
-  <!-- 3. NFT jackpot utilities -->
+  <!-- 3. Bonus promo (optional) -->
   <section class="gold-section" data-aos="fade-up">
-    <h2>🎁 NFT jackpot & utilities</h2>
-    <p>
-      The IBITI ecosystem includes an <strong>NFT jackpot mechanic</strong> and additional NFT-based utilities.
-      These NFTs are designed to reward active participants and long-term supporters of the project.
-    </p>
-    <ul class="buy-steps">
-      <li>NFT jackpot rewards can be linked to IBITI activity and special campaigns.</li>
-      <li>Utility NFTs will have use cases such as fee discounts, ecosystem access and bonus multipliers.</li>
-      <li>Each NFT has a limited lifetime or limited number of activations before it is burned.</li>
-    </ul>
-    <p>
-      Detailed rules for the NFT jackpot and specific NFT campaigns will be announced separately in our official channels.
-    </p>
+    <h2>🎁 Optional: Promo buy with +10% bonus (official shop)</h2>
+
+    <div class="box">
+      <p>
+        Some campaigns may offer an on-chain bonus (example: <strong>+10%</strong>) when buying through
+        the official shop interface.
+      </p>
+      <ul class="buy-steps">
+        <li>Purchases happen via the project’s promo contract (on-chain). Users confirm transactions in their wallet.</li>
+        <li><strong>Approvals are exact amount</strong> (no “infinite approve”), which increases user safety and trust.</li>
+        <li>After purchase, the user can get a clean receipt (paid, market bought, bonus, tx hash).</li>
+      </ul>
+
+      <p class="center" style="margin-top:14px;">
+        <a href="shop.html" class="btn-small launch-btn">Open IBITI Shop</a>
+      </p>
+
+      <p class="muted" style="margin-top:10px;">
+        Note: promo rules can change by campaign. Always read the current terms shown in the shop UI.
+      </p>
+    </div>
   </section>
 
-  <!-- 4. Roadmap after launch -->
+  <!-- 4. NFT utilities -->
   <section class="gold-section" data-aos="fade-up">
-    <h2>🔮 After 10.12.2025: What’s next</h2>
-    <ul class="buy-steps">
-      <li>Progressive increase of IBITI/USDT liquidity to reduce price impact for new buyers.</li>
-      <li>Activation of on-chain staking modules for IBITI holders.</li>
-      <li>Launch of NFT-based discounts and other on-chain utilities.</li>
-      <li>Further integrations with DeFi platforms and tools during 2026.</li>
-      <li>Development of user-friendly interfaces, including mobile-friendly access to the IBITI ecosystem.</li>
-    </ul>
-    <p>
-      The goal is straightforward: less chaos, more transparency, more code, and more real value for people who choose to be part of IBITI.
-    </p>
+    <h2>🎁 NFT utilities (roadmap)</h2>
+    <div class="box">
+      <p>
+        IBITI ecosystem includes an <strong>NFT jackpot</strong> concept and utility NFTs:
+        discounts, multipliers, access perks. Specific rules will be announced in official channels.
+      </p>
+      <ul class="buy-steps">
+        <li>Utility NFTs may have limited activations or lifetime and can be burned after use.</li>
+        <li>Campaign rules are published separately to avoid confusion and keep everything auditable.</li>
+      </ul>
+    </div>
   </section>
 
-  <div style="text-align: center; margin: 20px 0;">
-    <a href="index.html" class="btn-small launch-return-btn">← Back to main page</a>
+  <!-- 5. What’s next -->
+  <section class="gold-section" data-aos="fade-up">
+    <h2>🔮 What’s next</h2>
+    <div class="box">
+      <ul class="buy-steps">
+        <li>Progressive liquidity growth to reduce price impact for new buyers.</li>
+        <li>Activation of on-chain staking modules for IBITI holders.</li>
+        <li>NFT discount mechanics and additional utilities.</li>
+        <li>More DeFi integrations and analytics during 2026.</li>
+        <li>Improved web + mobile UX for non-crypto-native users.</li>
+      </ul>
+      <p class="muted" style="margin-top:12px;">
+        The goal: less chaos, more transparency, more code, more real value.
+      </p>
+    </div>
+  </section>
+
+  <div class="center" style="margin: 18px 0 10px;">
+    <a href="index.html" class="btn-small launch-btn">← Back to main page</a>
   </div>
 
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
     <p>
-      <a href="privacy.html">Privacy Policy</a> | 
+      <a href="privacy.html">Privacy Policy</a> |
       <a href="terms.html">Terms of Use</a>
     </p>
     <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
