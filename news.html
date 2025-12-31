@@ -1,158 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IBITIcoin – Crypto News</title>
-  <link rel="stylesheet" href="../css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IBITIcoin – News</title>
+
+  <meta name="description" content="IBITIcoin news: trading launch, UI updates, staking and NFT utility development." />
+  <meta name="theme-color" content="#000000" />
+
+  <link rel="stylesheet" href="css/style.css" />
+
   <style>
-    body {
-      background: #000;
-      color: gold;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #111;
-      padding: 30px 20px;
-      text-align: center;
-      border-bottom: 2px solid gold;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 2.5em;
-      color: gold;
-    }
-    nav.breadcrumb {
-      background: #111;
-      padding: 10px 20px;
-      font-size: 0.9em;
-    }
-    nav.breadcrumb a {
-      color: gold;
-      text-decoration: none;
-      margin-right: 5px;
-    }
-    nav.breadcrumb a:hover {
-      text-decoration: underline;
-    }
-    .news-section {
-      max-width: 1000px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
+    body { background:#000; color:#f7d000; margin:0; padding:0; font-family: Arial, sans-serif; }
+    header { background:#111; padding:30px 20px; text-align:center; border-bottom:2px solid #f7d000; }
+    header h1 { margin:0; font-size:2.3em; color:#f7d000; }
+    header p { margin:10px 0 0; color:rgba(255,255,255,0.72); }
+
+    nav.breadcrumb { background:#111; padding:10px 20px; font-size:0.95em; border-bottom:1px solid rgba(247,208,0,0.25); }
+    nav.breadcrumb a { color:#f7d000; text-decoration:none; margin-right:5px; }
+    nav.breadcrumb a:hover { text-decoration:underline; }
+
+    .news-section { max-width:1000px; margin:32px auto; padding:0 20px; }
     .news-item {
-      background: #111;
-      border: 1px solid gold;
-      border-radius: 8px;
-      padding: 24px;
-      margin-bottom: 24px;
+      background:#0f0f0f;
+      border:1px solid rgba(247,208,0,0.6);
+      border-radius:10px;
+      padding:22px;
+      margin-bottom:20px;
+      box-shadow:0 0 24px rgba(247,208,0,0.08);
     }
-    .news-item h2 {
-      margin-top: 0;
-      color: gold;
-      font-size: 1.8em;
+    .news-item h2 { margin:0; color:#f7d000; font-size:1.6em; }
+    .news-date { margin:10px 0 14px; font-size:0.95em; color:rgba(255,255,255,0.70); }
+    .tag {
+      display:inline-block; margin-left:10px; padding:3px 10px;
+      border-radius:999px; font-size:0.82em; font-weight:700;
+      border:1px solid rgba(255,255,255,0.25);
+      color:rgba(255,255,255,0.85);
     }
-    .news-item .news-date {
-      font-size: 0.9em;
-      color: #ccc;
-      margin: 8px 0 16px;
+    .tag.live { border-color:rgba(124,255,178,0.6); color:#7CFFB2; }
+    .tag.archived { border-color:rgba(255,255,255,0.25); color:rgba(255,255,255,0.65); }
+
+    .news-item p { margin:10px 0; line-height:1.65; color:rgba(255,255,255,0.78); }
+    .news-item code { color:#fff; }
+    .news-item a.btn {
+      display:inline-block; margin-top:14px;
+      background:#f7d000; color:#000;
+      padding:10px 16px; border-radius:8px;
+      text-decoration:none; font-weight:800;
+      transition:transform 0.08s ease, background 0.2s ease;
     }
-    .news-item p {
-      margin: 12px 0;
-      line-height: 1.6;
-    }
-    .news-item a {
-      display: inline-block;
-      margin-top: 16px;
-      background: gold;
-      color: #000;
-      padding: 10px 20px;
-      border-radius: 5px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: background 0.3s;
-    }
-    .news-item a:hover {
-      background: #c0a000;
-    }
+    .news-item a.btn:hover { background:#c0a000; transform: translateY(-1px); }
+
     footer {
-      background: #111;
-      padding: 20px;
-      text-align: center;
-      border-top: 2px solid gold;
-      color: gold;
+      background:#111; padding:20px; text-align:center;
+      border-top:2px solid #f7d000; color:#f7d000;
     }
-    footer a {
-      color: gold;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    footer a:hover {
-      text-decoration: underline;
-    }
+    footer a { color:#f7d000; text-decoration:none; font-weight:800; }
+    footer a:hover { text-decoration:underline; }
   </style>
 </head>
+
 <body>
 
   <header>
-    <h1>IBITIcoin – Crypto News</h1>
+    <h1>IBITIcoin – News</h1>
+    <p>Official updates and progress notes</p>
   </header>
 
   <nav class="breadcrumb">
-    <a href="../index.html">Home</a> &raquo; News
+    <a href="index.html">Home</a> &raquo; News
+    <span style="float:right;">
+      <a href="shop.html">Shop</a> |
+      <a href="roadmap.html">Roadmap</a>
+    </span>
   </nav>
 
   <section class="news-section">
 
-    <!-- New актуальная новость про запуск торговли -->
+    <!-- актуальное -->
     <article class="news-item">
-      <h2>IBITI Open Trading Launch on PancakeSwap</h2>
-      <p class="news-date">10.12.2025</p>
-      <p>Starting from 10 December 2025, IBITIcoin is officially traded on BNB Smart Chain in the <strong>IBITI/USDT</strong> pair on PancakeSwap. This is the project’s first public liquidity pool.</p>
+      <h2>IBITI / USDT Trading is Live on PancakeSwap <span class="tag live">LIVE</span></h2>
+      <p class="news-date">Dec 2025</p>
+      <p>
+        IBITIcoin is publicly traded on <strong>BNB Smart Chain</strong> via the
+        <strong>IBITI/USDT</strong> pair on PancakeSwap (v2). Price formation is handled by the AMM pool.
+      </p>
       <p>Token contract: <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code></p>
-      <p>You can buy IBITI through the official pool at:</p>
-      <a href="https://pancakeswap.finance/swap?chain=bsc&amp;outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&amp;inputCurrency=0x55d398326f99059fF775485246999027B3197955" target="_blank" rel="noopener noreferrer">
-        Open IBITI/USDT on PancakeSwap
-      </a>
+      <a class="btn"
+        href="https://pancakeswap.finance/swap?chain=bsc&amp;outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&amp;inputCurrency=0x55d398326f99059fF775485246999027B3197955"
+        target="_blank" rel="noopener noreferrer">Open PancakeSwap Pool</a>
     </article>
 
     <article class="news-item">
-      <h2>IBITIcoin Phase Sale Launch</h2>
-      <p class="news-date">01.07.2025</p>
-      <p>The first phase of the IBITIcoin pre-sale started on 1 July 2025 at 12:00 (Kyiv time) with a price of 0.10 USDT per token and significant bonuses for early participants.</p>
-      <a href="launch-info.html">Read more</a>
+      <h2>IBITI Shop UI Updated (mobile-friendly)</h2>
+      <p class="news-date">Dec 2025</p>
+      <p>
+        The IBITI Shop page was updated to improve user experience in mobile wallet DApp browsers
+        and provide a clearer purchase flow for new users.
+      </p>
+      <a class="btn" href="shop.html">Open IBITI Shop</a>
+    </article>
+
+    <!-- старое / архив -->
+    <article class="news-item">
+      <h2>IBITIcoin Phase Sale Concept <span class="tag archived">ARCHIVED</span></h2>
+      <p class="news-date">Jul 2025</p>
+      <p>
+        Early drafts included a phased sale concept with fixed pricing and bonuses.
+        This approach has been discontinued in favor of a transparent AMM liquidity model.
+      </p>
+      <a class="btn" href="launch-info.html">Read details</a>
     </article>
 
     <article class="news-item">
-      <h2>Start of NFT Jackpot Airdrop</h2>
-      <p class="news-date">08.07.2025</p>
-      <p>On 8 July 2025 we launched an exclusive NFT jackpot: every buyer received a chance to win a unique NFT with bonuses inside the IBITI ecosystem.</p>
-      <a href="launch-info.html">Read more</a>
-    </article>
-
-    <article class="news-item">
-      <h2>Post-Phase Sale with Flexible Pricing</h2>
-      <p class="news-date">15.07.2025</p>
-      <p>After the three sale phases were completed, continuous IBITIcoin purchases became available using a configurable <em>fallback</em> price model.</p>
-      <a href="launch-info.html">Read more</a>
-    </article>
-
-    <article class="news-item">
-      <h2>Partnership with a Leading DeFi Platform</h2>
-      <p class="news-date">22.07.2025</p>
-      <p>We announced our plans to integrate IBITIcoin into one of the largest DeFi ecosystems, unlocking staking, lending and other financial tools for the community.</p>
-      <a href="launch-info.html">Read more</a>
+      <h2>NFT Jackpot Airdrop Concept <span class="tag archived">ARCHIVED / REWORKING</span></h2>
+      <p class="news-date">Jul 2025</p>
+      <p>
+        The NFT jackpot idea is being redesigned to fit the current ecosystem model.
+        Utility NFTs are planned to deliver perks and discounts in a clean, on-chain way.
+      </p>
+      <a class="btn" href="launch-info.html">Read details</a>
     </article>
 
   </section>
 
   <footer>
-    <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
-    <p><a href="../index.html">← Back to Home</a></p>
+    <p>&copy; <span id="y"></span> IBITIcoin. All rights reserved.</p>
+    <p><a href="index.html">← Back to Home</a></p>
   </footer>
-<script src="/js/xmas.js"></script>
+
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
+  <script src="/js/xmas.js"></script>
 </body>
 </html>
-
