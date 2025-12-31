@@ -192,12 +192,18 @@
       <div class="sidebar-note">
         If comments do not load: disable ad-blocker for this page and allow third-party cookies.
         Disqus is often blocked by browser privacy settings.
+        <br><br>
+        Troubleshooting (opens in new tab):
+        <a href="https://help.disqus.com/en/articles/1717084-troubleshooting-guide" target="_blank" rel="noopener noreferrer">Disqus guide</a>
       </div>
 
       <div id="disqus_thread" style="margin-top:12px;"></div>
 
       <script>
-        var disqus_config = function () {};
+        var disqus_config = function () {
+          this.page.url = window.location.origin + "/blog.html";
+          this.page.identifier = "ibiti-blog";
+        };
         (function() {
           var d = document, s = d.createElement('script');
           s.src = 'https://vovan1980-github-io-ibiticoin-github-io.disqus.com/embed.js';
@@ -208,7 +214,7 @@
 
       <noscript>
         Please enable JavaScript to view
-        <a href="https://disqus.com/?ref_noscript">Disqus comments</a>.
+        <a href="https://disqus.com/?ref_noscript" target="_blank" rel="noopener noreferrer">Disqus comments</a>.
       </noscript>
 
       <div class="sidebar-note" style="margin-top:14px;">
