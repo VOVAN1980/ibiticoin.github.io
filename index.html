@@ -496,12 +496,15 @@
 (() => {
   const now = new Date();
 
-  // сезон: Dec 1 -> Feb 1 (не включая Feb 1)
   const seasonYear = (now.getMonth() === 11) ? now.getFullYear() + 1 : now.getFullYear();
-  const start = new Date(seasonYear - 1, 11, 1, 0, 0, 0); // Dec 1
-  const end   = new Date(seasonYear, 1, 1, 0, 0, 0);      // Feb 1
+  const start = new Date(seasonYear - 1, 11, 1, 0, 0, 0);
+  const end   = new Date(seasonYear, 1, 1, 0, 0, 0);
 
-  if (now < start || now >= end) return;
+  const overlay = document.getElementById("xmasOverlay");
+  if (now < start || now >= end) {
+    if (overlay) overlay.remove();
+    return;
+  }
 
   // ===================== GARLAND (raised center + smooth chaos) =====================
   const garland = document.getElementById("garland");
@@ -699,6 +702,7 @@
 <script src="js/share-modal.js?v=2"></script>
 </body>
 </html>
+
 
 
 
