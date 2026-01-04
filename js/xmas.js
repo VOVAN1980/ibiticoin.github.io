@@ -1,7 +1,14 @@
 (() => {
-  // Только декабрь (0=янв ... 11=дек). Хочешь всегда — закомментируй 2 строки ниже
-  const m = new Date().getMonth();
-  if (m !== 11) return;
+  // ВКЛЮЧЕНО: с 1 декабря по 1 февраля (не включительно 1 февраля)
+  const now = new Date();
+
+  // "Сезонный год": если декабрь — сезон заканчивается в следующем году
+  const seasonYear = (now.getMonth() === 11) ? now.getFullYear() + 1 : now.getFullYear();
+
+  const start = new Date(seasonYear - 1, 11, 1, 0, 0, 0); // Dec 1
+  const end   = new Date(seasonYear, 1, 1, 0, 0, 0);      // Feb 1
+
+  if (now < start || now >= end) return;
 
   // Если уже добавлено — не добавляем второй раз
   if (document.getElementById("xmasOverlay")) return;
@@ -12,19 +19,17 @@
   overlay.className = "xmas-overlay";
   overlay.setAttribute("aria-hidden", "true");
 
-  overlay.innerHTML = `
-    <canvas id="snowCanvas"></canvas>
-  `;
+  overlay.innerHTML = `<canvas id="snowCanvas"></canvas>`;
   document.body.appendChild(overlay);
 
-  // --- Inject minimal CSS (если у тебя уже есть в style.css — можно убрать этот блок) ---
+  // --- Inject minimal CSS ---
   const css = document.createElement("style");
   css.textContent = `
     .xmas-overlay{
       position: fixed;
       inset: 0;
       pointer-events: none;
-      z-index: 999; /* если надо выше/ниже — меняй */
+      z-index: 999;
     }
     #snowCanvas{
       width: 100%;
@@ -145,4 +150,5 @@
   tick();
   setInterval(tick, 1000);
 })();
+
 
