@@ -1,393 +1,448 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Why IBITIcoin | IBITIcoin</title>
-  <meta name="description" content="Why IBITIcoin exists: transparent, community-driven DeFi on BNB Chain. Early-stage, verified contracts, live pool, and a long-term roadmap." />
+  <title>Why IBITIcoin?</title>
+  <meta name="description" content="Почему IBITIcoin? Прозрачность, проверяемость, ранняя стадия и участие сообщества. Все ссылки и статусы в одном месте." />
 
-  <!-- Site styles (keep your existing style.css) -->
-  <link rel="stylesheet" href="/css/style.css" />
-
-  <!-- Minimal fallback styling (in case style.css doesn't cover this page well) -->
   <style>
     :root{
-      --bg:#0b0b0d;
-      --card:#121218;
-      --text:#f2f2f6;
-      --muted:#b6b6c3;
-      --accent:#f6c744; /* IBITI yellow vibe */
-      --accent2:#2de2a6;
-      --border:rgba(255,255,255,.10);
-      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --bg:#07080a;
+      --panel:#0e1016;
+      --panel2:#0b0d12;
+      --text:#e8ecf2;
+      --muted:#aab3c2;
+      --gold:#f0c44e;
+      --gold2:#ffd76b;
+      --stroke:rgba(255,255,255,.08);
+      --shadow:0 10px 30px rgba(0,0,0,.55);
       --radius:18px;
     }
-    body{ background:var(--bg); color:var(--text); margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",sans-serif; }
-    a{ color:inherit; text-decoration:none; }
-    .wrap{ max-width:1100px; margin:0 auto; padding:22px 18px 60px; }
-    .topbar{
-      display:flex; gap:12px; align-items:center; justify-content:space-between;
-      padding:12px 0 18px; border-bottom:1px solid var(--border);
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(240,196,78,.15), transparent 55%),
+        radial-gradient(900px 500px at 80% 20%, rgba(96,165,250,.10), transparent 55%),
+        radial-gradient(900px 500px at 50% 90%, rgba(240,196,78,.10), transparent 60%),
+        var(--bg);
     }
-    .brand{ display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.3px; }
-    .brand__logo{
-      width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg,var(--accent),#ffec9c);
-      box-shadow: 0 10px 30px rgba(246,199,68,.25);
+
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1120px; margin:0 auto; padding:18px 16px 60px;}
+
+    /* NAV */
+    .nav{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(to bottom, rgba(7,8,10,.92), rgba(7,8,10,.70));
+      border-bottom:1px solid var(--stroke);
     }
-    .nav{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:flex-end; }
+    .nav-inner{
+      max-width:1120px; margin:0 auto;
+      padding:12px 16px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px; min-width:190px;
+    }
+    .logo{
+      width:34px; height:34px; border-radius:10px;
+      background: linear-gradient(135deg, var(--gold2), #b8891d);
+      box-shadow: 0 0 0 1px rgba(0,0,0,.25), 0 12px 30px rgba(240,196,78,.15);
+    }
+    .brand strong{display:block; font-weight:800; letter-spacing:.4px}
+    .brand small{display:block; color:var(--muted); font-size:12px; margin-top:1px}
+
+    .menu{
+      display:flex; align-items:center; gap:10px;
+      flex-wrap:wrap;               /* <<< чтобы кнопки НЕ исчезали */
+      justify-content:center;
+      flex:1;
+    }
+
     .btn{
       display:inline-flex; align-items:center; justify-content:center;
-      padding:10px 14px; border-radius:12px; border:1px solid var(--border);
-      background:rgba(255,255,255,.04);
-      font-weight:700; font-size:14px; line-height:1;
-      transition:transform .12s ease, background .12s ease, border-color .12s ease;
+      padding:9px 12px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      font-weight:650;
+      font-size:13px;
+      gap:8px;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
       white-space:nowrap;
     }
-    .btn:hover{ transform:translateY(-1px); background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.16); }
-    .btn--light{
-      background:linear-gradient(180deg, rgba(246,199,68,.98), rgba(246,199,68,.88));
-      color:#141414; border-color:rgba(246,199,68,.45);
-      box-shadow: 0 14px 40px rgba(246,199,68,.18);
+    .btn:hover{transform:translateY(-1px); background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.14);}
+    .btn--gold{
+      border-color: rgba(240,196,78,.35);
+      background: linear-gradient(180deg, rgba(240,196,78,.22), rgba(240,196,78,.10));
+      color: var(--gold2);
     }
-    .btn--light:hover{ background:linear-gradient(180deg, rgba(255,221,120,.98), rgba(246,199,68,.88)); }
-    .btn--ghost{ background:transparent; }
+    .btn--solid{
+      border-color: rgba(240,196,78,.65);
+      background: linear-gradient(180deg, var(--gold2), var(--gold));
+      color:#17120a;
+      box-shadow: 0 12px 26px rgba(240,196,78,.18);
+    }
+
+    .nav-right{
+      display:flex; align-items:center; gap:10px; min-width:190px; justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+
+    /* HERO */
     .hero{
-      margin-top:26px;
-      display:grid; gap:18px;
-      grid-template-columns: 1.2fr .8fr;
-      align-items:stretch;
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.3fr .9fr;
+      gap:16px;
     }
-    @media (max-width: 900px){
-      .hero{ grid-template-columns: 1fr; }
-      .nav{ justify-content:flex-start; }
-      .topbar{ flex-direction:column; align-items:flex-start; }
+    @media (max-width: 920px){
+      .hero{grid-template-columns:1fr}
+      .brand{min-width:auto}
+      .nav-right{min-width:auto}
     }
     .card{
-      background:linear-gradient(180deg, rgba(18,18,24,.92), rgba(18,18,24,.78));
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:22px;
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
     }
-    .hero h1{ margin:0 0 10px; font-size:44px; line-height:1.05; letter-spacing:-.8px; }
-    .sub{ margin:0; color:var(--muted); font-size:16px; line-height:1.55; }
-    .pillrow{ margin-top:14px; display:flex; flex-wrap:wrap; gap:10px; }
+    .card.pad{padding:22px}
+    h1{
+      margin:0 0 10px;
+      font-size:36px;
+      line-height:1.1;
+      letter-spacing:-.6px;
+    }
+    .lead{color:var(--muted); font-size:15px; line-height:1.6; margin:0 0 14px}
+    .pill-row{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 16px}
     .pill{
-      display:inline-flex; gap:8px; align-items:center;
-      padding:8px 10px; border-radius:999px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.04);
-      font-size:13px; color:var(--muted); font-weight:650;
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      font-size:12px;
     }
-    .dot{ width:8px; height:8px; border-radius:50%; background:var(--accent2); box-shadow:0 0 0 4px rgba(45,226,166,.12); }
-    .ctaRow{
-      margin-top:16px;
-      display:flex; flex-wrap:wrap; gap:10px;
-      align-items:center;
-    }
-    .ctaCenter{
-      display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
-      padding:16px 0 0;
-    }
-    .section{ margin-top:18px; }
-    .section h2{ margin:0 0 10px; font-size:22px; letter-spacing:-.2px; }
-    .section p{ margin:0 0 10px; color:var(--muted); line-height:1.7; }
-    .grid{
-      margin-top:18px;
-      display:grid; gap:14px;
-      grid-template-columns: repeat(3, 1fr);
-    }
-    @media (max-width: 900px){ .grid{ grid-template-columns: 1fr; } }
-    .mini{
+    .dot{width:8px; height:8px; border-radius:99px; background:#22c55e; box-shadow:0 0 0 3px rgba(34,197,94,.12)}
+    .cta{display:flex; flex-wrap:wrap; gap:10px; margin-top:14px}
+
+    /* FACTS */
+    .facts{display:grid; gap:12px}
+    .fact{
+      padding:14px 14px;
       border-radius:16px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.03);
-      padding:16px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.25);
     }
-    .mini h3{ margin:0 0 8px; font-size:16px; }
-    .mini p{ margin:0; color:var(--muted); line-height:1.6; font-size:14px; }
+    .fact b{display:block; margin-bottom:6px}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size:12px; color:#cdd6e5; word-break:break-all}
+    .small{color:var(--muted); font-size:13px; line-height:1.5}
+    .grid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:14px;
+    }
+    @media (max-width: 920px){ .grid{grid-template-columns:1fr} }
+    .h2{
+      margin:0 0 10px; font-size:20px; letter-spacing:-.2px
+    }
     .list{
-      margin:10px 0 0; padding:0 0 0 18px; color:var(--muted); line-height:1.8;
+      margin:10px 0 0;
+      padding-left:18px;
+      color:var(--muted);
+      line-height:1.7;
+      font-size:14px;
     }
-    .hr{ height:1px; background:var(--border); margin:22px 0; }
+
+    .note{
+      margin-top:14px;
+      padding:14px 14px;
+      border-left:3px solid rgba(240,196,78,.95);
+      background: rgba(240,196,78,.08);
+      border-radius:14px;
+      color:#e9e2cf;
+    }
+
+    /* LINKS TABLE */
     .links{
-      display:grid; gap:10px;
+      margin-top:18px;
+    }
+    .links-grid{
+      display:grid;
       grid-template-columns: 1fr 1fr;
+      gap:12px;
     }
-    @media (max-width: 900px){ .links{ grid-template-columns: 1fr; } }
-    .linkItem{
-      display:flex; justify-content:space-between; gap:12px; align-items:center;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.03);
+    @media (max-width: 820px){ .links-grid{grid-template-columns:1fr} }
+    .linkrow{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:12px 12px;
+      border:1px solid var(--stroke);
       border-radius:14px;
-      padding:12px 14px;
+      background: rgba(255,255,255,.03);
     }
-    .linkItem strong{ font-size:14px; }
-    .linkItem span{ color:var(--muted); font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .footer{
-      margin-top:34px;
-      padding-top:18px;
-      border-top:1px solid var(--border);
+    .linkrow .lbl{font-weight:700}
+    .linkrow .url{color:var(--muted); font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:420px}
+    .linkrow .go{flex:0 0 auto}
+    .go{padding:8px 10px; border-radius:10px; border:1px solid var(--stroke); background: rgba(0,0,0,.25)}
+    .go:hover{background: rgba(255,255,255,.06)}
+
+    /* FOOTER */
+    footer{
+      margin-top:18px;
+      padding:18px 4px 0;
       color:var(--muted);
-      font-size:13px;
-      display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; align-items:center;
+      font-size:12px;
+      display:flex; flex-wrap:wrap; gap:10px;
+      align-items:center; justify-content:space-between;
+      border-top:1px solid var(--stroke);
     }
-    .notice{
-      border-left:4px solid rgba(246,199,68,.85);
-      padding:12px 14px;
-      background:rgba(246,199,68,.06);
-      border-radius:14px;
-      color:var(--muted);
-      line-height:1.6;
-    }
-    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+
+    /* OPTIONAL: keep anchors visible under sticky nav */
+    section{scroll-margin-top:90px}
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-
-    <!-- Top navigation -->
-    <header class="topbar">
+  <div class="nav">
+    <div class="nav-inner">
       <div class="brand">
-        <div class="brand__logo" aria-hidden="true"></div>
+        <div class="logo" aria-hidden="true"></div>
         <div>
-          <div style="font-size:16px; line-height:1;">IBITIcoin</div>
-          <div style="font-size:12px; color:var(--muted); margin-top:2px;">BNB Chain • Community-driven • Transparent</div>
+          <strong>IBITIcoin</strong>
+          <small>BNB Chain • community-driven • прозрачность</small>
         </div>
       </div>
 
-      <nav class="nav" aria-label="Primary">
-        <a class="btn btn--ghost" href="/index.html">Home</a>
-        <a class="btn btn--ghost" href="/how-to-buy.html">How to Buy</a>
-        <a class="btn btn--ghost" href="/shop.html">Shop</a>
+      <div class="menu">
+        <a class="btn" href="/index.html">🏠 Home</a>
+        <a class="btn" href="/how-to-buy.html">🧾 How to Buy</a>
+        <a class="btn" href="/shop.html">🛒 Shop</a>
 
-        <!-- Keep these two centered next to each other as requested -->
-        <span style="display:flex; gap:10px; align-items:center;">
-          <a class="btn btn--light" href="/whitepaper.html">Whitepaper</a>
-          <a class="btn btn--light" href="/why.html" aria-current="page">Why IBITIcoin</a>
-        </span>
-
-        <a class="btn" href="/whitepaper.pdf" download>Download PDF</a>
-      </nav>
-    </header>
-
-    <!-- Hero -->
-    <section class="hero">
-      <div class="card">
-        <h1>Why IBITIcoin?</h1>
-        <p class="sub">
-          IBITIcoin exists because real ecosystems are built <b>step by step</b> — with transparency, verified on-chain mechanics,
-          and a community that grows together. No hype theatre. No hidden tricks.
-        </p>
-
-        <div class="pillrow" role="list">
-          <div class="pill" role="listitem"><span class="dot" aria-hidden="true"></span> Token is live on BNB Chain</div>
-          <div class="pill" role="listitem"><span class="dot" aria-hidden="true"></span> Contracts deployed & verified</div>
-          <div class="pill" role="listitem"><span class="dot" aria-hidden="true"></span> IBITI/USDT pool active</div>
-          <div class="pill" role="listitem"><span class="dot" aria-hidden="true"></span> Early-stage, community-driven</div>
-        </div>
-
-        <div class="ctaRow">
-          <a class="btn btn--light" href="/how-to-buy.html">How to Buy</a>
-          <a class="btn" href="/whitepaper.html">Read Whitepaper</a>
-          <a class="btn" href="/shop.html">Open Promo / Shop</a>
-        </div>
-
-        <div class="section" style="margin-top:18px;">
-          <div class="notice">
-            <b>Note:</b> This page will evolve as the project evolves. As IBITIcoin grows, we will update milestones, modules, and
-            public status here — so anyone can track progress honestly.
-          </div>
-        </div>
+        <!-- По твоей просьбе — рядом и по центру -->
+        <a class="btn btn--gold" href="/whitepaper.html">📄 Whitepaper</a>
+        <a class="btn btn--solid" href="/why.html">✨ Why IBITIcoin?</a>
       </div>
 
-      <aside class="card">
-        <h2 style="margin:0 0 10px;">Quick facts</h2>
-        <p class="sub" style="margin:0 0 14px;">
-          Everything important should be verifiable and easy to find.
-        </p>
-
-        <div class="mini" style="margin-bottom:12px;">
-          <h3>Network</h3>
-          <p>BNB Smart Chain (BEP-20)</p>
-        </div>
-
-        <div class="mini" style="margin-bottom:12px;">
-          <h3>Token Contract</h3>
-          <p class="mono" style="word-break:break-all;">
-            0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb
-          </p>
-          <p style="margin-top:10px;">
-            <a class="btn" href="https://bscscan.com/token/0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb" target="_blank" rel="noopener noreferrer">View on BscScan</a>
-          </p>
-        </div>
-
-        <div class="mini">
-          <h3>IBITI/USDT (Trade)</h3>
-          <p style="margin:0 0 10px; color:var(--muted); font-size:14px; line-height:1.6;">
-            Use the official PancakeSwap route and always verify the contract address.
-          </p>
-          <a class="btn btn--light" href="https://pancakeswap.finance/swap?chain=bsc&outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&inputCurrency=0x55d398326f99059fF775485246999027B3197955" target="_blank" rel="noopener noreferrer">
-            Open PancakeSwap
-          </a>
-        </div>
-      </aside>
-    </section>
-
-    <!-- Main content -->
-    <section class="card section" style="margin-top:18px;">
-      <h2>Why does IBITIcoin exist?</h2>
-      <p>
-        IBITIcoin was not created to chase trends, copy memes, or promise miracles.
-        It was created to build a <b>transparent, community-driven DeFi ecosystem</b> on BNB Chain — openly, honestly, and steadily.
-      </p>
-      <p>
-        We believe strong crypto projects are not born overnight.
-        They grow when real people support them early, understand what is being built, and move forward together.
-      </p>
-
-      <div class="hr"></div>
-
-      <h2>Where are we right now?</h2>
-      <p>
-        IBITIcoin is <b>early-stage</b>. The token is live, the pool is active, and contracts are deployed & verified.
-        Everything important is on-chain and publicly visible.
-      </p>
-      <p>
-        Liquidity is currently small — and we are open about it. This is not a weakness; it is a normal starting point for a
-        community-driven project that grows by real participation rather than artificial hype.
-      </p>
-
-      <div class="grid" role="list" aria-label="Core principles">
-        <div class="mini" role="listitem">
-          <h3>Transparency</h3>
-          <p>On-chain verification, clear links, and public status updates. No hidden mechanics.</p>
-        </div>
-        <div class="mini" role="listitem">
-          <h3>Community-first</h3>
-          <p>The project is built with the community, not “sold” to it.</p>
-        </div>
-        <div class="mini" role="listitem">
-          <h3>Long-term building</h3>
-          <p>We ship modules step by step instead of announcing empty promises.</p>
-        </div>
+      <div class="nav-right">
+        <a class="btn" href="/IBITIcoin_Whitepaper.pdf">⬇️ Download PDF</a>
       </div>
-
-      <div class="hr"></div>
-
-      <h2>Why early participation matters</h2>
-      <p>
-        Early-stage participation helps strengthen fundamentals: visibility, liquidity, integrations, and community confidence.
-        There are no forced investments and no pressure — everyone makes their own decision.
-      </p>
-      <ul class="list">
-        <li>Support liquidity growth organically</li>
-        <li>Strengthen the project’s position on the market</li>
-        <li>Participate before large players arrive</li>
-        <li>Help shape the future direction of the ecosystem</li>
-      </ul>
-
-      <div class="hr"></div>
-
-      <h2>What are we building?</h2>
-      <p>
-        IBITIcoin is designed to be more than just a token. The roadmap focuses on real utility and on-chain modules built gradually
-        and transparently.
-      </p>
-      <ul class="list">
-        <li><b>Staking mechanisms</b> to reward long-term supporters</li>
-        <li><b>DAO governance</b> for community participation in decisions</li>
-        <li><b>NFT-based utilities</b> and access features</li>
-        <li>Additional utility modules released step by step</li>
-      </ul>
-
-      <div class="hr"></div>
-
-      <h2>Transparency & security</h2>
-      <p>
-        Security is a mindset, not a slogan. Always verify links and contract addresses manually.
-      </p>
-      <div class="notice">
-        <b>Security reminder:</b> The IBITIcoin team will <b>never</b> DM you first. If someone contacts you claiming to be “support”
-        or “admin”, treat it as suspicious. Use only the official links below.
-      </div>
-
-      <div class="hr"></div>
-
-      <h2>Official links</h2>
-      <div class="links">
-        <div class="linkItem">
-          <strong>Website</strong>
-          <span>https://www.ibiticoin.com</span>
-          <a class="btn" href="https://www.ibiticoin.com" target="_blank" rel="noopener noreferrer">Open</a>
-        </div>
-
-        <div class="linkItem">
-          <strong>Whitepaper (EN)</strong>
-          <span>https://www.ibiticoin.com/whitepaper.html</span>
-          <a class="btn" href="/whitepaper.html">Open</a>
-        </div>
-
-        <div class="linkItem">
-          <strong>Telegram Chat</strong>
-          <span>https://t.me/IBITIcoin_chat</span>
-          <a class="btn" href="https://t.me/IBITIcoin_chat" target="_blank" rel="noopener noreferrer">Open</a>
-        </div>
-
-        <div class="linkItem">
-          <strong>X (Twitter)</strong>
-          <span>https://x.com/ibiticoin</span>
-          <a class="btn" href="https://x.com/ibiticoin" target="_blank" rel="noopener noreferrer">Open</a>
-        </div>
-
-        <div class="linkItem">
-          <strong>Facebook Group</strong>
-          <span>https://www.facebook.com/groups/ibiticoin</span>
-          <a class="btn" href="https://www.facebook.com/groups/ibiticoin" target="_blank" rel="noopener noreferrer">Open</a>
-        </div>
-
-        <div class="linkItem">
-          <strong>Facebook Page</strong>
-          <span>https://www.facebook.com/ibiticoin.ibiticoin</span>
-          <a class="btn" href="https://www.facebook.com/ibiticoin.ibiticoin" target="_blank" rel="noopener noreferrer">Open</a>
-        </div>
-
-        <div class="linkItem">
-          <strong>LinkedIn</strong>
-          <span>https://www.linkedin.com/in/ibiticoin</span>
-          <a class="btn" href="https://www.linkedin.com/in/ibiticoin" target="_blank" rel="noopener noreferrer">Open</a>
-        </div>
-
-        <div class="linkItem">
-          <strong>Trade IBITI/USDT (BSC)</strong>
-          <span>pancakeswap.finance/swap?chain=bsc...</span>
-          <a class="btn btn--light" href="https://pancakeswap.finance/swap?chain=bsc&outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&inputCurrency=0x55d398326f99059fF775485246999027B3197955" target="_blank" rel="noopener noreferrer">Open</a>
-        </div>
-      </div>
-
-      <div class="hr"></div>
-
-      <h2>Home • Whitepaper • How to Buy • Shop</h2>
-      <p class="sub" style="margin:0;">
-        Use the navigation buttons at the top of this page. This page is part of the public documentation and will be updated as the
-        project grows.
-      </p>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <div>© <span id="y"></span> IBITIcoin. All rights reserved.</div>
-      <div>
-        <span class="mono">Early-stage • Transparent • Community-driven</span>
-      </div>
-    </footer>
-
+    </div>
   </div>
 
-  <script>
-    // Small helper
-    document.getElementById("y").textContent = new Date().getFullYear();
-  </script>
+  <main class="wrap">
+    <div class="hero">
+      <div class="card pad">
+        <h1>Почему именно IBITIcoin?</h1>
+        <p class="lead">
+          Коротко и честно: потому что мы строим проект, который можно <b>проверить</b>, а не “поверить на слово”.
+          Без скрытых механизмов, без мутных обещаний, без давления. Всё, что важно — видно в блокчейне и в открытых материалах.
+        </p>
+
+        <div class="pill-row">
+          <div class="pill"><span class="dot"></span> Токен запущен в BNB Chain</div>
+          <div class="pill"><span class="dot"></span> Пул IBITI/USDT уже активен</div>
+          <div class="pill"><span class="dot"></span> Контракты задеплоены и верифицированы</div>
+          <div class="pill"><span class="dot"></span> Проект на ранней стадии (это честно)</div>
+        </div>
+
+        <div class="cta">
+          <a class="btn btn--solid" href="/how-to-buy.html">Как купить</a>
+          <a class="btn btn--gold" href="/whitepaper.html">Открыть Whitepaper</a>
+          <a class="btn" href="/shop.html">Открыть Promo / Shop</a>
+          <a class="btn" href="https://bscscan.com/token/0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb" target="_blank" rel="noopener">BscScan</a>
+          <a class="btn" href="https://pancakeswap.finance/swap?chain=bsc&outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&inputCurrency=0x55d398326f99059fF775485246999027B3197955" target="_blank" rel="noopener">PancakeSwap</a>
+        </div>
+
+        <div class="note">
+          <b>Примечание:</b> эта страница будет обновляться по мере развития IBITIcoin: рост ликвидности, новые модули, партнёрства, аудиты и публичные статусы.
+          Мы специально держим это “живым документом”, чтобы любой мог следить за прогрессом.
+        </div>
+      </div>
+
+      <aside class="card pad facts" aria-label="Краткие факты">
+        <div class="fact">
+          <b>Сеть</b>
+          <div class="small">BNB Smart Chain (BEP-20)</div>
+        </div>
+        <div class="fact">
+          <b>Контракт токена</b>
+          <div class="mono">0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</div>
+          <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap">
+            <a class="btn btn--gold" style="padding:8px 10px" href="https://bscscan.com/token/0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb" target="_blank" rel="noopener">Просмотреть на BscScan</a>
+          </div>
+        </div>
+        <div class="fact">
+          <b>Торговая пара</b>
+          <div class="small">IBITI / USDT (PancakeSwap)</div>
+          <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap">
+            <a class="btn btn--solid" style="padding:8px 10px" href="https://pancakeswap.finance/swap?chain=bsc&outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&inputCurrency=0x55d398326f99059fF775485246999027B3197955" target="_blank" rel="noopener">Открыть PancakeSwap</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="grid">
+      <div class="card pad">
+        <div class="h2">Зачем существует IBITIcoin?</div>
+        <p class="small">
+          Большинство “малых токенов” живут на обещаниях, мемах и закрытых чатах. Мы делаем наоборот:
+          строим понятную структуру, которую можно проверять, а не угадывать.
+        </p>
+        <ul class="list">
+          <li><b>Прозрачность:</b> ссылки, контракты, статусы — публично.</li>
+          <li><b>Пошаговое развитие:</b> модули запускаются по мере готовности, без “магии”.</li>
+          <li><b>Ориентация на сообщество:</b> ранняя стадия = честный старт и шанс войти до “толпы”.</li>
+        </ul>
+      </div>
+
+      <div class="card pad">
+        <div class="h2">Где мы сейчас?</div>
+        <p class="small">
+          Проект живой, но молодой. Есть токен, есть пул, есть инфраструктура и соцсети.
+          Ликвидность пока небольшая — это нормальная реальность старта, и именно её усиление ускоряет рост.
+        </p>
+        <ul class="list">
+          <li><b>Токен и пул:</b> уже запущены.</li>
+          <li><b>Контракты:</b> верифицированы и проверяемы.</li>
+          <li><b>Следующий этап:</b> рост ликвидности + расширение функционала (staking/DAO/NFT/утилиты).</li>
+        </ul>
+      </div>
+
+      <div class="card pad">
+        <div class="h2">Почему раннее участие важно?</div>
+        <p class="small">
+          На ранней стадии участие — это не “хайп”, а поддержка основы: ликвидности, узнаваемости и доверия.
+          Никакого давления: каждый решает сам, только если ему комфортно.
+        </p>
+        <ul class="list">
+          <li>Поддержка органического роста ликвидности.</li>
+          <li>Укрепление позиции проекта на рынке.</li>
+          <li>Участие до прихода крупных игроков.</li>
+          <li>Вклад в направление развития сообщества.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card pad" style="margin-top:16px">
+      <div class="h2">Как можно участвовать уже сейчас?</div>
+      <p class="small">
+        Мы сделали простой механизм на сайте: участие + бонус за ранний этап.
+      </p>
+      <ul class="list">
+        <li><b>+10% IBITI бонус</b> на покупки, которые проходят через официальный сайт (Promo/Shop).</li>
+        <li>После первой покупки вы получаете <b>персональную реферальную ссылку</b>.</li>
+        <li>За каждого друга, который совершит <b>первую покупку</b> по вашей ссылке — вы получаете <b>+1 IBITI</b>.</li>
+      </ul>
+
+      <div class="note" style="margin-top:14px">
+        <b>Важно:</b> бонусы действуют только через официальный механизм на сайте.
+        Покупки “где-то ещё” могут не участвовать в промо — поэтому всегда проверяйте ссылку и домен.
+      </div>
+    </section>
+
+    <section class="card pad" style="margin-top:16px">
+      <div class="h2">Прозрачность и безопасность</div>
+      <p class="small">
+        Безопасность — это не лозунг. Это привычка проверять ссылки и адреса контрактов вручную.
+      </p>
+      <div class="note">
+        Команда IBITIcoin <b>никогда</b> не пишет первой в личные сообщения.  
+        Если вам кто-то пишет “от имени проекта”, “саппорт”, “админ” — это почти наверняка мошенник.  
+        Используйте только официальные ссылки ниже.
+      </div>
+    </section>
+
+    <section class="links">
+      <div class="card pad">
+        <div class="h2">Официальные ссылки</div>
+        <div class="links-grid">
+          <div class="linkrow">
+            <div>
+              <div class="lbl">Веб-сайт</div>
+              <div class="url">https://www.ibiticoin.com</div>
+            </div>
+            <a class="go btn btn--gold" href="https://www.ibiticoin.com" target="_blank" rel="noopener">Открыть</a>
+          </div>
+
+          <div class="linkrow">
+            <div>
+              <div class="lbl">Whitepaper (EN)</div>
+              <div class="url">https://www.ibiticoin.com/whitepaper.html</div>
+            </div>
+            <a class="go btn" href="https://www.ibiticoin.com/whitepaper.html" target="_blank" rel="noopener">Открыть</a>
+          </div>
+
+          <div class="linkrow">
+            <div>
+              <div class="lbl">Telegram чат</div>
+              <div class="url">https://t.me/IBITIcoin_chat</div>
+            </div>
+            <a class="go btn" href="https://t.me/IBITIcoin_chat" target="_blank" rel="noopener">Открыть</a>
+          </div>
+
+          <div class="linkrow">
+            <div>
+              <div class="lbl">X (Twitter)</div>
+              <div class="url">https://x.com/ibiticoin</div>
+            </div>
+            <a class="go btn" href="https://x.com/ibiticoin" target="_blank" rel="noopener">Открыть</a>
+          </div>
+
+          <div class="linkrow">
+            <div>
+              <div class="lbl">Facebook группа</div>
+              <div class="url">https://www.facebook.com/groups/ibiticoin</div>
+            </div>
+            <a class="go btn" href="https://www.facebook.com/groups/ibiticoin" target="_blank" rel="noopener">Открыть</a>
+          </div>
+
+          <div class="linkrow">
+            <div>
+              <div class="lbl">Facebook страница</div>
+              <div class="url">https://www.facebook.com/ibiticoin.ibiticoin</div>
+            </div>
+            <a class="go btn" href="https://www.facebook.com/ibiticoin.ibiticoin" target="_blank" rel="noopener">Открыть</a>
+          </div>
+
+          <div class="linkrow">
+            <div>
+              <div class="lbl">LinkedIn</div>
+              <div class="url">https://www.linkedin.com/in/ibiticoin</div>
+            </div>
+            <a class="go btn" href="https://www.linkedin.com/in/ibiticoin" target="_blank" rel="noopener">Открыть</a>
+          </div>
+
+          <div class="linkrow">
+            <div>
+              <div class="lbl">Торговля IBITI/USDT</div>
+              <div class="url">pancakeswap.finance/swap?chain=bsc…</div>
+            </div>
+            <a class="go btn btn--solid" href="https://pancakeswap.finance/swap?chain=bsc&outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&inputCurrency=0x55d398326f99059fF775485246999027B3197955" target="_blank" rel="noopener">Открыть</a>
+          </div>
+        </div>
+
+        <div class="small" style="margin-top:12px">
+          Навигация: <b>Home</b> • <b>How to Buy</b> • <b>Shop</b> • <b>Whitepaper</b> • <b>Why IBITIcoin</b>  
+          <br>Эта страница является частью публичной документации и будет обновляться по мере развития проекта.
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div>© 2026 IBITIcoin. Все права защищены.</div>
+      <div>Ранняя стадия • Прозрачность • Ориентация на сообщество</div>
+    </footer>
+  </main>
 </body>
 </html>
