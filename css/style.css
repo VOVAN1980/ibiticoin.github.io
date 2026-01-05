@@ -1293,7 +1293,9 @@ html, body {
   margin: 0 auto;
   padding: 0 16px;
   display: flex;
-  justify-content: center; /* кнопка по центру */
+  justify-content: center;
+  gap: 18px;         /* ← расстояние между кнопками */
+  flex-wrap: wrap;   /* ← чтобы на мобилке переносились красиво */
 }
 
 .promo-wrapper {
@@ -1387,4 +1389,5 @@ html, body {
 .gift-text {
   white-space: nowrap;
 }
+
 
