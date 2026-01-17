@@ -514,7 +514,7 @@ async function addTokenToWallet() {
     const modal = $("pancakeModal");
     const overlay = $("pancakeOverlay");
     const link = $("pancakeOpenLink");
-    const url = "https://pancakeswap.finance/swap?chain=bsc&outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb";
+    const url = "https://pancakeswap.finance/swap?chain=bsc&outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&inputCurrency=0x55d398326f99059fF775485246999027B3197955";
 
     if (link) link.href = url;
     if (overlay) overlay.classList.add("open");
