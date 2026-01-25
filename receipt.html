@@ -415,12 +415,14 @@
     const totalStr = smartTrim(ethers.formatUnits(total, ibitiDec), 8);
 
     let priceStr = "—";
-    try{
-      if (market > 0n){
-        const scaled = (paid * 100000000n) / market; // 8-dec fixed
-        priceStr = smartTrim(ethers.formatUnits(scaled, 8), 10);
-      }
-    }catch(_){}
+try {
+  if (total > 0n) {
+    const paidF = Number(ethers.formatUnits(paid, usdtDec));
+    const totalF = Number(ethers.formatUnits(total, ibitiDec));
+    const p = paidF / totalF;
+    priceStr = smartTrim(p.toFixed(10), 10);
+  }
+} catch (_) {}
 
     return { paidStr, marketStr, bonusStr, totalStr, priceStr };
   }
