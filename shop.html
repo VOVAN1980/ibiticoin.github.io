@@ -1259,12 +1259,12 @@
   const isMobile = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
   function toast(msg){
-    const el = $("toast");
-    if (!el) return alert(msg);
-    el.textContent = msg;
-    el.classList.add("show");
-    setTimeout(() => el.classList.remove("show"), 2400);
-  }
+  const el = $("toast");
+  if (!el) return; // не алертим
+  el.textContent = msg;
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 2400);
+}
 
   function getLink(){
     const inp = $("referralLink");
@@ -1412,8 +1412,10 @@ if (nativeBtn) {
 <script src="js/app.js"></script>
 <script src="js/xmas.js"></script>
 
+<div id="toast"></div>
 </body>
 </html>
+
 
 
 
