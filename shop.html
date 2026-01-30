@@ -1343,6 +1343,7 @@
         catch(_) { toast("Copy failed. Long-press and copy the link."); }
       },
       shareTgBtn:   () => openUrl("https://t.me/share/url?url=" + encodeURIComponent(linkOrUrl())),
+      shareDiscordBtn: () => openUrl("https://discord.gg/ePyBt7jM?ref=" + encodeURIComponent(linkOrUrl())),
       shareWaBtn:   () => openUrl("https://wa.me/?text=" + encodeURIComponent(linkOrUrl())),
       shareVbBtn:   () => openUrl("viber://forward?text=" + encodeURIComponent(linkOrUrl())),
       shareVkBtn:   () => openUrl("https://vk.com/share.php?url=" + encodeURIComponent(linkOrUrl())),
@@ -1403,5 +1404,6 @@ if (nativeBtn) {
 
 </body>
 </html>
+
 
 
