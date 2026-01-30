@@ -1112,6 +1112,11 @@
       <span>Telegram</span>
     </button>
 
+    <button class="share-btn" id="shareDiscordBtn" type="button">
+      <span class="share-ico">💠</span>
+       <span>Discord</span>
+     </button>
+
     <button class="share-btn" id="shareWaBtn" type="button">
       <span class="share-ico">
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1343,7 +1348,12 @@
         catch(_) { toast("Copy failed. Long-press and copy the link."); }
       },
       shareTgBtn:   () => openUrl("https://t.me/share/url?url=" + encodeURIComponent(linkOrUrl())),
-      shareDiscordBtn: () => openUrl("https://discord.gg/ePyBt7jM?ref=" + encodeURIComponent(linkOrUrl())),
+      shareDiscordBtn: async () => {
+      const v = linkOrUrl();
+      try { await navigator.clipboard.writeText(v); toast("Copied! Paste it in Discord."); }
+      catch(_) { toast("Copy failed. Long-press and copy the link."); }
+      openUrl("https://discord.gg/ePyBt7jM");
+      },
       shareWaBtn:   () => openUrl("https://wa.me/?text=" + encodeURIComponent(linkOrUrl())),
       shareVbBtn:   () => openUrl("viber://forward?text=" + encodeURIComponent(linkOrUrl())),
       shareVkBtn:   () => openUrl("https://vk.com/share.php?url=" + encodeURIComponent(linkOrUrl())),
@@ -1404,6 +1414,7 @@ if (nativeBtn) {
 
 </body>
 </html>
+
 
 
 
