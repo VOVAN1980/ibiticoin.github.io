@@ -91,7 +91,7 @@
     { id: "telegram", name: "Telegram", icon: "📨", url: "https://t.me/share/url?url={url}" },
 
     // Discord = join link (no {url})
-    { id: "discord", name: "Discord", icon: "💠", url: "https://discord.gg/wEc4zSdt4w" },
+    { id: "discord", name: "Discord", icon: "💠", url: "https://discord.gg/cHbDXnUKMQ" },
 
     { id: "whatsapp", name: "WhatsApp", icon: "💬", url: "https://api.whatsapp.com/send?text={url}" },
     { id: "viber", name: "Viber", icon: "📱", url: "viber://forward?text={url}" },
