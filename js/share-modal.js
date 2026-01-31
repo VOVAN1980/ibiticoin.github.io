@@ -89,10 +89,6 @@
   const shareData = [
     { id: "copy", name: "Copy", icon: "📋", action: "copy" },
     { id: "telegram", name: "Telegram", icon: "📨", url: "https://t.me/share/url?url={url}" },
-
-    // Discord = join link (no {url})
-    { id: "discord", name: "Discord", icon: "💠", url: "https://discord.gg/wEc4zSdt4w" },
-
     { id: "whatsapp", name: "WhatsApp", icon: "💬", url: "https://api.whatsapp.com/send?text={url}" },
     { id: "viber", name: "Viber", icon: "📱", url: "viber://forward?text={url}" },
     { id: "vk", name: "VK", icon: "🟦", url: "https://vk.com/share.php?url={url}" },
@@ -131,12 +127,7 @@
           setTimeout(() => (b.innerHTML = `${s.icon} ${s.name}`), 1000);
           return;
         }
-
-        const targetUrl = s.url.includes("{url}")
-          ? s.url.replace("{url}", encodeURIComponent(location.href))
-          : s.url;
-
-        window.open(targetUrl, "_blank");
+        window.open(s.url.replace("{url}", encodeURIComponent(location.href)), "_blank");
       });
       btns.appendChild(b);
     });
