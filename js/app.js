@@ -200,30 +200,36 @@
   }
 
   // ===== on-chain purchase detect (logs) =====
-  async function checkPurchasedOnchain(account) {
-    const netCfg = net();
-    if (!netCfg.promoRouter || !isAddr(netCfg.promoRouter) || !account) return false;
+async function checkPurchasedOnchain(account) {
+  const netCfg = net();
+  if (!netCfg.promoRouter || !isAddr(netCfg.promoRouter) || !account) return false;
 
-    const rp = getReadProvider();
-    const iface = new ethers.Interface([
-      "event PromoBuy(address indexed buyer, address indexed referrer, uint256 paymentAmount, uint256 boughtAmount, uint256 bonusAmount, uint256 refAmount)"
-    ]);
-    const topic0 = iface.getEvent("PromoBuy").topicHash;
-    const topic1 = ethers.zeroPadValue(account, 32);
+  const rp = getReadProvider();
+  const iface = new ethers.Interface([
+    "event PromoBuy(address indexed buyer, address indexed referrer, uint256 paymentAmount, uint256 boughtAmount, uint256 bonusAmount, uint256 refAmount)"
+  ]);
+  const topic0 = iface.getEvent("PromoBuy").topicHash;
+  const topic1 = ethers.zeroPadValue(account, 32);
 
-    const toBlock = await rp.getBlockNumber();
-    const scan = Number(netCfg.logScanBlocks || 200000);
-    const fromBlock = Math.max(0, toBlock - scan);
+  const toBlock = await rp.getBlockNumber();
+  const scan = Number(netCfg.logScanBlocks || 50000); // ← БЫЛО 200000
+  const fromBlock = Math.max(0, toBlock - scan);
 
-    const logs = await rp.getLogs({
+  let logs = [];
+  try {
+    logs = await rp.getLogs({
       address: netCfg.promoRouter,
       fromBlock,
       toBlock,
       topics: [topic0, topic1]
     });
-
-    return Array.isArray(logs) && logs.length > 0;
+  } catch (e) {
+    console.warn("getLogs rate-limited, skip check");
+    return false;
   }
+
+  return Array.isArray(logs) && logs.length > 0;
+}
 
   async function updateReferralUI(account) {
     const netCfg = net();
