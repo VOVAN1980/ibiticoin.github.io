@@ -254,12 +254,71 @@
   box-shadow: 0 12px 28px rgba(61,127,255,.5);
   filter: brightness(1.05);
 }
+/* Карточка терминала */
+.labs-terminal{
+  position: relative;
+  border: 1px solid rgba(80,140,255,.35);
+  background: rgba(10,14,28,.55);
+  border-radius: 14px;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+
+/* Базовое мягкое свечение */
+.labs-terminal::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  border-radius: inherit;
+  pointer-events:none;
+  box-shadow:
+    0 0 0 1px rgba(90,150,255,.18),
+    0 0 24px rgba(70,130,255,.14);
+  opacity:.55;
+  transition: opacity .25s ease, box-shadow .25s ease;
+}
+
+/* Hover — усиление */
+.labs-terminal:hover{
+  transform: translateY(-2px);
+  border-color: rgba(120,180,255,.65);
+  box-shadow:
+    0 10px 28px rgba(0,0,0,.45),
+    0 0 28px rgba(66,133,244,.22);
+}
+
+.labs-terminal:hover::before{
+  opacity:1;
+  box-shadow:
+    0 0 0 1px rgba(120,180,255,.35),
+    0 0 36px rgba(66,133,244,.28),
+    0 0 70px rgba(66,133,244,.14);
+}
 
 @media (max-width: 640px){
   .labs-section{ padding: 56px 14px; }
   .terminal-body{ font-size: 12px; line-height: 1.5; }
   .btn-labs{ width: 100%; min-width: 0; }
 }
+
+  .labs-terminal::after{
+  content:"";
+  position:absolute;
+  top:0; left:-40%;
+  width:30%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(120,180,255,.20), transparent);
+  transform: skewX(-20deg);
+  opacity:0;
+  transition: opacity .25s ease;
+  pointer-events:none;
+}
+.labs-terminal:hover::after{
+  opacity:1;
+  animation: labs-sweep 1.2s ease;
+}
+@keyframes labs-sweep{
+  from{ left:-40%; }
+  to{ left:130%; }
+}  
   </style>
 </head>
 <body>
@@ -825,5 +884,6 @@
 <script src="js/share-modal.js?v=2"></script>
 </body>
 </html>
+
 
 
