@@ -3,18 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- SEO & Metadata -->
     <title>IBITI Labs | Eternal Permission Kernel</title>
-    <meta name="description" content="Security-validated execution kernel for AI Agents. 157/157 tests passing. Invariant-enforced safety.">
+    <meta name="description" content="Security-validated execution kernel for AI Agents.">
     
-    <!-- Open Graph (Замените ссылку на картинку на свою реальную) -->
+    <!-- OG Tags -->
     <meta property="og:image" content="https://ibiticoin.com/assets/og-labs.jpg">
     <meta name="theme-color" content="#030407">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,12 +23,9 @@
                     colors: {
                         void: '#030407',
                         surface: '#0A0C10',
-                        glass: 'rgba(255, 255, 255, 0.03)',
-                        border: 'rgba(255, 255, 255, 0.08)',
                         primary: '#3B82F6',
                         accent: '#8B5CF6',
                         safe: '#10B981',
-                        danger: '#F43F5E',
                         muted: '#64748B',
                     },
                     fontFamily: {
@@ -40,18 +34,10 @@
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     animation: {
-                        'scan': 'scan 4s linear infinite',
                         'blink': 'blink 1s steps(1) infinite',
                     },
                     keyframes: {
-                        scan: {
-                            '0%': { transform: 'translateY(-100%)', opacity: '0' },
-                            '50%': { opacity: '1' },
-                            '100%': { transform: 'translateY(500%)', opacity: '0' },
-                        },
-                        blink: {
-                            '50%': { opacity: '0' }
-                        }
+                        blink: { '50%': { opacity: '0' } }
                     }
                 }
             }
@@ -61,78 +47,103 @@
     <style>
         body { background-color: #030407; color: #ffffff; overflow-x: hidden; }
         
-        /* --- 1. Background Canvas --- */
-        #neural-bg {
+        /* --- 1. FILM GRAIN (Cinematic Texture) --- */
+        .noise-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            /* Fade out at bottom for smooth footer transition */
-            mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* --- 2. Reveal Animations (Scroll) --- */
+        /* --- 2. HERO ENTRANCE (Depth & Blur) --- */
+        @keyframes heroIn {
+            0% { opacity: 0; transform: translateY(40px) scale(0.96); filter: blur(12px); }
+            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+        .hero-enter { animation: heroIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+
+        /* --- 3. REVEAL ON SCROLL --- */
         .reveal {
             opacity: 0;
-            transform: translateY(30px) scale(0.98);
-            filter: blur(4px);
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(40px) scale(0.98);
+            filter: blur(8px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            filter: blur(0);
-        }
-        
-        /* Stagger delays for children */
-        .reveal-delay-1 { transition-delay: 0.1s; }
-        .reveal-delay-2 { transition-delay: 0.2s; }
-        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal.active { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 
-        /* --- 3. Glass & Polish --- */
-        .glass-panel {
+        /* --- 4. SPOTLIGHT CARD (Hover Effect) --- */
+        .spotlight-card {
             background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease, border-color 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
         }
-        .glass-panel:hover {
-            border-color: rgba(59, 130, 246, 0.3);
-            transform: translateY(-2px);
+        /* The glow follows mouse via JS */
+        .spotlight-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .spotlight-card:hover::before { opacity: 1; }
+        
+        .spotlight-content { position: relative; z-index: 1; }
+
+        /* --- 5. MAGNETIC BUTTONS --- */
+        .magnet {
+            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
         }
 
-        /* --- 4. Code Window "Scanline" --- */
+        /* --- 6. SCANLINE & CODE --- */
+        .code-window {
+            background: #050608;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 20px 50px -10px rgba(0,0,0,0.5);
+        }
         .scanline {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 20px;
-            background: linear-gradient(to bottom, transparent, rgba(59, 130, 246, 0.2), transparent);
-            animation: scan 3s linear infinite;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.2) 51%);
+            background-size: 100% 4px;
             pointer-events: none;
             z-index: 10;
+            opacity: 0.3;
         }
+        .beam {
+            position: absolute; top: 0; left: 0; width: 100%; height: 20px;
+            background: linear-gradient(to bottom, transparent, rgba(59,130,246,0.1), transparent);
+            animation: beam 4s linear infinite;
+            pointer-events: none;
+            z-index: 11;
+        }
+        @keyframes beam { 0% { transform: translateY(-100%); } 100% { transform: translateY(600%); } }
 
-        ::selection { background: rgba(59, 130, 246, 0.3); color: white; }
+        /* Canvas z-index */
+        #neural-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
     </style>
 </head>
-<body class="antialiased flex flex-col min-h-screen">
+<body class="antialiased flex flex-col min-h-screen selection:bg-primary/30 selection:text-white">
 
-    <!-- CANVAS BACKGROUND (Living Algorithms) -->
+    <!-- NOISE TEXTURE -->
+    <div class="noise-overlay"></div>
+    
+    <!-- BACKGROUND CANVAS -->
     <canvas id="neural-bg"></canvas>
 
     <!-- NAVBAR -->
-    <nav class="fixed top-0 w-full z-50 border-b border-white/5 bg-void/80 backdrop-blur-md transition-all duration-300" id="navbar">
+    <nav class="fixed top-0 w-full z-50 border-b border-white/5 bg-void/80 backdrop-blur-md transition-all duration-300">
         <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-6">
                 <a href="/" class="group flex items-center gap-2 text-sm font-medium text-muted hover:text-white transition">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
                     <span class="hidden sm:inline">Main</span>
                 </a>
                 <div class="h-4 w-[1px] bg-white/10 hidden sm:block"></div>
@@ -143,79 +154,71 @@
             </div>
             <div class="hidden md:flex items-center gap-8 text-sm font-medium text-muted">
                 <a href="#docs" class="hover:text-white transition">Documentation</a>
-                <a href="https://github.com/ibiti" target="_blank" class="flex items-center gap-2 hover:text-white transition group">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="group-hover:text-white"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                    GitHub
-                </a>
+                <a href="https://github.com/ibiti" target="_blank" class="hover:text-white transition">GitHub</a>
             </div>
         </div>
     </nav>
 
     <main class="flex-grow">
         <!-- HERO SECTION -->
-        <section class="relative min-h-screen flex flex-col justify-center items-center pt-24 px-6 overflow-hidden">
+        <section class="relative min-h-[90vh] flex flex-col justify-center items-center pt-24 px-6 perspective-1000">
             
-            <!-- Vignette (Focus on center) -->
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#030407_85%)] pointer-events-none z-0"></div>
+            <!-- Vignette -->
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#030407_90%)] pointer-events-none"></div>
 
-            <div class="relative z-10 max-w-5xl w-full text-center space-y-8 reveal active">
+            <div class="relative z-10 max-w-5xl w-full text-center space-y-8" id="hero-container">
                 
-                <!-- Terminal Typer -->
-                <div class="font-mono text-xs text-primary mb-2 h-4">
-                    <span id="typer"></span><span class="animate-blink">_</span>
+                <!-- Badge -->
+                <div class="hero-enter flex justify-center">
+                    <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-surface/50 border border-white/10 shadow-lg backdrop-blur-sm hover:border-white/20 transition">
+                        <span class="flex h-2 w-2 relative">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-safe opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-safe"></span>
+                        </span>
+                        <span class="text-xs font-mono text-muted tracking-wide">
+                            KERNEL: <span class="text-white">Active</span>
+                        </span>
+                    </div>
                 </div>
 
-                <!-- Status Badge -->
-                <div class="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-surface/80 backdrop-blur border border-white/10 shadow-lg mb-2">
-                    <span class="flex h-2 w-2 relative">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-safe opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-safe"></span>
-                    </span>
-                    <span class="text-xs font-mono text-muted tracking-wide">
-                        KERNEL STATUS: <span class="text-white">Active</span>
-                    </span>
-                    <div class="h-3 w-[1px] bg-white/10"></div>
-                    <span class="text-xs font-mono text-primary">v1.0.0</span>
-                </div>
-
-                <!-- H1 -->
-                <h1 class="font-display text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight leading-[1.05] text-white drop-shadow-2xl">
+                <!-- Headline with Parallax ID -->
+                <h1 id="hero-title" class="hero-enter delay-100 font-display text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight leading-[1.05] text-white drop-shadow-2xl will-change-transform">
                     Trust Your <br />
                     <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-violet-400 to-white">
                         Artificial Agents
                     </span>
                 </h1>
 
-                <!-- Sub -->
-                <p class="text-lg md:text-xl text-muted max-w-2xl mx-auto leading-relaxed">
+                <!-- Subheadline -->
+                <p id="hero-sub" class="hero-enter delay-200 text-lg md:text-xl text-muted max-w-2xl mx-auto leading-relaxed will-change-transform">
                     The operating system for on-chain intelligence.
-                    <span class="text-gray-300 border-b border-white/10 pb-0.5">Immutable permissions</span>, modular validators, and instant revocation.
+                    <span class="text-gray-300">Immutable permissions</span>, modular validators, and instant revocation.
                 </p>
 
-                <!-- Buttons -->
-                <div class="flex flex-col sm:flex-row gap-4 justify-center pt-8">
-                    <a href="mailto:partners@ibiticoin.com" class="group px-8 py-4 rounded-xl bg-white text-black font-semibold hover:bg-gray-200 transition shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] flex items-center justify-center gap-2">
+                <!-- Magnetic Buttons -->
+                <div id="hero-cta" class="hero-enter delay-300 flex flex-col sm:flex-row gap-4 justify-center pt-8">
+                    <a href="mailto:partners@ibiticoin.com" class="magnet group px-8 py-4 rounded-xl bg-white text-black font-semibold hover:bg-gray-200 transition shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] flex items-center justify-center gap-2">
                         Request Pilot
                         <svg class="transition-transform group-hover:translate-x-1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </a>
-                    <a href="#spec" class="px-8 py-4 rounded-xl bg-surface/50 border border-white/10 text-white font-semibold hover:bg-white/10 transition backdrop-blur-md flex items-center justify-center gap-2">
+                    <a href="#spec" class="magnet px-8 py-4 rounded-xl bg-surface/50 border border-white/10 text-white font-semibold hover:bg-white/10 transition backdrop-blur-md flex items-center justify-center gap-2">
                         Read Spec
                     </a>
                 </div>
             </div>
 
-            <!-- CODE WINDOW (Alive) -->
-            <div id="spec" class="mt-24 w-full max-w-3xl rounded-xl overflow-hidden border border-white/10 shadow-2xl relative group reveal reveal-delay-2 bg-[#050608]">
-                <!-- Scanline Effect -->
+            <!-- CODE WINDOW (Realistic) -->
+            <div id="spec" class="mt-24 w-full max-w-3xl code-window rounded-xl overflow-hidden relative group reveal">
                 <div class="scanline"></div>
+                <div class="beam"></div>
                 
                 <div class="bg-[#0F1117] border-b border-white/5 p-3 flex items-center justify-between z-20 relative">
                     <div class="flex gap-2">
-                        <div class="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
-                        <div class="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
-                        <div class="w-3 h-3 rounded-full bg-[#27C93F]"></div>
+                        <div class="w-3 h-3 rounded-full bg-[#FF5F56] opacity-80"></div>
+                        <div class="w-3 h-3 rounded-full bg-[#FFBD2E] opacity-80"></div>
+                        <div class="w-3 h-3 rounded-full bg-[#27C93F] opacity-80"></div>
                     </div>
-                    <div class="text-xs text-muted font-mono">EPKernel.sol — Read Only</div>
+                    <div class="text-xs text-muted font-mono">EPKernel.sol</div>
                     <div class="w-10"></div>
                 </div>
                 <div class="p-6 font-mono text-sm leading-7 overflow-x-auto text-gray-300 relative z-10">
@@ -226,45 +229,47 @@
                     <div class="flex"><span class="w-8 text-white/10 select-none">144</span> &nbsp;&nbsp;&nbsp;&nbsp;policyId, p.owner, msg.sender, target, value</div>
                     <div class="flex"><span class="w-8 text-white/10 select-none">145</span> &nbsp;&nbsp;);</div>
                     <div class="flex"><span class="w-8 text-white/10 select-none">146</span> }</div>
-                    <div class="flex"><span class="w-8 text-white/10 select-none">147</span> </div>
-                    <div class="flex"><span class="w-8 text-white/10 select-none">148</span> <span class="text-muted">// 3. Execution (Atomic)</span></div>
                     <div class="flex"><span class="w-8 text-white/10 select-none">149</span> (bool success, ) = target.<span class="text-primary">call</span>{value: value}(data);</div>
                     <div class="flex"><span class="w-8 text-white/10 select-none">150</span> <span class="text-accent">if</span> (!success) <span class="text-accent">revert</span>(<span class="text-safe">"Execution Failed"</span>);<span class="animate-blink text-primary">_</span></div>
                 </div>
             </div>
         </section>
 
-        <!-- PIPELINE SECTION -->
+        <!-- PIPELINE (Spotlight Cards) -->
         <section class="py-32 border-t border-white/5 bg-surface relative z-10">
             <div class="max-w-6xl mx-auto px-6">
                 <div class="mb-16 reveal">
                     <h2 class="font-display text-3xl font-bold text-white mb-4">The Execution Pipeline</h2>
-                    <p class="text-muted max-w-xl">
-                        Logic is separated from execution. The Kernel is immutable; logic is modular. 
-                    </p>
+                    <p class="text-muted max-w-xl">Logic is separated from execution.</p>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
                     <!-- Connector -->
                     <div class="hidden md:block absolute top-[2.5rem] left-[16%] right-[16%] h-[1px] bg-white/10 border-t border-dashed border-white/10 z-0"></div>
 
-                    <!-- Steps -->
-                    <div class="glass-panel p-8 rounded-2xl relative z-10 reveal reveal-delay-1">
-                        <div class="w-10 h-10 bg-surface border border-white/10 rounded-lg flex items-center justify-center mb-6 text-primary shadow-lg">1</div>
-                        <h3 class="text-xl font-bold mb-3">Sign Intent</h3>
-                        <p class="text-muted text-sm">Agent constructs intent. Owner key signs an EIP-712 message off-chain.</p>
+                    <!-- Cards -->
+                    <div class="spotlight-card rounded-2xl p-8 reveal delay-100" onmousemove="handleSpotlight(event)">
+                        <div class="spotlight-content">
+                            <div class="w-10 h-10 bg-surface border border-white/10 rounded-lg flex items-center justify-center mb-6 text-primary shadow-lg">1</div>
+                            <h3 class="text-xl font-bold mb-3 text-white">Sign Intent</h3>
+                            <p class="text-muted text-sm">Agent constructs intent. Owner key signs an EIP-712 message off-chain.</p>
+                        </div>
                     </div>
 
-                    <div class="glass-panel p-8 rounded-2xl relative z-10 reveal reveal-delay-2">
-                        <div class="w-10 h-10 bg-surface border border-white/10 rounded-lg flex items-center justify-center mb-6 text-accent shadow-lg">2</div>
-                        <h3 class="text-xl font-bold mb-3">Validate</h3>
-                        <p class="text-muted text-sm">Kernel verifies signature & Nonce. Delegates to Validator modules for logic checks.</p>
+                    <div class="spotlight-card rounded-2xl p-8 reveal delay-200" onmousemove="handleSpotlight(event)">
+                        <div class="spotlight-content">
+                            <div class="w-10 h-10 bg-surface border border-white/10 rounded-lg flex items-center justify-center mb-6 text-accent shadow-lg">2</div>
+                            <h3 class="text-xl font-bold mb-3 text-white">Validate</h3>
+                            <p class="text-muted text-sm">Kernel verifies signature & Nonce. Delegates to Validator modules.</p>
+                        </div>
                     </div>
 
-                    <div class="glass-panel p-8 rounded-2xl relative z-10 reveal reveal-delay-3">
-                        <div class="w-10 h-10 bg-surface border border-white/10 rounded-lg flex items-center justify-center mb-6 text-safe shadow-lg">3</div>
-                        <h3 class="text-xl font-bold mb-3">Execute</h3>
-                        <p class="text-muted text-sm">If passed, call is executed via <code class="bg-white/10 px-1 rounded">call()</code>. Reverts instantly on failure.</p>
+                    <div class="spotlight-card rounded-2xl p-8 reveal delay-300" onmousemove="handleSpotlight(event)">
+                        <div class="spotlight-content">
+                            <div class="w-10 h-10 bg-surface border border-white/10 rounded-lg flex items-center justify-center mb-6 text-safe shadow-lg">3</div>
+                            <h3 class="text-xl font-bold mb-3 text-white">Execute</h3>
+                            <p class="text-muted text-sm">If passed, call is executed via low-level call. Reverts instantly on failure.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -276,29 +281,27 @@
                 <div class="reveal">
                     <div class="inline-block px-3 py-1 mb-6 rounded-full bg-safe/10 border border-safe/20 text-safe text-xs font-mono font-bold">SECURITY VALIDATION</div>
                     <h2 class="font-display text-4xl font-bold mb-6">Validated Code.</h2>
-                    <p class="text-muted text-lg mb-8">We use invariant fuzzing to prove the Kernel state cannot be corrupted.</p>
+                    <p class="text-muted text-lg mb-8">Invariant fuzzing proves the Kernel state cannot be corrupted.</p>
                     <div class="grid grid-cols-2 gap-8 border-l border-white/10 pl-8">
                         <div>
-                            <div class="text-4xl font-bold text-white">157<span class="text-safe text-2xl">/157</span></div>
+                            <div class="text-4xl font-bold text-white tabular-nums">157<span class="text-safe text-2xl">/157</span></div>
                             <div class="text-xs text-muted font-mono mt-2 uppercase">Tests Passing</div>
                         </div>
                         <div>
-                            <div class="text-4xl font-bold text-white">128k<span class="text-primary text-2xl">+</span></div>
+                            <div class="text-4xl font-bold text-white tabular-nums">128k<span class="text-primary text-2xl">+</span></div>
                             <div class="text-xs text-muted font-mono mt-2 uppercase">Invariant Calls</div>
                         </div>
                     </div>
                 </div>
-
-                <div class="w-full reveal reveal-delay-2">
+                <div class="w-full reveal delay-200">
                     <div class="rounded-lg bg-[#0D1117] border border-white/10 shadow-2xl overflow-hidden font-mono text-xs">
                         <div class="bg-[#161B22] px-4 py-2 border-b border-white/5 text-muted flex justify-between">
-                            <span>forge test --via-ir</span>
+                            <span>forge test</span>
                             <span class="text-safe">158ms</span>
                         </div>
                         <div class="p-6 space-y-3 text-gray-400">
                             <div>[<span class="text-safe">PASS</span>] invariant_nonceNeverDecreases()</div>
                             <div>[<span class="text-safe">PASS</span>] invariant_revokedPolicyCannotExecute()</div>
-                            <div>[<span class="text-safe">PASS</span>] testSpendLimit_rollingWindow_native()</div>
                             <div class="text-white pt-2">Suite result: <span class="text-safe">ok</span>. 157 passed.</div>
                         </div>
                     </div>
@@ -309,7 +312,7 @@
 
     <footer class="border-t border-white/5 bg-surface relative z-10">
         <div class="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row justify-between items-center text-sm text-muted">
-            <p>© 2026 IBITI Inc. Built for Agents.</p>
+            <p>© 2026 IBITI Inc.</p>
             <div class="flex gap-6 mt-4 md:mt-0">
                 <a href="#" class="hover:text-white">Privacy</a>
                 <a href="mailto:contact@ibiti.com" class="hover:text-white">Contact</a>
@@ -317,51 +320,60 @@
         </div>
     </footer>
 
-    <!-- SCRIPT: Living Background & Interactions -->
+    <!-- LOGIC -->
     <script>
-        // --- 1. Typing Effect ---
-        const text = "Initializing Kernel... Loading Modules... System Ready.";
-        const typer = document.getElementById('typer');
-        let i = 0;
-        function typeWriter() {
-            if (i < text.length) {
-                typer.innerHTML += text.charAt(i);
-                i++;
-                setTimeout(typeWriter, 50);
-            }
+        // --- 1. SPOTLIGHT EFFECT (Cards) ---
+        function handleSpotlight(e) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
+            e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
         }
-        setTimeout(typeWriter, 500);
 
-        // --- 2. Reveal on Scroll ---
+        // --- 2. HERO PARALLAX (Mouse) ---
+        const heroTitle = document.getElementById('hero-title');
+        const heroSub = document.getElementById('hero-sub');
+        const heroCta = document.getElementById('hero-cta');
+        
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 20; // range -10 to 10
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            
+            if (heroTitle) heroTitle.style.transform = `translate(${x * 1.5}px, ${y * 1.5}px)`;
+            if (heroSub) heroSub.style.transform = `translate(${x * 1}px, ${y * 1}px)`;
+            if (heroCta) heroCta.style.transform = `translate(${x * 0.5}px, ${y * 0.5}px)`;
+        });
+
+        // --- 3. MAGNETIC BUTTONS ---
+        document.querySelectorAll('.magnet').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                btn.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'translate(0, 0)';
+            });
+        });
+
+        // --- 4. REVEAL ON SCROLL ---
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                }
+                if (entry.isIntersecting) entry.target.classList.add('active');
             });
         }, { threshold: 0.1 });
-        
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        // --- 3. Neural Mesh Canvas (The "Matrix" Logic) ---
+        // --- 5. LIVING CANVAS (Data Flow) ---
         const canvas = document.getElementById('neural-bg');
         const ctx = canvas.getContext('2d');
-        
         let width, height;
         let particles = [];
-        const particleCount = window.innerWidth < 768 ? 30 : 60; // Mobile optimization
-        const connectionDist = 150;
         
-        // Mouse interaction
-        let mouse = { x: null, y: null };
-        window.addEventListener('mousemove', e => {
-            mouse.x = e.x;
-            mouse.y = e.y;
-        });
-        window.addEventListener('mouseleave', () => {
-            mouse.x = null;
-            mouse.y = null;
-        });
+        // Data Packets (travel along lines)
+        let packets = [];
 
         function resize() {
             width = canvas.width = window.innerWidth;
@@ -374,81 +386,94 @@
             constructor() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
+                this.vx = (Math.random() - 0.5) * 0.3;
+                this.vy = (Math.random() - 0.5) * 0.3;
                 this.size = Math.random() * 1.5 + 1;
-                this.color = Math.random() > 0.5 ? '#3B82F6' : '#8B5CF6'; // Brand colors
+                this.alpha = Math.random() * 0.5 + 0.1;
             }
-            
             update() {
                 this.x += this.vx;
                 this.y += this.vy;
-
-                // Bounce off edges
                 if (this.x < 0 || this.x > width) this.vx *= -1;
                 if (this.y < 0 || this.y > height) this.vy *= -1;
-
-                // Mouse interaction (repel)
-                if (mouse.x != null) {
-                    let dx = mouse.x - this.x;
-                    let dy = mouse.y - this.y;
-                    let distance = Math.sqrt(dx*dx + dy*dy);
-                    if (distance < 200) {
-                        const forceDirectionX = dx / distance;
-                        const forceDirectionY = dy / distance;
-                        const force = (200 - distance) / 200;
-                        const directionX = forceDirectionX * force * 2;
-                        const directionY = forceDirectionY * force * 2;
-                        this.x -= directionX;
-                        this.y -= directionY;
-                    }
-                }
             }
-            
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.globalAlpha = 0.8;
+                ctx.fillStyle = `rgba(59, 130, 246, ${this.alpha})`; // Blue-ish
                 ctx.fill();
             }
         }
 
-        function initParticles() {
-            particles = [];
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle());
-            }
+        function init() {
+            const count = window.innerWidth < 768 ? 20 : 50;
+            for(let i=0; i<count; i++) particles.push(new Particle());
         }
+        init();
 
-        function animate() {
+        let lastTime = 0;
+        function animate(ts) {
+            if (ts - lastTime < 16) { requestAnimationFrame(animate); return; } // Cap at ~60fps
+            lastTime = ts;
+
             ctx.clearRect(0, 0, width, height);
             
+            // Draw particles and lines
             for (let i = 0; i < particles.length; i++) {
-                particles[i].update();
-                particles[i].draw();
+                let p1 = particles[i];
+                p1.update();
+                p1.draw();
                 
-                // Draw connections
                 for (let j = i; j < particles.length; j++) {
-                    let dx = particles[i].x - particles[j].x;
-                    let dy = particles[i].y - particles[j].y;
-                    let distance = Math.sqrt(dx*dx + dy*dy);
+                    let p2 = particles[j];
+                    let dx = p1.x - p2.x;
+                    let dy = p1.y - p2.y;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
                     
-                    if (distance < connectionDist) {
+                    if (dist < 150) {
                         ctx.beginPath();
-                        ctx.strokeStyle = `rgba(100, 116, 139, ${1 - distance/connectionDist})`; // Slate color lines
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 - dist/1500})`;
                         ctx.lineWidth = 0.5;
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
                         ctx.stroke();
+
+                        // Chance to spawn a data packet
+                        if (Math.random() < 0.001) {
+                            packets.push({
+                                x: p1.x, y: p1.y,
+                                tx: p2.x, ty: p2.y,
+                                progress: 0,
+                                speed: Math.random() * 0.02 + 0.01
+                            });
+                        }
                     }
                 }
             }
+
+            // Draw Packets (Pulses)
+            for (let i = packets.length - 1; i >= 0; i--) {
+                let p = packets[i];
+                p.progress += p.speed;
+                if (p.progress >= 1) {
+                    packets.splice(i, 1);
+                    continue;
+                }
+                let currX = p.x + (p.tx - p.x) * p.progress;
+                let currY = p.y + (p.ty - p.y) * p.progress;
+                
+                ctx.beginPath();
+                ctx.arc(currX, currY, 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = '#8B5CF6'; // Violet pulse
+                ctx.shadowBlur = 4;
+                ctx.shadowColor = '#8B5CF6';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+
             requestAnimationFrame(animate);
         }
-
-        initParticles();
-        animate();
+        animate(0);
     </script>
 </body>
 </html>
