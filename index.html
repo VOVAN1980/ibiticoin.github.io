@@ -155,130 +155,111 @@
       }
     } 
 
-    /* --- IBITI LABS PORTAL STYLES (НОВАЯ СЕКЦИЯ) --- */
-    .labs-section {
-      background: #050508; /* Очень темный фон, почти черный */
-      padding: 80px 20px;
-      position: relative;
-      overflow: hidden;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      text-align: center;
-      color: white;
-    }
+    .labs-section{
+  padding: 72px 20px;
+  background: #06070c;
+  border-top: 1px solid rgba(255,215,0,.18);
+  border-bottom: 1px solid rgba(255,215,0,.18);
+}
 
-    /* Фоновый эффект (синее свечение) */
-    .labs-section::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 600px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0,0,0,0) 70%);
-      z-index: 0;
-      pointer-events: none;
-    }
+.labs-container{
+  max-width: 860px;
+  margin: 0 auto;
+  text-align: center;
+}
 
-    .labs-container {
-      position: relative;
-      z-index: 1;
-      max-width: 800px;
-      margin: 0 auto;
-    }
+.labs-title{
+  margin: 0 0 10px;
+  font-size: clamp(30px, 5vw, 56px);
+  line-height: 1.05;
+  letter-spacing: .04em;
+  color: #b9d4ff;
+  text-transform: uppercase;
+}
 
-    .labs-title {
-      font-size: 2.5em;
-      font-weight: 800;
-      margin-bottom: 10px;
-      background: linear-gradient(to right, #fff, #3B82F6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-family: 'Courier New', monospace; /* Техно-шрифт */
-      text-transform: uppercase;
-    }
+.labs-subtitle{
+  margin: 0 0 26px;
+  color: #9da7b5;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.labs-stats{
+  color: #35f287;
+  font-weight: 700;
+}
+.labs-sep{
+  color: #6a7280;
+  margin: 0 8px;
+}
 
-    .labs-subtitle {
-      color: #a1a1aa;
-      font-family: monospace;
-      font-size: 1.1em;
-      margin-bottom: 40px;
-      letter-spacing: 1px;
-    }
+.labs-terminal{
+  max-width: 700px;
+  margin: 0 auto 28px;
+  border: 1px solid rgba(80,130,255,.35);
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #11131c 0%, #0a0c12 100%);
+  box-shadow: 0 10px 32px rgba(0,0,0,.45), inset 0 0 40px rgba(40,90,255,.08);
+}
 
-    .labs-stats {
-      color: #4ade80; /* Зеленый цвет успеха */
-      font-weight: bold;
-    }
+.terminal-header{
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.02);
+}
+.dot{
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dot-r{ background: #ff5f56; }
+.dot-y{ background: #ffbd2e; }
+.dot-g{ background: #27c93f; }
 
-    /* Окно с кодом (Карточка) */
-    .labs-terminal {
-      background: rgba(20, 20, 25, 0.9);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      border-radius: 12px;
-      padding: 0;
-      margin: 0 auto 40px auto;
-      max-width: 600px;
-      box-shadow: 0 0 40px rgba(59, 130, 246, 0.1);
-      text-align: left;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+.terminal-body{
+  margin: 0;
+  padding: 16px 18px 18px;
+  text-align: left;
+  color: #cdd7ff;
+  font: 500 14px/1.55 "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  overflow-x: auto;
+  white-space: pre;
+}
 
-    .labs-terminal:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 0 60px rgba(59, 130, 246, 0.25);
-      border-color: rgba(59, 130, 246, 0.6);
-    }
+.code-purple{ color: #b388ff; }
+.code-green{ color: #31e38c; }
+.code-white{ color: #c9cfdb; }
 
-    .terminal-header {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 10px 15px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      display: flex;
-      gap: 8px;
-      border-radius: 12px 12px 0 0;
-    }
+.btn-labs{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 240px;
+  padding: 14px 26px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #e9f2ff;
+  font-weight: 800;
+  letter-spacing: .02em;
+  background: linear-gradient(180deg, #5da0ff 0%, #3d7fff 100%);
+  box-shadow: 0 8px 22px rgba(61,127,255,.38);
+  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+}
+.btn-labs:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(61,127,255,.5);
+  filter: brightness(1.05);
+}
 
-    .dot { width: 10px; height: 10px; border-radius: 50%; }
-    .dot-r { background: #ef4444; }
-    .dot-y { background: #eab308; }
-    .dot-g { background: #22c55e; }
-
-    .terminal-body {
-      padding: 20px;
-      font-family: 'Courier New', monospace;
-      font-size: 13px;
-      color: #60a5fa; /* Синий код */
-      line-height: 1.6;
-      overflow-x: auto;
-    }
-
-    .code-white { color: #e2e8f0; }
-    .code-purple { color: #c084fc; }
-    .code-green { color: #4ade80; }
-
-    /* Кнопка Лаборатории */
-    .btn-labs {
-      display: inline-block;
-      padding: 16px 40px;
-      background: #3B82F6; /* Синий цвет IBITI Labs */
-      color: white !important;
-      text-decoration: none;
-      font-weight: bold;
-      border-radius: 8px;
-      font-size: 1.1em;
-      transition: all 0.3s;
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
-      border: 1px solid rgba(255,255,255,0.1);
-      margin-top: 20px;
-    }
-
-    .btn-labs:hover {
-      background: #2563eb;
-      box-shadow: 0 0 40px rgba(59, 130, 246, 0.8);
-      transform: scale(1.05);
-      color: #fff;
-    }
+@media (max-width: 640px){
+  .labs-section{ padding: 56px 14px; }
+  .terminal-body{ font-size: 12px; line-height: 1.5; }
+  .btn-labs{ width: 100%; min-width: 0; }
+}
   </style>
 </head>
 <body>
@@ -844,4 +825,5 @@
 <script src="js/share-modal.js?v=2"></script>
 </body>
 </html>
+
 
