@@ -21,7 +21,7 @@
                         border: 'rgba(255, 255, 255, 0.08)',
                         primary: '#3B82F6',
                         accent: '#8B5CF6',
-                        gold: '#FFD700', // Added gold nuance based on your screenshot
+                        gold: '#FFD700',
                         cyan: '#06b6d4',
                         safe: '#10B981'
                     },
@@ -50,7 +50,11 @@
         body { background-color: #020204; color: white; overflow-x: hidden; }
 
         /* --- UNIVERSE & GRAIN --- */
-        #universe { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; mask-image: linear-gradient(to bottom, black 40%, transparent 100%); }
+        #universe { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; 
+            /* Убрал сильное затемнение, чтобы фон был "ближе" */
+            mask-image: linear-gradient(to bottom, black 20%, rgba(0,0,0,0.8) 100%); 
+        }
         
         /* --- CRYSTAL UI (PREMIUM LOOK) --- */
         .crystal {
@@ -63,9 +67,10 @@
         }
         .crystal:hover {
             border-color: rgba(255, 255, 255, 0.15);
-            transform: translateY(-5px);
+            transform: translateY(-5px) scale(1.01);
             box-shadow: 0 20px 60px rgba(0,0,0, 0.6), inset 0 0 20px rgba(255,255,255,0.05);
             background: rgba(20, 20, 25, 0.6);
+            z-index: 10;
         }
 
         /* --- TEXT GRADIENTS --- */
@@ -128,7 +133,6 @@
 
             <!-- Logo -->
             <div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
-                <!-- Using a simple geometric logo for "Labs" feel -->
                 <div class="relative w-6 h-6 flex items-center justify-center">
                     <div class="absolute inset-0 bg-primary/40 blur-lg rounded-full animate-pulse"></div>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-full h-full text-white relative z-10"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
@@ -137,7 +141,13 @@
             </div>
 
             <!-- Right Actions -->
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
+                <!-- FX Toggle Button -->
+                <button id="fx-toggle" onclick="toggleFX()" class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-[10px] font-mono tracking-widest text-green-400 transition">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 shadow-[0_0_5px_currentColor]"></span>
+                    FX: ON
+                </button>
+
                  <a href="https://github.com/VOVAN1980/ibiti-epk-core" target="_blank" class="text-white/50 hover:text-white transition p-2 bg-white/5 rounded-full hover:bg-white/10" title="View Source">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                 </a>
@@ -148,17 +158,14 @@
     <main class="relative pt-24 pb-12 px-6 overflow-hidden">
         
         <!-- 1. HERO SECTION -->
-        <!-- Added top margin instead of center alignment to lift title up -->
         <section class="mt-10 md:mt-20 mb-28 max-w-5xl mx-auto text-center relative z-10 perspective-1000">
             <div class="space-y-8 reveal active">
                 
-                <!-- Badge -->
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary text-[10px] md:text-xs font-mono tracking-widest uppercase mb-4 animate-float">
                     <span class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_10px_#3B82F6]"></span>
                     Kernel Active v1.0
                 </div>
 
-                <!-- Main Title -->
                 <h1 class="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[1.1] glow-text">
                     Trust Your <br />
                     <span class="text-gradient-live">
@@ -166,19 +173,15 @@
                     </span>
                 </h1>
 
-                <!-- Subtitle -->
                 <p class="text-base md:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed px-4">
                     The execution kernel for on-chain intelligence.
                     <span class="text-white border-b border-white/20">Immutable core</span>, modular validators, and instant revocation.
                 </p>
 
-                <!-- Actions -->
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8 px-6">
                     <button onclick="toggleModal(true)" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-black font-bold tracking-wide shadow-[0_0_30px_rgba(255,255,255,0.15)] hover:shadow-[0_0_50px_rgba(255,255,255,0.3)] transition-all transform hover:-translate-y-1">
                         Contact Us
                     </button>
-                    
-                    <!-- Docs Button -->
                     <a href="#" class="w-full sm:w-auto px-8 py-4 rounded-xl border border-white/10 bg-white/5 text-white hover:bg-white/10 hover:border-white/20 transition backdrop-blur-md flex items-center justify-center gap-2 group">
                         <svg class="text-white/50 group-hover:text-white transition" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                         <span>EPK v1 Docs</span>
@@ -187,7 +190,7 @@
             </div>
         </section>
 
-        <!-- 2. HOLOGRAPHIC CODE (THE CORE) -->
+        <!-- 2. HOLOGRAPHIC CODE -->
         <section class="max-w-4xl mx-auto mb-32 reveal">
             <div class="crystal rounded-xl overflow-hidden relative shadow-[0_0_80px_rgba(59,130,246,0.1)] border border-white/10">
                 <div class="scanline"></div>
@@ -226,7 +229,7 @@
             </div>
         </section>
 
-        <!-- 3. REAL STATS (UPDATED) -->
+        <!-- 3. REAL STATS -->
         <section class="max-w-6xl mx-auto mb-32 reveal">
              <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left border-y border-white/5 bg-white/[0.01] rounded-2xl p-8 md:p-12">
                 <div>
@@ -339,7 +342,6 @@
                         Pioneering the security layer for the autonomous agent economy. Built for speed, security, and immutability.
                     </p>
                     
-                    <!-- Socials -->
                     <div class="mt-8 flex gap-4">
                         <!-- X (Twitter) -->
                         <a href="https://x.com/ibiticoin" target="_blank" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 hover:text-white transition border border-white/5">
@@ -349,7 +351,7 @@
                         <a href="https://www.ibiticoin.com/" target="_blank" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 hover:text-white transition border border-white/5">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
                         </a>
-                        <!-- Github (Existing) -->
+                        <!-- Github -->
                         <a href="https://github.com/VOVAN1980/ibiti-epk-core" target="_blank" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/60 hover:text-white transition border border-white/5">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                         </a>
@@ -389,17 +391,13 @@
 
     <!-- CONTACT MODAL -->
     <div id="contact-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center px-4">
-        <!-- Backdrop -->
         <div onclick="toggleModal(false)" class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>
-        
-        <!-- Content -->
         <div class="crystal max-w-md w-full rounded-2xl p-8 relative transform transition-all scale-100 z-10 border border-white/10">
             <button onclick="toggleModal(false)" class="absolute top-4 right-4 text-white/40 hover:text-white transition">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
             <h2 class="text-2xl font-bold text-white mb-2">Get in touch</h2>
             <p class="text-white/50 text-sm mb-8">We are currently in private beta. Reach out for pilot access.</p>
-            
             <div class="space-y-4">
                 <a href="mailto:info@ibiticoin.com" class="block p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition flex items-center gap-4 group">
                     <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
@@ -431,20 +429,29 @@
             if(show) { 
                 modal.classList.remove('hidden'); 
                 setTimeout(() => modal.classList.add('flex'), 10); 
-                document.body.style.overflow = 'hidden'; // Prevent scroll
-            }
-            else { 
+                document.body.style.overflow = 'hidden'; 
+            } else { 
                 modal.classList.remove('flex'); 
                 setTimeout(() => modal.classList.add('hidden'), 300); 
-                document.body.style.overflow = ''; // Restore scroll
+                document.body.style.overflow = ''; 
             }
         }
 
-        // --- UNIVERSE BACKGROUND ---
+        // --- INTERACTIVE UNIVERSE BACKGROUND ---
         const canvas = document.getElementById('universe');
         const ctx = canvas.getContext('2d');
         let width, height, nodes = [];
+        let fxEnabled = true;
+        let animationId;
         
+        // Mouse Tracking for Interaction
+        let mouse = { x: null, y: null, radius: 200 };
+        
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
         function resize() { 
             width = canvas.width = window.innerWidth; 
             height = canvas.height = window.innerHeight; 
@@ -455,20 +462,43 @@
         
         class Node {
             constructor() { 
-                this.x = Math.random()*width; 
-                this.y = Math.random()*height; 
-                this.vx = (Math.random()-0.5)*0.2; // Slower, more elegant
-                this.vy = (Math.random()-0.5)*0.2; 
-                this.size = Math.random() * 1.5;
+                this.x = Math.random() * width; 
+                this.y = Math.random() * height; 
+                this.vx = (Math.random() - 0.5) * 0.5; 
+                this.vy = (Math.random() - 0.5) * 0.5; 
+                this.size = Math.random() * 2 + 0.5; // Bigger variation
+                this.baseX = this.x;
+                this.baseY = this.y;
             }
             update() { 
-                this.x+=this.vx; 
-                this.y+=this.vy; 
-                if(this.x<0||this.x>width)this.vx*=-1; 
-                if(this.y<0||this.y>height)this.vy*=-1; 
+                // Regular movement
+                this.x += this.vx; 
+                this.y += this.vy; 
+
+                // Wall bounce
+                if(this.x < 0 || this.x > width) this.vx *= -1; 
+                if(this.y < 0 || this.y > height) this.vy *= -1; 
+
+                // MOUSE INTERACTION (The "Playful" Part)
+                if (mouse.x != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx*dx + dy*dy);
+                    
+                    if (distance < mouse.radius) {
+                        const forceDirectionX = dx / distance;
+                        const forceDirectionY = dy / distance;
+                        const force = (mouse.radius - distance) / mouse.radius;
+                        const directionX = forceDirectionX * force * 3; // Strength
+                        const directionY = forceDirectionY * force * 3;
+                        
+                        this.x += directionX;
+                        this.y += directionY;
+                    }
+                }
             }
             draw() { 
-                ctx.fillStyle = `rgba(255,255,255,${0.1 + Math.random()*0.2})`; 
+                ctx.fillStyle = `rgba(255,255,255,${0.3 + Math.random()*0.2})`; 
                 ctx.beginPath(); 
                 ctx.arc(this.x,this.y,this.size,0,Math.PI*2); 
                 ctx.fill(); 
@@ -477,35 +507,79 @@
         
         function initNodes() { 
             nodes=[]; 
-            // Reduce count on mobile for performance
-            const count = window.innerWidth < 768 ? 40 : 100;
+            // More particles for better look, less on mobile
+            const count = window.innerWidth < 768 ? 50 : 130;
             for(let i=0;i<count;i++) nodes.push(new Node()); 
         }
         
         function animate() {
+            if(!fxEnabled) return;
+            
             ctx.clearRect(0,0,width,height);
+            
             for(let i=0; i<nodes.length; i++) {
                 nodes[i].update(); 
                 nodes[i].draw();
+                
+                // Connect to other nodes
                 for(let j=i; j<nodes.length; j++) {
-                    const d = Math.hypot(nodes[i].x-nodes[j].x, nodes[i].y-nodes[j].y);
-                    if(d<100) { 
-                        ctx.strokeStyle=`rgba(100,150,255,${0.05 * (1 - d/100)})`; // Very subtle lines
-                        ctx.beginPath(); 
+                    const dx = nodes[i].x - nodes[j].x;
+                    const dy = nodes[i].y - nodes[j].y;
+                    const d = Math.sqrt(dx*dx + dy*dy);
+                    
+                    if(d < 120) { 
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(100,150,255,${0.15 * (1 - d/120)})`; 
+                        ctx.lineWidth = 0.5;
                         ctx.moveTo(nodes[i].x,nodes[i].y); 
                         ctx.lineTo(nodes[j].x,nodes[j].y); 
                         ctx.stroke(); 
                     }
                 }
+                
+                // Connect to Mouse (Neural connection feel)
+                if (mouse.x != null) {
+                    const dx = nodes[i].x - mouse.x;
+                    const dy = nodes[i].y - mouse.y;
+                    const d = Math.sqrt(dx*dx + dy*dy);
+                    if (d < 150) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(139, 92, 246, ${0.2 * (1 - d/150)})`; // Purple tint for interaction
+                        ctx.lineWidth = 0.8;
+                        ctx.moveTo(nodes[i].x, nodes[i].y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        ctx.stroke();
+                    }
+                }
             }
-            requestAnimationFrame(animate);
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // --- FX TOGGLE LOGIC ---
+        function toggleFX() {
+            fxEnabled = !fxEnabled;
+            const btn = document.getElementById('fx-toggle');
+            const span = btn.querySelector('span');
+            
+            if(fxEnabled) {
+                btn.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-green-400 shadow-[0_0_5px_currentColor]"></span> FX: ON`;
+                btn.classList.remove('text-red-400');
+                btn.classList.add('text-green-400');
+                animate();
+            } else {
+                btn.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> FX: OFF`;
+                btn.classList.remove('text-green-400');
+                btn.classList.add('text-red-400');
+                cancelAnimationFrame(animationId);
+                ctx.clearRect(0,0,width,height); // Clear canvas
+            }
         }
         
+        // Start
         resize(); 
         animate();
 
         // --- TILT & REVEAL ---
-        // Only enable tilt on non-mobile
         if (window.matchMedia("(min-width: 768px)").matches) {
             document.querySelectorAll('.tilt-card').forEach(c => {
                 c.addEventListener('mousemove', e => {
@@ -517,11 +591,8 @@
         }
         
         const obs = new IntersectionObserver(es => es.forEach(e => {
-            if(e.isIntersecting) {
-                e.target.classList.add('active');
-            }
+            if(e.isIntersecting) e.target.classList.add('active');
         }), {threshold: 0.1});
-        
         document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
     </script>
 </body>
