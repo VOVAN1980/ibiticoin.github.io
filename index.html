@@ -153,9 +153,9 @@
         transform: scale(1.12);
         box-shadow: 0 0 12px rgba(255,30,30,.95);
       }
-    } /* <--- ВОТ ЗДЕСЬ БЫЛА ОШИБКА, Я ДОБАВИЛ ЗАКРЫВАЮЩУЮ СКОБКУ */
+    } 
 
-    /* --- IBITI LABS PORTAL STYLES --- */
+    /* --- IBITI LABS PORTAL STYLES (НОВАЯ СЕКЦИЯ) --- */
     .labs-section {
       background: #050508; /* Очень темный фон, почти черный */
       padding: 80px 20px;
@@ -163,6 +163,7 @@
       overflow: hidden;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       text-align: center;
+      color: white;
     }
 
     /* Фоновый эффект (синее свечение) */
@@ -194,6 +195,7 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       font-family: 'Courier New', monospace; /* Техно-шрифт */
+      text-transform: uppercase;
     }
 
     .labs-subtitle {
@@ -277,12 +279,10 @@
       transform: scale(1.05);
       color: #fff;
     }
-  }
-    
   </style>
 </head>
 <body>
-  <!-- 🎄 Christmas overlay -->
+  <!-- 🎄 Christmas overlay (ВКЛЮЧАЕТСЯ АВТОМАТИЧЕСКИ ПО ДАТЕ) -->
 <div id="xmasOverlay" class="xmas-overlay" aria-hidden="true">
   <div id="garland" class="garland"></div>
 
@@ -421,7 +421,7 @@
     </div>
   </section>
 
-  <!-- IBITI LABS TEASER SECTION -->
+  <!-- IBITI LABS TEASER SECTION (НОВАЯ СЕКЦИЯ) -->
   <section class="labs-section" data-aos="fade-up">
     <div class="labs-container">
       
@@ -482,6 +482,69 @@
   </footer>
 
        <!-- Cookie banner START -->
+  <style>
+    #cookie-banner {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 9999;
+      background: #111;
+      border-top: 1px solid #444;
+      color: #f5f5f5;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      line-height: 1.4;
+      padding: 10px 16px;
+      display: none;               /* изначально полностью скрыт */
+      transform: translateY(100%); /* за краем экрана */
+      opacity: 0;
+      transition: transform 0.35s ease-out, opacity 0.35s ease-out;
+    }
+    #cookie-banner.cookie-visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    #cookie-banner .cookie-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between; /* текст слева, кнопка справа */
+      flex-wrap: wrap;
+    }
+    #cookie-banner .cookie-text {
+      flex: 1 1 auto;
+      min-width: 220px;
+    }
+    #cookie-banner .cookie-actions {
+      flex: 0 0 auto;
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      min-width: 140px;
+    }
+    #cookie-banner a {
+      color: #ffd800;
+      text-decoration: underline;
+    }
+    #cookie-accept {
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid #000;
+      background: #ffd800;
+      color: #000;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 14px rgba(255,216,0,0.6);
+      white-space: nowrap;
+    }
+    #cookie-accept:hover {
+      filter: brightness(1.05);
+    }
+  </style>
+
   <div id="cookie-banner">
     <div class="cookie-inner">
       <div class="cookie-text">
@@ -783,4 +846,3 @@
 <script src="js/share-modal.js?v=2"></script>
 </body>
 </html>
-
