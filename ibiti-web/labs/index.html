@@ -327,33 +327,34 @@
             <h2 class="text-3xl font-bold mb-16 text-center">Execution Pipeline</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
                 <!-- Card 1 -->
-                <div class="crystal rounded-2xl p-8 tilt-card group relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-bl-full -mr-4 -mt-4 transition-all group-hover:bg-primary/20"></div>
+                <a href="/ibiti-web/labs/sign-intent.html" class="crystal rounded-2xl p-8 tilt-card group relative overflow-hidden block">
+                  <div class="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-bl-full -mr-4 -mt-4 transition-all group-hover:bg-primary/20"></div>
                     <div class="tilt-inner relative z-10">
-                        <div class="text-4xl font-bold text-white/10 mb-6">01</div>
-                        <h3 class="text-xl font-bold mb-3 text-white group-hover:text-primary transition-colors">Sign Intent</h3>
-                        <p class="text-sm text-white/50 leading-relaxed">Agent constructs transaction. Owner signs message off-chain using EIP-712 standards.</p>
-                    </div>
+                      <div class="text-4xl font-bold text-white/10 mb-6">01</div>
+                    <h3 class="text-xl font-bold mb-3 text-white group-hover:text-primary transition-colors">Sign Intent</h3>
+                   <p class="text-sm text-white/50 leading-relaxed">Agent constructs transaction. Owner signs message off-chain using EIP-712 standards.</p>
                 </div>
+             </a>
+
                 <!-- Card 2 -->
-                <div class="crystal rounded-2xl p-8 tilt-card group relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-accent/10 rounded-bl-full -mr-4 -mt-4 transition-all group-hover:bg-accent/20"></div>
-                    <div class="tilt-inner relative z-10">
-                        <div class="text-4xl font-bold text-white/10 mb-6">02</div>
+                <a href="/ibiti-web/labs/validate.html" class="crystal rounded-2xl p-8 tilt-card group relative overflow-hidden block">
+                 <div class="absolute top-0 right-0 w-24 h-24 bg-accent/10 rounded-bl-full -mr-4 -mt-4 transition-all group-hover:bg-accent/20"></div>
+                   <div class="tilt-inner relative z-10">
+                      <div class="text-4xl font-bold text-white/10 mb-6">02</div>
                         <h3 class="text-xl font-bold mb-3 text-white group-hover:text-accent transition-colors">Validate</h3>
-                        <p class="text-sm text-white/50 leading-relaxed">Kernel checks signature & Nonce. Delegates logical checks to attached Validator modules.</p>
+                     <p class="text-sm text-white/50 leading-relaxed">Kernel checks signature & Nonce. Delegates logical checks to attached Validator modules.</p>
                     </div>
-                </div>
+                   </a>
+
                 <!-- Card 3 -->
-                <div class="crystal rounded-2xl p-8 tilt-card group relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 rounded-bl-full -mr-4 -mt-4 transition-all group-hover:bg-cyan-500/20"></div>
+                <a href="/ibiti-web/labs/execute.html" class="crystal rounded-2xl p-8 tilt-card group relative overflow-hidden block">
+                  <div class="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 rounded-bl-full -mr-4 -mt-4 transition-all group-hover:bg-cyan-500/20"></div>
                     <div class="tilt-inner relative z-10">
-                        <div class="text-4xl font-bold text-white/10 mb-6">03</div>
-                        <h3 class="text-xl font-bold mb-3 text-white group-hover:text-cyan-400 transition-colors">Execute</h3>
-                        <p class="text-sm text-white/50 leading-relaxed">Low-level call executes. Any security violation triggers an instant atomic revert.</p>
+                       <div class="text-4xl font-bold text-white/10 mb-6">03</div>
+                          <h3 class="text-xl font-bold mb-3 text-white group-hover:text-cyan-400 transition-colors">Execute</h3>
+                       <p class="text-sm text-white/50 leading-relaxed">Low-level call executes. Any security violation triggers an instant atomic revert.</p>
                     </div>
-                </div>
-            </div>
+                  </a>
         </section>
 
     </main>
@@ -627,6 +628,7 @@
     </script>
 </body>
 </html>
+
 
 
 
