@@ -10,27 +10,12 @@
   <meta name="keywords" content="IBITIcoin, cryptocurrency, investment, blockchain, DeFi, BNB Smart Chain">
   <meta name="author" content="IBITIcoin Team">
 
-  <!-- Facebook Domain Verification -->
-  <meta name="facebook-domain-verification" content="gry2h4kbugyrwzn0qhcuh838y7hj5v" />
-
   <!-- Open Graph -->
   <meta property="og:title" content="IBITIcoin – The Future of Digital Finance">
   <meta property="og:description" content="Learn how IBITIcoin makes crypto more accessible and secure for everyone.">
   <meta property="og:image" content="https://www.ibiticoin.com/img/og-image.png" />
-  <meta property="og:image:type" content="image/png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="IBITIcoin Logo – next-generation digital currency" />
-  <meta property="og:url" content="https://www.ibiticoin.com/">
   <meta property="og:type" content="website">
 
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@ibiticoin">
-  <meta name="twitter:title" content="IBITIcoin – The Future of Digital Finance">
-  <meta name="twitter:description" content="Learn how IBITIcoin makes crypto more accessible and secure for everyone.">
-  <meta name="twitter:image" content="https://www.ibiticoin.com/img/og-image.png">
-  
   <!-- Global CSS -->
   <link rel="stylesheet" href="css/style.css">
   
@@ -46,7 +31,7 @@
     gtag('config', 'G-T5DF4BLR5S');
   </script>
   
-  <!-- Google Translate widget -->
+  <!-- Google Translate -->
   <script type="text/javascript">
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
@@ -58,280 +43,108 @@
   </script>
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-  <!-- Web3Modal + WalletConnect -->
-  <script src="https://unpkg.com/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
-  <script src="https://unpkg.com/web3modal@1.9.8/dist/index.js"></script>
-
-  <!-- ethers.js v6 (UMD) -->
+  <!-- Web3 Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.10.0/dist/ethers.umd.min.js"></script>
-  <script>
-    if (!window.ethers) {
-      console.error('Failed to load ethers v6');
-    }
-  </script>
 
   <style>
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.7);
-    }
-    .modal-content {
-      background-color: #111;
-      margin: 10% auto;
-      padding: 20px;
-      border: 2px solid gold;
-      width: 80%;
-      max-width: 500px;
-      border-radius: 10px;
-      text-align: center;
-      color: gold;
-      position: relative;
-    }
-    .modal-content h3 {
-      margin-top: 0;
-      font-size: 1.8em;
-    }
-    .modal-content .share-options a {
-      display: inline-block;
-      margin: 10px;
-      padding: 10px 20px;
-      background: gold;
-      color: #000;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: transform 0.3s;
-    }
-    .modal-content .share-options a:hover {
-      transform: scale(1.1);
-    }
-    .modal-content .close {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 1.5em;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .shop-wrap {
-      position: relative;
-      display: inline-block;
-    }
-
-    /* микро-бейдж */
+    /* Основные стили для модальных окон и магазина */
+    .shop-wrap { position: relative; display: inline-block; }
+    
     .promo-badge {
-      position: absolute;
-      top: -10px;
-      right: -8px;
-      padding: 2px 6px;
-      border-radius: 999px;
-      background: #ff1e1e;
-      color: #fff;
-      font-weight: 900;
-      font-size: 9px;
-      line-height: 1;
-      letter-spacing: .5px;
-      text-decoration: none;
-      border: 1px solid rgba(255,255,255,.25);
+      position: absolute; top: -10px; right: -8px;
+      padding: 2px 6px; border-radius: 999px;
+      background: #ff1e1e; color: #fff; font-weight: 900; font-size: 9px;
+      text-decoration: none; border: 1px solid rgba(255,255,255,.25);
       box-shadow: 0 0 8px rgba(255,30,30,.75);
-      animation: promoPulse 1.1s ease-in-out infinite;
-      z-index: 6;
+      animation: promoPulse 1.1s ease-in-out infinite; z-index: 6;
     }
 
     @keyframes promoPulse {
-      0%, 100% {
-        transform: scale(1);
-        box-shadow: 0 0 6px rgba(255,30,30,.55);
-      }
-      50% {
-        transform: scale(1.12);
-        box-shadow: 0 0 12px rgba(255,30,30,.95);
-      }
-    } /* <--- ВОТ ЗДЕСЬ БЫЛА ОШИБКА, Я ДОБАВИЛ ЗАКРЫВАЮЩУЮ СКОБКУ */
+      0%, 100% { transform: scale(1); box-shadow: 0 0 6px rgba(255,30,30,.55); }
+      50% { transform: scale(1.12); box-shadow: 0 0 12px rgba(255,30,30,.95); }
+    }
 
-    /* --- IBITI LABS PORTAL STYLES --- */
+    /* --- IBITI LABS STYLE --- */
     .labs-section {
-      background: #050508; /* Очень темный фон, почти черный */
-      padding: 80px 20px;
-      position: relative;
-      overflow: hidden;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      text-align: center;
+      background: #050508; padding: 80px 20px; position: relative;
+      overflow: hidden; border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center; color: white;
     }
-
-    /* Фоновый эффект (синее свечение) */
     .labs-section::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 600px;
-      height: 400px;
+      content: ''; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%); width: 600px; height: 400px;
       background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0,0,0,0) 70%);
-      z-index: 0;
-      pointer-events: none;
+      z-index: 0; pointer-events: none;
     }
-
-    .labs-container {
-      position: relative;
-      z-index: 1;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
+    .labs-container { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
     .labs-title {
-      font-size: 2.5em;
-      font-weight: 800;
-      margin-bottom: 10px;
+      font-size: 2.5em; font-weight: 800; margin-bottom: 10px;
       background: linear-gradient(to right, #fff, #3B82F6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-family: 'Courier New', monospace; /* Техно-шрифт */
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      font-family: 'Courier New', monospace; text-transform: uppercase;
     }
-
-    .labs-subtitle {
-      color: #a1a1aa;
-      font-family: monospace;
-      font-size: 1.1em;
-      margin-bottom: 40px;
-      letter-spacing: 1px;
-    }
-
-    .labs-stats {
-      color: #4ade80; /* Зеленый цвет успеха */
-      font-weight: bold;
-    }
-
-    /* Окно с кодом (Карточка) */
+    .labs-subtitle { color: #a1a1aa; font-family: monospace; font-size: 1.1em; margin-bottom: 40px; }
+    .labs-stats { color: #4ade80; font-weight: bold; }
+    
+    /* Terminal Code Box */
     .labs-terminal {
-      background: rgba(20, 20, 25, 0.9);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      border-radius: 12px;
-      padding: 0;
-      margin: 0 auto 40px auto;
-      max-width: 600px;
-      box-shadow: 0 0 40px rgba(59, 130, 246, 0.1);
-      text-align: left;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: rgba(20, 20, 25, 0.9); border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 12px; margin: 0 auto 40px auto; max-width: 600px;
+      box-shadow: 0 0 40px rgba(59, 130, 246, 0.1); text-align: left;
+      transition: transform 0.3s ease;
     }
-
-    .labs-terminal:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 0 60px rgba(59, 130, 246, 0.25);
-      border-color: rgba(59, 130, 246, 0.6);
-    }
-
+    .labs-terminal:hover { transform: translateY(-5px); box-shadow: 0 0 60px rgba(59, 130, 246, 0.25); }
     .terminal-header {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 10px 15px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      display: flex;
-      gap: 8px;
+      background: rgba(255, 255, 255, 0.05); padding: 10px 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; gap: 8px;
       border-radius: 12px 12px 0 0;
     }
-
     .dot { width: 10px; height: 10px; border-radius: 50%; }
-    .dot-r { background: #ef4444; }
-    .dot-y { background: #eab308; }
-    .dot-g { background: #22c55e; }
-
+    .dot-r { background: #ef4444; } .dot-y { background: #eab308; } .dot-g { background: #22c55e; }
     .terminal-body {
-      padding: 20px;
-      font-family: 'Courier New', monospace;
-      font-size: 13px;
-      color: #60a5fa; /* Синий код */
-      line-height: 1.6;
-      overflow-x: auto;
+      padding: 20px; font-family: 'Courier New', monospace; font-size: 13px;
+      color: #60a5fa; line-height: 1.6; overflow-x: auto;
     }
-
-    .code-white { color: #e2e8f0; }
-    .code-purple { color: #c084fc; }
-    .code-green { color: #4ade80; }
-
-    /* Кнопка Лаборатории */
+    .code-white { color: #e2e8f0; } .code-purple { color: #c084fc; } .code-green { color: #4ade80; }
+    
     .btn-labs {
-      display: inline-block;
-      padding: 16px 40px;
-      background: #3B82F6; /* Синий цвет IBITI Labs */
-      color: white !important;
-      text-decoration: none;
-      font-weight: bold;
-      border-radius: 8px;
-      font-size: 1.1em;
-      transition: all 0.3s;
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
-      border: 1px solid rgba(255,255,255,0.1);
-      margin-top: 20px;
+      display: inline-block; padding: 16px 40px; background: #3B82F6;
+      color: white !important; text-decoration: none; font-weight: bold;
+      border-radius: 8px; font-size: 1.1em; transition: all 0.3s;
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); border: 1px solid rgba(255,255,255,0.1);
     }
+    .btn-labs:hover { background: #2563eb; transform: scale(1.05); box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
 
-    .btn-labs:hover {
-      background: #2563eb;
-      box-shadow: 0 0 40px rgba(59, 130, 246, 0.8);
-      transform: scale(1.05);
-      color: #fff;
+    /* Cookie Banner Fix */
+    #cookie-banner {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 9999;
+      background: rgba(10, 10, 10, 0.95); border-top: 1px solid #333;
+      color: #f5f5f5; font-family: sans-serif; font-size: 13px;
+      padding: 15px 20px; display: none; backdrop-filter: blur(5px);
     }
+    #cookie-banner.cookie-visible { display: block; animation: slideUp 0.5s ease-out; }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    
+    .cookie-inner {
+      max-width: 1000px; margin: 0 auto; display: flex;
+      align-items: center; justify-content: space-between; gap: 20px;
+    }
+    #cookie-accept {
+      padding: 8px 24px; border-radius: 4px; border: none;
+      background: #ffd800; color: #000; font-weight: bold; cursor: pointer;
+    }
+    
+    /* Footer Spacing Fix */
+    footer { padding-bottom: 80px; } /* Отступ снизу, чтобы баннер не закрывал текст */
   </style>
 </head>
 <body>
-  <!-- 🎄 Christmas overlay -->
-<div id="xmasOverlay" class="xmas-overlay" aria-hidden="true">
-  <div id="garland" class="garland"></div>
-
-  <svg class="xmas-tree tree-left" viewBox="0 0 160 260" role="img">
-    <g class="tree-sway">
-      <polygon points="80,20 25,95 55,95 15,155 55,155 30,205 130,205 105,155 145,155 105,95 135,95"
-               class="tree-body"/>
-      <rect x="70" y="205" width="20" height="30" rx="4" class="tree-trunk"/>
-      <circle cx="55" cy="105" r="5" class="tree-light l1"/>
-      <circle cx="95" cy="115" r="5" class="tree-light l2"/>
-      <circle cx="70" cy="145" r="5" class="tree-light l3"/>
-      <circle cx="110" cy="155" r="5" class="tree-light l4"/>
-      <circle cx="60" cy="180" r="5" class="tree-light l2"/>
-      <circle cx="100" cy="185" r="5" class="tree-light l1"/>
-      <polygon points="80,10 86,24 101,25 89,35 93,49 80,41 67,49 71,35 59,25 74,24"
-               class="tree-star"/>
-    </g>
-  </svg>
-
-  <svg class="xmas-tree tree-right" viewBox="0 0 160 260" role="img">
-    <g class="tree-sway">
-      <polygon points="80,20 25,95 55,95 15,155 55,155 30,205 130,205 105,155 145,155 105,95 135,95"
-               class="tree-body"/>
-      <rect x="70" y="205" width="20" height="30" rx="4" class="tree-trunk"/>
-      <circle cx="55" cy="105" r="5" class="tree-light l3"/>
-      <circle cx="95" cy="115" r="5" class="tree-light l1"/>
-      <circle cx="70" cy="145" r="5" class="tree-light l4"/>
-      <circle cx="110" cy="155" r="5" class="tree-light l2"/>
-      <circle cx="60" cy="180" r="5" class="tree-light l1"/>
-      <circle cx="100" cy="185" r="5" class="tree-light l3"/>
-      <polygon points="80,10 86,24 101,25 89,35 93,49 80,41 67,49 71,35 59,25 74,24"
-               class="tree-star"/>
-    </g>
-  </svg>
-
-  <canvas id="snowCanvas"></canvas>
-</div>
   
   <!-- Corner buttons -->
-  <div class="corner-box corner-box-left">
-    <a href="/">Home</a>
-  </div>
-  <div class="corner-box corner-box-left2">
-    <a href="blog.html">Blog</a>
-  </div>
-  <div class="corner-box corner-box-right">
-    <a href="roadmap.html">Roadmap</a>
-  </div>
-  <div class="corner-box corner-box-right-langs">
-    <div id="google_translate_element"></div>
-  </div>
+  <div class="corner-box corner-box-left"><a href="/">Home</a></div>
+  <div class="corner-box corner-box-left2"><a href="blog.html">Blog</a></div>
+  <div class="corner-box corner-box-right"><a href="roadmap.html">Roadmap</a></div>
+  <div class="corner-box corner-box-right-langs"><div id="google_translate_element"></div></div>
   
   <!-- Hero header -->
   <header class="hero-header">
@@ -343,23 +156,20 @@
   <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <!-- Main content -->
+  <!-- 1. WHY CHOOSE -->
   <section class="gold-section" data-aos="fade-up">
     <h2>WHY CHOOSE IBITIcoin?</h2>
     <p>
       IBITIcoin is an innovative cryptocurrency on <strong>BNB Smart Chain</strong>, created for fast,
       secure and accessible work in the digital economy. Trading is live in the official
-      <strong>IBITI / USDT</strong> liquidity pool on PancakeSwap, with on-chain modules for staking,
-      NFTs and DAO governance in development.
+      <strong>IBITI / USDT</strong> liquidity pool on PancakeSwap.
     </p>
-    <a class="btn"
-       href="https://pancakeswap.finance/swap?chain=bsc&amp;outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&amp;inputCurrency=0x55d398326f99059fF775485246999027B3197955"
-       target="_blank" rel="noopener noreferrer">
+    <a class="btn" href="https://pancakeswap.finance/swap?chain=bsc&amp;outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&amp;inputCurrency=0x55d398326f99059fF775485246999027B3197955" target="_blank">
       Buy IBITIcoin on PancakeSwap
     </a>
   </section>
   
-  <!-- Extra navigation buttons -->
+  <!-- Navigation -->
   <section class="extra-buttons-section">
     <a class="btn-small" href="calculator.html">Calculator</a>
     <a class="btn-small" href="how-to-buy.html">How to Buy IBITI</a>
@@ -367,63 +177,43 @@
     <a class="btn-small" href="coin-chart.html">Chart</a>
     <a class="btn-small" href="nft.html">NFT Gallery</a>
     <div class="shop-wrap">
-  <a class="btn-small" href="shop.html">Shop</a>
-  <a class="promo-badge" href="shop.html#promo-section">PROMO</a>
-  </div>
+      <a class="btn-small" href="shop.html">Shop</a>
+      <a class="promo-badge" href="shop.html#promo-section">PROMO</a>
+    </div>
     <a class="btn-small" href="book.html">Book</a>
     <a class="btn-small" href="staking.html">Staking</a>
     <a class="btn-small" id="openShareModal" href="#">Share</a>
   </section>
 
-       <!-- About project -->
+  <!-- 2. ABOUT -->
   <section class="gold-section" id="about">
     <h2>ABOUT IBITIcoin</h2>
-    <p>
-      IBITIcoin (IBITI) is a community-driven cryptocurrency on
-      <strong>BNB Smart Chain (BEP-20)</strong> with a fixed supply and
-      transparent on-chain tokenomics. The project focuses on
-      <strong>long-term liquidity</strong>, <strong>fair distribution</strong>
-      and building a modular DeFi ecosystem (staking, NFTs, DAO governance).
-    </p>
-    <p>
-      The official trading pair is
-      <strong>IBITI / USDT</strong> on PancakeSwap v2, with liquidity
-      managed from a dedicated reserve wallet.
-    </p>
+    <p>IBITIcoin (IBITI) is a community-driven cryptocurrency on BNB Smart Chain (BEP-20) with transparent on-chain tokenomics.</p>
   </section>
 
-  <section class="action-band" aria-label="Docs">
-  <div class="action-band__inner">
-    <a class="btn btn--light" href="/whitepaper.html">Whitepaper</a>
-    <a class="btn btn--light" href="/why.html">Why IBITIcoin?</a>
-  </div>
-</section>
+  <section class="action-band">
+    <div class="action-band__inner">
+      <a class="btn btn--light" href="/whitepaper.html">Whitepaper</a>
+      <a class="btn btn--light" href="/why.html">Why IBITIcoin?</a>
+    </div>
+  </section>
 
-    <!-- Founder / Team -->
+  <!-- 3. TEAM -->
   <section class="gold-section" id="team">
     <h2>TEAM</h2>
     <div class="team-wrapper">
       <div class="team-card">
         <h3>Volodymyr Podkorytov</h3>
-        <p class="role">Founder &amp; Lead Developer – IBITIcoin</p>
-        <p class="bio">
-          Responsible for smart contracts on BNB Smart Chain, project architecture,
-          liquidity management and long-term roadmap of the IBITI ecosystem.
-        </p>
-        <p class="links">
-          <a href="https://www.linkedin.com/in/ibiticoin" target="_blank" rel="noopener">
-            LinkedIn profile
-          </a>
-        </p>
+        <p class="role">Founder &amp; Lead Developer</p>
+        <p class="bio">Responsible for smart contracts on BNB Smart Chain, project architecture, liquidity management and long-term roadmap.</p>
+        <p class="links"><a href="https://www.linkedin.com/in/ibiticoin" target="_blank">LinkedIn profile</a></p>
       </div>
     </div>
   </section>
 
-  <!-- IBITI LABS TEASER SECTION -->
+  <!-- 4. IBITI LABS (NEW SECTION) -->
   <section class="labs-section" data-aos="fade-up">
     <div class="labs-container">
-      
-      <!-- Заголовок -->
       <h2 class="labs-title">IBITI Labs</h2>
       <p class="labs-subtitle">
         Eternal Permission Kernel (EPK) <br>
@@ -431,19 +221,15 @@
         <span class="labs-stats">128k+ invariant checks</span>
       </p>
 
-      <!-- Визуализация кода (Вместо картинки) -->
       <div class="labs-terminal">
         <div class="terminal-header">
-          <div class="dot dot-r"></div>
-          <div class="dot dot-y"></div>
-          <div class="dot dot-g"></div>
+          <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
         </div>
         <div class="terminal-body">
           <span class="code-purple">function</span> execute(Policy memory policy) <span class="code-purple">external</span> {<br>
           &nbsp;&nbsp;<span class="code-white">// 1. Security Invariants</span><br>
           &nbsp;&nbsp;<span class="code-purple">require</span>(policy.active, <span class="code-green">"Revoked"</span>);<br>
-          &nbsp;&nbsp;<span class="code-purple">require</span>(recover(sig) == owner, <span class="code-green">"Bad Sig"</span>);<br>
-          <br>
+          &nbsp;&nbsp;<span class="code-purple">require</span>(recover(sig) == owner, <span class="code-green">"Bad Sig"</span>);<br><br>
           &nbsp;&nbsp;<span class="code-white">// 2. Atomic Execution</span><br>
           &nbsp;&nbsp;(bool success, ) = target.call{value: val}(data);<br>
           &nbsp;&nbsp;<span class="code-purple">if</span> (!success) <span class="code-purple">revert</span>(<span class="code-green">"Tx Failed"</span>);<br>
@@ -451,333 +237,73 @@
         </div>
       </div>
 
-      <!-- Кнопка перехода -->
-      <a href="ibiti-web/labs/index.html" class="btn-labs">
-        OPEN IBITI LABS &rarr;
-      </a>
-      
+      <a href="ibiti-web/labs/index.html" class="btn-labs">OPEN IBITI LABS &rarr;</a>
     </div>
   </section>
 
+  <!-- FOOTER -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
-
-    <p>
-      <a href="privacy.html">Privacy Policy</a> |
-      <a href="terms.html">Terms of Use</a>
-    </p>
-
+    <p><a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms of Use</a></p>
     <p>
       <a href="https://x.com/ibiticoin" target="_blank">X (Twitter)</a> |
       <a href="https://t.me/IBITIcoin_chat" target="_blank">Telegram</a> |
-      <a href="https://www.facebook.com/ibiticoin.ibiticoin/" target="_blank">Facebook</a> |
-      <a href="https://www.linkedin.com/in/ibiticoin" target="_blank">LinkedIn (Founder)</a>
+      <a href="https://www.facebook.com/ibiticoin.ibiticoin/" target="_blank">Facebook</a>
     </p>
-
-    <p>
-      <a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a>
-    </p>
+    <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
   </footer>
 
-       <!-- Cookie banner START -->
+  <!-- Cookie Banner -->
   <div id="cookie-banner">
     <div class="cookie-inner">
       <div class="cookie-text">
-        We use cookies and similar technologies to provide basic site functionality,
-        analytics and live chat. For details, see our
-        <a href="privacy.html">Privacy Policy</a>.
+        We use cookies for analytics and basic functionality. See <a href="privacy.html" style="color:#ffd800">Privacy Policy</a>.
       </div>
-      <div class="cookie-actions">
-        <button id="cookie-accept">Accept</button>
-      </div>
+      <button id="cookie-accept">Accept</button>
     </div>
   </div>
 
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script>AOS.init({ once: true });</script>
+  
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var KEY    = 'ibiti_cookie_consent_v1';
-      var banner = document.getElementById('cookie-banner');
-      var btn    = document.getElementById('cookie-accept');
-
-      if (!banner || !btn) return;
-
-      var showBanner = function () {
-        banner.style.display = 'block';
-        // маленькая задержка, чтобы анимация сработала
-        setTimeout(function () {
-          banner.classList.add('cookie-visible');
-        }, 10);
-      };
-
-      var hideBanner = function () {
+    // Cookie Logic
+    document.addEventListener('DOMContentLoaded', () => {
+      const KEY = 'ibiti_cookie_consent_v1';
+      const banner = document.getElementById('cookie-banner');
+      if (!localStorage.getItem(KEY)) banner.classList.add('cookie-visible');
+      
+      document.getElementById('cookie-accept').onclick = () => {
+        localStorage.setItem(KEY, 'accepted');
         banner.classList.remove('cookie-visible');
-        setTimeout(function () {
-          banner.style.display = 'none';
-        }, 350);
       };
+    });
 
-      try {
-        if (!localStorage.getItem(KEY)) {
-          showBanner();
-        }
-      } catch (e) {
-        showBanner();
+    // Info Popup
+    document.addEventListener("DOMContentLoaded", () => {
+      if(!sessionStorage.getItem('seen_popup')) {
+        Swal.fire({
+          icon: 'info', title: 'IBITIcoin is live',
+          html: 'Trading on PancakeSwap: <b>IBITI/USDT</b>',
+          confirmButtonText: 'OK'
+        });
+        sessionStorage.setItem('seen_popup', 'true');
       }
-
-      btn.addEventListener('click', function () {
-        try {
-          localStorage.setItem(KEY, 'accepted');
-        } catch (e) {}
-        hideBanner();
-      });
     });
   </script>
 
-  <!-- AOS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <!-- Tawk.to Chat -->
   <script>
-    AOS.init({ once: true });
-  </script>
-
-  <!-- Tawk.to -->
-  <script>
-    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
     (function(){
-      var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-      s1.async = true;
-      s1.src = 'https://embed.tawk.to/67db03deb73265190d550119/1imnoe7rb';
-      s1.charset = 'UTF-8';
-      s1.setAttribute('crossorigin', '*');
-      s0.parentNode.insertBefore(s1, s0);
+      var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+      s1.async=true; s1.src='https://embed.tawk.to/67db03deb73265190d550119/1imnoe7rb';
+      s1.charset='UTF-8'; s1.setAttribute('crossorigin','*');
+      s0.parentNode.insertBefore(s1,s0);
     })();
   </script>
-
-    <!-- Info popup: live trading status -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      Swal.fire({
-        icon: 'info',
-        title: 'IBITIcoin is live on PancakeSwap',
-        html: `
-          <b>Official trading pair: IBITI / USDT (BNB Smart Chain)</b><br><br>
-          Contract: <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code><br><br>
-          <a href="https://pancakeswap.finance/swap?chain=bsc&outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&inputCurrency=0x55d398326f99059fF775485246999027B3197955"
-             target="_blank" rel="noopener noreferrer">
-            Open IBITI / USDT on PancakeSwap
-          </a>
-        `,
-        confirmButtonText: 'Got it'
-      });
-    });
-  </script>
-
-  <script>
-(() => {
-  const now = new Date();
-
-  const seasonYear = (now.getMonth() === 11) ? now.getFullYear() + 1 : now.getFullYear();
-  const start = new Date(seasonYear - 1, 11, 1, 0, 0, 0);
-  const end   = new Date(seasonYear, 1, 1, 0, 0, 0);
-
-  const overlay = document.getElementById("xmasOverlay");
-  if (now < start || now >= end) {
-    if (overlay) overlay.remove();
-    return;
-  }
-
-  // ===================== GARLAND (raised center + smooth chaos) =====================
-  const garland = document.getElementById("garland");
-
-  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
-
-  function buildGarland() {
-    if (!garland) return;
-
-    // настройки
-    const colors = ["#ff5252","#39d98a","#4dabff","#ffd86a","#c77dff","#ff7a00"];
-
-    const wireBaseY   = 14;    // базовая высота провода (чуть ниже верхнего края)
-    const edgeDrop    = 10;    // края ниже (держится “за край”)
-    const sagUp       = -18;   // !!! центр ВВЕРХ: отрицательное значение (подними: -24 / -30)
-    const chaosA      = 10;    // хаотичность (8-14 норм)
-    const bulbDrop    = 18;    // лампа ниже провода
-    const minGap      = 34;    // расстояние между лампами (меньше = больше ламп)
-
-    // очистка
-    garland.innerHTML = "";
-
-    // размеры именно контейнера с padding
-    const cs   = getComputedStyle(garland);
-    const padL = parseFloat(cs.paddingLeft)  || 0;
-    const padR = parseFloat(cs.paddingRight) || 0;
-
-    const rect = garland.getBoundingClientRect();
-    const innerW = Math.max(320, rect.width - padL - padR);
-    const H = 120; // высота SVG/зоны гирлянды (под твой CSS)
-
-    // --- плавный хаотичный шум (без дерганья) ---
-    const knots = Array.from({ length: 9 }, () => (Math.random() * 2 - 1));
-    const smoothstep = (x) => x * x * (3 - 2 * x);
-    const noise1D = (t) => {
-      const n = knots.length - 1;
-      const x = t * n;
-      const i = Math.floor(x);
-      const f = smoothstep(x - i);
-      const a = knots[clamp(i, 0, n)];
-      const b = knots[clamp(i + 1, 0, n)];
-      return a + (b - a) * f; // ~[-1..1]
-    };
-
-    // --- SVG wire ---
-    const svgNS = "http://www.w3.org/2000/svg";
-    const svg = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("viewBox", `0 0 ${innerW} ${H}`);
-    svg.setAttribute("preserveAspectRatio", "none");
-
-    const path = document.createElementNS(svgNS, "path");
-    path.setAttribute("class", "wire");
-
-    const pts = [];
-    const nPts = Math.floor(innerW / 40);
-    for (let i = 0; i <= nPts; i++) {
-      const t = i / nPts;
-      const x = t * innerW;
-
-      // ВАЖНО: центр вверх -> sagUp отрицательный
-      const y = wireBaseY
-              + edgeDrop
-              + Math.sin(t * Math.PI) * sagUp
-              + noise1D(t) * chaosA;
-
-      pts.push({ x, y: clamp(y, 6, H - 40) });
-    }
-
-    // Catmull-Rom -> Bezier
-    let d = `M ${pts[0].x} ${pts[0].y}`;
-    for (let i = 1; i < pts.length - 2; i++) {
-      const p0 = pts[i - 1], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2];
-      const c1x = p1.x + (p2.x - p0.x) / 6;
-      const c1y = p1.y + (p2.y - p0.y) / 6;
-      const c2x = p2.x - (p3.x - p1.x) / 6;
-      const c2y = p2.y - (p3.y - p1.y) / 6;
-      d += ` C ${c1x} ${c1y}, ${c2x} ${c2y}, ${p2.x} ${p2.y}`;
-    }
-    path.setAttribute("d", d);
-
-    svg.appendChild(path);
-    garland.appendChild(svg);
-
-    // --- Bulbs ---
-    const bulbsCount = Math.max(18, Math.floor(innerW / minGap));
-    for (let i = 0; i < bulbsCount; i++) {
-      const t = (bulbsCount === 1) ? 0.5 : i / (bulbsCount - 1);
-
-      const x = padL + t * innerW;
-      const wireY = wireBaseY
-                  + edgeDrop
-                  + Math.sin(t * Math.PI) * sagUp
-                  + noise1D(t) * chaosA;
-
-      const bulb = document.createElement("span");
-      bulb.className = "bulb";
-
-      const col = colors[i % colors.length];
-      bulb.style.setProperty("--c", col);
-      bulb.style.setProperty("--blink", (1.0 + Math.random() * 1.4) + "s");
-      bulb.style.setProperty("--delay", (Math.random() * 1.2) + "s");
-
-      bulb.style.left = x + "px";
-      bulb.style.top  = (clamp(wireY, 6, H - 60) + bulbDrop + (Math.random() * 2 - 1)) + "px";
-
-      // внутрянка
-      const halo = document.createElement("span"); halo.className = "halo";
-      const cord = document.createElement("span"); cord.className = "cord";
-      const cap  = document.createElement("span"); cap.className  = "cap";
-      bulb.append(halo, cord, cap);
-
-      garland.appendChild(bulb);
-    }
-  }
-
-  buildGarland();
-  window.addEventListener("resize", buildGarland, { passive: true });
-
-  // =============================== SNOW ===============================
-  const canvas = document.getElementById("snowCanvas");
-  if (!canvas) return;
-
-  const ctx = canvas.getContext("2d", { alpha: true });
-  let w = 0, h = 0, dpr = 1;
-
-  const flakes = [];
-  const FLAKE_COUNT = 120; // 80 легче / 160 плотнее
-
-  function resizeSnow() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    w = Math.floor(window.innerWidth);
-    h = Math.floor(window.innerHeight);
-
-    canvas.width  = Math.floor(w * dpr);
-    canvas.height = Math.floor(h * dpr);
-    canvas.style.width = w + "px";
-    canvas.style.height = h + "px";
-
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
-  function spawnFlake(resetY = false) {
-    return {
-      x: Math.random() * w,
-      y: resetY ? -20 - Math.random() * h : Math.random() * h,
-      r: 1 + Math.random() * 2.6,
-      vy: 0.8 + Math.random() * 1.6,
-      vx: -0.5 + Math.random() * 1.0,
-      wobble: Math.random() * Math.PI * 2,
-      wobbleSpeed: 0.01 + Math.random() * 0.02,
-      opacity: 0.30 + Math.random() * 0.55
-    };
-  }
-
-  function initSnow() {
-    flakes.length = 0;
-    for (let i = 0; i < FLAKE_COUNT; i++) flakes.push(spawnFlake(false));
-  }
-
-  let last = performance.now();
-  function tick(now) {
-    const dt = Math.min(33, now - last);
-    last = now;
-
-    ctx.clearRect(0, 0, w, h);
-
-    for (const f of flakes) {
-      f.wobble += f.wobbleSpeed * dt;
-      f.x += (f.vx + Math.sin(f.wobble) * 0.25) * (dt / 16);
-      f.y += f.vy * (dt / 16);
-
-      if (f.y > h + 10 || f.x < -30 || f.x > w + 30) {
-        Object.assign(f, spawnFlake(true));
-      }
-
-      ctx.globalAlpha = f.opacity;
-      ctx.beginPath();
-      ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-      ctx.fillStyle = "#ffffff";
-      ctx.fill();
-    }
-
-    ctx.globalAlpha = 1;
-    requestAnimationFrame(tick);
-  }
-
-  resizeSnow();
-  initSnow();
-  requestAnimationFrame(tick);
-
-  window.addEventListener("resize", () => { resizeSnow(); initSnow(); }, { passive: true });
-})();
-</script>
-
-<script src="js/share-modal.js?v=2"></script>
+  
+  <script src="js/share-modal.js?v=2"></script>
 </body>
 </html>
