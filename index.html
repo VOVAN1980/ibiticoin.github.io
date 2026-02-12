@@ -421,45 +421,43 @@
     </div>
   </section>
 
-  <!-- IBITI LABS TEASER SECTION (НОВАЯ СЕКЦИЯ) -->
-  <section class="labs-section" data-aos="fade-up">
-    <div class="labs-container">
-      
-      <!-- Заголовок -->
-      <h2 class="labs-title">IBITI Labs</h2>
-      <p class="labs-subtitle">
-        Eternal Permission Kernel (EPK) <br>
-        <span class="labs-stats">● 157/157 tests passing</span> · 
-        <span class="labs-stats">128k+ invariant checks</span>
-      </p>
+  <!-- IBITI LABS TEASER SECTION -->
+<section class="labs-section" data-aos="fade-up" id="ibiti-labs">
+  <div class="labs-container">
+    <h2 class="labs-title">IBITI Labs</h2>
 
-      <!-- Визуализация кода (Вместо картинки) -->
-      <div class="labs-terminal">
-        <div class="terminal-header">
-          <div class="dot dot-r"></div>
-          <div class="dot dot-y"></div>
-          <div class="dot dot-g"></div>
-        </div>
-        <div class="terminal-body">
-          <span class="code-purple">function</span> execute(Policy memory policy) <span class="code-purple">external</span> {<br>
-          &nbsp;&nbsp;<span class="code-white">// 1. Security Invariants</span><br>
-          &nbsp;&nbsp;<span class="code-purple">require</span>(policy.active, <span class="code-green">"Revoked"</span>);<br>
-          &nbsp;&nbsp;<span class="code-purple">require</span>(recover(sig) == owner, <span class="code-green">"Bad Sig"</span>);<br>
-          <br>
-          &nbsp;&nbsp;<span class="code-white">// 2. Atomic Execution</span><br>
-          &nbsp;&nbsp;(bool success, ) = target.call{value: val}(data);<br>
-          &nbsp;&nbsp;<span class="code-purple">if</span> (!success) <span class="code-purple">revert</span>(<span class="code-green">"Tx Failed"</span>);<br>
-          }
-        </div>
+    <p class="labs-subtitle">
+      Eternal Permission Kernel (EPK)<br />
+      <span class="labs-stats">● 157/157 tests passing</span>
+      <span class="labs-sep">·</span>
+      <span class="labs-stats">128k+ invariant checks</span>
+    </p>
+
+    <!-- Code visualization -->
+    <div class="labs-terminal" role="region" aria-label="EPK code preview">
+      <div class="terminal-header" aria-hidden="true">
+        <span class="dot dot-r"></span>
+        <span class="dot dot-y"></span>
+        <span class="dot dot-g"></span>
       </div>
 
-      <!-- Кнопка перехода -->
-      <a href="ibiti-web/labs/index.html" class="btn-labs">
-        OPEN IBITI LABS &rarr;
-      </a>
-      
+      <pre class="terminal-body"><code><span class="code-purple">function</span> execute(Policy memory policy) <span class="code-purple">external</span> {
+  <span class="code-white">// 1. Security Invariants</span>
+  <span class="code-purple">require</span>(policy.active, <span class="code-green">"Revoked"</span>);
+  <span class="code-purple">require</span>(recover(sig) == owner, <span class="code-green">"Bad Sig"</span>);
+
+  <span class="code-white">// 2. Atomic Execution</span>
+  (bool success, ) = target.call{value: val}(data);
+  <span class="code-purple">if</span> (!success) <span class="code-purple">revert</span>(<span class="code-green">"Tx Failed"</span>);
+}</code></pre>
     </div>
-  </section>
+
+    <!-- CTA -->
+    <a href="/ibiti-web/labs/index.html" class="btn-labs" aria-label="Open IBITI Labs">
+      OPEN IBITI LABS →
+    </a>
+  </div>
+</section>
 
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
@@ -846,3 +844,4 @@
 <script src="js/share-modal.js?v=2"></script>
 </body>
 </html>
+
