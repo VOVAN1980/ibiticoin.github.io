@@ -209,22 +209,29 @@
                     <pre class="font-mono text-xs md:text-sm leading-relaxed text-gray-400">
 <span class="text-white/20">140</span> <span class="text-purple-400">function</span> <span class="text-blue-400">execute</span>(
 <span class="text-white/20">141</span>     <span class="text-yellow-200">uint256</span> policyId, <span class="text-yellow-200">address</span> target, <span class="text-yellow-200">uint256</span> value,
-<span class="text-white/20">142</span>     <span class="text-yellow-200">bytes</span> <span class="text-purple-400">calldata</span> data, <span class="text-yellow-200">bytes</span> <span class="text-purple-400">calldata</span> signature
-<span class="text-white/20">143</span> ) <span class="text-purple-400">external payable</span> {
-<span class="text-white/20">144</span>     
-<span class="text-white/20">145</span>     <span class="text-gray-600">// 1. Security Invariants</span>
-<span class="text-white/20">146</span>     <span class="text-purple-400">require</span>(policy.active, <span class="text-green-400">"Panic: Revoked"</span>);
-<span class="text-white/20">147</span>     <span class="text-purple-400">require</span>(recover(hash, signature) == policy.owner, <span class="text-green-400">"Bad Sig"</span>);
-<span class="text-white/20">148</span> 
-<span class="text-white/20">149</span>     <span class="text-gray-600">// 2. Modular Constraints (SpendLimit, Allowlist)</span>
-<span class="text-white/20">150</span>     <span class="text-purple-400">if</span> (policy.validator != <span class="text-purple-400">address</span>(0)) {
-<span class="text-white/20">151</span>         IV(<span class="text-cyan-400">validator</span>).<span class="text-blue-400">validate</span>(target, data, value);
-<span class="text-white/20">152</span>     }
-<span class="text-white/20">153</span> 
-<span class="text-white/20">154</span>     <span class="text-gray-600">// 3. Atomic Execution</span>
-<span class="text-white/20">155</span>     (bool success, ) = target.<span class="text-blue-400">call</span>{value: value}(data);
-<span class="text-white/20">156</span>     <span class="text-purple-400">if</span> (!success) <span class="text-purple-400">revert</span>(<span class="text-green-400">"Tx Failed"</span>);<span class="animate-pulse text-primary">_</span>
-<span class="text-white/20">157</span> }</pre>
+<span class="text-white/20">142</span>     <span class="text-yellow-200">bytes</span> <span class="text-purple-400">calldata</span> data, <span class="text-yellow-200">uint256</span> deadline,
+<span class="text-white/20">143</span>     <span class="text-yellow-200">bytes</span> <span class="text-purple-400">calldata</span> signature
+<span class="text-white/20">144</span> ) <span class="text-purple-400">external payable</span> <span class="text-purple-400">returns</span> (<span class="text-yellow-200">bytes</span> <span class="text-purple-400">memory</span> result) {
+<span class="text-white/20">145</span>
+<span class="text-white/20">146</span>     <span class="text-gray-600">// 1. Policy Active / Panic Mode</span>
+<span class="text-white/20">147</span>     <span class="text-purple-400">require</span>(policy.active, <span class="text-green-400">"PolicyInactive"</span>);
+<span class="text-white/20">148</span>
+<span class="text-white/20">149</span>     <span class="text-gray-600">// 2. Deadline (anti-replay window)</span>
+<span class="text-white/20">150</span>     <span class="text-purple-400">require</span>(deadline &gt; block.timestamp, <span class="text-green-400">"Expired"</span>);
+<span class="text-white/20">151</span>
+<span class="text-white/20">152</span>     <span class="text-gray-600">// 3. EIP-712 Owner Signature</span>
+<span class="text-white/20">153</span>     <span class="text-purple-400">require</span>(recover(hash, signature) == policy.owner, <span class="text-green-400">"BadSignature"</span>);
+<span class="text-white/20">154</span>
+<span class="text-white/20">155</span>     <span class="text-gray-600">// 4. Optional Validator Module</span>
+<span class="text-white/20">156</span>     <span class="text-purple-400">if</span> (policy.validator != <span class="text-purple-400">address</span>(0)) {
+<span class="text-white/20">157</span>         IV(<span class="text-cyan-400">policy.validator</span>).<span class="text-blue-400">validate</span>(policyId, target, value, data);
+<span class="text-white/20">158</span>     }
+<span class="text-white/20">159</span>
+<span class="text-white/20">160</span>     <span class="text-gray-600">// 5. Atomic Execution</span>
+<span class="text-white/20">161</span>     (bool ok, <span class="text-yellow-200">bytes</span> <span class="text-purple-400">memory</span> ret) = target.<span class="text-blue-400">call</span>{value: value}(data);
+<span class="text-white/20">162</span>     <span class="text-purple-400">require</span>(ok, <span class="text-green-400">"TxFailed"</span>);<span class="animate-pulse text-primary">_</span>
+<span class="text-white/20">163</span>     <span class="text-purple-400">return</span> ret;
+<span class="text-white/20">164</span> }</pre>
                 </div>
             </div>
         </section>
@@ -597,6 +604,7 @@
     </script>
 </body>
 </html>
+
 
 
 
