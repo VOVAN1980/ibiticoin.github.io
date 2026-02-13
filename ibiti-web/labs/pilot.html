@@ -31,72 +31,131 @@
   </script>
 
   <style>
-    body{
-      background:#020204;
-      color:#fff;
-      overflow-x:hidden;
-      position:relative;
-      isolation:isolate;
-    }
+  :root{
+    --bg:#020204;
+    --w:255,255,255;
+    --p:59,130,246;
+    --a:139,92,246;
+    --c:34,211,238;
+  }
 
-    /* Background image (investor look) */
-    .bg-hero{
-      position:fixed;
-      inset:0;
-      z-index:-20;
-      background:
-        radial-gradient(1200px 600px at 55% 30%, rgba(59,130,246,0.22), transparent 65%),
-        radial-gradient(900px 500px at 78% 62%, rgba(139,92,246,0.20), transparent 60%),
-        linear-gradient(to bottom, rgba(0,0,0,0.40), rgba(0,0,0,0.85)),
-        url('/ibiti-web/labs/img/epk-investor-hero.webp');
-      background-size:cover;
-      background-position:center;
-      background-repeat:no-repeat;
-      filter:saturate(1.05) contrast(1.05);
-    }
-    .vignette{
-      position:fixed;
-      inset:0;
-      z-index:-10;
-      background:radial-gradient(closest-side at 50% 40%, rgba(0,0,0,0.15), rgba(0,0,0,0.85));
-      pointer-events:none;
-    }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:#fff;
+    overflow-x:hidden;
+    position:relative;
+    isolation:isolate;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
 
-    /* Minimal “non-boxy” panels */
+  /* ===== BACKGROUND (investor image) ===== */
+  .bg-hero{
+    position:fixed;
+    inset:0;
+    z-index:-30;
+    pointer-events:none;
+
+    background:
+      radial-gradient(1200px 600px at 55% 30%, rgba(var(--p),0.20), transparent 65%),
+      radial-gradient(900px 500px at 78% 62%, rgba(var(--a),0.18), transparent 60%),
+      radial-gradient(700px 420px at 22% 70%, rgba(var(--c),0.10), transparent 55%),
+      linear-gradient(to bottom, rgba(0,0,0,0.32), rgba(0,0,0,0.78)),
+      url('/ibiti-web/labs/img/epk-investor-hero.webp');
+
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    filter:saturate(1.04) contrast(1.06) brightness(0.98);
+    transform:translateZ(0);
+  }
+
+  /* Vignette: делает края глубже, но НЕ “мутнит” контент */
+  .vignette{
+    position:fixed;
+    inset:0;
+    z-index:-20;
+    pointer-events:none;
+    background:
+      radial-gradient(closest-side at 50% 38%, rgba(0,0,0,0.06), rgba(0,0,0,0.62)),
+      linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.40));
+  }
+
+  /* ===== PANELS (readable, not “muddy”) ===== */
+  .panel{
+    background: rgba(10,10,14,0.44);
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: 0 18px 70px rgba(0,0,0,0.55);
+    border-radius: 16px;
+
+    /* меньше blur = меньше мыла */
+    backdrop-filter: blur(8px) saturate(120%);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
+  }
+
+  /* тонкая линия где нужно */
+  .hairline{
+    border:1px solid rgba(255,255,255,0.10);
+  }
+
+  /* читаемый текст */
+  .muted{  color: rgba(255,255,255,0.78); }
+  .muted2{ color: rgba(255,255,255,0.62); }
+  .muted3{ color: rgba(255,255,255,0.45); }
+
+  /* ===== GRADIENT TEXT ===== */
+  .text-gradient{
+    background: linear-gradient(to right, #60a5fa 10%, #a78bfa 55%, #22d3ee 90%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-size:200% auto;
+    animation:textShine 7s linear infinite;
+  }
+  @keyframes textShine { to { background-position: 200% center; } }
+
+  /* ===== MODAL ===== */
+  .modal-hidden{
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transform:translateY(8px);
+  }
+  .modal-show{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+    transform:translateY(0);
+  }
+  .ease-pop{
+    transition: opacity .18s ease, transform .18s ease, visibility .18s ease;
+  }
+
+  /* ===== TOAST ===== */
+  .toast-hidden{
+    opacity:0;
+    transform:translateY(10px);
+    pointer-events:none;
+  }
+  .toast-show{
+    opacity:1;
+    transform:translateY(0);
+    pointer-events:auto;
+  }
+
+  /* ===== MOBILE tuning ===== */
+  @media (max-width:768px){
     .panel{
-      background: rgba(10,10,14,0.18);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255,255,255,0.06);
-      box-shadow: 0 12px 60px rgba(0,0,0,0.35);
+      background: rgba(10,10,14,0.52);
+      backdrop-filter: blur(6px) saturate(120%);
+      -webkit-backdrop-filter: blur(6px) saturate(120%);
+      box-shadow: 0 14px 55px rgba(0,0,0,0.55);
     }
-    .hairline{
-      border:1px solid rgba(255,255,255,0.07);
+    .bg-hero{
+      filter:saturate(1.02) contrast(1.04) brightness(0.96);
     }
-    .muted{
-      color: rgba(255,255,255,0.62);
-    }
-    .muted2{
-      color: rgba(255,255,255,0.45);
-    }
-
-    /* Gradient text */
-    .text-gradient{
-      background: linear-gradient(to right, #60a5fa 10%, #a78bfa 55%, #22d3ee 90%);
-      -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
-      background-size:200% auto;
-      animation:textShine 7s linear infinite;
-    }
-    @keyframes textShine { to { background-position: 200% center; } }
-
-    /* Modal */
-    .modal-hidden{ opacity:0; visibility:hidden; pointer-events:none; transform:translateY(6px); }
-    .modal-show{ opacity:1; visibility:visible; pointer-events:auto; transform:translateY(0); }
-    .ease-pop{ transition: opacity .18s ease, transform .18s ease, visibility .18s ease; }
-
-    /* Toast */
-    .toast-hidden{ opacity:0; transform:translateY(8px); pointer-events:none; }
-    .toast-show{ opacity:1; transform:translateY(0); pointer-events:auto; }
+  }
 </style>
 </head>
 
