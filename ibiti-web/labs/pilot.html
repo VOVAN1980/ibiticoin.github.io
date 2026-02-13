@@ -188,37 +188,67 @@
       </div>
 
       <!-- PROBLEM / FIX -->
-      <div class="mt-14 panel rounded-2xl p-6 md:p-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <div class="text-[10px] font-mono tracking-widest text-white/35 mb-3" data-i18n="pTag">THE PROBLEM</div>
-            <h2 class="text-2xl md:text-3xl font-bold" data-i18n="pTitle">AI is probabilistic. Money is not.</h2>
-            <p class="mt-4 muted leading-relaxed" data-i18n="pText">
-              Agents hallucinate, get prompt-injected, or mis-execute trades. If an agent holds a key (or unlimited approvals),
-              one mistake becomes irreversible loss. Protocols and platforms cannot put user funds behind “best effort”.
-            </p>
-            <ul class="mt-4 space-y-2 text-sm muted2">
-              <li data-i18n="pB1">• Unlimited approvals turn a bug into unlimited damage.</li>
-              <li data-i18n="pB2">• Off-chain guardrails fail the moment the on-chain call is allowed.</li>
-              <li data-i18n="pB3">• “Trust me” is not a security model for institutions.</li>
-            </ul>
-          </div>
+<div class="mt-14 panel rounded-2xl p-6 md:p-8">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-          <div>
-            <div class="text-[10px] font-mono tracking-widest text-white/35 mb-3" data-i18n="sTag">THE FIX</div>
-            <h2 class="text-2xl md:text-3xl font-bold" data-i18n="sTitle">Deterministic constraints on-chain.</h2>
-            <p class="mt-4 muted leading-relaxed" data-i18n="sText">
-              EPK enforces policy in execution: spend caps (per-tx & rolling windows), allow/deny targets and call keys,
-              EIP-712 signatures (human-auditable intent), plus nonce/deadline replay protection.
-              If policy fails — the transaction reverts.
-            </p>
-            <ul class="mt-4 space-y-2 text-sm muted2">
-              <li data-i18n="sB1">• Limits enforced in the kernel, not in UI.</li>
-              <li data-i18n="sB2">• Allowlist/denylist defaults block unknown interactions.</li>
-              <li data-i18n="sB3">• Instant revoke (panic) halts agent execution.</li>
-            </ul>
-          </div>
-        </div>
+    <!-- THE PROBLEM -->
+    <div>
+      <div class="text-[10px] font-mono tracking-widest text-white/35 mb-3" data-i18n="pTag">THE PROBLEM</div>
+      <h2 class="text-2xl md:text-3xl font-bold" data-i18n="pTitle">AI is probabilistic. Money is not.</h2>
+
+      <p class="mt-4 muted leading-relaxed" data-i18n="pText">
+        Agents hallucinate, get prompt-injected, or mis-execute trades — that’s normal for probabilistic systems.
+        But on-chain execution is final. When an agent holds keys (or has unlimited approvals), a single bad decision
+        becomes an irreversible loss event.
+        <br><br>
+        UI warnings, “are you sure?” dialogs, and off-chain monitors do not protect funds once the transaction is signed.
+        What matters is what the chain accepts. Institutions, exchanges, and wallets cannot place user funds behind “best effort”
+        or “trust the bot”. They need deterministic boundaries that hold even when the agent is wrong, compromised, or manipulated.
+        <br><br>
+        The core issue is simple: traditional agent automation gives the agent <span class="text-white/70">capability without constraint</span>.
+        In finance, that’s a loaded gun on autopilot.
+      </p>
+
+      <ul class="mt-5 space-y-2 text-sm muted2">
+        <li data-i18n="pB1">• Unlimited approvals turn a minor bug into unlimited damage — one leaked key drains everything.</li>
+        <li data-i18n="pB2">• Prompt injection can “legitimize” malicious actions and redirect intent without changing UI.</li>
+        <li data-i18n="pB3">• Off-chain guardrails fail the moment the on-chain call is allowed — the chain doesn’t read your dashboards.</li>
+        <li data-i18n="pB4">• Wrong target / wrong calldata mistakes are common and irreversible once mined.</li>
+        <li data-i18n="pB5">• Replay and stale signatures become attack surface without strict nonces and deadlines.</li>
+        <li data-i18n="pB6">• “Trust me” is not a security model for institutions — policy must be enforceable and auditable.</li>
+      </ul>
+    </div>
+
+    <!-- THE FIX -->
+    <div>
+      <div class="text-[10px] font-mono tracking-widest text-white/35 mb-3" data-i18n="sTag">THE FIX</div>
+      <h2 class="text-2xl md:text-3xl font-bold" data-i18n="sTitle">Deterministic constraints on-chain.</h2>
+
+      <p class="mt-4 muted leading-relaxed" data-i18n="sText">
+        EPK enforces policy at the only layer that matters: <span class="text-white/70">execution</span>.
+        The agent can propose actions — but the kernel decides what is allowed to happen on-chain.
+        This makes autonomy safe: even if the agent hallucinates, gets hijacked, or attempts an unsafe call, the policy blocks it.
+        <br><br>
+        Policies cover financial limits (spend caps per transaction and rolling windows), interaction boundaries
+        (allow/deny targets and call-keys), and signature intent (EIP-712 typed data that is human-auditable, not blind calldata).
+        Every intent is bounded by nonce + deadline replay protection, so signatures cannot be reused outside their window.
+        <br><br>
+        If any rule fails — the transaction <span class="text-white/70">reverts atomically</span>.
+        No partial execution, no “best effort”, no off-chain “we’ll catch it next time”.
+      </p>
+
+      <ul class="mt-5 space-y-2 text-sm muted2">
+        <li data-i18n="sB1">• Limits are enforced in the kernel, not in UI — constraints survive front-end and bot failures.</li>
+        <li data-i18n="sB2">• Spend caps per-tx and rolling windows reduce blast radius by design.</li>
+        <li data-i18n="sB3">• Allowlist/denylist defaults block unknown interactions and non-approved call paths.</li>
+        <li data-i18n="sB4">• EIP-712 typed intents make approvals auditable — wallets can display what is being authorized.</li>
+        <li data-i18n="sB5">• Nonce + deadline kill replay and stale signatures — each intent is single-use and time-bounded.</li>
+        <li data-i18n="sB6">• Instant revoke (panic) halts all agent execution immediately when risk is detected.</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
 
         <div class="mt-8 pt-6 border-t border-white/8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div class="flex flex-wrap items-center gap-6">
