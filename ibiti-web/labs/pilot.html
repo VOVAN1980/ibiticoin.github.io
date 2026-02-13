@@ -31,73 +31,158 @@
   </script>
 
   <style>
-    body{
-      background:#020204;
-      color:#fff;
-      overflow-x:hidden;
-      position:relative;
-      isolation:isolate;
-    }
+  /* =========================
+     BASE
+  ========================== */
+  :root{
+    --bg:#020204;
+    --w:255,255,255;
+    --p:59,130,246;
+    --a:139,92,246;
+    --c:34,211,238;
+  }
 
-    /* Background image (investor look) */
-    .bg-hero{
-      position:fixed;
-      inset:0;
-      z-index:-20;
-      background:
-        radial-gradient(1200px 600px at 55% 30%, rgba(59,130,246,0.22), transparent 65%),
-        radial-gradient(900px 500px at 78% 62%, rgba(139,92,246,0.20), transparent 60%),
-        linear-gradient(to bottom, rgba(0,0,0,0.40), rgba(0,0,0,0.85)),
-        url('/ibiti-web/labs/img/epk-investor-hero.webp');
-      background-size:cover;
-      background-position:center;
-      background-repeat:no-repeat;
-      filter:saturate(1.05) contrast(1.05);
-    }
-    .vignette{
-      position:fixed;
-      inset:0;
-      z-index:-10;
-      background:radial-gradient(closest-side at 50% 40%, rgba(0,0,0,0.15), rgba(0,0,0,0.85));
-      pointer-events:none;
-    }
+  body{
+    background:var(--bg);
+    color:#fff;
+    overflow-x:hidden;
+    position:relative;
+    isolation:isolate;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
 
-    /* Minimal “non-boxy” panels */
+  /* =========================
+     INVESTOR HERO BACKGROUND
+     (image + gradients, no canvas needed)
+  ========================== */
+  .bg-hero{
+    position:fixed;
+    inset:0;
+    z-index:-30;
+    pointer-events:none;
+
+    /* порядок слоёв важен */
+    background:
+      radial-gradient(1100px 520px at 55% 28%, rgba(var(--p),0.22), transparent 62%),
+      radial-gradient(900px 500px at 78% 62%, rgba(var(--a),0.18), transparent 60%),
+      radial-gradient(700px 420px at 22% 70%, rgba(var(--c),0.10), transparent 55%),
+      linear-gradient(to bottom, rgba(0,0,0,0.30), rgba(0,0,0,0.70)),
+      url('/ibiti-web/labs/img/epk-investor-hero.webp');
+
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    filter:saturate(1.05) contrast(1.08) brightness(0.95);
+    transform:translateZ(0);
+  }
+
+  /* мягкая виньетка, чтобы не “мутнил” низ */
+  .vignette{
+    position:fixed;
+    inset:0;
+    z-index:-20;
+    pointer-events:none;
+    background:
+      radial-gradient(closest-side at 50% 34%, rgba(0,0,0,0.08), rgba(0,0,0,0.70)),
+      linear-gradient(to bottom, rgba(0,0,0,0.10), rgba(0,0,0,0.52));
+  }
+
+  /* =========================
+     PREMIUM “NON-BOXY” PANELS
+     (минимальная рамка, без “ящиков”)
+  ========================== */
+  .panel{
+    position:relative;
+    background:rgba(10,10,14,0.32);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:16px;
+    box-shadow:0 18px 70px rgba(0,0,0,0.55);
+
+    /* blur меньше — текст не “мылится” */
+    backdrop-filter:blur(10px) saturate(120%);
+    -webkit-backdrop-filter:blur(10px) saturate(120%);
+
+    transition:transform .35s cubic-bezier(.25,1,.5,1),
+               border-color .35s cubic-bezier(.25,1,.5,1),
+               background .35s cubic-bezier(.25,1,.5,1);
+  }
+
+  /* мягкая подсветка сверху вместо “коробки” */
+  .panel:before{
+    content:"";
+    position:absolute;
+    inset:-1px;
+    border-radius:inherit;
+    pointer-events:none;
+    background:radial-gradient(700px 240px at 50% 0%,
+      rgba(255,255,255,0.09),
+      transparent 60%);
+    opacity:.9;
+  }
+
+  .panel:hover{
+    transform:translateY(-3px);
+    border-color:rgba(255,255,255,0.14);
+    background:rgba(12,12,18,0.38);
+  }
+
+  .hairline{
+    border:1px solid rgba(255,255,255,0.08);
+  }
+
+  .muted{  color:rgba(255,255,255,0.74); }
+  .muted2{ color:rgba(255,255,255,0.58); }
+  .muted3{ color:rgba(255,255,255,0.42); }
+
+  /* =========================
+     GRADIENT TEXT
+  ========================== */
+  .text-gradient{
+    background:linear-gradient(to right, #60a5fa 10%, #a78bfa 55%, #22d3ee 90%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-size:200% auto;
+    animation:textShine 7s linear infinite;
+  }
+  @keyframes textShine{ to{ background-position:200% center; } }
+
+  /* =========================
+     REVEAL (если используешь)
+  ========================== */
+  .reveal{
+    opacity:0;
+    transform:translateY(18px);
+    transition:opacity .8s cubic-bezier(.16,1,.3,1),
+               transform .8s cubic-bezier(.16,1,.3,1);
+  }
+  .reveal.active{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  /* =========================
+     SCROLLBAR (опционально)
+  ========================== */
+  .scrollbar-hide::-webkit-scrollbar{ width:0; height:0; }
+  .scrollbar-hide{ scrollbar-width:none; }
+
+  /* =========================
+     MOBILE TUNING
+  ========================== */
+  @media (max-width:768px){
     .panel{
-      background: rgba(10,10,14,0.18);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255,255,255,0.06);
-      box-shadow: 0 12px 60px rgba(0,0,0,0.35);
+      backdrop-filter:blur(6px) saturate(120%);
+      -webkit-backdrop-filter:blur(6px) saturate(120%);
+      background:rgba(10,10,14,0.40);
+      box-shadow:0 14px 55px rgba(0,0,0,0.55);
     }
-    .hairline{
-      border:1px solid rgba(255,255,255,0.07);
+    .bg-hero{
+      filter:saturate(1.02) contrast(1.06) brightness(0.92);
     }
-    .muted{
-      color: rgba(255,255,255,0.62);
-    }
-    .muted2{
-      color: rgba(255,255,255,0.45);
-    }
-
-    /* Gradient text */
-    .text-gradient{
-      background: linear-gradient(to right, #60a5fa 10%, #a78bfa 55%, #22d3ee 90%);
-      -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
-      background-size:200% auto;
-      animation:textShine 7s linear infinite;
-    }
-    @keyframes textShine { to { background-position: 200% center; } }
-
-    /* Modal */
-    .modal-hidden{ opacity:0; visibility:hidden; pointer-events:none; transform:translateY(6px); }
-    .modal-show{ opacity:1; visibility:visible; pointer-events:auto; transform:translateY(0); }
-    .ease-pop{ transition: opacity .18s ease, transform .18s ease, visibility .18s ease; }
-
-    /* Toast */
-    .toast-hidden{ opacity:0; transform:translateY(8px); pointer-events:none; }
-    .toast-show{ opacity:1; transform:translateY(0); pointer-events:auto; }
-  </style>
+  }
+</style>
 </head>
 
 <body class="selection:bg-primary/30 selection:text-white">
@@ -187,35 +272,34 @@
         </div>
       </div>
 
-      <!-- PROBLEM / FIX -->
+      <<!-- PROBLEM / FIX -->
 <div class="mt-14 panel rounded-2xl p-6 md:p-8">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-
     <!-- THE PROBLEM -->
     <div>
       <div class="text-[10px] font-mono tracking-widest text-white/35 mb-3" data-i18n="pTag">THE PROBLEM</div>
       <h2 class="text-2xl md:text-3xl font-bold" data-i18n="pTitle">AI is probabilistic. Money is not.</h2>
 
       <p class="mt-4 muted leading-relaxed" data-i18n="pText">
-        Agents hallucinate, get prompt-injected, or mis-execute trades — that’s normal for probabilistic systems.
-        But on-chain execution is final. When an agent holds keys (or has unlimited approvals), a single bad decision
-        becomes an irreversible loss event.
+        Modern agents and LLM-driven bots are not deterministic systems. They hallucinate, get prompt-injected,
+        misread context, and occasionally do the exact wrong thing with very high confidence.
+        In normal software that’s a bug. In finance it’s an incident.
         <br><br>
-        UI warnings, “are you sure?” dialogs, and off-chain monitors do not protect funds once the transaction is signed.
-        What matters is what the chain accepts. Institutions, exchanges, and wallets cannot place user funds behind “best effort”
-        or “trust the bot”. They need deterministic boundaries that hold even when the agent is wrong, compromised, or manipulated.
+        The moment an agent is given a private key, a signer, or unlimited token approvals, you’ve created a single point of failure
+        that can execute irreversible actions. UI confirmations, monitoring dashboards, and off-chain “guardrails” help only until
+        the on-chain call is valid. The chain does not care that the agent was “confused”.
         <br><br>
-        The core issue is simple: traditional agent automation gives the agent <span class="text-white/70">capability without constraint</span>.
-        In finance, that’s a loaded gun on autopilot.
+        For wallets, exchanges, protocols, and institutions this is a hard blocker: you cannot ship “autonomous execution” as a feature
+        unless you can prove a deterministic safety boundary — not in policy docs, but in the execution path itself.
       </p>
 
       <ul class="mt-5 space-y-2 text-sm muted2">
-        <li data-i18n="pB1">• Unlimited approvals turn a minor bug into unlimited damage — one leaked key drains everything.</li>
-        <li data-i18n="pB2">• Prompt injection can “legitimize” malicious actions and redirect intent without changing UI.</li>
-        <li data-i18n="pB3">• Off-chain guardrails fail the moment the on-chain call is allowed — the chain doesn’t read your dashboards.</li>
+        <li data-i18n="pB1">• Unlimited approvals turn a small bug into unlimited damage and uncontrolled loss.</li>
+        <li data-i18n="pB2">• Prompt injection can redirect actions without changing the user’s perceived intent.</li>
+        <li data-i18n="pB3">• Off-chain checks fail the moment the on-chain call is allowed — execution is final.</li>
         <li data-i18n="pB4">• Wrong target / wrong calldata mistakes are common and irreversible once mined.</li>
-        <li data-i18n="pB5">• Replay and stale signatures become attack surface without strict nonces and deadlines.</li>
-        <li data-i18n="pB6">• “Trust me” is not a security model for institutions — policy must be enforceable and auditable.</li>
+        <li data-i18n="pB5">• Replay and stale signatures become attack surface without strict nonces + deadlines.</li>
+        <li data-i18n="pB6">• “Trust the bot” is not a security model — institutions need enforceable constraints.</li>
       </ul>
     </div>
 
@@ -225,28 +309,27 @@
       <h2 class="text-2xl md:text-3xl font-bold" data-i18n="sTitle">Deterministic constraints on-chain.</h2>
 
       <p class="mt-4 muted leading-relaxed" data-i18n="sText">
-        EPK enforces policy at the only layer that matters: <span class="text-white/70">execution</span>.
-        The agent can propose actions — but the kernel decides what is allowed to happen on-chain.
-        This makes autonomy safe: even if the agent hallucinates, gets hijacked, or attempts an unsafe call, the policy blocks it.
+        EPK solves this by moving safety from “best effort” off-chain logic into an on-chain execution kernel.
+        Agents can propose actions — but the kernel enforces a policy that defines exactly what may execute.
+        If a policy rule fails, the transaction reverts atomically. No partial execution. No “we’ll catch it later”.
         <br><br>
-        Policies cover financial limits (spend caps per transaction and rolling windows), interaction boundaries
-        (allow/deny targets and call-keys), and signature intent (EIP-712 typed data that is human-auditable, not blind calldata).
-        Every intent is bounded by nonce + deadline replay protection, so signatures cannot be reused outside their window.
+        The policy is enforced at execution time: spend caps (per-tx and rolling windows), allow/deny rules for targets and call-keys,
+        and human-auditable EIP-712 typed intents. Every intent is bound to nonce + deadline replay protection so signatures cannot be reused
+        outside their intended window.
         <br><br>
-        If any rule fails — the transaction <span class="text-white/70">reverts atomically</span>.
-        No partial execution, no “best effort”, no off-chain “we’ll catch it next time”.
+        Result: even if the agent hallucinates, is compromised, or behaves maliciously, it cannot exceed predefined limits or interact with
+        unapproved contracts. Autonomy becomes deployable for real platforms because the safety boundary is mathematical — enforced by the chain.
       </p>
 
       <ul class="mt-5 space-y-2 text-sm muted2">
-        <li data-i18n="sB1">• Limits are enforced in the kernel, not in UI — constraints survive front-end and bot failures.</li>
-        <li data-i18n="sB2">• Spend caps per-tx and rolling windows reduce blast radius by design.</li>
-        <li data-i18n="sB3">• Allowlist/denylist defaults block unknown interactions and non-approved call paths.</li>
-        <li data-i18n="sB4">• EIP-712 typed intents make approvals auditable — wallets can display what is being authorized.</li>
-        <li data-i18n="sB5">• Nonce + deadline kill replay and stale signatures — each intent is single-use and time-bounded.</li>
-        <li data-i18n="sB6">• Instant revoke (panic) halts all agent execution immediately when risk is detected.</li>
+        <li data-i18n="sB1">• Limits enforced in the kernel, not in UI — constraints survive front-end failures.</li>
+        <li data-i18n="sB2">• Per-tx caps + rolling windows reduce blast radius and enable risk-tiered automation.</li>
+        <li data-i18n="sB3">• Allowlist/denylist (targets + call-keys) blocks unknown interactions by default.</li>
+        <li data-i18n="sB4">• EIP-712 typed intents make approvals auditable — wallets can display what’s authorized.</li>
+        <li data-i18n="sB5">• Nonce + deadline prevent replay and stale signatures — each intent is time-bounded.</li>
+        <li data-i18n="sB6">• Instant revoke (panic) halts agent execution immediately when risk is detected.</li>
       </ul>
     </div>
-
   </div>
 </div>
 
