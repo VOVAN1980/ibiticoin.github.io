@@ -44,8 +44,18 @@
       background-size:200% auto; animation:textShine 6s linear infinite;
     }
     @keyframes textShine { to { background-position: 200% center; } }
-    #universe{position:fixed;inset:0;z-index:0;pointer-events:none;}
-    body > *:not(#universe){position:relative;z-index:1;}
+    #universe{
+  position: fixed;
+  inset: 0;
+  z-index: 0;          /* НЕ -1 */
+  pointer-events: none; /* ключевое */
+}
+
+/* всё содержимое сайта поверх */
+body > *:not(#universe){
+  position: relative;
+  z-index: 1;
+}
   </style>
 </head>
 
