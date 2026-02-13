@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IBITI Labs | Partner & Pilot</title>
+  <title>IBITI Labs | Pilot & Partners</title>
 
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;500;700;800&display=swap" rel="stylesheet">
+
   <script src="https://cdn.tailwindcss.com"></script>
 
   <script>
@@ -18,8 +20,8 @@
             primary: '#3B82F6',
             accent: '#8B5CF6',
             cyan: '#06b6d4',
-            gold: '#FFD700',
-            safe: '#10B981'
+            safe: '#10B981',
+            gold: '#FFD700'
           },
           fontFamily: {
             sans: ['Outfit', 'Inter', 'sans-serif'],
@@ -39,68 +41,96 @@
       isolation: isolate;
     }
 
-    /* Investor background: image + controlled gradients */
-    body::before{
-      content:"";
+    /* Background image (optional). Put your image in /ibiti-web/labs/img/ */
+    .bg-hero{
       position: fixed;
       inset: 0;
       z-index: -20;
       background:
-        radial-gradient(80% 60% at 50% 18%, rgba(59,130,246,.20), transparent 60%),
-        radial-gradient(70% 55% at 72% 62%, rgba(139,92,246,.16), transparent 62%),
-        linear-gradient(to bottom, rgba(2,2,4,.84), rgba(2,2,4,.94)),
-        url("/ibiti-web/img/investor-bg.png");
+        radial-gradient(1200px 800px at 70% 20%, rgba(139,92,246,0.14), transparent 60%),
+        radial-gradient(900px 700px at 30% 70%, rgba(34,211,238,0.10), transparent 55%),
+        linear-gradient(to bottom, rgba(2,2,4,0.92), rgba(2,2,4,0.88)),
+        url("img/epk-investor-hero.webp");
       background-size: cover;
       background-position: center;
-      background-repeat: no-repeat;
-      filter: saturate(1.05) contrast(1.05);
+      filter: saturate(0.95) contrast(1.05);
     }
 
-    /* subtle grain */
-    body::after{
-      content:"";
+    /* If image missing, it still looks good because gradients exist */
+    .grain{
       position: fixed;
       inset: 0;
-      z-index: -19;
+      z-index: -10;
       pointer-events:none;
-      opacity: .10;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+      opacity: .22;
     }
 
-    /* Only for 2 “focus” panels */
-    .glass{
-      background: rgba(255,255,255,0.05);
+    /* Universe canvas */
+    #universe{
+      position: fixed;
+      inset: 0;
+      width:100%;
+      height:100%;
+      z-index: -15;
+      pointer-events:none;
+      opacity: .55;
+      mask-image: linear-gradient(to bottom, black 10%, rgba(0,0,0,0.65) 100%);
+    }
+
+    /* Clean “no-card” sections: subtle separators only */
+    .hairline{
       border: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 22px;
+    }
+
+    .pill{
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .soft-panel{
+      background: rgba(0,0,0,0.22);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
     }
 
     .text-gradient{
-      background: linear-gradient(to right, #60a5fa 10%, #a78bfa 55%, #22d3ee 90%);
-      -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
-      background-size:200% auto; animation:textShine 6s linear infinite;
+      background: linear-gradient(to right, #60a5fa 5%, #a78bfa 45%, #22d3ee 95%);
+      -webkit-background-clip:text; background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-size:200% auto;
+      animation:textShine 6s linear infinite;
     }
     @keyframes textShine { to { background-position: 200% center; } }
 
-    .hairline{ border-color: rgba(255,255,255,0.10); }
+    /* Contact modal */
+    #contactModal.hidden { display:none; }
   </style>
 </head>
 
 <body class="selection:bg-primary/30 selection:text-white">
 
+  <!-- Background layers -->
+  <div class="bg-hero"></div>
+  <canvas id="universe"></canvas>
+  <div class="grain"></div>
+
   <!-- NAV -->
   <nav class="fixed top-0 w-full z-50">
-    <div class="absolute inset-0 bg-background/70 backdrop-blur-xl border-b hairline"></div>
-    <div class="relative max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
-      <a href="index.html" class="flex items-center gap-2 text-sm text-white/55 hover:text-white transition">
+    <div class="absolute inset-0 bg-black/35 backdrop-blur-xl border-b border-white/10"></div>
+    <div class="relative max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <a href="/ibiti-web/labs/index.html" class="flex items-center gap-2 text-sm text-white/60 hover:text-white transition">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 12H5M12 19l-7-7 7-7"/>
         </svg>
-        <span>Back to Labs</span>
+        <span class="hidden sm:inline">Back to Labs</span>
       </a>
 
-      <div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-3">
+      <div class="flex items-center gap-3">
         <div class="relative w-6 h-6 flex items-center justify-center">
           <div class="absolute inset-0 bg-primary/40 blur-lg rounded-full"></div>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-full h-full text-white relative z-10">
@@ -110,176 +140,373 @@
         <span class="font-bold tracking-tight text-lg">IBITI <span class="text-white/40 font-normal">Labs</span></span>
       </div>
 
-      <a href="../../index.html" class="text-white/55 hover:text-white transition" title="Main Site">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-          <polyline points="9 22 9 12 15 12 15 22"></polyline>
-        </svg>
-      </a>
+      <div class="flex items-center gap-2">
+        <a href="../../index.html" class="p-2 rounded-full bg-white/5 border border-white/10 text-white/70 hover:text-white hover:bg-white/10 transition" title="Main Site">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+        </a>
+      </div>
     </div>
   </nav>
 
-  <main class="pt-28 pb-16 px-6">
-    <!-- HERO -->
-    <section class="max-w-6xl mx-auto pt-8">
-      <div class="max-w-4xl mx-auto text-center">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border hairline bg-white/[0.04] text-white/70 text-[10px] font-mono tracking-widest uppercase">
-          <span class="w-1.5 h-1.5 rounded-full bg-safe shadow-[0_0_10px_rgba(16,185,129,.6)]"></span>
-          Partner & Pilot
+  <main class="pt-28 pb-20 px-6">
+    <section class="max-w-6xl mx-auto">
+
+      <!-- HERO -->
+      <div class="text-center max-w-4xl mx-auto">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full pill text-[10px] font-mono tracking-widest text-white/70 uppercase">
+          <span class="w-1.5 h-1.5 rounded-full bg-safe shadow-[0_0_10px_currentColor]"></span>
+          Pilot onboarding · Partners & Investors
         </div>
 
-        <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mt-5 leading-[1.05]">
+        <h1 class="mt-6 text-4xl md:text-6xl font-extrabold tracking-tight leading-[1.08]">
           Safe Execution for <span class="text-gradient">AI Agents</span>
         </h1>
 
-        <p class="text-white/60 mt-4 max-w-3xl mx-auto leading-relaxed">
-          IBITI EPK is an on-chain execution kernel that enforces hard permissions:
-          spend limits, allowlists, deadlines, nonces, and instant revocation.
-          Let agents operate — without handing them unlimited power.
+        <p class="mt-4 text-white/60 text-base md:text-lg leading-relaxed">
+          IBITI EPK is an on-chain execution kernel that enforces hard permissions for autonomous agents:
+          spend limits, allowlists/deny lists, typed intents (EIP-712), nonces/deadlines, and instant revoke.
+          <span class="text-white/75">No “trust the bot”. Only deterministic constraints.</span>
         </p>
 
         <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <button class="btn btn-primary" onclick="openContact('pilot')">Request Pilot</button>
-             class="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-white text-black font-bold hover:opacity-90 transition shadow-[0_0_30px_rgba(255,255,255,.18)]">
+          <button onclick="openContact('pilot')"
+                  class="w-full sm:w-auto px-7 py-4 rounded-xl bg-white text-black font-bold hover:opacity-90 transition shadow-[0_0_30px_rgba(255,255,255,0.18)]">
             Request Pilot
-          </a>
-          <button class="btn btn-ghost" onclick="openContact('partner')">Become a Partner</button>
-             class="w-full sm:w-auto px-7 py-3.5 rounded-xl border hairline bg-white/[0.03] text-white hover:bg-white/[0.06] transition">
+          </button>
+          <button onclick="openContact('partner')"
+                  class="w-full sm:w-auto px-7 py-4 rounded-xl border border-white/15 bg-white/5 text-white font-semibold hover:bg-white/10 transition">
             Become a Partner
-          </a>
+          </button>
+          <button onclick="openContact('investor')"
+                  class="w-full sm:w-auto px-7 py-4 rounded-xl border border-gold/20 bg-gold/5 text-gold font-semibold hover:bg-gold/10 transition">
+            Investor Contact
+          </button>
         </div>
 
-        <div class="mt-6 text-xs text-white/45 flex flex-wrap gap-3 justify-center">
-          <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span>EIP-712 typed intents</span>
-          <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-accent"></span>Modular validators</span>
-          <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan"></span>Instant revoke (panic)</span>
+        <div class="mt-5 flex flex-wrap justify-center gap-x-5 gap-y-2 text-[12px] text-white/50">
+          <span class="inline-flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-primary"></span>EIP-712 intents</span>
+          <span class="inline-flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-accent"></span>Modular validators</span>
+          <span class="inline-flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-cyan"></span>Instant revoke (panic)</span>
         </div>
       </div>
-    </section>
 
-    <!-- PROBLEM / FIX (no cards, just clean sections) -->
-    <section class="max-w-6xl mx-auto mt-14 border-t hairline pt-10">
-      <div class="grid md:grid-cols-2 gap-10">
-        <div>
-          <div class="text-[10px] font-mono tracking-widest text-white/50 uppercase">The problem</div>
-          <h2 class="text-2xl md:text-3xl font-bold mt-2">AI is probabilistic. Money is not.</h2>
-          <p class="text-white/60 mt-3 leading-relaxed">
-            Agents hallucinate, get prompt-injected, and mis-execute trades.
-            Giving any agent unlimited approvals or raw key access turns a single mistake into irreversible loss.
-          </p>
-        </div>
-
-        <div>
-          <div class="text-[10px] font-mono tracking-widest text-white/50 uppercase">The fix</div>
-          <h3 class="text-2xl md:text-3xl font-bold mt-2">Deterministic constraints on-chain.</h3>
-          <div class="mt-4 space-y-3 text-white/70">
-            <div class="flex gap-3">
-              <div class="mt-2 w-2 h-2 rounded-full bg-primary shadow-[0_0_12px_rgba(59,130,246,.6)]"></div>
-              <div><span class="text-white">Spend limits</span> per-tx and rolling windows — enforced in execution, not in UI.</div>
-            </div>
-            <div class="flex gap-3">
-              <div class="mt-2 w-2 h-2 rounded-full bg-accent shadow-[0_0_12px_rgba(139,92,246,.6)]"></div>
-              <div><span class="text-white">Allowlist / denylist</span> targets and call keys — block unknown interactions by default.</div>
-            </div>
-            <div class="flex gap-3">
-              <div class="mt-2 w-2 h-2 rounded-full bg-cyan shadow-[0_0_12px_rgba(6,182,212,.6)]"></div>
-              <div><span class="text-white">Instant revoke</span> + TTL/nonce/deadline — kill replay and stale signatures.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- WHO IT'S FOR (3 lines, not 3 boxes) -->
-    <section class="max-w-6xl mx-auto mt-12 border-t hairline pt-10">
-      <div class="grid md:grid-cols-3 gap-10">
-        <div>
-          <div class="text-[10px] font-mono tracking-widest text-white/50 uppercase">Wallets / Exchanges</div>
-          <h3 class="text-xl font-bold mt-2">Safe Agent Accounts</h3>
-          <p class="text-white/60 mt-2 leading-relaxed">
-            Offer controlled agent execution with explicit policy boundaries. Reduce support risk and improve user trust.
-          </p>
-        </div>
-        <div>
-          <div class="text-[10px] font-mono tracking-widest text-white/50 uppercase">Agent builders</div>
-          <h3 class="text-xl font-bold mt-2">Ship faster</h3>
-          <p class="text-white/60 mt-2 leading-relaxed">
-            Don’t rebuild security primitives. Plug into a hardened permission kernel and focus on intelligence.
-          </p>
-        </div>
-        <div>
-          <div class="text-[10px] font-mono tracking-widest text-white/50 uppercase">Protocols / Institutions</div>
-          <h3 class="text-xl font-bold mt-2">Policy-first automation</h3>
-          <p class="text-white/60 mt-2 leading-relaxed">
-            Delegate execution while preserving governance: limits, auditability, and revocation by design.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- PROOF (one glass panel only) -->
-    <section class="max-w-6xl mx-auto mt-12">
-      <div class="glass px-7 py-6">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      <!-- ONE CLEAN PANEL: Problem + Solution -->
+      <div class="mt-14 soft-panel rounded-2xl p-7 md:p-10">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
           <div>
-            <div class="text-[10px] font-mono tracking-widest text-white/50 uppercase">Proof</div>
-            <div class="mt-2 flex flex-wrap items-baseline gap-x-8 gap-y-2">
-              <div class="text-3xl font-bold">157<span class="text-white/35 font-normal"> / 157</span></div>
-              <div class="text-white/55">core tests passing</div>
-              <div class="text-3xl font-bold">128k<span class="text-white/35 font-normal">+</span></div>
-              <div class="text-white/55">invariant checks</div>
+            <div class="text-[10px] font-mono tracking-widest text-white/50 uppercase">The problem</div>
+            <h2 class="mt-2 text-2xl md:text-3xl font-bold text-white">AI is probabilistic. Money is not.</h2>
+            <p class="mt-3 text-white/55 leading-relaxed">
+              Agents hallucinate, get prompt-injected, or mis-execute trades. If an agent holds a key or unlimited approvals,
+              a single mistake becomes irreversible loss. Protocols and platforms cannot put user funds behind “best effort”.
+            </p>
+            <ul class="mt-5 space-y-2 text-white/55 text-sm">
+              <li>• Key compromise becomes total loss.</li>
+              <li>• “Unlimited approve” turns into unlimited damage.</li>
+              <li>• Off-chain guardrails fail when the on-chain call is allowed.</li>
+            </ul>
+          </div>
+
+          <div>
+            <div class="text-[10px] font-mono tracking-widest text-white/50 uppercase">The fix</div>
+            <h2 class="mt-2 text-2xl md:text-3xl font-bold text-white">Deterministic constraints on-chain.</h2>
+            <p class="mt-3 text-white/55 leading-relaxed">
+              EPK enforces policy in execution: spend caps per tx and rolling windows, allow/deny targets and call keys,
+              EIP-712 signatures (human-auditable intent), plus nonce/deadline replay protection.
+              If policy fails — the transaction reverts. No UI promises. No “trust me”.
+            </p>
+            <ul class="mt-5 space-y-2 text-white/55 text-sm">
+              <li>• Spend limits enforced in the kernel, not in UI.</li>
+              <li>• Whitelist / denylist for targets and call signatures.</li>
+              <li>• Instant revoke (panic) to halt agent execution.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-10 pt-7 border-t border-white/10 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+          <div class="flex flex-wrap items-center gap-x-8 gap-y-2">
+            <div>
+              <div class="text-[10px] font-mono tracking-widest text-white/45 uppercase">Proof</div>
+              <div class="mt-1 text-white font-bold text-xl tabular-nums">
+                157 <span class="text-white/35 font-medium">/ 157</span>
+                <span class="text-safe font-mono text-base ml-2">tests passing</span>
+              </div>
+              <div class="text-white/45 text-sm mt-1">Fuzz + invariants; CI is public.</div>
             </div>
-            <div class="text-white/50 mt-2 text-sm">
-              Verified by fuzzing & formal verification workflow.
+
+            <div>
+              <div class="text-[10px] font-mono tracking-widest text-white/45 uppercase">Invariants</div>
+              <div class="mt-1 text-white font-bold text-xl tabular-nums">
+                128k<span class="text-primary">+</span>
+              </div>
+              <div class="text-white/45 text-sm mt-1">Invariant checks executed.</div>
             </div>
           </div>
 
-          <div class="flex flex-col sm:flex-row gap-3">
+          <div class="flex gap-3">
             <a href="https://github.com/VOVAN1980/ibiti-epk-core" target="_blank"
-               class="px-6 py-3 rounded-xl border hairline bg-white/[0.03] hover:bg-white/[0.06] transition text-white text-sm">
+               class="px-5 py-3 rounded-xl border border-white/15 bg-white/5 text-white hover:bg-white/10 transition font-semibold">
               View GitHub
             </a>
             <a href="https://github.com/VOVAN1980/ibiti-epk-core/actions/workflows/ci.yml" target="_blank"
-               class="px-6 py-3 rounded-xl border border-green-500/25 bg-green-500/10 hover:bg-green-500/15 transition text-green-300 text-sm">
+               class="px-5 py-3 rounded-xl border border-safe/25 bg-safe/10 text-safe hover:bg-safe/15 transition font-semibold">
               Live CI Logs
             </a>
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- PILOT STRIP (one glass panel only) -->
-    <section class="max-w-6xl mx-auto mt-10">
-      <div class="glass px-7 py-6">
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+      <!-- FOR WHO (minimal, no card grid) -->
+      <div class="mt-14 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div>
+          <div class="text-[10px] font-mono tracking-widest text-white/50 uppercase">Wallets / Exchanges</div>
+          <h3 class="mt-2 text-xl font-bold">Safe Agent Accounts</h3>
+          <p class="mt-2 text-white/55 leading-relaxed">
+            Offer agent execution with explicit policy boundaries. Reduce support risk, improve trust, and unlock “agentic”
+            features without giving bots unlimited power.
+          </p>
+        </div>
+
+        <div>
+          <div class="text-[10px] font-mono tracking-widest text-white/50 uppercase">Agent builders</div>
+          <h3 class="mt-2 text-xl font-bold">Ship faster</h3>
+          <p class="mt-2 text-white/55 leading-relaxed">
+            Don’t reinvent security primitives. Plug into EPK’s hardened permission layer and focus on intelligence,
+            strategy, and UX.
+          </p>
+        </div>
+
+        <div>
+          <div class="text-[10px] font-mono tracking-widest text-white/50 uppercase">Protocols / Institutions</div>
+          <h3 class="mt-2 text-xl font-bold">Policy-first automation</h3>
+          <p class="mt-2 text-white/55 leading-relaxed">
+            Delegate execution while preserving governance: limits, allowlists, auditability, and revocation by design.
+          </p>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="mt-14 text-center">
+        <div class="text-white/50 text-sm">Pilot v1 onboarding is limited. We accept a small number of integrations.</div>
+        <div class="mt-4 flex flex-col sm:flex-row justify-center gap-3">
+          <button onclick="openContact('pilot')"
+                  class="px-7 py-4 rounded-xl bg-white text-black font-bold hover:opacity-90 transition">
+            Contact for Pilot
+          </button>
+          <button onclick="openContact('partner')"
+                  class="px-7 py-4 rounded-xl border border-white/15 bg-white/5 text-white font-semibold hover:bg-white/10 transition">
+            Partnership
+          </button>
+        </div>
+        <div class="mt-6 text-xs text-white/35">IBITI Labs · EPK v1 · info@ibiticoin.com</div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- CONTACT MODAL -->
+  <div id="contactModal" class="hidden fixed inset-0 z-[999] items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-md" onclick="closeContact()"></div>
+
+    <div class="relative w-full max-w-lg rounded-2xl border border-white/10 bg-black/45 backdrop-blur-xl p-6 shadow-[0_0_60px_rgba(0,0,0,0.65)]">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <div class="text-[10px] font-mono tracking-widest text-white/50 uppercase">Contact</div>
+          <h3 id="contactTitle" class="text-2xl font-bold text-white mt-1">Get in touch</h3>
+          <p id="contactSubtitle" class="text-white/55 mt-2">
+            Choose channel. We reply within 24 hours.
+          </p>
+        </div>
+
+        <button onclick="closeContact()" class="text-white/50 hover:text-white transition p-2 rounded-lg hover:bg-white/5" aria-label="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <a id="contactX" target="_blank"
+           class="rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition p-4 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </div>
           <div>
-            <div class="text-[10px] font-mono tracking-widest text-white/50 uppercase">Next step</div>
-            <h3 class="text-xl font-bold mt-2">Pilot v1 onboarding</h3>
-            <p class="text-white/60 mt-2 max-w-2xl leading-relaxed">
-              Send your use case (wallet integration, exchange automation, protocol execution, or agent runtime).
-              We map policies and ship a clean pilot plan.
-            </p>
+            <div class="text-xs text-white/45 uppercase tracking-wide">X</div>
+            <div class="text-white font-semibold">@ibiticoin</div>
+          </div>
+        </a>
+
+        <div class="rounded-xl border border-white/10 bg-white/5 p-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+            </div>
+            <div class="min-w-0">
+              <div class="text-xs text-white/45 uppercase tracking-wide">Email</div>
+              <div class="text-white font-semibold truncate" id="contactEmailText">info@ibiticoin.com</div>
+            </div>
           </div>
 
-          <div class="flex flex-col sm:flex-row gap-3">
-            <a href="mailto:info@ibiticoin.com?subject=Pilot%20Request%20(IBITI%20EPK)"
-               class="px-6 py-3 rounded-xl bg-white text-black font-bold hover:opacity-90 transition">
-              Email for Pilot
+          <div class="mt-3 flex gap-2">
+            <button onclick="copyEmail()"
+                    class="flex-1 rounded-lg bg-white text-black font-bold py-2 hover:opacity-90 transition">
+              Copy
+            </button>
+
+            <a id="contactGmail" target="_blank"
+               class="flex-1 rounded-lg border border-white/10 bg-white/0 hover:bg-white/10 transition py-2 text-center text-white font-semibold">
+              Gmail
             </a>
-            <a href="mailto:info@ibiticoin.com?subject=Partnership%20Inquiry%20(IBITI%20EPK)"
-               class="px-6 py-3 rounded-xl border hairline bg-white/[0.03] hover:bg-white/[0.06] transition text-white">
-              Partnership
-            </a>
+          </div>
+
+          <div class="mt-2 text-[11px] text-white/35">
+            Subject is prefilled for pilot/partner/investor.
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- FOOTER -->
-    <footer class="max-w-6xl mx-auto mt-14 pt-10 border-t hairline text-center text-xs text-white/35">
-      <div>IBITI Labs · EPK v1 · info@ibiticoin.com</div>
-      <div class="mt-2 text-white/25">Response time: &lt; 24h · Encrypted & private</div>
-    </footer>
-  </main>
+      <div class="mt-5 text-[11px] text-white/35 flex flex-wrap gap-2">
+        <span class="inline-flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-safe"></span> Response time &lt; 24h
+        </span>
+        <span>•</span>
+        <span>Direct to founder</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Universe (lightweight, non-interactive)
+    const canvas = document.getElementById('universe');
+    const ctx = canvas.getContext('2d');
+    let w, h, nodes = [];
+
+    function resize(){
+      w = canvas.width = innerWidth;
+      h = canvas.height = innerHeight;
+      nodes = [];
+      const count = innerWidth < 768 ? 40 : 90;
+      for(let i=0;i<count;i++){
+        nodes.push({
+          x: Math.random()*w,
+          y: Math.random()*h,
+          vx: (Math.random()-0.5)*0.25,
+          vy: (Math.random()-0.5)*0.25,
+          r: Math.random()*2+0.4
+        });
+      }
+    }
+    addEventListener('resize', resize);
+
+    function loop(){
+      ctx.clearRect(0,0,w,h);
+      for(let i=0;i<nodes.length;i++){
+        const a = nodes[i];
+        a.x += a.vx; a.y += a.vy;
+        if(a.x<0||a.x>w) a.vx*=-1;
+        if(a.y<0||a.y>h) a.vy*=-1;
+
+        ctx.fillStyle='rgba(255,255,255,0.30)';
+        ctx.beginPath(); ctx.arc(a.x,a.y,a.r,0,Math.PI*2); ctx.fill();
+
+        for(let j=i+1;j<nodes.length;j++){
+          const b = nodes[j];
+          const dx=a.x-b.x, dy=a.y-b.y;
+          const d=Math.sqrt(dx*dx+dy*dy);
+          if(d<120){
+            ctx.strokeStyle=`rgba(139, 92, 246, ${0.10*(1-d/120)})`;
+            ctx.lineWidth=0.6;
+            ctx.beginPath();
+            ctx.moveTo(a.x,a.y);
+            ctx.lineTo(b.x,b.y);
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(loop);
+    }
+    resize(); loop();
+
+    // Contact modal
+    const CONTACT = {
+      email: "info@ibiticoin.com",
+      x: "https://x.com/ibiticoin",
+    };
+
+    const SUBJECTS = {
+      pilot: "Pilot integration request (IBITI EPK)",
+      partner: "Partnership inquiry (IBITI EPK)",
+      investor: "Investor inquiry (IBITI EPK)",
+      default: "Inquiry (IBITI EPK)"
+    };
+
+    function openContact(kind = "default") {
+      const modal = document.getElementById("contactModal");
+      const title = document.getElementById("contactTitle");
+      const subtitle = document.getElementById("contactSubtitle");
+
+      const subject = SUBJECTS[kind] || SUBJECTS.default;
+
+      document.getElementById("contactEmailText").textContent = CONTACT.email;
+
+      const x = document.getElementById("contactX");
+      x.href = CONTACT.x;
+
+      const gmail = document.getElementById("contactGmail");
+      gmail.href = "https://mail.google.com/mail/?view=cm&fs=1"
+        + "&to=" + encodeURIComponent(CONTACT.email)
+        + "&su=" + encodeURIComponent(subject);
+
+      if (kind === "pilot") {
+        title.textContent = "Request a Pilot";
+        subtitle.textContent = "Send your use case (wallet/exchange/protocol/agent runtime). We map policy + scope fast.";
+      } else if (kind === "partner") {
+        title.textContent = "Become a Partner";
+        subtitle.textContent = "Tell us what you bring: distribution, integrations, BD, ecosystem access, funding.";
+      } else if (kind === "investor") {
+        title.textContent = "Investor Contact";
+        subtitle.textContent = "Intro + ticket size + what you want to evaluate (tech, market, traction).";
+      } else {
+        title.textContent = "Get in touch";
+        subtitle.textContent = "Choose channel. We reply within 24 hours.";
+      }
+
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeContact() {
+      const modal = document.getElementById("contactModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      document.body.style.overflow = "";
+    }
+
+    async function copyEmail() {
+      try {
+        await navigator.clipboard.writeText(CONTACT.email);
+        const el = document.getElementById("contactEmailText");
+        const old = el.textContent;
+        el.textContent = "Copied ✓ " + CONTACT.email;
+        setTimeout(() => el.textContent = old, 1200);
+      } catch (e) {
+        prompt("Copy email:", CONTACT.email);
+      }
+    }
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeContact();
+    });
+  </script>
 </body>
 </html>
