@@ -50,11 +50,27 @@
         body { background-color: #020204; color: white; overflow-x: hidden; }
 
         /* --- UNIVERSE & GRAIN --- */
-        #universe { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; 
-            /* Убрал сильное затемнение, чтобы фон был "ближе" */
-            mask-image: linear-gradient(to bottom, black 20%, rgba(0,0,0,0.8) 100%); 
-        }
+        body{
+       background-color:#020204;
+       color:#fff;
+       overflow-x:hidden;
+
+       position: relative;
+       isolation: isolate;
+     }
+
+       #universe{
+       position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+
+      z-index: -10;
+      pointer-events: none;
+
+  /* если хочешь оставить затемнение — ок */
+  mask-image: linear-gradient(to bottom, black 20%, rgba(0,0,0,0.8) 100%);
+}
         
         /* --- CRYSTAL UI (PREMIUM LOOK) --- */
         .crystal {
@@ -115,19 +131,6 @@
         @media (max-width: 768px) {
             .tilt-card { transform: none !important; }
         }
-
-         #universe{
-  position: fixed;
-  inset: 0;
-  z-index: 0;          /* НЕ -1 */
-  pointer-events: none; /* ключевое */
-}
-
-/* всё содержимое сайта поверх */
-body > *:not(#universe){
-  position: relative;
-  z-index: 1;
-}
     </style>
 </head>
 <body class="selection:bg-primary/30 selection:text-white">
@@ -641,3 +644,4 @@ body > *:not(#universe){
     </script>
 </body>
 </html>
+
