@@ -35,7 +35,7 @@
     overflow-x:hidden;
 
     position: relative;
-    isolation: isolate; /* фиксит стек слоёв */
+    isolation: isolate;
   }
 
   #universe{
@@ -44,16 +44,11 @@
     width: 100%;
     height: 100%;
 
-    z-index: -10;        /* ключ: всегда позади */
-    pointer-events: none;/* ключ: не ловит ПКМ/клики */
+    z-index: -10;
+    pointer-events: none;
   }
 
-  /* УДАЛИ ЭТОТ БЛОК, он ломает всё:
-  body > *:not(#universe){
-    position: relative;
-    z-index: 1;
-  }
-  */
+  /* УДАЛЕНО: body > *:not(#universe) ... */
 
   .crystal{
     background: rgba(15, 15, 20, 0.4);
