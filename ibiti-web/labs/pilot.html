@@ -97,6 +97,55 @@
     /* Toast */
     .toast-hidden{ opacity:0; transform:translateY(8px); pointer-events:none; }
     .toast-show{ opacity:1; transform:translateY(0); pointer-events:auto; }
+
+    /* 1) Фон: чуть чище и без “мыла” */
+.bg-hero{
+  filter: saturate(1.05) contrast(1.08) brightness(0.95);
+}
+
+/* 2) Виньетка: ослабить, чтобы низ не “грязнился” */
+.vignette{
+  background:
+    radial-gradient(closest-side at 50% 35%, rgba(0,0,0,0.10), rgba(0,0,0,0.72)),
+    linear-gradient(to bottom, rgba(0,0,0,0.10), rgba(0,0,0,0.55));
+}
+
+/* 3) Панели: меньше blur (он и даёт “мутность”), больше контраста */
+.panel{
+  background: rgba(10,10,14,0.32);          /* было 0.18 */
+  border: 1px solid rgba(255,255,255,0.08); /* чуть контрастнее */
+  box-shadow: 0 18px 70px rgba(0,0,0,0.55);
+  backdrop-filter: blur(10px) saturate(120%); /* было blur(14px) */
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+}
+
+/* 4) Текст: светлее — чтобы не “терялся” на фоне */
+.muted{  color: rgba(255,255,255,0.74); }   /* было 0.62 */
+.muted2{ color: rgba(255,255,255,0.58); }   /* было 0.45 */
+
+/* 5) “не ящики”: убираем ощущение коробки — мягкая подсветка вместо рамки */
+.panel{
+  position: relative;
+}
+.panel:before{
+  content:"";
+  position:absolute; inset:-1px;
+  border-radius: inherit;
+  pointer-events:none;
+  background: radial-gradient(700px 220px at 50% 0%,
+    rgba(255,255,255,0.08),
+    transparent 60%);
+  opacity: 0.9;
+}
+
+/* 6) Если где-то снизу ещё сильнее мутно — точечно отключи blur на мобильных */
+@media (max-width: 768px){
+  .panel{
+    backdrop-filter: blur(6px) saturate(120%);
+    -webkit-backdrop-filter: blur(6px) saturate(120%);
+    background: rgba(10,10,14,0.38);
+  }
+}
 </style>
 </head>
 
