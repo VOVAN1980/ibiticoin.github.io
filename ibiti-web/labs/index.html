@@ -212,50 +212,110 @@
         </section>
 
         <!-- 2. HOLOGRAPHIC CODE -->
-        <section class="max-w-4xl mx-auto mb-32 reveal">
-            <div class="crystal rounded-xl overflow-hidden relative shadow-[0_0_80px_rgba(59,130,246,0.1)] border border-white/10">
-                <div class="scanline"></div>
-                <div class="beam"></div>
-                
-                <div class="px-6 py-4 border-b border-white/5 bg-black/40 flex items-center justify-between">
-                    <div class="flex gap-2">
-                        <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
-                        <div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
-                        <div class="w-3 h-3 rounded-full bg-green-500/50"></div>
-                    </div>
-                    <div class="font-mono text-xs text-white/30 uppercase tracking-widest">EPKernel.sol (Read-Only)</div>
-                </div>
-                
-                <div class="p-6 md:p-8 overflow-x-auto bg-[#050508] scrollbar-hide">
-                    <pre class="font-mono text-xs md:text-sm leading-relaxed text-gray-400">
+<section class="max-w-4xl mx-auto mb-32 reveal">
+  <div class="crystal rounded-xl overflow-hidden relative shadow-[0_0_80px_rgba(59,130,246,0.1)] border border-white/10">
+    <div class="scanline"></div>
+    <div class="beam"></div>
+
+    <div class="px-6 py-4 border-b border-white/5 bg-black/40 flex items-center justify-between">
+      <div class="flex gap-2">
+        <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
+        <div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+        <div class="w-3 h-3 rounded-full bg-green-500/50"></div>
+      </div>
+      <div class="font-mono text-xs text-white/30 uppercase tracking-widest">EPKernel.sol (Read-Only)</div>
+    </div>
+
+    <!-- scrollable terminal body -->
+    <div class="p-6 md:p-8 bg-[#050508] scrollbar-hide max-h-[420px] overflow-y-auto overflow-x-auto">
+
+      <!-- honesty note + sources -->
+      <div class="mb-4 text-xs md:text-sm text-gray-400">
+        <div class="font-semibold text-gray-300">Normative execute() flow (v1)</div>
+        <div class="text-gray-500">
+          This snippet reflects the real order of checks (policy → expiry → agent → allowlist → value → nonce+EIP-712 → validator → nonce++ → call).
+        </div>
+        <div class="mt-2 flex flex-wrap gap-3">
+          <a class="text-cyan-300 hover:text-cyan-200 underline"
+             href="https://testnet.bscscan.com/address/0x0beEB0083C576B54DB99B4abEF0Dcbc5Bc70bF82#code"
+             target="_blank" rel="noopener">Verified contract (BscScan)</a>
+
+          <a class="text-cyan-300 hover:text-cyan-200 underline"
+             href="https://github.com/VOVAN1980/ibiti-epk-core/blob/main/contracts/epk/EPKernel.sol"
+             target="_blank" rel="noopener">Source (GitHub)</a>
+        </div>
+      </div>
+
+      <pre class="font-mono text-xs md:text-sm leading-relaxed text-gray-400">
 <span class="text-white/20">140</span> <span class="text-purple-400">function</span> <span class="text-blue-400">execute</span>(
-<span class="text-white/20">141</span>     <span class="text-yellow-200">uint256</span> policyId, <span class="text-yellow-200">address</span> target, <span class="text-yellow-200">uint256</span> value,
-<span class="text-white/20">142</span>     <span class="text-yellow-200">bytes</span> <span class="text-purple-400">calldata</span> data, <span class="text-yellow-200">uint256</span> deadline,
-<span class="text-white/20">143</span>     <span class="text-yellow-200">bytes</span> <span class="text-purple-400">calldata</span> signature
-<span class="text-white/20">144</span> ) <span class="text-purple-400">external payable</span> <span class="text-purple-400">returns</span> (<span class="text-yellow-200">bytes</span> <span class="text-purple-400">memory</span> result) {
-<span class="text-white/20">145</span>
-<span class="text-white/20">146</span>     <span class="text-gray-600">// 1. Policy Active / Panic Mode</span>
-<span class="text-white/20">147</span>     <span class="text-purple-400">require</span>(policy.active, <span class="text-green-400">"PolicyInactive"</span>);
+<span class="text-white/20">141</span>     <span class="text-yellow-200">uint256</span> policyId,
+<span class="text-white/20">142</span>     <span class="text-yellow-200">address</span> target,
+<span class="text-white/20">143</span>     <span class="text-yellow-200">uint256</span> value,
+<span class="text-white/20">144</span>     <span class="text-yellow-200">bytes</span> <span class="text-purple-400">calldata</span> data,
+<span class="text-white/20">145</span>     <span class="text-yellow-200">uint256</span> deadline,
+<span class="text-white/20">146</span>     <span class="text-yellow-200">bytes</span> <span class="text-purple-400">calldata</span> signature
+<span class="text-white/20">147</span> ) <span class="text-purple-400">external payable</span> <span class="text-purple-400">returns</span> (<span class="text-yellow-200">bytes</span> <span class="text-purple-400">memory</span> out) {
 <span class="text-white/20">148</span>
-<span class="text-white/20">149</span>     <span class="text-gray-600">// 2. Deadline (anti-replay window)</span>
-<span class="text-white/20">150</span>     <span class="text-purple-400">require</span>(deadline &gt; block.timestamp, <span class="text-green-400">"Expired"</span>);
-<span class="text-white/20">151</span>
-<span class="text-white/20">152</span>     <span class="text-gray-600">// 3. EIP-712 Owner Signature</span>
-<span class="text-white/20">153</span>     <span class="text-purple-400">require</span>(recover(hash, signature) == policy.owner, <span class="text-green-400">"BadSignature"</span>);
-<span class="text-white/20">154</span>
-<span class="text-white/20">155</span>     <span class="text-gray-600">// 4. Optional Validator Module</span>
-<span class="text-white/20">156</span>     <span class="text-purple-400">if</span> (policy.validator != <span class="text-purple-400">address</span>(0)) {
-<span class="text-white/20">157</span>         IV(<span class="text-cyan-400">policy.validator</span>).<span class="text-blue-400">validate</span>(policyId, target, value, data);
-<span class="text-white/20">158</span>     }
-<span class="text-white/20">159</span>
-<span class="text-white/20">160</span>     <span class="text-gray-600">// 5. Atomic Execution</span>
-<span class="text-white/20">161</span>     (bool ok, <span class="text-yellow-200">bytes</span> <span class="text-purple-400">memory</span> ret) = target.<span class="text-blue-400">call</span>{value: value}(data);
-<span class="text-white/20">162</span>     <span class="text-purple-400">require</span>(ok, <span class="text-green-400">"TxFailed"</span>);<span class="animate-pulse text-primary">_</span>
-<span class="text-white/20">163</span>     <span class="text-purple-400">return</span> ret;
-<span class="text-white/20">164</span> }</pre>
-                </div>
-            </div>
-        </section>
+<span class="text-white/20">149</span>     <span class="text-gray-600">// 1) Policy exists + active</span>
+<span class="text-white/20">150</span>     <span class="text-gray-500">/* Policy memory p = policies[policyId]; */</span>
+<span class="text-white/20">151</span>     <span class="text-purple-400">if</span> (<span class="text-gray-500">/* p.owner */</span> owner == <span class="text-purple-400">address</span>(0)) <span class="text-purple-400">revert</span> <span class="text-cyan-400">PolicyNotFound</span>();
+<span class="text-white/20">152</span>     <span class="text-purple-400">if</span> (!<span class="text-gray-500">/* p.active */</span> active) <span class="text-purple-400">revert</span> <span class="text-cyan-400">PolicyInactive</span>();
+<span class="text-white/20">153</span>
+<span class="text-white/20">154</span>     <span class="text-gray-600">// 2) Deadline required + fresh</span>
+<span class="text-white/20">155</span>     <span class="text-purple-400">if</span> (deadline == 0) <span class="text-purple-400">revert</span> <span class="text-cyan-400">DeadlineRequired</span>();
+<span class="text-white/20">156</span>     <span class="text-purple-400">if</span> (deadline &lt;= block.timestamp) <span class="text-purple-400">revert</span> <span class="text-cyan-400">Expired</span>();
+<span class="text-white/20">157</span>
+<span class="text-white/20">158</span>     <span class="text-gray-600">// 3) Effective expiry = min(policyTTL, deadline)</span>
+<span class="text-white/20">159</span>     <span class="text-yellow-200">uint256</span> policyExpiry = (<span class="text-gray-500">/* p.validUntil */</span> validUntil == 0)
+<span class="text-white/20">160</span>         ? <span class="text-blue-300">type</span>(<span class="text-yellow-200">uint256</span>).max
+<span class="text-white/20">161</span>         : <span class="text-yellow-200">uint256</span>(<span class="text-gray-500">/* p.validUntil */</span> validUntil);
+<span class="text-white/20">162</span>     <span class="text-yellow-200">uint256</span> effectiveExpiry = policyExpiry &lt; deadline ? policyExpiry : deadline;
+<span class="text-white/20">163</span>     <span class="text-purple-400">if</span> (block.timestamp &gt; effectiveExpiry) <span class="text-purple-400">revert</span> <span class="text-cyan-400">Expired</span>();
+<span class="text-white/20">164</span>
+<span class="text-white/20">165</span>     <span class="text-gray-600">// 4) Agent permission (+ TTL)</span>
+<span class="text-white/20">166</span>     <span class="text-gray-500">/* AgentPermission memory ap = agentPermission[policyId][msg.sender]; */</span>
+<span class="text-white/20">167</span>     <span class="text-purple-400">if</span> (!<span class="text-gray-500">/* ap.allowed */</span> allowed) <span class="text-purple-400">revert</span> <span class="text-cyan-400">AgentNotAllowed</span>();
+<span class="text-white/20">168</span>     <span class="text-purple-400">if</span> (<span class="text-gray-500">/* ap.validUntil */</span> agentValidUntil != 0 &amp;&amp; block.timestamp &gt; <span class="text-gray-500">/* ap.validUntil */</span> agentValidUntil)
+<span class="text-white/20">169</span>         <span class="text-purple-400">revert</span> <span class="text-cyan-400">AgentExpired</span>();
+<span class="text-white/20">170</span>
+<span class="text-white/20">171</span>     <span class="text-gray-600">// 5) Target + selector allowlist</span>
+<span class="text-white/20">172</span>     <span class="text-purple-400">if</span> (data.length &lt; 4) <span class="text-purple-400">revert</span> <span class="text-cyan-400">CallNotAllowed</span>();
+<span class="text-white/20">173</span>     <span class="text-yellow-200">bytes4</span> selector = <span class="text-blue-300">bytes4</span>(data[:4]);
+<span class="text-white/20">174</span>     <span class="text-yellow-200">bytes32</span> callKey = <span class="text-blue-300">keccak256</span>(abi.encodePacked(target, selector));
+<span class="text-white/20">175</span>     <span class="text-purple-400">if</span> (!<span class="text-gray-500">/* callAllowed[policyId][callKey] */</span> isAllowed) <span class="text-purple-400">revert</span> <span class="text-cyan-400">CallNotAllowed</span>();
+<span class="text-white/20">176</span>
+<span class="text-white/20">177</span>     <span class="text-gray-600">// 6) Value bound + exact msg.value match</span>
+<span class="text-white/20">178</span>     <span class="text-purple-400">if</span> (value &gt; <span class="text-gray-500">/* p.maxValuePerCall */</span> maxValuePerCall) <span class="text-purple-400">revert</span> <span class="text-cyan-400">ValueTooHigh</span>();
+<span class="text-white/20">179</span>     <span class="text-purple-400">if</span> (msg.value != value) <span class="text-purple-400">revert</span> <span class="text-cyan-400">MsgValueMismatch</span>();
+<span class="text-white/20">180</span>
+<span class="text-white/20">181</span>     <span class="text-gray-600">// 7) Nonce + EIP-712 owner signature</span>
+<span class="text-white/20">182</span>     <span class="text-yellow-200">uint256</span> nonce = nonces[policyId];
+<span class="text-white/20">183</span>     <span class="text-yellow-200">bytes32</span> digest = <span class="text-blue-300">_hashTypedDataV4</span>(
+<span class="text-white/20">184</span>         <span class="text-blue-300">keccak256</span>(abi.encode(
+<span class="text-white/20">185</span>             _EXECUTE_TYPEHASH, policyId, target, value, <span class="text-blue-300">keccak256</span>(data), nonce, deadline
+<span class="text-white/20">186</span>         ))
+<span class="text-white/20">187</span>     );
+<span class="text-white/20">188</span>     <span class="text-yellow-200">address</span> signer = <span class="text-blue-300">_recover</span>(digest, signature);
+<span class="text-white/20">189</span>     <span class="text-purple-400">if</span> (signer != <span class="text-gray-500">/* p.owner */</span> owner) <span class="text-purple-400">revert</span> <span class="text-cyan-400">BadSignature</span>();
+<span class="text-white/20">190</span>
+<span class="text-white/20">191</span>     <span class="text-gray-600">// 8) Optional validator</span>
+<span class="text-white/20">192</span>     <span class="text-purple-400">if</span> (<span class="text-gray-500">/* p.validator */</span> validator != <span class="text-purple-400">address</span>(0)) {
+<span class="text-white/20">193</span>         IPolicyValidator(<span class="text-cyan-400">validator</span>).<span class="text-blue-400">validate</span>(
+<span class="text-white/20">194</span>             policyId, <span class="text-gray-500">/* owner */</span> owner, msg.sender, target, value, data
+<span class="text-white/20">195</span>         );
+<span class="text-white/20">196</span>     }
+<span class="text-white/20">197</span>
+<span class="text-white/20">198</span>     <span class="text-gray-600">// 9) Nonce++ then atomic call</span>
+<span class="text-white/20">199</span>     nonces[policyId] = nonce + 1;
+<span class="text-white/20">200</span>     (bool ok, <span class="text-yellow-200">bytes</span> <span class="text-purple-400">memory</span> ret) = target.<span class="text-blue-400">call</span>{value: value}(data);
+<span class="text-white/20">201</span>     <span class="text-purple-400">if</span> (!ok) { <span class="text-gray-600">/* bubble revert */</span> }
+<span class="text-white/20">202</span>
+<span class="text-white/20">203</span>     <span class="text-purple-400">emit</span> <span class="text-blue-400">Executed</span>(policyId, <span class="text-gray-500">/* owner */</span> owner, msg.sender, target, selector, value);
+<span class="text-white/20">204</span>     <span class="text-purple-400">return</span> ret;<span class="animate-pulse text-primary">_</span>
+<span class="text-white/20">205</span> }</pre>
+    </div>
+  </div>
+</section>
 
         <!-- 3. REAL STATS -->
         <section id="security" class="max-w-6xl mx-auto mb-32 reveal">
@@ -702,6 +762,7 @@
  </script>
 </body>
 </html>
+
 
 
 
