@@ -450,16 +450,17 @@
                   </a>
         </section>
 
-       <!-- 6. RECOGNITION (CENTERED + CONTROLLED) -->
+       <!-- 6. RECOGNITION (BALANCED, NO BOXES, YOU CONTROL BNB) -->
 <section id="recognition" class="relative py-28 md:py-32 reveal">
   <div class="relative max-w-6xl mx-auto px-6">
+
     <header class="text-center mb-14 md:mb-16">
       <h2 class="text-3xl md:text-4xl font-bold">Recognition</h2>
       <p class="text-white/50 mt-3">External validation. Click to verify.</p>
     </header>
 
-    <!-- ONE KNOB -->
-    <div style="--bnbH: 230px;"></div>
+    <!-- TUNING KNOBS (edit only these) -->
+    <div style="--bnbSize: 320px; --bnbLift: -10px;"></div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-14 md:gap-20 items-start justify-items-center">
 
@@ -472,8 +473,8 @@
         <div class="pointer-events-none absolute -inset-10 blur-3xl opacity-25
                     bg-[radial-gradient(ellipse_at_center,rgba(255,120,0,0.45),transparent_65%)]"></div>
 
-        <!-- FRAME (keeps Dora from going off-screen) -->
-        <div class="relative w-full h-[260px] md:h-[300px] flex items-center justify-center">
+        <!-- FRAME -->
+        <div class="relative w-full h-[300px] md:h-[320px] flex items-center justify-center">
           <img src="img/dorahacks.png"
                alt="DoraHacks"
                class="max-h-full max-w-full object-contain
@@ -483,8 +484,8 @@
                       group-hover:drop-shadow-[0_0_70px_rgba(255,120,0,0.35)]" />
         </div>
 
-        <!-- CAPTION -->
-        <div class="mt-6 min-h-[56px]">
+        <!-- CAPTION (fixed height -> perfect alignment) -->
+        <div class="mt-6 h-[64px] flex flex-col items-center justify-start">
           <div class="text-sm font-semibold text-white/85 group-hover:text-white transition">
             DoraHacks — OpenClaw Winner
           </div>
@@ -504,11 +505,10 @@
                     bg-[radial-gradient(ellipse_at_center,rgba(255,200,0,0.45),transparent_65%)]"></div>
 
         <!-- FRAME -->
-        <div class="relative w-full h-[260px] md:h-[300px] flex items-center justify-center">
-          <!-- ONLY CHANGE THIS: --bnbH -->
+        <div class="relative w-full h-[300px] md:h-[320px] flex items-center justify-center">
           <img src="img/bnbchain.png"
                alt="BNB Chain"
-               style="height: var(--bnbH); width: auto;"
+               style="width: var(--bnbSize); height: auto; transform: translateY(var(--bnbLift));"
                class="object-contain
                       transition duration-500 ease-out
                       group-hover:scale-105 group-hover:-translate-y-2
@@ -516,8 +516,8 @@
                       group-hover:drop-shadow-[0_0_70px_rgba(255,200,0,0.32)]" />
         </div>
 
-        <!-- CAPTION -->
-        <div class="mt-6 min-h-[56px]">
+        <!-- CAPTION (fixed height -> perfect alignment) -->
+        <div class="mt-6 h-[64px] flex flex-col items-center justify-start">
           <div class="text-sm font-semibold text-white/85 group-hover:text-white transition">
             BNB Chain — AI Agent Ecosystem
           </div>
@@ -532,6 +532,7 @@
     <div class="mt-12 text-center text-xs font-mono text-white/25 tracking-widest">
       PUBLIC LINKS • CLICK-TO-VERIFY
     </div>
+
   </div>
 </section>
 
@@ -863,6 +864,7 @@
  </script>
 </body>
 </html>
+
 
 
 
