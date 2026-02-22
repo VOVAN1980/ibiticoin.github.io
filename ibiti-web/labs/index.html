@@ -450,52 +450,52 @@
                   </a>
         </section>
 
-               <!-- 6. RECOGNITION -->
-<section id="recognition" class="relative py-28">
+              <!-- 6. RECOGNITION (TOP: CLEAN, NO BOXES, HIGH VISIBILITY) -->
+<section id="recognition" class="max-w-6xl mx-auto py-28 relative reveal">
 
-  <!-- мягкий фон под всей секцией -->
-  <div class="absolute inset-0 bg-white/[0.04] backdrop-blur-sm"></div>
+  <div class="text-center mb-16">
+    <h2 class="text-3xl md:text-4xl font-bold">Recognition</h2>
+    <p class="text-white/45 mt-3">External validation. Click to verify.</p>
+  </div>
 
-  <div class="relative max-w-6xl mx-auto">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
 
-    <div class="text-center mb-16">
-      <h2 class="text-3xl md:text-4xl font-bold">Recognition</h2>
-      <p class="text-white/50 mt-3">External validation. Click to verify.</p>
-    </div>
+    <!-- DoraHacks -->
+    <a href="https://dorahacks.io/buidl/39567/" target="_blank" rel="noopener"
+       class="group relative flex items-center justify-center h-[260px] md:h-[300px]">
+      <!-- glow under logo (not a box) -->
+      <div class="pointer-events-none absolute inset-0">
+        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+                    w-[520px] h-[320px] blur-3xl opacity-45
+                    bg-[radial-gradient(circle,rgba(255,140,0,0.45),transparent_70%)]">
+        </div>
+      </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+      <img src="img/dorahacks.png" alt="DoraHacks"
+           class="relative w-[320px] md:w-[360px] object-contain
+                  brightness-125 contrast-125 saturate-125
+                  transition duration-500
+                  group-hover:scale-105
+                  group-hover:drop-shadow-[0_0_80px_rgba(255,140,0,0.65)]" />
+    </a>
 
-      <!-- DoraHacks -->
-      <a href="https://dorahacks.io/buidl/39567/"
-         target="_blank"
-         rel="noopener"
-         class="group flex justify-center">
+    <!-- BNB Chain -->
+    <a href="https://x.com/BNBCHAIN" target="_blank" rel="noopener"
+       class="group relative flex items-center justify-center h-[260px] md:h-[300px]">
+      <div class="pointer-events-none absolute inset-0">
+        <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+                    w-[520px] h-[320px] blur-3xl opacity-35
+                    bg-[radial-gradient(circle,rgba(255,200,0,0.45),transparent_70%)]">
+        </div>
+      </div>
 
-        <img src="img/dorahacks.png"
-             alt="DoraHacks"
-             class="w-[320px] md:w-[360px]
-                    object-contain
-                    transition duration-500
-                    group-hover:scale-105
-                    group-hover:drop-shadow-[0_0_60px_rgba(255,140,0,0.5)]" />
-      </a>
-
-      <!-- BNB Chain -->
-      <a href="https://x.com/BNBCHAIN"
-         target="_blank"
-         rel="noopener"
-         class="group flex justify-center">
-
-        <img src="img/bnbchain.png"
-             alt="BNB Chain"
-             class="w-[320px] md:w-[360px]
-                    object-contain
-                    transition duration-500
-                    group-hover:scale-105
-                    group-hover:drop-shadow-[0_0_60px_rgba(255,200,0,0.5)]" />
-      </a>
-
-    </div>
+      <img src="img/bnbchain.png" alt="BNB Chain"
+           class="relative w-[320px] md:w-[360px] object-contain
+                  brightness-115 contrast-115 saturate-115
+                  transition duration-500
+                  group-hover:scale-105
+                  group-hover:drop-shadow-[0_0_80px_rgba(255,200,0,0.6)]" />
+    </a>
 
   </div>
 </section>
@@ -828,6 +828,7 @@
  </script>
 </body>
 </html>
+
 
 
 
