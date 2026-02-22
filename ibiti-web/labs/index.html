@@ -450,34 +450,52 @@
                   </a>
         </section>
 
-               <!-- 6. RECOGNITION (PNG VERSION, NO BOXES) -->
-<section id="recognition" class="max-w-6xl mx-auto py-24 relative reveal">
+               <!-- 6. RECOGNITION (TOP STYLE CLEAN PNG) -->
+<section id="recognition" class="max-w-6xl mx-auto py-28 relative reveal">
 
-  <div class="text-center mb-16">
+  <div class="text-center mb-20">
     <h2 class="text-3xl md:text-4xl font-bold">Recognition</h2>
-    <p class="text-white/50 mt-3">
-      External validation. Click to verify.
-    </p>
+    <p class="text-white/50 mt-3">External validation. Click to verify.</p>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
 
     <!-- DoraHacks -->
     <a href="https://dorahacks.io/buidl/39567/" target="_blank" rel="noopener"
-       class="group flex justify-center">
+       class="group flex justify-center relative">
+
+      <!-- soft glow background -->
+      <div class="absolute w-[420px] h-[420px] rounded-full blur-3xl opacity-30
+                  bg-[radial-gradient(circle,rgba(255,140,0,0.35),transparent_70%)]">
+      </div>
+
       <img src="img/dorahacks.png"
            alt="DoraHacks OpenClaw Winner"
-           class="w-[420px] md:w-[480px] object-contain transition duration-500
-                  group-hover:scale-105 group-hover:drop-shadow-[0_0_60px_rgba(255,140,0,0.35)]" />
+           class="relative w-[360px] md:w-[400px] object-contain
+                  brightness-110 contrast-110
+                  transition duration-500
+                  group-hover:scale-105
+                  group-hover:brightness-125
+                  group-hover:drop-shadow-[0_0_80px_rgba(255,150,0,0.6)]" />
     </a>
 
     <!-- BNB Chain -->
     <a href="https://x.com/BNBCHAIN" target="_blank" rel="noopener"
-       class="group flex justify-center">
+       class="group flex justify-center relative">
+
+      <!-- soft glow background -->
+      <div class="absolute w-[420px] h-[420px] rounded-full blur-3xl opacity-25
+                  bg-[radial-gradient(circle,rgba(255,200,0,0.35),transparent_70%)]">
+      </div>
+
       <img src="img/bnbchain.png"
            alt="BNB Chain"
-           class="w-[420px] md:w-[480px] object-contain transition duration-500
-                  group-hover:scale-105 group-hover:drop-shadow-[0_0_60px_rgba(255,200,0,0.35)]" />
+           class="relative w-[360px] md:w-[400px] object-contain
+                  brightness-110 contrast-110
+                  transition duration-500
+                  group-hover:scale-105
+                  group-hover:brightness-125
+                  group-hover:drop-shadow-[0_0_80px_rgba(255,200,0,0.6)]" />
     </a>
 
   </div>
@@ -812,6 +830,7 @@
  </script>
 </body>
 </html>
+
 
 
 
