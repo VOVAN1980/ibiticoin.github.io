@@ -450,16 +450,15 @@
                   </a>
         </section>
 
-       <!-- 6. RECOGNITION (BALANCED & CONTROLLABLE) -->
+       <!-- 6. RECOGNITION (BALANCED, GLOW ON HOVER ONLY) -->
 <section id="recognition" class="relative py-24 md:py-28 reveal"
   style="
-    /* 🎛️ ПАНЕЛЬ УПРАВЛЕНИЯ РАЗМЕРАМИ И ПОЛОЖЕНИЕМ (МЕНЯЙ ЦИФРЫ ЗДЕСЬ) */
+    /* 🎛️ ПАНЕЛЬ УПРАВЛЕНИЯ РАЗМЕРАМИ И ПОЛОЖЕНИЕМ */
+    --dora-w: 240px;  
+    --dora-y: 0px;    
     
-    --dora-w: 240px;  /* Ширина DoraHacks (он вытянут, поэтому цифра больше) */
-    --dora-y: 0px;    /* Сдвиг DoraHacks вверх-вниз (например: -10px или 20px) */
-    
-    --bnb-w: 240px;   /* Ширина BNB Chain (он квадратный и массивный, делаем меньше!) */
-    --bnb-y: -35px;    /* Сдвиг BNB вверх-вниз (чтобы выровнять визуальный центр с Дорой) */
+    --bnb-w: 240px;   
+    --bnb-y: -35px;    
   "
 >
   <div class="relative max-w-6xl mx-auto px-6">
@@ -475,9 +474,10 @@
       <a href="https://dorahacks.io/buidl/39567/"
          target="_blank" rel="noopener"
          class="group relative w-full max-w-[520px] flex flex-col items-center text-center">
-        <!-- Свечение -->
-        <div class="pointer-events-none absolute -inset-10 blur-3xl opacity-20
-                    bg-[radial-gradient(ellipse_at_center,rgba(255,120,0,0.42),transparent_65%)]"></div>
+        
+        <!-- Свечение фона (скрыто по умолчанию, появляется при наведении) -->
+        <div class="pointer-events-none absolute -inset-10 blur-3xl opacity-0 transition duration-500 ease-out group-hover:opacity-30
+                    bg-[radial-gradient(ellipse_at_center,rgba(255,120,0,0.5),transparent_65%)]"></div>
 
         <div class="relative w-full h-[220px] md:h-[240px] flex items-center justify-center">
           <!-- ЛОГОТИП DORA -->
@@ -487,15 +487,14 @@
                class="object-contain
                       transition duration-500 ease-out
                       group-hover:scale-105 group-hover:-translate-y-2
-                      drop-shadow-[0_0_34px_rgba(255,120,0,0.16)]
-                      group-hover:drop-shadow-[0_0_56px_rgba(255,120,0,0.30)]" />
+                      group-hover:drop-shadow-[0_0_56px_rgba(255,120,0,0.4)]" />
         </div>
 
         <div class="mt-5 h-[58px] flex flex-col items-center justify-start">
-          <div class="text-sm font-semibold text-white/85 group-hover:text-white transition">
+          <div class="text-sm font-semibold text-white/85 group-hover:text-white transition duration-300">
             DoraHacks — OpenClaw Winner
           </div>
-          <div class="text-xs font-mono text-white/40">
+          <div class="text-xs font-mono text-white/40 group-hover:text-white/70 transition duration-300">
             dorahacks.io/buidl/39567
           </div>
         </div>
@@ -505,9 +504,10 @@
       <a href="https://x.com/BNBCHAIN"
          target="_blank" rel="noopener"
          class="group relative w-full max-w-[320px] flex flex-col items-center text-center">
-        <!-- Свечение -->
-        <div class="pointer-events-none absolute -inset-10 blur-3xl opacity-18
-                    bg-[radial-gradient(ellipse_at_center,rgba(255,200,0,0.42),transparent_65%)]"></div>
+        
+        <!-- Свечение фона (скрыто по умолчанию, появляется при наведении) -->
+        <div class="pointer-events-none absolute -inset-10 blur-3xl opacity-0 transition duration-500 ease-out group-hover:opacity-30
+                    bg-[radial-gradient(ellipse_at_center,rgba(255,200,0,0.5),transparent_65%)]"></div>
 
         <div class="relative w-full h-[220px] md:h-[240px] flex items-center justify-center">
           <!-- ЛОГОТИП BNB -->
@@ -517,15 +517,14 @@
                class="object-contain
                       transition duration-500 ease-out
                       group-hover:scale-105 group-hover:-translate-y-2
-                      drop-shadow-[0_0_34px_rgba(255,200,0,0.14)]
-                      group-hover:drop-shadow-[0_0_56px_rgba(255,200,0,0.28)]" />
+                      group-hover:drop-shadow-[0_0_56px_rgba(255,200,0,0.4)]" />
         </div>
 
         <div class="mt-5 h-[58px] flex flex-col items-center justify-start">
-          <div class="text-sm font-semibold text-white/85 group-hover:text-white transition">
+          <div class="text-sm font-semibold text-white/85 group-hover:text-white transition duration-300">
             BNB Chain — AI Agent Ecosystem
           </div>
-          <div class="text-xs font-mono text-white/40">
+          <div class="text-xs font-mono text-white/40 group-hover:text-white/70 transition duration-300">
             x.com/BNBCHAIN
           </div>
         </div>
@@ -868,6 +867,7 @@
  </script>
 </body>
 </html>
+
 
 
 
