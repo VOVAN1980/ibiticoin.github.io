@@ -450,12 +450,12 @@
                   </a>
         </section>
 
-               <!-- 6. RECOGNITION (CLEAN, CLICKABLE, TOP-INFRA) -->
+               <!-- 6. RECOGNITION (NO CARDS, TOP-INFRA STRIP) -->
 <section id="recognition" class="max-w-6xl mx-auto py-24 relative reveal">
-  <!-- ambient glow -->
+  <!-- subtle ambient glow -->
   <div class="pointer-events-none absolute inset-0 -z-10">
-    <div class="absolute left-1/2 top-[-40px] -translate-x-1/2 w-[980px] h-[420px] rounded-full blur-3xl opacity-35"
-         style="background: radial-gradient(circle at 50% 45%, rgba(59,130,246,0.22), rgba(139,92,246,0.14), transparent 70%);">
+    <div class="absolute left-1/2 top-[-40px] -translate-x-1/2 w-[980px] h-[380px] rounded-full blur-3xl opacity-30"
+         style="background: radial-gradient(circle at 50% 45%, rgba(59,130,246,0.18), rgba(139,92,246,0.12), transparent 70%);">
     </div>
   </div>
 
@@ -466,90 +466,47 @@
     </div>
     <h2 class="text-3xl md:text-4xl font-bold mt-5">Recognition</h2>
     <p class="text-sm md:text-base text-white/45 mt-3 max-w-2xl mx-auto">
-      External proof that EPK is shipped and worth integrating.
+      Verified public references. No claims, just links.
     </p>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-    <!-- DoraHacks -->
+  <!-- row 1 -->
+  <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 py-8 border-y border-white/10">
+    <div class="flex items-center gap-5 min-w-0">
+      <img src="img/dorahacks.svg" alt="DoraHacks"
+           class="h-8 md:h-9 w-auto object-contain opacity-80 grayscale hover:grayscale-0 hover:opacity-100 transition" />
+      <div class="min-w-0">
+        <div class="text-white font-semibold leading-tight">DoraHacks — OpenClaw Edition</div>
+        <div class="text-white/45 text-sm">Winner • Public submission page</div>
+      </div>
+    </div>
+
     <a href="https://dorahacks.io/buidl/39567/" target="_blank" rel="noopener"
-       class="group crystal rounded-2xl p-8 md:p-10 block relative overflow-hidden">
-      <div class="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500"
-           style="background: radial-gradient(circle at 20% 10%, rgba(255,255,255,0.06), transparent 55%);"></div>
-
-      <div class="flex items-start justify-between gap-6">
-        <div class="min-w-0">
-          <div class="flex items-center gap-2">
-            <div class="text-white font-semibold text-lg">DoraHacks</div>
-            <span class="text-[10px] font-mono tracking-widest uppercase text-white/35 border border-white/10 bg-white/5 px-2 py-0.5 rounded-full">
-              Winner
-            </span>
-          </div>
-          <div class="text-white/45 text-sm mt-1">OpenClaw Edition</div>
-          <div class="mt-5 flex flex-wrap gap-2">
-            <span class="text-[10px] font-mono tracking-widest uppercase px-2.5 py-1 rounded-full border border-white/10 bg-white/5 text-white/60">
-              Public page
-            </span>
-            <span class="text-[10px] font-mono tracking-widest uppercase px-2.5 py-1 rounded-full border border-green-500/20 bg-green-500/5 text-green-400">
-              Verified submission
-            </span>
-          </div>
-        </div>
-
-        <div class="text-white/25 group-hover:text-white/60 transition shrink-0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M7 17l9.2-9.2M17 17V7H7"/>
-          </svg>
-        </div>
-      </div>
-
-      <div class="mt-8 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-
-      <div class="mt-5 flex items-center justify-between">
-        <div class="text-xs font-mono text-white/35 uppercase tracking-widest">Link</div>
-        <div class="text-xs font-mono text-primary tracking-widest">dorahacks.io/buidl/39567</div>
-      </div>
+       class="inline-flex items-center gap-2 text-sm font-mono text-primary hover:text-white transition whitespace-nowrap">
+      Open
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M7 17l9.2-9.2M17 17V7H7"/>
+      </svg>
     </a>
+  </div>
 
-    <!-- BNB Chain -->
+  <!-- row 2 -->
+  <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 py-8 border-b border-white/10">
+    <div class="flex items-center gap-5 min-w-0">
+      <img src="img/bnbchain.svg" alt="BNB Chain"
+           class="h-8 md:h-9 w-auto object-contain opacity-80 grayscale hover:grayscale-0 hover:opacity-100 transition" />
+      <div class="min-w-0">
+        <div class="text-white font-semibold leading-tight">BNB Chain — AI Agent Ecosystem / OpenClaw</div>
+        <div class="text-white/45 text-sm">Ecosystem context • Public reference</div>
+      </div>
+    </div>
+
     <a href="https://x.com/nina_rong/status/2025388959539597594" target="_blank" rel="noopener"
-       class="group crystal rounded-2xl p-8 md:p-10 block relative overflow-hidden">
-      <div class="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500"
-           style="background: radial-gradient(circle at 20% 10%, rgba(255,255,255,0.06), transparent 55%);"></div>
-
-      <div class="flex items-start justify-between gap-6">
-        <div class="min-w-0">
-          <div class="flex items-center gap-2">
-            <div class="text-white font-semibold text-lg">BNB Chain</div>
-            <span class="text-[10px] font-mono tracking-widest uppercase text-white/35 border border-white/10 bg-white/5 px-2 py-0.5 rounded-full">
-              Agents
-            </span>
-          </div>
-          <div class="text-white/45 text-sm mt-1">AI Agent Ecosystem / OpenClaw</div>
-
-          <div class="mt-5 flex flex-wrap gap-2">
-            <span class="text-[10px] font-mono tracking-widest uppercase px-2.5 py-1 rounded-full border border-white/10 bg-white/5 text-white/60">
-              Ecosystem track
-            </span>
-            <span class="text-[10px] font-mono tracking-widest uppercase px-2.5 py-1 rounded-full border border-primary/20 bg-primary/10 text-primary">
-              Builders support
-            </span>
-          </div>
-        </div>
-
-        <div class="text-white/25 group-hover:text-white/60 transition shrink-0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M7 17l9.2-9.2M17 17V7H7"/>
-          </svg>
-        </div>
-      </div>
-
-      <div class="mt-8 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-
-      <div class="mt-5 flex items-center justify-between">
-        <div class="text-xs font-mono text-white/35 uppercase tracking-widest">Link</div>
-        <div class="text-xs font-mono text-primary tracking-widest">x.com/nina_rong/…</div>
-      </div>
+       class="inline-flex items-center gap-2 text-sm font-mono text-primary hover:text-white transition whitespace-nowrap">
+      Open
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M7 17l9.2-9.2M17 17V7H7"/>
+      </svg>
     </a>
   </div>
 
@@ -886,6 +843,7 @@
  </script>
 </body>
 </html>
+
 
 
 
