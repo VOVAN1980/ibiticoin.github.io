@@ -450,69 +450,38 @@
                   </a>
         </section>
 
-               <!-- 6. RECOGNITION (NO CARDS, TOP-INFRA STRIP) -->
+               <!-- 6. RECOGNITION (PNG VERSION, NO BOXES) -->
 <section id="recognition" class="max-w-6xl mx-auto py-24 relative reveal">
-  <!-- subtle ambient glow -->
-  <div class="pointer-events-none absolute inset-0 -z-10">
-    <div class="absolute left-1/2 top-[-40px] -translate-x-1/2 w-[980px] h-[380px] rounded-full blur-3xl opacity-30"
-         style="background: radial-gradient(circle at 50% 45%, rgba(59,130,246,0.18), rgba(139,92,246,0.12), transparent 70%);">
-    </div>
-  </div>
 
-  <div class="text-center mb-14">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-white/70 text-[10px] md:text-xs font-mono tracking-widest uppercase">
-      <span class="w-1.5 h-1.5 rounded-full bg-green-400 shadow-[0_0_10px_rgba(16,185,129,0.6)]"></span>
-      Ecosystem validation
-    </div>
-    <h2 class="text-3xl md:text-4xl font-bold mt-5">Recognition</h2>
-    <p class="text-sm md:text-base text-white/45 mt-3 max-w-2xl mx-auto">
-      Verified public references. No claims, just links.
+  <div class="text-center mb-16">
+    <h2 class="text-3xl md:text-4xl font-bold">Recognition</h2>
+    <p class="text-white/50 mt-3">
+      External validation. Click to verify.
     </p>
   </div>
 
-  <!-- row 1 -->
-  <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 py-8 border-y border-white/10">
-    <div class="flex items-center gap-5 min-w-0">
-      <img src="img/dorahacks.svg" alt="DoraHacks"
-           class="h-8 md:h-9 w-auto object-contain opacity-80 grayscale hover:grayscale-0 hover:opacity-100 transition" />
-      <div class="min-w-0">
-        <div class="text-white font-semibold leading-tight">DoraHacks — OpenClaw Edition</div>
-        <div class="text-white/45 text-sm">Winner • Public submission page</div>
-      </div>
-    </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
 
+    <!-- DoraHacks -->
     <a href="https://dorahacks.io/buidl/39567/" target="_blank" rel="noopener"
-       class="inline-flex items-center gap-2 text-sm font-mono text-primary hover:text-white transition whitespace-nowrap">
-      Open
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M7 17l9.2-9.2M17 17V7H7"/>
-      </svg>
+       class="group flex justify-center">
+      <img src="img/dorahacks.png"
+           alt="DoraHacks OpenClaw Winner"
+           class="w-[420px] md:w-[480px] object-contain transition duration-500
+                  group-hover:scale-105 group-hover:drop-shadow-[0_0_60px_rgba(255,140,0,0.35)]" />
     </a>
-  </div>
 
-  <!-- row 2 -->
-  <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 py-8 border-b border-white/10">
-    <div class="flex items-center gap-5 min-w-0">
-      <img src="img/bnbchain.svg" alt="BNB Chain"
-           class="h-8 md:h-9 w-auto object-contain opacity-80 grayscale hover:grayscale-0 hover:opacity-100 transition" />
-      <div class="min-w-0">
-        <div class="text-white font-semibold leading-tight">BNB Chain — AI Agent Ecosystem / OpenClaw</div>
-        <div class="text-white/45 text-sm">Ecosystem context • Public reference</div>
-      </div>
-    </div>
-
+    <!-- BNB Chain -->
     <a href="https://x.com/BNBCHAIN" target="_blank" rel="noopener"
-       class="inline-flex items-center gap-2 text-sm font-mono text-primary hover:text-white transition whitespace-nowrap">
-      Open
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M7 17l9.2-9.2M17 17V7H7"/>
-      </svg>
+       class="group flex justify-center">
+      <img src="img/bnbchain.png"
+           alt="BNB Chain"
+           class="w-[420px] md:w-[480px] object-contain transition duration-500
+                  group-hover:scale-105 group-hover:drop-shadow-[0_0_60px_rgba(255,200,0,0.35)]" />
     </a>
+
   </div>
 
-  <div class="text-center mt-10 text-xs text-white/30">
-    Open-source core • Testnet deployed • CI green
-  </div>
 </section>
 
     </main>
@@ -843,6 +812,7 @@
  </script>
 </body>
 </html>
+
 
 
 
