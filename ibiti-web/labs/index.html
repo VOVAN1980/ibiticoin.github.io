@@ -129,6 +129,23 @@
         @media (max-width: 768px) {
             .tilt-card { transform: none !important; }
         }
+
+         /* Recognition shimmer — subtle, premium */
+.recog-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.recog-shimmer::after{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.05) 40%, transparent 80%);
+  background-size: 200% 100%;
+  animation: shimmer 5.5s linear infinite;
+  opacity: 0.35;
+  pointer-events:none;
+  mask-image: radial-gradient(circle at 30% 20%, black 0%, transparent 60%);
+}
     </style>
 </head>
 <body class="selection:bg-primary/30 selection:text-white">
@@ -432,6 +449,90 @@
                     </div>
                   </a>
         </section>
+
+               <!-- 6. RECOGNITION (TOP-INFRA STYLE) -->
+   <section id="recognition" class="max-w-6xl mx-auto py-24 relative reveal">
+   <!-- subtle bg glow -->
+   <div class="pointer-events-none absolute inset-0 -z-10">
+    <div class="absolute left-1/2 top-0 -translate-x-1/2 w-[900px] h-[360px] rounded-full blur-3xl opacity-40"
+         style="background: radial-gradient(circle at 50% 50%, rgba(59,130,246,0.22), rgba(139,92,246,0.14), transparent 70%);">
+    </div>
+  </div>
+
+  <div class="text-center mb-14">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-white/70 text-[10px] md:text-xs font-mono tracking-widest uppercase">
+      <span class="w-1.5 h-1.5 rounded-full bg-green-400 shadow-[0_0_10px_rgba(16,185,129,0.6)]"></span>
+      Ecosystem validation
+    </div>
+
+    <h2 class="text-3xl md:text-4xl font-bold mt-5">Recognition</h2>
+    <p class="text-sm md:text-base text-white/45 mt-3 max-w-2xl mx-auto">
+      Independent signals that EPK is real, shipped, and worth integrating.
+    </p>
+  </div>
+
+  <!-- logos row -->
+  <div class="flex flex-col md:flex-row items-stretch justify-center gap-6 md:gap-8">
+    <!-- Item 1 -->
+    <a href="#" class="group crystal rounded-2xl px-7 py-7 md:px-10 md:py-8 flex-1 min-w-[280px] max-w-[520px] block">
+      <div class="flex items-center justify-between gap-6">
+        <div class="flex items-center gap-4">
+          <!-- your logo: /img/... -->
+          <img src="/img/dorahacks.svg" alt="DoraHacks" class="h-9 md:h-10 opacity-80 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition" />
+          <div class="text-left">
+            <div class="text-white font-semibold leading-tight">DoraHacks</div>
+            <div class="text-white/45 text-sm">OpenClaw Edition — Winner</div>
+          </div>
+        </div>
+
+        <div class="text-white/30 group-hover:text-white/60 transition">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 17l9.2-9.2M17 17V7H7"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="mt-6 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+
+      <div class="mt-5 flex items-center justify-between">
+        <div class="text-xs font-mono text-white/35 uppercase tracking-widest">Signal</div>
+        <div class="text-xs font-mono text-green-400 tracking-widest">VALIDATED</div>
+      </div>
+    </a>
+
+    <!-- Item 2 -->
+    <a href="#" class="group crystal rounded-2xl px-7 py-7 md:px-10 md:py-8 flex-1 min-w-[280px] max-w-[520px] block">
+      <div class="flex items-center justify-between gap-6">
+        <div class="flex items-center gap-4">
+          <!-- your logo: /img/... -->
+          <img src="/img/bnbchain.svg" alt="BNB Chain" class="h-9 md:h-10 opacity-80 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition" />
+          <div class="text-left">
+            <div class="text-white font-semibold leading-tight">BNB Chain</div>
+            <div class="text-white/45 text-sm">AI Agent Ecosystem / OpenClaw Track</div>
+          </div>
+        </div>
+
+        <div class="text-white/30 group-hover:text-white/60 transition">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 17l9.2-9.2M17 17V7H7"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="mt-6 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+
+      <div class="mt-5 flex items-center justify-between">
+        <div class="text-xs font-mono text-white/35 uppercase tracking-widest">Focus</div>
+        <div class="text-xs font-mono text-primary tracking-widest">AGENTS</div>
+      </div>
+    </a>
+  </div>
+
+  <!-- tiny footnote -->
+  <div class="text-center mt-10 text-xs text-white/30">
+    Open-source core • Testnet deployed • CI green
+  </div>
+</section>
 
     </main>
 
@@ -761,6 +862,7 @@
  </script>
 </body>
 </html>
+
 
 
 
