@@ -1543,3 +1543,58 @@ body::before{
     0 10px 24px rgba(0,0,0,0.34),
     0 0 16px rgba(247,208,0,0.14);
 }
+
+/* === УБИРАЕМ ЖЁСТКИЕ ЛИНИИ === */
+hr,
+.section-divider{
+  opacity: 0.25;
+  border-color: rgba(247,208,0,0.2);
+}
+
+/* если это твои линии */
+.gold-line{
+  opacity: 0.25 !important;
+}
+
+/* === СЕКЦИИ ДЕЛАЕМ "СТЕКЛОМ" === */
+.gold-section,
+#about,
+#team .team-card{
+  background: linear-gradient(180deg, rgba(18,18,18,0.75), rgba(10,10,10,0.85));
+  border: 1px solid rgba(247,208,0,0.22) !important;
+  backdrop-filter: blur(6px);
+  box-shadow:
+    0 12px 40px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+/* мягкий внутренний свет */
+.gold-section::after,
+#about::after,
+#team .team-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: radial-gradient(circle at 50% 0%, rgba(247,208,0,0.05), transparent 60%);
+  pointer-events:none;
+}
+
+/* === КНОПКИ ДОРОЖЕ === */
+.btn,
+.btn-small{
+  background: linear-gradient(180deg, #f7d000, #d4af00);
+  color:#000;
+  border:none;
+  box-shadow:
+    0 8px 20px rgba(0,0,0,0.35),
+    0 0 14px rgba(247,208,0,0.12);
+  transition: all .2s ease;
+}
+
+.btn:hover,
+.btn-small:hover{
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 28px rgba(0,0,0,0.45),
+    0 0 20px rgba(247,208,0,0.25);
+}
