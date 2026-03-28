@@ -1433,3 +1433,113 @@ body::before{
   0%{ transform: translateX(-35%); }
   100%{ transform: translateX(35%); }
 }
+
+/* === HERO: мягкое живое свечение === */
+.hero-header{
+  position: relative;
+  padding: 22px 20px 26px;
+  overflow: hidden;
+}
+
+.hero-header::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:18px;
+  width:420px;
+  height:420px;
+  transform:translateX(-50%);
+  background: radial-gradient(circle, rgba(247,208,0,0.16) 0%, rgba(247,208,0,0.07) 28%, rgba(247,208,0,0.02) 48%, transparent 72%);
+  filter: blur(18px);
+  pointer-events:none;
+  z-index:0;
+  animation: heroGlow 8s ease-in-out infinite alternate;
+}
+
+.hero-header::after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-35%;
+  width:70%;
+  height:100%;
+  background: linear-gradient(115deg, transparent 0%, rgba(255,255,255,0.035) 48%, transparent 100%);
+  transform: skewX(-18deg);
+  pointer-events:none;
+  z-index:0;
+  animation: heroSweep 10s linear infinite;
+}
+
+.hero-header > *{
+  position:relative;
+  z-index:1;
+}
+
+.hero-header img{
+  filter:
+    drop-shadow(0 0 18px rgba(247,208,0,0.18))
+    drop-shadow(0 0 42px rgba(247,208,0,0.08));
+}
+
+.hero-header h1{
+  text-shadow: 0 0 14px rgba(247,208,0,0.16);
+}
+
+@keyframes heroGlow{
+  0%{ transform:translateX(-50%) scale(0.98); opacity:0.8; }
+  100%{ transform:translateX(-50%) scale(1.04); opacity:1; }
+}
+
+@keyframes heroSweep{
+  0%{ transform: translateX(0) skewX(-18deg); opacity:0; }
+  12%{ opacity:1; }
+  55%{ opacity:1; }
+  100%{ transform: translateX(240%) skewX(-18deg); opacity:0; }
+}
+
+/* === БЛОКИ: меньше "рамка ради рамки", больше depth === */
+.gold-section,
+#about,
+#team .team-card,
+.blog-post,
+.roadmap-item,
+.legal-section{
+  background: linear-gradient(180deg, rgba(18,18,18,0.92), rgba(10,10,10,0.94));
+  border-color: rgba(247,208,0,0.28) !important;
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.02);
+}
+
+/* верхний мягкий блик внутри секций */
+.gold-section,
+#about,
+#team .team-card{
+  position: relative;
+  overflow: hidden;
+}
+
+.gold-section::before,
+#about::before,
+#team .team-card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent 20%);
+  pointer-events:none;
+}
+
+/* кнопки чуть дороже */
+.btn,
+.btn-small{
+  box-shadow:
+    0 6px 18px rgba(0,0,0,0.26),
+    inset 0 1px 0 rgba(255,255,255,0.14);
+}
+
+.btn:hover,
+.btn-small:hover{
+  box-shadow:
+    0 10px 24px rgba(0,0,0,0.34),
+    0 0 16px rgba(247,208,0,0.14);
+}
