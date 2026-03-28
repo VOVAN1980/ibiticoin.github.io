@@ -809,8 +809,6 @@ html, body {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   z-index: 3000;
   align-items: center;
   justify-content: center;
@@ -1414,21 +1412,6 @@ body{
   overflow-x: hidden;
 }
 
-body::before{
-  content:"";
-  position: fixed;
-  inset: 0;
-  background:
-    linear-gradient(105deg,
-      transparent 0%,
-      rgba(255,255,255,0.018) 22%,
-      rgba(255,255,255,0.03) 28%,
-      rgba(255,255,255,0.012) 34%,
-      transparent 46%);
-  pointer-events: none;
-  z-index: 0;
-}
-
 /* === HERO: мягкое живое свечение === */
 .hero-header{
   position: relative;
@@ -1557,21 +1540,9 @@ hr,
 #team .team-card{
   background: linear-gradient(180deg, rgba(18,18,18,0.75), rgba(10,10,10,0.85));
   border: 1px solid rgba(247,208,0,0.22) !important;
-  backdrop-filter: blur(6px);
   box-shadow:
     0 12px 40px rgba(0,0,0,0.35),
     inset 0 1px 0 rgba(255,255,255,0.03);
-}
-
-/* мягкий внутренний свет */
-.gold-section::after,
-#about::after,
-#team .team-card::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background: radial-gradient(circle at 50% 0%, rgba(247,208,0,0.05), transparent 60%);
-  pointer-events:none;
 }
 
 /* === КНОПКИ ДОРОЖЕ === */
