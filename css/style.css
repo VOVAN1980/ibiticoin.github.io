@@ -1,5 +1,5 @@
 /* ---------- 1. БАЗА ----------------------------------------------------- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Cormorant+Garamond:wght@500;600;700&display=swap');
 
 :root{
     --gold:#ffd700;
@@ -77,7 +77,7 @@ body{
   margin:0;
   font-size:3rem;
   color:var(--gold);
-  font-family:'Space Grotesk',sans-serif;
+  font-family:'Cormorant Garamond',serif;
   font-weight:700;
   letter-spacing:-1px;
 }
@@ -95,7 +95,7 @@ body{
   margin-bottom:18px;
   color:var(--gold);
   text-transform:uppercase;
-  font-family:'Space Grotesk',sans-serif;
+  font-family:'Cormorant Garamond',serif;
   font-weight:600;
   letter-spacing:-0.5px;
 }
