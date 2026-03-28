@@ -1,11 +1,11 @@
 /* ---------- 1. БАЗА ----------------------------------------------------- */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 :root{
     --gold:#ffd700;
     --gold-dark:#c0a000;
     --bg-grad:linear-gradient(135deg,#000,#333);
-    --font:'Orbitron',sans-serif;
+    --font:'Inter',sans-serif;
 }
 
 *{box-sizing:border-box;scroll-behavior:smooth}
@@ -73,7 +73,14 @@ body{
 /* ---------- 4. HERO ----------------------------------------------------- */
 .hero-header{padding:15px 20px}
 .hero-header img{margin-bottom:22px}
-.hero-header h1{margin:0;font-size:3rem;color:var(--gold)}
+.hero-header h1{
+  margin:0;
+  font-size:3rem;
+  color:var(--gold);
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  letter-spacing:-1px;
+}
 .hero-header p {margin:8px 0 0;font-size:1.4rem}
 
 /* ---------- 5. GOLD SECTION / GENERIC BLOCKS --------------------------- */
@@ -83,7 +90,15 @@ body{
     border-bottom:2px solid var(--gold);
     padding:56px 18px;
 }
-.gold-section h2{font-size:2.4rem;margin-bottom:18px;color:var(--gold);text-transform:uppercase}
+.gold-section h2{
+  font-size:2.4rem;
+  margin-bottom:18px;
+  color:var(--gold);
+  text-transform:uppercase;
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:600;
+  letter-spacing:-0.5px;
+}
 .gold-section p {font-size:1.15rem;max-width:800px;margin:0 auto 20px;line-height:1.55}
 
 /* ---------- 6. FOOTER --------------------------------------------------- */
