@@ -1407,31 +1407,11 @@ html, body {
 
 body{
   background:
-    radial-gradient(circle at 50% 0%, rgba(247,208,0,0.10) 0%, rgba(247,208,0,0.04) 18%, rgba(0,0,0,0) 42%),
-    linear-gradient(180deg, #050505 0%, #000 100%);
+    radial-gradient(circle at 50% 0%, rgba(247,208,0,0.08) 0%, rgba(247,208,0,0.03) 16%, rgba(0,0,0,0) 34%),
+    linear-gradient(180deg, #040404 0%, #000000 100%);
   background-attachment: fixed;
   position: relative;
   overflow-x: hidden;
-}
-
-body::before{
-  content:"";
-  position: fixed;
-  inset: 0;
-  background:
-    linear-gradient(115deg,
-      transparent 0%,
-      rgba(255,255,255,0.025) 35%,
-      transparent 55%);
-  transform: translateX(-35%);
-  animation: glassSweep 14s linear infinite;
-  pointer-events: none;
-  z-index: 0;
-}
-
-@keyframes glassSweep{
-  0%{ transform: translateX(-35%); }
-  100%{ transform: translateX(35%); }
 }
 
 /* === HERO: мягкое живое свечение === */
