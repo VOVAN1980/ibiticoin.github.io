@@ -1414,6 +1414,21 @@ body{
   overflow-x: hidden;
 }
 
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(105deg,
+      transparent 0%,
+      rgba(255,255,255,0.018) 22%,
+      rgba(255,255,255,0.03) 28%,
+      rgba(255,255,255,0.012) 34%,
+      transparent 46%);
+  pointer-events: none;
+  z-index: 0;
+}
+
 /* === HERO: мягкое живое свечение === */
 .hero-header{
   position: relative;
