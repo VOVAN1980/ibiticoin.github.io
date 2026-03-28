@@ -753,7 +753,6 @@ html, body {
 #walletModal {
   /* мягкое затемнение + лёгкий blur фона */
   background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(4px);
 }
 
 #walletModal .modal-content {
@@ -1434,20 +1433,6 @@ body{
   animation: heroGlow 8s ease-in-out infinite alternate;
 }
 
-.hero-header::after{
-  content:"";
-  position:absolute;
-  top:0;
-  left:-35%;
-  width:70%;
-  height:100%;
-  background: linear-gradient(115deg, transparent 0%, rgba(255,255,255,0.035) 48%, transparent 100%);
-  transform: skewX(-18deg);
-  pointer-events:none;
-  z-index:0;
-  animation: heroSweep 10s linear infinite;
-}
-
 .hero-header > *{
   position:relative;
   z-index:1;
@@ -1461,18 +1446,6 @@ body{
 
 .hero-header h1{
   text-shadow: 0 0 14px rgba(247,208,0,0.16);
-}
-
-@keyframes heroGlow{
-  0%{ transform:translateX(-50%) scale(0.98); opacity:0.8; }
-  100%{ transform:translateX(-50%) scale(1.04); opacity:1; }
-}
-
-@keyframes heroSweep{
-  0%{ transform: translateX(0) skewX(-18deg); opacity:0; }
-  12%{ opacity:1; }
-  55%{ opacity:1; }
-  100%{ transform: translateX(240%) skewX(-18deg); opacity:0; }
 }
 
 /* === БЛОКИ: меньше "рамка ради рамки", больше depth === */
@@ -1538,7 +1511,7 @@ hr,
 .gold-section,
 #about,
 #team .team-card{
-  background: linear-gradient(180deg, rgba(18,18,18,0.75), rgba(10,10,10,0.85));
+  background: #0a0a0a;
   border: 1px solid rgba(247,208,0,0.22) !important;
   box-shadow:
     0 12px 40px rgba(0,0,0,0.35),
