@@ -12,12 +12,17 @@
 
   <style>
     body { background:#000; color:#f7d000; margin:0; padding:0; font-family: Arial, sans-serif; }
-    header { background:#111; padding:30px 20px; text-align:center; border-bottom:2px solid #f7d000; }
-    header h1 { margin:0; font-size:2.3em; color:#f7d000; }
-    header p { margin:10px 0 0; color:rgba(255,255,255,0.72); }
+    header { background:#111; padding:22px 20px; text-align:center; border-bottom:2px solid #f7d000; }
+    header p { margin:0; color:rgba(255,255,255,0.72); }
 
-    nav.breadcrumb { background:#111; padding:10px 20px; font-size:0.95em; border-bottom:1px solid rgba(247,208,0,0.25); }
-    nav.breadcrumb a { color:#f7d000; text-decoration:none; margin-right:5px; }
+    nav.breadcrumb {
+      background:#111;
+      padding:12px 20px;
+      font-size:0.95em;
+      border-bottom:1px solid rgba(247,208,0,0.25);
+      text-align:center;
+    }
+    nav.breadcrumb a { color:#f7d000; text-decoration:none; font-weight:800; }
     nav.breadcrumb a:hover { text-decoration:underline; }
 
     .news-section { max-width:1000px; margin:32px auto; padding:0 20px; }
@@ -63,21 +68,15 @@
 <body>
 
   <header>
-    <h1>IBITIcoin – News</h1>
     <p>Official updates and progress notes</p>
   </header>
 
   <nav class="breadcrumb">
-    <a href="index.html">Home</a> &raquo; News
-    <span style="float:right;">
-      <a href="shop.html">Shop</a> |
-      <a href="roadmap.html">Roadmap</a>
-    </span>
+    <a href="index.html">Home</a>
   </nav>
 
   <section class="news-section">
 
-    <!-- актуальное -->
     <article class="news-item">
       <h2>IBITI / USDT Trading is Live on PancakeSwap <span class="tag live">LIVE</span></h2>
       <p class="news-date">Dec 2025</p>
@@ -101,7 +100,6 @@
       <a class="btn" href="shop.html">Open IBITI Shop</a>
     </article>
 
-    <!-- старое / архив -->
     <article class="news-item">
       <h2>IBITIcoin Phase Sale Concept <span class="tag archived">ARCHIVED</span></h2>
       <p class="news-date">Jul 2025</p>
