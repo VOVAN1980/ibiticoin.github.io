@@ -9,66 +9,240 @@
   <meta name="theme-color" content="#000000" />
 
   <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+    body{
+      background:
+        radial-gradient(circle at 50% 0%, rgba(247,208,0,0.08) 0%, rgba(247,208,0,0.02) 18%, rgba(0,0,0,0) 42%),
+        linear-gradient(180deg, #050505 0%, #000 100%);
+      color:#fff;
+      margin:0;
+      padding:0;
+      font-family: var(--font);
+    }
+
+    header{
+      background:#111;
+      padding:30px 20px;
+      text-align:center;
+      border-bottom:2px solid var(--gold);
+    }
+
+    header h1{
+      margin:0;
+      font-size:2.3em;
+      color:var(--gold);
+    }
+
+    header p{
+      margin:10px 0 0;
+      color:rgba(255,255,255,0.72);
+    }
+
+    nav.breadcrumb{
+      background:rgba(10,10,10,0.92);
+      padding:14px 20px;
+      font-size:0.95em;
+      border-bottom:1px solid rgba(247,208,0,0.22);
+      text-align:center;
+    }
+
+    nav.breadcrumb a{
+      color:var(--gold);
+      text-decoration:none;
+      font-weight:700;
+    }
+
+    nav.breadcrumb a:hover{
+      text-decoration:underline;
+    }
+
+    .news-section{
+      max-width:980px;
+      margin:38px auto;
+      padding:0 20px 20px;
+    }
+
+    .news-item{
+      background:linear-gradient(180deg, rgba(18,18,18,0.96), rgba(10,10,10,0.96));
+      border:1px solid rgba(247,208,0,0.34);
+      border-radius:16px;
+      padding:24px 24px 22px;
+      margin-bottom:22px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.02) inset,
+        0 12px 34px rgba(0,0,0,0.36),
+        0 0 28px rgba(247,208,0,0.06);
+      text-align:left;
+    }
+
+    .news-item h2{
+      margin:0;
+      color:var(--gold);
+      font-size:1.55em;
+      line-height:1.2;
+    }
+
+    .news-date{
+      margin:10px 0 14px;
+      font-size:0.95em;
+      color:rgba(255,255,255,0.60);
+    }
+
+    .tag{
+      display:inline-block;
+      margin-left:10px;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:0.75em;
+      font-weight:800;
+      letter-spacing:0.4px;
+      border:1px solid rgba(255,255,255,0.18);
+      color:rgba(255,255,255,0.82);
+      vertical-align:middle;
+    }
+
+    .tag.live{
+      border-color:rgba(124,255,178,0.45);
+      color:#7CFFB2;
+      background:rgba(124,255,178,0.06);
+    }
+
+    .tag.archived{
+      border-color:rgba(255,255,255,0.14);
+      color:rgba(255,255,255,0.62);
+      background:rgba(255,255,255,0.03);
+    }
+
+    .news-item p{
+      margin:10px 0;
+      line-height:1.68;
+      color:rgba(255,255,255,0.82);
+      font-size:1rem;
+    }
+
+    .news-item code{
+      color:#fff;
+      background:rgba(255,255,255,0.04);
+      padding:2px 6px;
+      border-radius:6px;
+      word-break:break-all;
+    }
+
+    .news-item .btn{
+      margin-top:14px;
+    }
+
+    footer{
+      padding:22px 20px;
+      text-align:center;
+      border-top:2px solid var(--gold);
+      background:rgba(10,10,10,0.94);
+    }
+
+    footer p{
+      margin:8px 0;
+      color:var(--gold);
+    }
+
+    footer a{
+      color:var(--gold);
+      text-decoration:none;
+      font-weight:800;
+    }
+
+    footer a:hover{
+      text-decoration:underline;
+    }
+
+    @media (max-width: 768px){
+      header h1{
+        font-size:1.9em;
+      }
+
+      .news-item{
+        padding:18px 16px 18px;
+        border-radius:14px;
+      }
+
+      .news-item h2{
+        font-size:1.25em;
+      }
+
+      .tag{
+        display:inline-block;
+        margin:10px 0 0;
+      }
+    }
+  </style>
 </head>
 
 <body>
+
   <header>
     <h1>IBITIcoin – News</h1>
     <p>Official updates and progress notes</p>
   </header>
 
-  <nav class="breadcrumb" style="background:#111; padding:10px 20px; text-align:center; border-bottom:1px solid rgba(247,208,0,0.25);">
-    <a href="index.html" style="color:#f7d000; text-decoration:none; font-weight:700;">Home</a>
+  <nav class="breadcrumb">
+    <a href="index.html">Home</a>
   </nav>
 
-  <section class="news-section" style="max-width:1000px; margin:32px auto; padding:0 20px;">
+  <section class="news-section">
 
-    <article class="news-item" style="background:#0f0f0f; border:1px solid rgba(247,208,0,0.6); border-radius:10px; padding:22px; margin-bottom:20px; box-shadow:0 0 24px rgba(247,208,0,0.08);">
-      <h2 style="margin:0; color:#f7d000; font-size:1.6em;">IBITI / USDT Trading is Live on PancakeSwap <span style="display:inline-block; margin-left:10px; padding:3px 10px; border-radius:999px; font-size:0.82em; font-weight:700; border:1px solid rgba(124,255,178,0.6); color:#7CFFB2;">LIVE</span></h2>
-      <p style="margin:10px 0 14px; font-size:0.95em; color:rgba(255,255,255,0.70);">Dec 2025</p>
-      <p style="margin:10px 0; line-height:1.65; color:rgba(255,255,255,0.78);">
-        IBITIcoin is publicly traded on <strong>BNB Smart Chain</strong> via the
-        <strong>IBITI/USDT</strong> pair on PancakeSwap (v2). Price formation is handled by the AMM pool.
+    <article class="news-item">
+      <h2>IBITI / USDT Trading is Live on PancakeSwap <span class="tag live">LIVE</span></h2>
+      <p class="news-date">Dec 2025</p>
+      <p>
+        IBITIcoin is live on BNB Smart Chain through the official
+        <strong>IBITI / USDT</strong> trading pair on PancakeSwap v2.
+        The market price is formed directly by AMM liquidity.
       </p>
-      <p style="margin:10px 0; line-height:1.65; color:rgba(255,255,255,0.78);">
-        Token contract: <code style="color:#fff;">0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code>
+      <p>
+        Token contract:
+        <code>0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb</code>
       </p>
       <a class="btn"
          href="https://pancakeswap.finance/swap?chain=bsc&amp;outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&amp;inputCurrency=0x55d398326f99059fF775485246999027B3197955"
          target="_blank"
          rel="noopener noreferrer">
-        Open PancakeSwap Pool
+        Open PancakeSwap
       </a>
     </article>
 
-    <article class="news-item" style="background:#0f0f0f; border:1px solid rgba(247,208,0,0.6); border-radius:10px; padding:22px; margin-bottom:20px; box-shadow:0 0 24px rgba(247,208,0,0.08);">
-      <h2 style="margin:0; color:#f7d000; font-size:1.6em;">IBITI Shop UI Updated</h2>
-      <p style="margin:10px 0 14px; font-size:0.95em; color:rgba(255,255,255,0.70);">Dec 2025</p>
-      <p style="margin:10px 0; line-height:1.65; color:rgba(255,255,255,0.78);">
-        The IBITI Shop page was updated to improve navigation, simplify the purchase flow,
-        and work better inside mobile wallet DApp browsers.
+    <article class="news-item">
+      <h2>IBITI Shop Interface Updated</h2>
+      <p class="news-date">Dec 2025</p>
+      <p>
+        The Shop page was updated for a cleaner purchase flow, better mobile handling,
+        and simpler navigation inside wallet browsers.
       </p>
-      <a class="btn" href="shop.html">Open IBITI Shop</a>
+      <p>
+        The goal is straightforward: fewer distractions, faster actions, and a clearer
+        route for first-time buyers.
+      </p>
+      <a class="btn" href="shop.html">Open Shop</a>
     </article>
 
-    <article class="news-item" style="background:#0f0f0f; border:1px solid rgba(247,208,0,0.6); border-radius:10px; padding:22px; margin-bottom:20px; box-shadow:0 0 24px rgba(247,208,0,0.08);">
-      <h2 style="margin:0; color:#f7d000; font-size:1.6em;">IBITIcoin Phase Sale Concept <span style="display:inline-block; margin-left:10px; padding:3px 10px; border-radius:999px; font-size:0.82em; font-weight:700; border:1px solid rgba(255,255,255,0.25); color:rgba(255,255,255,0.65);">ARCHIVED</span></h2>
-      <p style="margin:10px 0 14px; font-size:0.95em; color:rgba(255,255,255,0.70);">Jul 2025</p>
-      <p style="margin:10px 0; line-height:1.65; color:rgba(255,255,255,0.78);">
-        Early drafts included a phased sale concept with fixed pricing and bonuses.
-        This approach was later dropped in favor of a transparent AMM liquidity model.
+    <article class="news-item">
+      <h2>Phase Sale Concept <span class="tag archived">ARCHIVED</span></h2>
+      <p class="news-date">Jul 2025</p>
+      <p>
+        Earlier drafts included a phased sale model with fixed pricing and bonus logic.
+        That direction was later dropped in favor of a more transparent AMM-based liquidity model.
       </p>
-      <a class="btn" href="launch-info.html">Read details</a>
+      <a class="btn" href="launch-info.html">Read Details</a>
     </article>
 
-    <article class="news-item" style="background:#0f0f0f; border:1px solid rgba(247,208,0,0.6); border-radius:10px; padding:22px; margin-bottom:20px; box-shadow:0 0 24px rgba(247,208,0,0.08);">
-      <h2 style="margin:0; color:#f7d000; font-size:1.6em;">NFT Jackpot Airdrop Concept <span style="display:inline-block; margin-left:10px; padding:3px 10px; border-radius:999px; font-size:0.82em; font-weight:700; border:1px solid rgba(255,255,255,0.25); color:rgba(255,255,255,0.65);">ARCHIVED / REWORKING</span></h2>
-      <p style="margin:10px 0 14px; font-size:0.95em; color:rgba(255,255,255,0.70);">Jul 2025</p>
-      <p style="margin:10px 0; line-height:1.65; color:rgba(255,255,255,0.78);">
-        The original NFT jackpot idea is being reworked to match the current ecosystem direction.
-        Future NFT utility is planned around discounts and practical on-chain use.
+    <article class="news-item">
+      <h2>NFT Jackpot Concept <span class="tag archived">ARCHIVED / REWORKING</span></h2>
+      <p class="news-date">Jul 2025</p>
+      <p>
+        The early NFT jackpot concept is under rework.
+        The current direction is utility-focused NFTs with cleaner on-chain logic,
+        practical perks, and ecosystem discounts.
       </p>
-      <a class="btn" href="launch-info.html">Read details</a>
+      <a class="btn" href="launch-info.html">Read Details</a>
     </article>
 
   </section>
