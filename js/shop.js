@@ -3,7 +3,7 @@
 
 const PANCAKE_SWAP_URL =
   "https://pancakeswap.finance/swap?chain=bsc&" +
-  "outputCurrency=0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb&" +
+  "outputCurrency=0x71b552D3503fe20610aaA470A96E1838fae8381A&" +
   "inputCurrency=0x55d398326f99059fF775485246999027B3197955";
 
 let currentProductId = null;

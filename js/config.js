@@ -16,10 +16,10 @@
       blockExplorerUrls: ["https://bscscan.com"],
       nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
 
-      ibiti: "0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb",
+      ibiti: "0x71b552D3503fe20610aaA470A96E1838fae8381A",
       usdt:  "0x55d398326f99059fF775485246999027B3197955",
       pancakeRouter: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
-      promoRouter: "0xcDdACBc10ea1110079405c230b3FBB9B77B81840",
+      promoRouter: "0x42924EE213eF1943BE655c2C535FB72F52C64781",
       slippageBps: 300
     },
 

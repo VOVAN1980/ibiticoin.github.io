@@ -2,7 +2,7 @@ import { signer, connectWallet } from "./wallet.js";
 import { ibitiTokenAbi }         from "./abis/ibitiTokenAbi.js";
 import { Contract, parseEther }   from "https://cdn.jsdelivr.net/npm/ethers@6.10.0/+esm";
 
-const IBITI_TOKEN_ADDRESS = "0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb";
+const IBITI_TOKEN_ADDRESS = "0x71b552D3503fe20610aaA470A96E1838fae8381A";
 let ibitiContract = null;
 
 // Вообще не вызываем connectWallet() автоматически,

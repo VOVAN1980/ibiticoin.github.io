@@ -38,7 +38,7 @@ and the connected dashboards that interact with the on-chain contracts.
 
 - **Website:** https://ibiticoin.com  
 - **Frontend (GitHub Pages):** https://vovan1980.github.io/ibiticoin.github.io  
-- **Main token (BSC):** `0x47F2FFCb164b2EeCCfb7eC436Dfb3637a457B9bb`  
+- **Main token (BSC):** `0x71b552D3503fe20610aaA470A96E1838fae8381A`  
 - **Decimals:** `8`
 
 ---
