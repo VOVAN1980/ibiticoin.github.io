@@ -20,7 +20,7 @@
       usdt:  "0x55d398326f99059fF775485246999027B3197955",
       pancakeRouter: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
       promoRouter: "0x42924EE213eF1943BE655c2C535FB72F52C64781",
-      staking: "",
+      staking: "0x509e0CeaA5840304D2f33bC43e66Fa27ECDc0348",
       slippageBps: 300
     },
 

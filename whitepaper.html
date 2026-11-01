@@ -220,8 +220,8 @@
           </p>
 
           <div class="callout">
-            <b>Live on mainnet:</b> the IBITI token, team vesting and the website sale.
-            <b>Deployed next, one by one:</b> staking, NFTs and the sell contract with the smart fee.
+            <b>Live on mainnet:</b> the IBITI token, team vesting, the website sale and staking.
+            <b>Deployed next, one by one:</b> NFTs and the sell contract with the smart fee.
             Each one gets its address here once it is deployed and verified.
           </div>
 
@@ -229,6 +229,7 @@
             <div class="pill">Token (IBITI): <span class="mono">0x71b552D3503fe20610aaA470A96E1838fae8381A</span></div>
             <div class="pill">USDT (BSC): <span class="mono">0x55d398326f99059fF775485246999027B3197955</span></div>
             <div class="pill">Website Sale: <span class="mono">0x42924EE213eF1943BE655c2C535FB72F52C64781</span></div>
+            <div class="pill">Staking: <span class="mono">0x509e0CeaA5840304D2f33bC43e66Fa27ECDc0348</span></div>
           </div>
 
           <p class="small">
@@ -246,7 +247,7 @@
                 <li><a href="#token">3) IBITI Token</a></li>
                 <li><a href="#market">4) Market & Price</a></li>
                 <li><a href="#promo">5) Website Sale (IBITIPromoSale)</a></li>
-                <li><a href="#staking">6) Staking (Planned)</a></li>
+                <li><a href="#staking">6) Staking</a></li>
                 <li><a href="#nfts">7) NFTs (Planned)</a></li>
               </ul>
             </div>
@@ -271,7 +272,7 @@
               <ul>
                 <li>Buy IBITI on the website at a fixed price, with a bonus and a referral reward.</li>
                 <li>Trade on PancakeSwap once the pool has liquidity.</li>
-                <li>Stake IBITI and use NFTs once those modules are deployed.</li>
+                <li>Stake IBITI for a known reward; use NFTs once they are deployed.</li>
                 <li>Everything visible on-chain (no “trust me, bro”).</li>
               </ul>
             </div>
@@ -315,6 +316,7 @@
             <tr><td>IBITI token</td><td class="mono"><code>0x71b552D3503fe20610aaA470A96E1838fae8381A</code></td></tr>
             <tr><td>Team vesting</td><td class="mono"><code>0xC4bdF5b6d7688a7d5457A194ac1210ec34003604</code></td></tr>
             <tr><td>Website sale</td><td class="mono"><code>0x42924EE213eF1943BE655c2C535FB72F52C64781</code></td></tr>
+            <tr><td>Staking</td><td class="mono"><code>0x509e0CeaA5840304D2f33bC43e66Fa27ECDc0348</code></td></tr>
 
             <tr><td colspan="2"><b>Market</b></td></tr>
             <tr><td>USDT (BSC)</td><td class="mono"><code>0x55d398326f99059fF775485246999027B3197955</code></td></tr>
@@ -328,7 +330,6 @@
             <tr><td>Burn address</td><td class="mono"><code>0x000000000000000000000000000000000000dEaD</code></td></tr>
 
             <tr><td colspan="2"><b>Modules</b></td></tr>
-            <tr><td>IBITIStaking</td><td class="small">Not deployed yet</td></tr>
             <tr><td>NFTDiscount (DiscountNFT)</td><td class="small">Not deployed yet</td></tr>
             <tr><td>IBITINFT</td><td class="small">Not deployed yet</td></tr>
             <tr><td>NFTSaleManager</td><td class="small">Not deployed yet</td></tr>
@@ -355,7 +356,7 @@
               <b>What the token is for</b>
               <ul>
                 <li>Medium of value inside IBITI ecosystem modules</li>
-                <li>Staking (once deployed)</li>
+                <li>Staking</li>
                 <li>NFT purchase & discount mechanisms (once deployed)</li>
               </ul>
             </div>
@@ -439,7 +440,7 @@
       <ul>
         <li>1,000,000 IBITI went to the website sale</li>
         <li>Marketing and ecosystem needs</li>
-        <li>Staking rewards, once staking is deployed</li>
+        <li>1,000,000 IBITI went to the staking reward pool</li>
       </ul>
     </div>
   </div>
@@ -705,11 +706,11 @@ bonus     = purchased * bonusBps / 10000
   </details>
 </section>
 
-        <section class="card" id="staking" data-wp="staking planned 1-12 months rewards penalties claim window renew nft rewards reward pool">
-          <h2>6) Staking (Planned)</h2>
+        <section class="card" id="staking" data-wp="staking 1-12 months rewards penalties claim window renew nft rewards reward pool">
+          <h2>6) Staking</h2>
 
           <div class="callout">
-            <b>Not deployed on mainnet yet.</b> The rules below match the contract tested on testnet.
+            <b>Live on mainnet:</b> <code>0x509e...0348</code>. The reward pool started with 1,000,000 IBITI.
           </div>
 
           <p class="lead">
@@ -797,7 +798,7 @@ bonus     = purchased * bonusBps / 10000
             <summary><span>NFT rewards from staking</span> (3/6/9/12 months)</summary>
             <p class="small">
               Terms of 3, 6, 9 and 12 months earn non-transferable “Jackpot” Discount NFTs. They are issued when you collect within the 30 days.
-              A failed NFT mint never blocks your tokens.
+              The NFT contract is not deployed yet: until it is connected, you receive your tokens but not the NFTs. A failed NFT mint never blocks your tokens.
             </p>
           </details>
         </section>
@@ -916,6 +917,7 @@ bonus     = purchased * bonusBps / 10000
                 <li><b>Token:</b> nobody. It has no owner.</li>
                 <li><b>Vesting:</b> the owner pays out, only within the schedule.</li>
                 <li><b>Website sale:</b> the owner has the powers in section 5.7.</li>
+                <li><b>Staking:</b> the owner can pause new stakes and withdraw the free part of the pool, but not stakes or reserved rewards.</li>
                 <li>No live contract is behind a proxy, so none can be upgraded.</li>
               </ul>
             </div>
@@ -948,6 +950,7 @@ bonus     = purchased * bonusBps / 10000
             <li><b>USDT routing</b>: the sale contract holds 0 USDT; the Reserve wallet receives it.</li>
             <li><b>Sale stock</b>: <code>poolRemaining()</code> returns the real balance.</li>
             <li><b>Vesting</b>: <code>available()</code>, <code>released()</code> and <code>Released</code> events.</li>
+            <li><b>Staking</b>: <code>totalStaked()</code>, <code>reservedRewards()</code> and <code>freeRewards()</code> always add up to the contract's balance.</li>
             <li><b>Supply</b>: <code>totalSupply()</code> can only go down.</li>
           </ul>
 
@@ -989,7 +992,8 @@ bonus     = purchased * bonusBps / 10000
 
           <h3>Planned modules</h3>
           <ul>
-            <li>Staking, NFTs and the sell contract are not live. Their rules can change before deployment.</li>
+            <li>NFTs and the sell contract are not live. Their rules can change before deployment.</li>
+            <li>Staking NFT rewards depend on the NFT contract. Until it is connected, stakers receive tokens but not NFTs.</li>
           </ul>
         </section>
 
@@ -1029,7 +1033,7 @@ bonus     = purchased * bonusBps / 10000
           <details>
             <summary><span>What happens if I forget about my stake?</span></summary>
             <p class="small">
-              In the planned design you have 30 days after the term to take the reward and NFTs. After that they are lost, but your stake stays yours with no time limit.
+              You have 30 days after the term to take the reward and NFTs. After that they are lost, but your stake stays yours with no time limit.
             </p>
           </details>
 
@@ -1109,6 +1113,10 @@ bonus     = purchased * bonusBps / 10000
             <div class="small mono"><code>0xC4bd...3604</code></div>
           </div>
           <div class="kv">
+            <b>Staking</b>
+            <div class="small mono"><code>0x509e...0348</code></div>
+          </div>
+          <div class="kv">
             <b>Reserve wallet</b>
             <div class="small mono"><code>0x9d8d...De41</code></div>
           </div>
@@ -1129,7 +1137,7 @@ Get IBITI from the sale contract:
         </div>
 
         <div class="card">
-          <h2>Staking quick rules (planned)</h2>
+          <h2>Staking quick rules</h2>
           <ul class="small">
             <li>Terms: <b>1–12 months</b> (30 days per month), minimum 100 IBITI</li>
             <li>Claim window: <b>30 days</b> after the term</li>
@@ -1152,7 +1160,7 @@ Get IBITI from the sale contract:
         <div class="card">
           <h2>BSC reviewer checklist</h2>
           <ul class="small">
-            <li class="ok">Token, vesting and sale contracts verified</li>
+            <li class="ok">Token, vesting, sale and staking contracts verified</li>
             <li>Read sale params: price, bonusBps, refReward, limits</li>
             <li>Verify USDT routing: reserve wallet receives USDT, sale contract 0 USDT</li>
             <li>Read vesting: available(), released(), unlockedAt()</li>

@@ -25,10 +25,10 @@ Live on mainnet:
 - IBITI token (BEP-20, 8 decimals, 100,000,000 fixed supply, no owner, no fees)
 - Team vesting
 - Website sale at a fixed price, with a bonus and a referral reward
+- Staking for 1 to 12 months, with a reward known in advance
 
 Deployed next, one by one:
 
-- Fixed-term staking with NFT rewards
 - NFT discounts
 - Sell contract with the smart fee
 
@@ -48,6 +48,7 @@ This repository contains the **public frontend** (static HTML/CSS/JS) for ibitic
 | IBITI token | `0x71b552D3503fe20610aaA470A96E1838fae8381A` |
 | Team vesting | `0xC4bdF5b6d7688a7d5457A194ac1210ec34003604` |
 | Website sale | `0x42924EE213eF1943BE655c2C535FB72F52C64781` |
+| Staking | `0x509e0CeaA5840304D2f33bC43e66Fa27ECDc0348` |
 
 ---
 
@@ -64,7 +65,7 @@ This repository contains:
 - Public landing pages (RU/EN)
 - Shop: website sale flow and purchase receipts
 - Whitepaper (HTML and PDF)
-- Staking and NFT pages, not active until those modules are deployed
+- Staking page; NFT page, not active until those modules are deployed
 - Legal pages (privacy, terms, comment policy, etc.)
 
 Static stack: **HTML + CSS + vanilla JS** (no backend).
