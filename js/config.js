@@ -33,10 +33,10 @@
       blockExplorerUrls: ["https://testnet.bscscan.com"],
       nativeCurrency: { name: "tBNB", symbol: "tBNB", decimals: 18 },
 
-      usdt:  "0xDC8eD79f9889F630Dc8083e5fD8C5294f1B603bb",
-      ibiti: "0xc230f9394875305ac83013C0186a400865bc8f86",
+      usdt:  "0xe4221B295012D583347d400BA28f5783d61c7E13",
+      ibiti: "0x4D641C74529B39e3C4Cc996B5b5be47A0B61dD0C",
       pancakeRouter: "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
-      promoRouter:   "0x9693Be6ee997B0508c490b08320fefda8493Dc4e",
+      promoRouter:   "0x5143E30336F5c04214BeFeFB44398839344b0B01",
       slippageBps: 300
     }
   };

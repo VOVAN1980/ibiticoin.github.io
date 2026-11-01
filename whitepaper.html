@@ -227,8 +227,7 @@
           <div class="pillRow">
             <div class="pill">Token (IBITI): <span class="mono">0x71b552D3503fe20610aaA470A96E1838fae8381A</span></div>
             <div class="pill">USDT (BSC): <span class="mono">0x55d398326f99059fF775485246999027B3197955</span></div>
-            <div class="pill">Promo Proxy: <span class="mono">0x42924EE213eF1943BE655c2C535FB72F52C64781</span></div>
-            <div class="pill">Promo Impl: <span class="mono">0x42924EE213eF1943BE655c2C535FB72F52C64781</span></div>
+            <div class="pill">Website Sale: <span class="mono">0x42924EE213eF1943BE655c2C535FB72F52C64781</span></div>
           </div>
 
           <p class="small">
@@ -308,31 +307,26 @@
             <tr><td>IBITI token</td><td class="mono"><code>0x71b552D3503fe20610aaA470A96E1838fae8381A</code></td></tr>
             <tr><td>USDT (BSC)</td><td class="mono"><code>0x55d398326f99059fF775485246999027B3197955</code></td></tr>
             <tr><td>PancakeSwap V2 Router</td><td class="mono"><code>0x10ED43C718714eb63d5aA57B78B54704E256024E</code></td></tr>
-            <tr><td>IBITI/USDT Pair (price reference)</td><td class="mono"><code>0xADfb9F0f810311e9c01C27B380909A5FfC104Be0</code> <span class="small">(Primary price reference pair)</span></td></tr>
+            <tr><td>IBITI/USDT Pair (price reference)</td><td class="mono"><code>0x5b39C5A553a7355eb47368a9Af5ec5aDB5C7e9d3</code> <span class="small">(Pool is created when liquidity is added)</span></td></tr>
 
-            <tr><td colspan="2"><b>Website Cash Promo Router (UUPS)</b></td></tr>
-            <tr><td>Proxy (public entrypoint)</td><td class="mono"><code>0x42924EE213eF1943BE655c2C535FB72F52C64781</code></td></tr>
-            <tr><td>Implementation</td><td class="mono"><code>0x42924EE213eF1943BE655c2C535FB72F52C64781</code></td></tr>
+            <tr><td colspan="2"><b>Website Cash Promo</b></td></tr>
+            <tr><td>Sale contract (public entrypoint)</td><td class="mono"><code>0x42924EE213eF1943BE655c2C535FB72F52C64781</code></td></tr>
 
             <tr><td colspan="2"><b>Operational wallets</b></td></tr>
-            <tr><td>Owner wallet</td><td class="mono"><code>0xC00dC8E3F4647AAa4791AE58901eDDFE6095adA5</code></td></tr>
+            <tr><td>Liquidity wallet</td><td class="mono"><code>0xC00dC8E3F4647AAa4791AE58901eDDFE6095adA5</code></td></tr>
             <tr><td>Reserve wallet</td><td class="mono"><code>0x9d8dd8b2cff7a17967fa0ef19ed5c0b3ebefde41</code></td></tr>
-            <tr><td>Vesting wallet</td><td class="mono"><code>0x1841DE9b1c8bF5244675896b0F4FF96C9331596f</code></td></tr>
+            <tr><td>Vesting contract owner</td><td class="mono"><code>0x1841DE9b1c8bF5244675896b0F4FF96C9331596f</code></td></tr>
             <tr><td>Burn address</td><td class="mono"><code>0x000000000000000000000000000000000000dEaD</code></td></tr>
 
             <tr><td colspan="2"><b>Modules</b></td></tr>
-            <tr><td>FeeManager</td><td class="mono"><code>0x34770ba3625437742e18C6827DFC893c42Eec956</code></td></tr>
-            <tr><td>UserStatusManager</td><td class="mono"><code>0xf1C734156A2Ab62e1018D18f6347425623af611a</code></td></tr>
-            <tr><td>BridgeManager</td><td class="mono"><code>0x813d2d93a3EfDFe8B09513b09B7CbdE06B239113</code></td></tr>
-            <tr><td>StakingModule</td><td class="mono"><code>0x9ad8D68F7a6C9f673bd1db8348734f8dA515113c</code></td></tr>
-            <tr><td>NFTDiscount (DiscountNFT)</td><td class="mono"><code>0x911f7153AA7554b3f936f2ad05318B8368c14668</code></td></tr>
-            <tr><td>IBITINFT</td><td class="mono"><code>0xE14bfBB10180eda4bDC574f02700e0E2BC0A4667</code></td></tr>
-            <tr><td>NFTSaleManager</td><td class="mono"><code>0x2c702A42966a939b6C5Da4828cd8D67890Db097E</code></td></tr>
-            <tr><td>PhasedTokenSale</td><td class="mono"><code>0x6A6eDc85f4690DBAB98d52CdF656ef849d28148e</code></td></tr>
+            <tr><td>FeeManager</td><td class="small">Not deployed yet</td></tr>
+            <tr><td>UserStatusManager</td><td class="small">Not deployed yet</td></tr>
+            <tr><td>StakingModule</td><td class="small">Not deployed yet</td></tr>
+            <tr><td>NFTDiscount (DiscountNFT)</td><td class="small">Not deployed yet</td></tr>
+            <tr><td>IBITINFT</td><td class="small">Not deployed yet</td></tr>
+            <tr><td>NFTSaleManager</td><td class="small">Not deployed yet</td></tr>
             <tr><td>TeamVesting</td><td class="mono"><code>0xC4bdF5b6d7688a7d5457A194ac1210ec34003604</code></td></tr>
-            <tr><td>DAOModule</td><td class="mono"><code>0xc0213d9d331Ea207717E38F5e0e995BA567fbd1F</code></td></tr>
-            <tr><td>BuybackManager</td><td class="mono"><code>0xdE7E16bbDe9076daF23DB25BA4E50d8FEeca5AC9</code></td></tr>
-            <tr><td>IBITI Price Oracle</td><td class="mono"><code>0x09e28925487841f0400687FD9DC9cf1d14B85aF3</code></td></tr>
+            <tr><td>BuybackManager</td><td class="small">Not deployed yet</td></tr>
           </table>
         </section>
 
@@ -960,7 +954,7 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
               <ul>
                 <li>Long-term vesting schedule</li>
                 <li>Withdraw rules enforced by contract</li>
-                <li>Vesting wallet: <code>0x1841...596f</code></li>
+                <li>Vesting contract: <code>0xC4bd...3604</code></li>
               </ul>
             </div>
           </div>
@@ -1172,8 +1166,8 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
             <div class="small mono"><code>IBITI</code> decimals: <b>8</b> • token: <code>0x71b5...381A</code></div>
           </div>
           <div class="kv">
-            <b>Website Promo (UUPS)</b>
-            <div class="small mono">Proxy: <code>0x4292...4781</code><br/>Impl: <code>0x4292...4781</code></div>
+            <b>Website Promo</b>
+            <div class="small mono"><code>0x4292...4781</code></div>
           </div>
           <div class="kv">
             <b>Reserve wallet</b>
