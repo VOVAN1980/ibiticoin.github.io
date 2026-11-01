@@ -461,10 +461,15 @@ a.btn { color:#000 !important; }
     <!-- Info popup: live trading status -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+      const noPool = !!document.getElementById("no-pool-yet");
       Swal.fire({
         icon: 'info',
-        title: 'IBITIcoin is live on PancakeSwap',
-        html: `
+        title: noPool ? 'IBITI website sale is live' : 'IBITIcoin is live on PancakeSwap',
+        html: noPool ? `
+          <b>Fixed price: $0.10 per IBITI, +10% bonus (BNB Smart Chain)</b><br><br>
+          Contract: <code>0x71b552D3503fe20610aaA470A96E1838fae8381A</code><br><br>
+          <a href="shop.html">Open IBITI Shop</a>
+        ` : `
           <b>Official trading pair: IBITI / USDT (BNB Smart Chain)</b><br><br>
           Contract: <code>0x71b552D3503fe20610aaA470A96E1838fae8381A</code><br><br>
           <a href="https://pancakeswap.finance/swap?chain=bsc&outputCurrency=0x71b552D3503fe20610aaA470A96E1838fae8381A&inputCurrency=0x55d398326f99059fF775485246999027B3197955"

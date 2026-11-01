@@ -35,17 +35,17 @@
     footer a { color: gold; text-decoration:none; }
     footer a:hover { text-decoration: underline; }
   </style>
-<style id="no-pool-yet">a[href*="pancakeswap.finance"],a[href*="dexscreener.com"],a[href*="coin-chart"],a[href*="calculator"],iframe[src*="dexscreener"],#buyPancakeBtn{display:none!important}</style>
+<style id="no-pool-yet">a[href*="pancakeswap.finance"],a[href*="dexscreener.com"],a[href*="coin-chart"],a[href*="calculator"],iframe[src*="dexscreener"],#buyPancakeBtn{display:none!important}.pool-only{display:none!important}</style>
 </head>
 
 <body>
   <header class="hero-header">
     <h1>IBITIcoin — Public Launch & Trading</h1>
-    <p class="muted">Live trading via AMM liquidity pool. Transparent, on-chain, no “hidden sale phases”.</p>
+    <p class="muted">Website sale at a fixed price<span class="pool-only">, open trading via AMM liquidity pool</span>. Transparent, on-chain, no “hidden sale phases”.</p>
   </header>
 
   <!-- 1. Trading status -->
-  <section class="gold-section" data-aos="fade-up">
+  <section class="gold-section pool-only" data-aos="fade-up">
     <h2>✅ Open trading on PancakeSwap (IBITI/USDT)</h2>
 
     <div class="box">
@@ -62,7 +62,7 @@
       </ul>
 
       <p class="muted" style="margin-top:12px;">
-        Price is determined by the AMM liquidity pool (market), not by fixed “admin prices”.
+        The pool price is set by the AMM liquidity pool (market). The website sale has its own fixed price, shown below.
       </p>
     </div>
 
@@ -78,7 +78,7 @@
   </section>
 
   <!-- 2. How to buy -->
-  <section class="gold-section" data-aos="fade-up">
+  <section class="gold-section pool-only" data-aos="fade-up">
     <h2>🪙 How to buy IBITI</h2>
 
     <div class="box">
@@ -98,18 +98,21 @@
 
   <!-- 3. Bonus promo (optional) -->
   <section class="gold-section" data-aos="fade-up">
-    <h2>🎁 Optional: Promo buy with +10% bonus (official shop)</h2>
+    <h2>🎁 Website sale: $0.10 per IBITI with +10% bonus (official shop)</h2>
 
-    <div class="box">
-      <p>
-        Some campaigns may offer an on-chain bonus (example: <strong>+10%</strong>) when buying through
-        the official shop interface.
-      </p>
-      <ul class="buy-steps">
-        <li>Purchases happen via the project’s promo contract (on-chain). Users confirm transactions in their wallet.</li>
-        <li><strong>Approvals are exact amount</strong> (no “infinite approve”), which increases user safety and trust.</li>
-        <li>After purchase, the user can get a clean receipt (paid, market bought, bonus, tx hash).</li>
-      </ul>
+  <div class="box">
+    <p>
+      IBITI is on sale through the official shop at a fixed price of <strong>$0.10</strong> per IBITI,
+      with a <strong>+10%</strong> bonus, for 10 to 100 USDT per purchase.
+    </p>
+    <ul class="buy-steps">
+      <li><strong>Network:</strong> BNB Smart Chain (BEP-20)</li>
+      <li><strong>Token contract:</strong> <code>0x71b552D3503fe20610aaA470A96E1838fae8381A</code></li>
+      <li><strong>Sale contract:</strong> <code>0x42924EE213eF1943BE655c2C535FB72F52C64781</code></li>
+      <li>Purchases happen via the project’s sale contract (on-chain). Users confirm transactions in their wallet.</li>
+      <li><strong>Approvals are exact amount</strong> (no “infinite approve”), which increases user safety and trust.</li>
+      <li>After purchase, the user can get a clean receipt (paid, purchased, bonus, tx hash).</li>
+    </ul>
 
       <p class="center" style="margin-top:14px;">
         <a href="shop.html" class="btn-small launch-btn">Open IBITI Shop</a>

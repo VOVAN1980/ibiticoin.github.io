@@ -5,7 +5,7 @@
 <h1 align="center">IBITIcoin</h1>
 
 <p align="center">
-  Multi-module DeFi ecosystem on BNB Smart Chain (BEP-20)
+  Fixed-supply token and utility modules on BNB Smart Chain (BEP-20)
 </p>
 
 ---
@@ -18,198 +18,97 @@
 
 ## Overview
 
-**IBITIcoin** is a multi-module DeFi ecosystem built on **BNB Smart Chain**.  
-The system combines:
+**IBITIcoin** is an infrastructure project on **BNB Smart Chain**, built around a fixed-supply token and separate utility modules.
 
-- The main IBITI token (BEP-20, 8 decimals)
-- Phased token sale with fallback mode
+Live on mainnet:
+
+- IBITI token (BEP-20, 8 decimals, 100,000,000 fixed supply, no owner, no fees)
+- Team vesting
+- Website sale at a fixed price, with a bonus and a referral reward
+
+Deployed next, one by one:
+
 - Fixed-term staking with NFT rewards
-- NFT-based fee / price discounts
-- Dynamic fee manager
-- On-chain DAO module
-- Public frontend: website, shop, staking dashboard, NFT gallery
+- NFT discounts
+- Sell contract with the smart fee
 
-This repository contains the **public frontend** (static HTML/CSS/JS) for ibiticoin.com  
-and the connected dashboards that interact with the on-chain contracts.
+This repository contains the **public frontend** (static HTML/CSS/JS) for ibiticoin.com.
 
 ---
 
 ## Key links
 
-- **Website:** https://ibiticoin.com  
-- **Frontend (GitHub Pages):** https://vovan1980.github.io/ibiticoin.github.io  
-- **Main token (BSC):** `0x71b552D3503fe20610aaA470A96E1838fae8381A`  
-- **Decimals:** `8`
+- **Website:** https://ibiticoin.com
+- **Whitepaper:** https://www.ibiticoin.com/whitepaper.html
+- **Frontend (GitHub Pages):** https://vovan1980.github.io/ibiticoin.github.io
+- **Smart contracts:** https://github.com/VOVAN1980/IBITIcoin
+
+| Contract | Address |
+|---|---|
+| IBITI token | `0x71b552D3503fe20610aaA470A96E1838fae8381A` |
+| Team vesting | `0xC4bdF5b6d7688a7d5457A194ac1210ec34003604` |
+| Website sale | `0x42924EE213eF1943BE655c2C535FB72F52C64781` |
 
 ---
 
 ## Repositories
 
-### Smart contracts / core protocol
+### Smart contracts
 
-> Full Solidity sources (token, sale, staking, NFTs, DAO, etc.)
-
-- `IBITIcoin.sol` – main BEP-20 token  
-- `PhasedTokenSale.sol` – multi-phase token sale with fallback mode  
-- `StakingModule.sol` – fixed-term staking (1–12 months), penalties, rewards  
-- `NFTDiscount.sol` / `IBITINFT.sol` – NFT discount logic and NFT collection  
-- `FeeManager.sol` – dynamic fees, activity tracking, volatility tiers  
-- `DAOModule.sol` / `DAOModuleImplementation.sol` – on-chain DAO  
-- `TeamVesting.sol` – team / founder vesting  
-- plus helper contracts (oracles, mocks, buyback, bridge, etc.)
-
-> See the dedicated **IBITIcoin-core** repository for the full contract set and tests.
+Solidity sources, scripts, tests and deployment records are in [IBITIcoin](https://github.com/VOVAN1980/IBITIcoin).
 
 ### Frontend & landing (this repo)
 
 This repository contains:
 
 - Public landing pages (RU/EN)
-- Token sale dashboard & statistics
-- Staking dashboard
-- NFT gallery & discount information
-- Shop integration (IBITI / USDT via PancakeSwap)
+- Shop: website sale flow and purchase receipts
+- Whitepaper (HTML and PDF)
+- Staking and NFT pages, not active until those modules are deployed
 - Legal pages (privacy, terms, comment policy, etc.)
 
 Static stack: **HTML + CSS + vanilla JS** (no backend).
 
 ---
 
-## Main features
+## Local development
 
-### IBITI Token (BEP-20)
+The site is fully static, so any local static server works.
 
-- Deployed on **BNB Smart Chain mainnet**
-- `8` decimals
-- Integrated with:
-  - `FeeManager` (dynamic buy/sell fees)
-  - `StakingModule` (locking & rewards)
-  - `NFTDiscount` (fee / price discounts for NFT holders)
+```bash
+git clone https://github.com/VOVAN1980/ibiticoin.github.io.git
+```
 
-### Phased token sale
+```bash
+cd ibiticoin.github.io
+```
 
-- Multiple sale phases with fixed prices and caps  
-- Automatic **fallback sale mode** once planned phases are finished  
-- Referral / bonus pools managed on-chain  
-
-### Staking module
-
-- Fixed-term staking from **1 to 12 months**
-- Increasing reward rate for longer lock periods  
-- Penalties / reduced rewards for early unstake  
-- NFT rewards for long-term and loyal stakers
-
-### NFT discounts
-
-- IBITI NFT collection with different rarity levels (1%, 3%, 5%, 7%, 10%, 15%, 25%, 50%, 75%, 100%, 100% FUL)  
-- Discount level is bound to NFT rarity and enforced by `NFTDiscount` + `IBITINFT` contracts  
-- Can influence:
-  - trading fees
-  - sale price / bonuses
-  - staking or referral rewards (configurable on contract side)
-
-### Dynamic fees (FeeManager)
-
-- Base buy / sell fees with flexible configuration  
-- Activity tracking and **volatility tiers**  
-- Optional boosting / reduction based on:
-  - market conditions
-  - user behaviour
-  - NFT ownership
-
-### DAO module
-
-- On-chain proposals & voting  
-- Thresholds to avoid spam proposals  
-- Optional NFT / token rewards for voters  
-- Pausable, upgradable logic via `DAOModuleImplementation`
+```bash
+npx serve .
+```
 
 ---
 
-## Local development
+## Security
 
-### Prerequisites
+See [SECURITY.md](SECURITY.md) for responsible disclosure rules and how to report a vulnerability.
 
-- **Node.js** 18+  
-- **npm** or **yarn**  
-- (optional) **hardhat** and **pnpm** for contract work  
-- BSC RPC endpoint (e.g. Ankr / public BSC node)  
-- Private key and API keys in a local `.env` file (never commit it)
+---
 
-Example `.env` for contracts:
+## License
 
-```env
-BSC_ARCHIVE_RPC_URL="https://..."
-BSC_RPC_URL="https://data-seed-prebsc-1-s1.binance.org:8545/"
-BSC_MAINNET_RPC_URL="https://bsc-dataseed1.bnbchain.org"
+### Source code
 
-PRIVATE_KEY="0x..."
-FOUNDER_WALLET="0x..."
-BSCSCAN_API_KEY="..."
-COINMARKETCAP_API_KEY="..."
-Frontend: install & run
-bash
-Копировать код
-# clone repo
-git clone https://github.com/VOVAN1980/ibiticoin.github.io.git
-cd ibiticoin.github.io
+All application code in this repository is licensed under the MIT License. See [LICENSE](LICENSE).
 
-# run simple static server (example)
-npx serve .
-# then open http://localhost:3000 (порт может отличаться)
-The site is fully static, so any other local static server also works.
+### Brand, logo & NFTs
 
-Contracts (example workflow)
-bash
-Копировать код
-cd contracts
-npm install
-
-# compile
-npx hardhat compile
-
-# run tests
-npx hardhat test
-
-# deploy to BSC testnet (example)
-npx hardhat run --network bscTestnet scripts/deploy_full.js
-Concrete deploy scripts and parameters live in the core contracts repository.
-
-Security
-See SECURITY.md for:
-
-responsible disclosure rules
-
-testing guidelines
-
-how to report a vulnerability (email / PGP if applicable)
-
-Never test on mainnet with real funds unless you understand the risks.
-
-License
-Source code
-All application and smart-contract code in this repository is licensed under the:
-
-MIT License – see LICENSE
-
-You are free to use, copy, modify, merge, publish, distribute, sublicense and/or sell copies of the software, under the terms of the MIT license.
-
-Brand, logo & NFTs
 The following are not covered by the MIT license:
 
-The IBITIcoin and IBITI names and brand
+- The IBITIcoin and IBITI names and brand
+- Logos, visual identity and design elements
+- All NFT artwork files (images in `/img` and related media)
 
-Logos, visual identity and design elements
+These assets are governed by [LICENSE_TECHNOLOGY.md](LICENSE_TECHNOLOGY.md) and [LICENSE_OVERVIEW.md](LICENSE_OVERVIEW.md).
 
-All NFT artwork files (images in /img and related media)
-
-These assets are protected and governed by:
-
-LICENSE_TECHNOLOGY.md
-
-LICENSE_OVERVIEW.md
-
-In short: the code is open, but the brand and artwork remain under controlled use.
-For partnerships, integrations or media usage of the IBITI brand, please contact:
-
-info@ibiticoin.com
+For partnerships, integrations or media usage of the IBITI brand, please contact info@ibiticoin.com.

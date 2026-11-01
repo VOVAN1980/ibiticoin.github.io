@@ -48,7 +48,7 @@
       padding: 14px;
     }
   </style>
-<style id="no-pool-yet">a[href*="pancakeswap.finance"],a[href*="dexscreener.com"],a[href*="coin-chart"],a[href*="calculator"],iframe[src*="dexscreener"],#buyPancakeBtn{display:none!important}</style>
+<style id="no-pool-yet">a[href*="pancakeswap.finance"],a[href*="dexscreener.com"],a[href*="coin-chart"],a[href*="calculator"],iframe[src*="dexscreener"],#buyPancakeBtn{display:none!important}.pool-only{display:none!important}</style>
 </head>
 
 <body>
@@ -98,13 +98,13 @@
       <h2>Latest updates</h2>
 
       <!-- 1) PancakeSwap trading -->
-      <article class="blog-post">
+      <article class="blog-post pool-only">
         <h3>Open trading is live: IBITI/USDT on PancakeSwap (v2)</h3>
-        <p><strong>Date:</strong> 25.12.2025</p>
+        <p><strong>Date:</strong> 11.2026</p>
         <p>
           IBITIcoin is publicly tradable on <strong>BNB Smart Chain</strong> through the official
           <strong>IBITI/USDT</strong> liquidity pool on <strong>PancakeSwap (v2)</strong>.
-          The price is formed by the AMM pool — transparent and on-chain.
+          The pool price is formed by the AMM — transparent and on-chain.
         </p>
         <p>
           Token contract:
@@ -129,15 +129,15 @@
       <!-- 2) Bonus promo via Shop -->
       <article class="blog-post">
         <h3>Bonus promo: +10% IBITI via official Shop (on-chain)</h3>
-        <p><strong>Date:</strong> 27.12.2025</p>
+        <p><strong>Date:</strong> 01.11.2026</p>
         <p>
           We launched an optional promo purchase flow on the official website:
-          buy with USDT and receive <strong>+10% IBITI</strong> bonus.
+          buy with USDT at a fixed price of <strong>$0.10</strong> per IBITI and receive <strong>+10% IBITI</strong> bonus.
           Everything is executed <strong>on-chain</strong> and confirmed in the user wallet.
         </p>
         <p>
           Security detail: USDT approval is set to the <strong>exact amount</strong> (no unlimited approvals).
-          After confirmation, users receive a clean receipt with: paid amount, market amount, bonus amount and tx hash.
+          After confirmation, users receive a clean receipt with: paid amount, purchased amount, bonus amount and tx hash.
         </p>
         <div class="btn-wrapper" style="text-align:center;">
           <a href="shop.html" class="btn blog-btn">Open IBITI Shop (+10% bonus)</a>
@@ -150,7 +150,7 @@
         <p><strong>Planned start date:</strong> 01.07.2025</p>
         <p>
           The original concept included early sale drafts with a fixed starting price and bonuses.
-          As the project evolved, we moved away from fixed phases toward a cleaner AMM-based public launch.
+          As the project evolved, we moved away from phases toward a simpler model: one website sale at a fixed on-chain price, and an AMM pool as the open market.
         </p>
         <div class="btn-wrapper" style="text-align:center;">
           <a href="launch-info.html" class="btn blog-btn">Read more</a>
@@ -171,12 +171,12 @@
       </article>
 
       <article class="blog-post">
-        <h3>From admin pricing drafts to AMM market pricing</h3>
+        <h3>From fallback pricing drafts to on-chain pricing</h3>
         <p><strong>Transition point:</strong> 21.07.2025</p>
         <p>
-          Earlier drafts explored temporary fallback pricing. This approach was discontinued in favor of
-          a transparent <strong>automated market maker (AMM)</strong> model.
-          Today the IBITI price is formed entirely by the IBITI/USDT liquidity pool.
+          Earlier drafts explored temporary fallback pricing. This approach was discontinued.
+          Today there are two on-chain prices: the website sale has a fixed price in its contract,
+          and the PancakeSwap pool price is formed by the <strong>automated market maker (AMM)</strong>.
         </p>
         <div class="btn-wrapper" style="text-align:center;">
           <a href="launch-info.html" class="btn blog-btn">Read more</a>
