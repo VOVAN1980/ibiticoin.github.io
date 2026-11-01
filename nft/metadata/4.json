@@ -1,0 +1,20 @@
+{
+  "name": "Enlightenment",
+  "description": "Reason takes the stage. Gears start turning and the world begins to speed up.",
+  "image": "https://www.ibiticoin.com/img/Enlightenment_4.webp",
+  "external_url": "https://www.ibiticoin.com/nft.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "The Path of Humanity"
+    },
+    {
+      "trait_type": "Card",
+      "value": 4
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Rare"
+    }
+  ]
+}

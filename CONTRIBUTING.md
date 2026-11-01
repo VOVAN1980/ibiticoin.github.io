@@ -51,7 +51,7 @@ Use clear, descriptive commit messages, e.g.:
 
 fix: handle staking early-unlock penalty
 
-feat: add NFT discount tooltip to shop
+feat: add NFT edition tooltip to gallery
 
 docs: update token sale info
 

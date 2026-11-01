@@ -1,0 +1,20 @@
+{
+  "name": "Awakening",
+  "description": "The first fire. A human being stands up, looks around and starts asking questions.",
+  "image": "https://www.ibiticoin.com/img/Awakening_2.webp",
+  "external_url": "https://www.ibiticoin.com/nft.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "The Path of Humanity"
+    },
+    {
+      "trait_type": "Card",
+      "value": 2
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Rare"
+    }
+  ]
+}

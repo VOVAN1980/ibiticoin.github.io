@@ -1,0 +1,20 @@
+{
+  "name": "The First Gods and Kings",
+  "description": "Cities, laws and thrones. People build the first order and learn who to obey.",
+  "image": "https://www.ibiticoin.com/img/First_Gods_and_Kings_3.webp",
+  "external_url": "https://www.ibiticoin.com/nft.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "The Path of Humanity"
+    },
+    {
+      "trait_type": "Card",
+      "value": 3
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Rare"
+    }
+  ]
+}

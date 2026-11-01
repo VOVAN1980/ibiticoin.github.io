@@ -1,0 +1,20 @@
+{
+  "name": "Blood and Steel",
+  "description": "Machines go to war. Humanity finds out what its own inventions can do.",
+  "image": "https://www.ibiticoin.com/img/Blood_and_Steel_6.webp",
+  "external_url": "https://www.ibiticoin.com/nft.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "The Path of Humanity"
+    },
+    {
+      "trait_type": "Card",
+      "value": 6
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Legendary"
+    }
+  ]
+}

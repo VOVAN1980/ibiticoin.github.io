@@ -1,0 +1,20 @@
+{
+  "name": "The Age of Darkness and Faith",
+  "description": "Cathedrals and fear. Faith lights up the night and casts a long shadow.",
+  "image": "https://www.ibiticoin.com/img/The_Age_of_Darkness_and_Faith_5.webp",
+  "external_url": "https://www.ibiticoin.com/nft.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "The Path of Humanity"
+    },
+    {
+      "trait_type": "Card",
+      "value": 5
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Legendary"
+    }
+  ]
+}

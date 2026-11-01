@@ -1,0 +1,20 @@
+{
+  "name": "Pandora",
+  "description": "The rarest card of the collection. The box that holds everything humanity let out, and hope at the bottom.",
+  "image": "https://www.ibiticoin.com/img/Pandora_100ful.webp",
+  "external_url": "https://www.ibiticoin.com/nft.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "The Path of Humanity"
+    },
+    {
+      "trait_type": "Card",
+      "value": 11
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Pandora"
+    }
+  ]
+}

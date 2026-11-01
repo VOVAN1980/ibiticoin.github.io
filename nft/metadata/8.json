@@ -1,0 +1,20 @@
+{
+  "name": "The Last Frontier",
+  "description": "The planet runs out of room and out of time. There is nowhere left to retreat.",
+  "image": "https://www.ibiticoin.com/img/The_Last_Frontier_50.webp",
+  "external_url": "https://www.ibiticoin.com/nft.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "The Path of Humanity"
+    },
+    {
+      "trait_type": "Card",
+      "value": 8
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Epic"
+    }
+  ]
+}

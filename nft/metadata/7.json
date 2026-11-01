@@ -1,0 +1,20 @@
+{
+  "name": "Digital Cell",
+  "description": "People move into the network and build themselves a cage made of light.",
+  "image": "https://www.ibiticoin.com/img/Digital_Cell_7.webp",
+  "external_url": "https://www.ibiticoin.com/nft.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "The Path of Humanity"
+    },
+    {
+      "trait_type": "Card",
+      "value": 7
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Legendary"
+    }
+  ]
+}

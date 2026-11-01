@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>IBITIcoin — Whitepaper (Full)</title>
-  <meta name="description" content="IBITIcoin (IBITI) full whitepaper: fixed-supply token, team vesting, website sale, planned staking and NFT modules, security, risks."/>
+  <meta name="description" content="IBITIcoin (IBITI) full whitepaper: fixed-supply token, team vesting, website sale, staking, NFT collection, security, risks."/>
 
   <style>
     :root{
@@ -220,9 +220,8 @@
           </p>
 
           <div class="callout">
-            <b>Live on mainnet:</b> the IBITI token, team vesting, the website sale and staking.
-            <b>Deployed next, one by one:</b> NFTs and the sell contract with the smart fee.
-            Each one gets its address here once it is deployed and verified.
+            <b>Live on mainnet:</b> the IBITI token, team vesting, the website sale, staking and the NFT collection.
+            Every contract has its address here and is verified on BscScan.
           </div>
 
           <div class="pillRow">
@@ -248,12 +247,12 @@
                 <li><a href="#market">4) Market & Price</a></li>
                 <li><a href="#promo">5) Website Sale (IBITIPromoSale)</a></li>
                 <li><a href="#staking">6) Staking</a></li>
-                <li><a href="#nfts">7) NFTs (Planned)</a></li>
+                <li><a href="#nfts">7) NFT Collection</a></li>
               </ul>
             </div>
             <div>
               <ul>
-                <li><a href="#fees">8) Smart Sell Fee (Planned)</a></li>
+                <li><a href="#fees">8) Fees</a></li>
                 <li><a href="#buyback">9) Buyback (Deferred)</a></li>
                 <li><a href="#security">10) Security & Admin Controls</a></li>
                 <li><a href="#transparency">11) Transparency & Monitoring</a></li>
@@ -272,7 +271,7 @@
               <ul>
                 <li>Buy IBITI on the website at a fixed price, with a bonus and a referral reward.</li>
                 <li>Trade on PancakeSwap once the pool has liquidity.</li>
-                <li>Stake IBITI for a known reward; use NFTs once they are deployed.</li>
+                <li>Stake IBITI for a known reward; collect NFTs in the gallery.</li>
                 <li>Everything visible on-chain (no “trust me, bro”).</li>
               </ul>
             </div>
@@ -298,8 +297,8 @@
           <details>
             <summary><span>Why is the token so small?</span> Modules live outside it</summary>
             <p class="small">
-              A token contract cannot be changed after deployment, and scanners judge a token by its own code. Keeping staking, NFTs and
-              fees in separate contracts means each of them can be fixed or replaced by a new deployment, while the token stays the same.
+              A token contract cannot be changed after deployment, and scanners judge a token by its own code. Keeping staking and NFTs
+              in separate contracts means each of them can be fixed or replaced by a new deployment, while the token stays the same.
             </p>
           </details>
         </section>
@@ -330,12 +329,9 @@
             <tr><td>Burn address</td><td class="mono"><code>0x000000000000000000000000000000000000dEaD</code></td></tr>
 
             <tr><td colspan="2"><b>Modules</b></td></tr>
-            <tr><td>NFTDiscount (DiscountNFT)</td><td class="small">Not deployed yet</td></tr>
-            <tr><td>IBITINFT</td><td class="small">Not deployed yet</td></tr>
-            <tr><td>NFTSaleManager</td><td class="small">Not deployed yet</td></tr>
-            <tr><td>FeeManager</td><td class="small">Not deployed yet</td></tr>
-            <tr><td>UserStatusManager</td><td class="small">Not deployed yet</td></tr>
-            <tr><td>BuybackManager</td><td class="small">Not deployed yet</td></tr>
+            <tr><td>NFT collection (IBITICollection)</td><td class="mono"><code>0x771Ad1baef4b7321F10F2549b6C1Bc34106120Ed</code></td></tr>
+            <tr><td>NFT sale (IBITINFTSale)</td><td class="mono"><code>0x92CFE8c739e6A1bE9bbc2971E5A7ba6747fccA1f</code></td></tr>
+            <tr><td>BuybackManager</td><td class="small">Deferred, not deployed</td></tr>
           </table>
         </section>
 
@@ -357,7 +353,6 @@
               <ul>
                 <li>Medium of value inside IBITI ecosystem modules</li>
                 <li>Staking</li>
-                <li>NFT purchase & discount mechanisms (once deployed)</li>
               </ul>
             </div>
           </div>
@@ -757,20 +752,19 @@ bonus     = purchased * bonusBps / 10000
               <th>Reward % (on time)</th>
               <th>Penalty % (early)</th>
               <th>NFT reward</th>
-              <th>NFT discount %</th>
             </tr>
-            <tr><td>1 month</td><td>1%</td><td>1%</td><td>0</td><td>0%</td></tr>
-            <tr><td>2 months</td><td>3%</td><td>3%</td><td>0</td><td>0%</td></tr>
-            <tr><td>3 months</td><td>5%</td><td>5%</td><td>2</td><td>3%</td></tr>
-            <tr><td>4 months</td><td>7%</td><td>7%</td><td>0</td><td>0%</td></tr>
-            <tr><td>5 months</td><td>10%</td><td>10%</td><td>0</td><td>0%</td></tr>
-            <tr><td>6 months</td><td>12%</td><td>12%</td><td>2</td><td>5%</td></tr>
-            <tr><td>7 months</td><td>14%</td><td>14%</td><td>0</td><td>0%</td></tr>
-            <tr><td>8 months</td><td>18%</td><td>18%</td><td>0</td><td>0%</td></tr>
-            <tr><td>9 months</td><td>20%</td><td>20%</td><td>2</td><td>7%</td></tr>
-            <tr><td>10 months</td><td>22%</td><td>22%</td><td>0</td><td>0%</td></tr>
-            <tr><td>11 months</td><td>25%</td><td>25%</td><td>0</td><td>0%</td></tr>
-            <tr><td>12 months</td><td>30%</td><td>30%</td><td>2</td><td>10%</td></tr>
+            <tr><td>1 month</td><td>1%</td><td>1%</td><td>—</td></tr>
+            <tr><td>2 months</td><td>3%</td><td>3%</td><td>—</td></tr>
+            <tr><td>3 months</td><td>5%</td><td>5%</td><td>2 bonus NFTs</td></tr>
+            <tr><td>4 months</td><td>7%</td><td>7%</td><td>—</td></tr>
+            <tr><td>5 months</td><td>10%</td><td>10%</td><td>—</td></tr>
+            <tr><td>6 months</td><td>12%</td><td>12%</td><td>2 bonus NFTs</td></tr>
+            <tr><td>7 months</td><td>14%</td><td>14%</td><td>—</td></tr>
+            <tr><td>8 months</td><td>18%</td><td>18%</td><td>—</td></tr>
+            <tr><td>9 months</td><td>20%</td><td>20%</td><td>2 bonus NFTs</td></tr>
+            <tr><td>10 months</td><td>22%</td><td>22%</td><td>—</td></tr>
+            <tr><td>11 months</td><td>25%</td><td>25%</td><td>—</td></tr>
+            <tr><td>12 months</td><td>30%</td><td>30%</td><td>2 bonus NFTs</td></tr>
           </table>
 
           <details>
@@ -797,98 +791,83 @@ bonus     = purchased * bonusBps / 10000
           <details>
             <summary><span>NFT rewards from staking</span> (3/6/9/12 months)</summary>
             <p class="small">
-              Terms of 3, 6, 9 and 12 months earn non-transferable “Jackpot” Discount NFTs. They are issued when you collect within the 30 days.
-              The NFT contract is not deployed yet: until it is connected, you receive your tokens but not the NFTs. A failed NFT mint never blocks your tokens.
+              Terms of 3, 6, 9 and 12 months earn 2 bonus NFTs from the collection (section 7.2). They are issued when you collect within the 30 days, while the card's edition lasts.
+              A failed NFT mint never blocks your tokens.
             </p>
           </details>
         </section>
 
-        <section class="card" id="nfts" data-wp="nft planned ibitinft discountnft nftdiscount expiry burn pandora jackpot non-transferable">
-          <h2>7) NFTs (Planned)</h2>
-
-          <div class="callout">
-            <b>Not deployed yet.</b> Below is the planned design. Prices and final rules are published with the deployed contracts.
-          </div>
-
-          <div class="grid2">
-            <div class="kv">
-              <b>IBITINFT (collectible/utility)</b>
-              <ul>
-                <li>ERC-721 collection</li>
-                <li>Unique tokenURI enforced (anti-duplicate)</li>
-              </ul>
-            </div>
-            <div class="kv">
-              <b>DiscountNFT (NFTDiscount)</b>
-              <ul>
-                <li>ERC-721 discount NFTs that lower the smart sell fee (section 8)</li>
-                <li>Most are <b>single-use</b>: use → burn</li>
-                <li>Many <b>expire</b> if unused (by level)</li>
-                <li>Pandora has special rules (no expiry)</li>
-              </ul>
-            </div>
-          </div>
-
-          <h3>7.1 Discount NFT levels & expiry</h3>
-          <table>
-            <tr><th>Level</th><th>Discount %</th><th>Expiry if unused</th><th>Notes</th></tr>
-            <tr><td>Normal</td><td>1%</td><td>30 days</td><td>Use → burn</td></tr>
-            <tr><td>Rare</td><td>3% / 5% / 7%</td><td>90 days</td><td>Use → burn</td></tr>
-            <tr><td>Legendary</td><td>10% / 15% / 25%</td><td>180 days</td><td>Use → burn</td></tr>
-            <tr><td>Epic</td><td>50% / 75% / 100%</td><td>365 days</td><td>Use → burn</td></tr>
-            <tr><td>Jackpot</td><td>Staking reward</td><td>365 days</td><td><b>Non-transferable</b></td></tr>
-            <tr><td>Pandora</td><td>100%</td><td><b>No expiry</b></td><td>Usage-limited</td></tr>
-          </table>
-
-          <details>
-            <summary><span>Pandora usage rules</span></summary>
-            <p class="small">
-              Pandora NFTs do not expire, but usage is limited to a maximum of
-              <b>10 uses per 360 days</b>. (This is a built-in anti-abuse throttle.)
-            </p>
-          </details>
-        </section>
-
-        <section class="card" id="fees" data-wp="fees smart fee feemanager sell contract user status vip whale staking nftdiscount bounds">
-          <h2>8) Smart Sell Fee (Planned)</h2>
-
-          <div class="callout">
-            <b>The token has no fee.</b> Transfers and PancakeSwap trades pay no IBITI fee. The smart fee applies only to someone who chooses
-            to sell IBITI to the project's own sell contract, which is <b>not deployed yet</b>.
-          </div>
+        <section class="card" id="nfts" data-wp="nft collection gallery card edition usdt pandora staking bonus royalty full collection book ibiticollection ibitinftsale">
+          <h2>7) NFT Collection</h2>
 
           <p class="lead">
-            The sell contract takes IBITI and pays USDT from its own stock. FeeManager calculates the fee for that sale, and a Discount NFT can lower it.
+            <b>The Path of Humanity</b>: 11 cards from the story told in our book.
+            Buy any card at any time with USDT in the <a href="nft.html">NFT Gallery</a>.
           </p>
 
           <div class="grid2">
             <div class="kv">
-              <b>What makes up the fee</b>
+              <b>What you get</b>
               <ul>
-                <li>Base sell fee: 10%</li>
-                <li>Active stake: fee × 0.9</li>
-                <li>VIP status: −2 points</li>
-                <li>Whale-size sale: +3 points</li>
-                <li>Discount NFT: lowers the result</li>
+                <li>An ERC-721 NFT that stays yours for good: no expiry, no burning</li>
+                <li>You can keep it or transfer it</li>
+                <li>It is a collectible: it gives no discount, no income and no share in the project</li>
               </ul>
             </div>
             <div class="kv">
-              <b>What reviewers care about</b>
+              <b>What is fixed on-chain</b>
               <ul>
-                <li>Fee clamped by min/max bounds</li>
-                <li>Admin setters visible on-chain</li>
-                <li>UserStatusManager holds VIP and whale flags only; it cannot freeze or block tokens</li>
-                <li>The token does not read any of these contracts</li>
+                <li>Each card has its own edition, which can be lowered but never raised</li>
+                <li>The price of each card is set in USDT and shown in the gallery; USDT goes straight to the reserve wallet</li>
+                <li>The contract has no burn or pause: the owner cannot take, burn or freeze an NFT</li>
+                <li>The sale is a separate contract, so it can be replaced without touching the collection</li>
+                <li>A resale on a marketplace that honours it pays 5% to the reserve wallet; the owner can change this, up to 10%</li>
               </ul>
             </div>
           </div>
 
-          <details>
-            <summary><span>Reality check</span> — fees are a policy tool, not a miracle</summary>
-            <p class="small">
-              Final values are set at deployment. Fees can support sustainability and discourage abuse, but they do not remove market risk.
-            </p>
-          </details>
+          <h3>7.1 Cards</h3>
+          <table>
+            <tr><th>#</th><th>Card</th><th>Rarity</th></tr>
+            <tr><td>1</td><td>Creation</td><td>Normal</td></tr>
+            <tr><td>2</td><td>Awakening</td><td>Rare</td></tr>
+            <tr><td>3</td><td>The First Gods and Kings</td><td>Rare</td></tr>
+            <tr><td>4</td><td>Enlightenment</td><td>Rare</td></tr>
+            <tr><td>5</td><td>The Age of Darkness and Faith</td><td>Legendary</td></tr>
+            <tr><td>6</td><td>Blood and Steel</td><td>Legendary</td></tr>
+            <tr><td>7</td><td>Digital Cell</td><td>Legendary</td></tr>
+            <tr><td>8</td><td>The Last Frontier</td><td>Epic</td></tr>
+            <tr><td>9</td><td>Quantum Leap</td><td>Epic</td></tr>
+            <tr><td>10</td><td>End or Rebirth</td><td>Epic</td></tr>
+            <tr><td>11</td><td>Pandora</td><td>Pandora</td></tr>
+          </table>
+
+          <h3>7.2 Staking bonus</h3>
+          <p class="small">
+            A stake of 3, 6, 9 or 12 months held to the end earns 2 cards as a bonus: Awakening for 3 months, The First Gods and Kings for 6, Enlightenment for 9, The Age of Darkness and Faith for 12.
+            They are the same cards as those on sale and come out of the same edition, so you can keep them or sell them.
+            If a card's edition has run out by the time you collect, you receive your tokens without the NFT.
+          </p>
+
+          <h3>7.3 The Full Collection</h3>
+          <p class="small">
+            A separate collector's item: all 11 cards together with the book. It is added to the same contract as a new card.
+            The price will be announced later, and it is not on sale until then.
+          </p>
+        </section>
+
+        <section class="card" id="fees" data-wp="fees no fee token sell contract">
+          <h2>8) Fees</h2>
+
+          <div class="callout">
+            <b>IBITI takes no fee.</b> Transfers and PancakeSwap trades pay no IBITI fee, and the token has no way to charge one.
+            On PancakeSwap you pay only the pool's own swap fee and gas.
+          </div>
+
+          <p class="small">
+            There is no sell contract and no fee contract on mainnet. If a paid product appears later, its terms will be
+            published here with its contract. A new contract cannot change the token.
+          </p>
         </section>
 
         <section class="card" id="buyback" data-wp="buyback burn burn address swap slippage reserve policy deferred">
@@ -990,14 +969,15 @@ bonus     = purchased * bonusBps / 10000
             <li>The token cannot be paused or frozen, so stolen tokens cannot be recovered by the project.</li>
           </ul>
 
-          <h3>Planned modules</h3>
+          <h3>NFTs</h3>
           <ul>
-            <li>NFTs and the sell contract are not live. Their rules can change before deployment.</li>
-            <li>Staking NFT rewards depend on the NFT contract. Until it is connected, stakers receive tokens but not NFTs.</li>
+            <li>NFTs are collectibles, and nothing guarantees that one can be resold at any price.</li>
+            <li>Staking bonus cards come out of the same editions as the cards on sale. Stakers can use up an edition and resell their cards below the gallery price.</li>
+            <li>Card metadata is hosted on the project's website until it is moved to IPFS and frozen in the contract.</li>
           </ul>
         </section>
 
-        <section class="card" id="faq" data-wp="faq questions how buy promo fee mint nft discount referral">
+        <section class="card" id="faq" data-wp="faq questions how buy promo fee mint nft collection referral">
           <h2>13) FAQ</h2>
 
           <details>
@@ -1045,9 +1025,9 @@ bonus     = purchased * bonusBps / 10000
           </details>
 
           <details>
-            <summary><span>Are Discount NFTs reusable?</span></summary>
+            <summary><span>Do NFTs expire or burn?</span></summary>
             <p class="small">
-              In the planned design, most discount NFTs are single-use (use → burn). Pandora is special: it does not expire but has a usage limit (10 per 360 days).
+              No. An NFT from the collection stays yours for good, and you can keep it or sell it, whether you bought it or earned it as a staking bonus.
             </p>
           </details>
 
@@ -1088,8 +1068,8 @@ bonus     = purchased * bonusBps / 10000
             <a href="#market">Market & Price</a>
             <a href="#promo">Website Sale</a>
             <a href="#staking">Staking</a>
-            <a href="#nfts">NFTs</a>
-            <a href="#fees">Smart Sell Fee</a>
+            <a href="#nfts">NFT Collection</a>
+            <a href="#fees">Fees</a>
             <a href="#buyback">Buyback</a>
             <a href="#security">Security</a>
             <a href="#transparency">Transparency</a>
@@ -1143,17 +1123,17 @@ Get IBITI from the sale contract:
             <li>Claim window: <b>30 days</b> after the term</li>
             <li>Later: reward and NFTs lost, stake stays yours</li>
             <li>Rewards/penalties: 1,3,5,7,10,12,14,18,20,22,25,30%</li>
-            <li>3/6/9/12 months → default 2 reward NFTs (3/5/7/10%)</li>
+            <li>3/6/9/12 months → 2 bonus NFTs</li>
           </ul>
         </div>
 
         <div class="card">
-          <h2>NFT quick rules (planned)</h2>
+          <h2>NFT quick rules</h2>
           <ul class="small">
-            <li><b>Discount NFTs expire</b> if unused: 30/90/180/365 days (by level)</li>
-            <li><b>Jackpot</b>: non-transferable</li>
-            <li><b>Pandora</b>: no expiry, usage-limited (10 per 360 days)</li>
-            <li>Most discounts: use → burn (single-use)</li>
+            <li>Buy any time with <b>USDT</b>, while the edition lasts</li>
+            <li><b>No expiry, no burning</b>: an NFT stays yours</li>
+            <li>An edition can go down, never up</li>
+            <li><b>Staking bonus</b>: cards from the same editions, yours to keep or sell</li>
           </ul>
         </div>
 

@@ -21,6 +21,7 @@
       pancakeRouter: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
       promoRouter: "0x42924EE213eF1943BE655c2C535FB72F52C64781",
       staking: "0x509e0CeaA5840304D2f33bC43e66Fa27ECDc0348",
+      nftSale: "0x92CFE8c739e6A1bE9bbc2971E5A7ba6747fccA1f",
       slippageBps: 300
     },
 
@@ -39,6 +40,7 @@
       pancakeRouter: "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
       promoRouter:   "0x5143E30336F5c04214BeFeFB44398839344b0B01",
       staking: "0x08d408AA7537d64878CdA30F9833b629423bE90D",
+      nftSale: "0x4D3ed53D4200cfD82CDE229C5a8c4efe6f485708",
       slippageBps: 300
     }
   };

@@ -1,0 +1,20 @@
+{
+  "name": "Quantum Leap",
+  "description": "Knowledge breaks through its limits, and nothing can be put back the way it was.",
+  "image": "https://www.ibiticoin.com/img/Quantum_Leap_75.webp",
+  "external_url": "https://www.ibiticoin.com/nft.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "The Path of Humanity"
+    },
+    {
+      "trait_type": "Card",
+      "value": 9
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Epic"
+    }
+  ]
+}

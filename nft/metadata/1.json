@@ -1,0 +1,20 @@
+{
+  "name": "Creation",
+  "description": "The first spark. Light, matter and time rise out of nothing, and the story begins.",
+  "image": "https://www.ibiticoin.com/img/Creation.webp",
+  "external_url": "https://www.ibiticoin.com/nft.html",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "The Path of Humanity"
+    },
+    {
+      "trait_type": "Card",
+      "value": 1
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Normal"
+    }
+  ]
+}

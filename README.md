@@ -26,11 +26,7 @@ Live on mainnet:
 - Team vesting
 - Website sale at a fixed price, with a bonus and a referral reward
 - Staking for 1 to 12 months, with a reward known in advance
-
-Deployed next, one by one:
-
-- NFT discounts
-- Sell contract with the smart fee
+- NFT collection: 11 cards bought with USDT, with no expiry and no burning
 
 This repository contains the **public frontend** (static HTML/CSS/JS) for ibiticoin.com.
 
@@ -65,7 +61,7 @@ This repository contains:
 - Public landing pages (RU/EN)
 - Shop: website sale flow and purchase receipts
 - Whitepaper (HTML and PDF)
-- Staking page; NFT page, not active until those modules are deployed
+- Staking page and NFT gallery
 - Legal pages (privacy, terms, comment policy, etc.)
 
 Static stack: **HTML + CSS + vanilla JS** (no backend).

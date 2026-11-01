@@ -4,7 +4,7 @@
 
   const DECIMALS = 8;
   const LADDER = [1, 3, 5, 7, 10, 12, 14, 18, 20, 22, 25, 30];
-  const NFT_DISCOUNT = { 3: 3, 6: 5, 9: 7, 12: 10 };
+  const NFT_MONTHS = [3, 6, 9, 12];
   const Status = { Closed: 0, Locked: 1, Claimable: 2, Expired: 3 };
 
   const STAKING_ABI = [
@@ -48,7 +48,7 @@
   const fmt = (x) => `${ethers.formatUnits(x, DECIMALS).replace(/\.0$/, "")} IBITI`;
   const date = (ts) => new Date(Number(ts) * 1000).toLocaleString();
   const percent = (months) => LADDER[months - 1];
-  const nftText = (months) => (NFT_DISCOUNT[months] ? `2 NFT × ${NFT_DISCOUNT[months]}%` : "");
+  const nftText = (months) => (NFT_MONTHS.includes(months) ? "2 bonus NFTs" : "");
 
   const net = window.IBITI_CONFIG.getNet();
   const stakingAddress = net.staking;
