@@ -20,6 +20,7 @@
       usdt:  "0x55d398326f99059fF775485246999027B3197955",
       pancakeRouter: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
       promoRouter: "0x42924EE213eF1943BE655c2C535FB72F52C64781",
+      staking: "",
       slippageBps: 300
     },
 
@@ -37,6 +38,7 @@
       ibiti: "0x4D641C74529B39e3C4Cc996B5b5be47A0B61dD0C",
       pancakeRouter: "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
       promoRouter:   "0x5143E30336F5c04214BeFeFB44398839344b0B01",
+      staking: "0x08d408AA7537d64878CdA30F9833b629423bE90D",
       slippageBps: 300
     }
   };

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>IBITI Staking Rules (Draft)</title>
+  <title>IBITI Staking Rules</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/style.css">
   <style>
@@ -82,70 +82,79 @@
       <a href="staking.html" class="back-btn">← Back to staking</a>
     </div>
 
-    <h1>📘 IBITI Staking Rules (Draft)</h1>
+    <h1>📘 IBITI Staking Rules</h1>
     <p class="subtitle-draft">
-      Staking is planned as part of the 2026 roadmap.  
-      Parameters below are a working draft and may be adjusted before on-chain launch.
+      Staking is not open yet. The rules below match the contract tested on testnet.
+      The live address is published when staking starts.
     </p>
 
-    <h2>📅 Lock periods and rewards</h2>
+    <h2>📅 Terms and rewards</h2>
     <p>
-      You will be able to lock IBITI for a period from <b>1 to 12 months</b>.
-      For each lock period, a fixed percentage reward is planned:
+      You can lock IBITI for <b>1 to 12 months</b> (a month is 30 days). The minimum stake is <b>100 IBITI</b>.
+      The reward is a fixed percentage of your stake for the whole term:
     </p>
 
     <table>
-      <tr><th>Lock period (months)</th><th>Planned reward</th><th>Penalty on early unstake</th></tr>
-      <tr><td>1</td><td>1%</td><td>1%</td></tr>
-      <tr><td>2</td><td>3%</td><td>3%</td></tr>
-      <tr><td>3</td><td>5%</td><td>5%</td></tr>
-      <tr><td>4</td><td>7%</td><td>7%</td></tr>
-      <tr><td>5</td><td>10%</td><td>10%</td></tr>
-      <tr><td>6</td><td>12%</td><td>12%</td></tr>
-      <tr><td>7</td><td>14%</td><td>14%</td></tr>
-      <tr><td>8</td><td>18%</td><td>18%</td></tr>
-      <tr><td>9</td><td>20%</td><td>20%</td></tr>
-      <tr><td>10</td><td>22%</td><td>22%</td></tr>
-      <tr><td>11</td><td>25%</td><td>25%</td></tr>
-      <tr><td>12</td><td>30%</td><td>30%</td></tr>
+      <tr><th>Term (months)</th><th>Reward</th><th>Penalty on early exit</th><th>NFT</th></tr>
+      <tr><td>1</td><td>1%</td><td>1%</td><td>—</td></tr>
+      <tr><td>2</td><td>3%</td><td>3%</td><td>—</td></tr>
+      <tr><td>3</td><td>5%</td><td>5%</td><td>2 × 3%</td></tr>
+      <tr><td>4</td><td>7%</td><td>7%</td><td>—</td></tr>
+      <tr><td>5</td><td>10%</td><td>10%</td><td>—</td></tr>
+      <tr><td>6</td><td>12%</td><td>12%</td><td>2 × 5%</td></tr>
+      <tr><td>7</td><td>14%</td><td>14%</td><td>—</td></tr>
+      <tr><td>8</td><td>18%</td><td>18%</td><td>—</td></tr>
+      <tr><td>9</td><td>20%</td><td>20%</td><td>2 × 7%</td></tr>
+      <tr><td>10</td><td>22%</td><td>22%</td><td>—</td></tr>
+      <tr><td>11</td><td>25%</td><td>25%</td><td>—</td></tr>
+      <tr><td>12</td><td>30%</td><td>30%</td><td>2 × 10%</td></tr>
     </table>
 
-    <p class="subtitle-draft">
-      Final APR/APY values and exact formulas will be confirmed in the smart contracts at launch.
-    </p>
-
-    <h2>🎁 NFTs for completed lock periods</h2>
-    <p>For long-term staking, additional NFT rewards are planned:</p>
-    <ul>
-      <li>3 months — 🎉 basic NFT</li>
-      <li>6 months — 🟦 rare NFT</li>
-      <li>9 months — 🟪 legendary NFT</li>
-      <li>12 months — 🟨 epic NFT</li>
-    </ul>
-    <p>❗ NFTs are issued only if the full lock period is completed without early unstake.</p>
-
-    <h2 class="alert">⚠ Penalties for early unstake (planned logic)</h2>
-    <ul>
-      <li>🔻 <b>The penalty is taken from your staked principal</b> (not only from rewards).</li>
-      <li>❌ No staking rewards are paid for early unstake.</li>
-      <li>❌ No NFTs are issued if you unlock before the end of the chosen period.</li>
-    </ul>
-
-    <h2>⏳ What if you don’t claim in time?</h2>
+    <h2>🎁 NFTs</h2>
     <p>
-      After the lock period ends, you will have <b>180 days</b> to claim your IBITI,
-      staking rewards and NFTs.
+      Terms of 3, 6, 9 and 12 months also earn 2 Jackpot NFTs with a 3%, 5%, 7% or 10% discount.
+      Jackpot NFTs cannot be transferred.
+    </p>
+    <p>❗ NFTs are issued only if you complete the full term and collect within the 30 days after it.</p>
+
+    <h2 class="alert">⚠ Early exit</h2>
+    <ul>
+      <li>🔻 <b>The penalty is taken from your stake</b>, not only from rewards.</li>
+      <li>📏 The penalty is the same on the first day and on the last day of the term.</li>
+      <li>❌ No reward and no NFT.</li>
+    </ul>
+    <p>Example: 1,000 IBITI for 12 months. Early exit returns 700 IBITI, on time you receive 1,300 IBITI and 2 NFTs.</p>
+
+    <h2>⏳ After the term ends</h2>
+    <p>
+      You have <b>30 days</b> to withdraw your stake with the reward and NFTs, or to renew.
     </p>
     <p class="alert">
-      If you do not claim within 180 days, the entire amount (principal, rewards and NFTs)
-      is planned to be transferred <b>irreversibly to the treasury</b> according to the protocol rules.
+      After those 30 days the reward and NFTs are lost. Your stake stays yours with no time limit,
+      and you can withdraw it whenever you want.
     </p>
 
-    <h2>📌 Tips for future stakers</h2>
+    <h2>🔁 Renewing</h2>
+    <ul>
+      <li>Choose a new amount and a new term. Within the 30 days your reward and NFTs are yours and count towards the new stake.</li>
+      <li>If the new amount is lower, the difference goes back to your wallet. If it is higher, you add the difference from your wallet.</li>
+      <li>After the 30 days only your stake counts.</li>
+      <li>A renewal needs enough reward pool for the new reward. You can always withdraw instead.</li>
+    </ul>
+
+    <h2>🏦 Reward pool</h2>
+    <ul>
+      <li>Rewards are paid from a pool on the staking contract. Your reward is reserved when you stake, so other people's stakes never pay it.</li>
+      <li>When the pool runs out, new stakes are refused. Existing stakes are not affected.</li>
+      <li>A pause stops new stakes and renewals. Withdrawing always stays open.</li>
+      <li>Penalties and lost rewards go back to the project. The project cannot touch your stake or your reserved reward.</li>
+    </ul>
+
+    <h2>📌 Tips</h2>
     <ul class="tips">
-      <li>Choose 3, 6, 9 or 12 months if you want to receive NFTs in addition to rewards.</li>
-      <li>Avoid early unstake — you will lose both the reward and part of the staked amount.</li>
-      <li>Set a reminder for the end of your lock period plus 180 days to claim in time.</li>
+      <li>Choose 3, 6, 9 or 12 months if you want NFTs in addition to rewards.</li>
+      <li>Avoid early exit: you lose the reward and part of your stake.</li>
+      <li>Set a reminder for the end of your term, and keep a little BNB in your wallet for gas.</li>
     </ul>
 
     <footer>

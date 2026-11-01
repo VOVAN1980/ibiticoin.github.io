@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -23,19 +23,8 @@
     }
     .column {
       flex: 1 1 300px;
-      max-width: 400px;
-    }
-    .home-btn {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      color: gold;
-      text-decoration: none;
-      font-weight: bold;
-      background: #1a1a1a;
-      padding: 10px 20px;
-      border-radius: 6px;
-      border: 1px solid gold;
+      max-width: 420px;
+      min-width: 0;
     }
     .hero-header {
       text-align: center;
@@ -43,12 +32,15 @@
     }
     .staking-box {
       background: #1a1a1a;
-      padding: 30px 20px;
+      padding: 24px 20px;
       border-radius: 12px;
       box-shadow: 0 0 15px rgba(255, 215, 0, 0.35);
+    }
+    .staking-box h3 {
+      margin-top: 0;
       text-align: center;
     }
-    button, input, select {
+    .staking-box button, .staking-box input, .staking-box select {
       padding: 12px;
       font-size: 1em;
       font-weight: bold;
@@ -59,43 +51,121 @@
       box-sizing: border-box;
       margin-top: 10px;
     }
-    #connectWalletBtn {
-      background: gold;
-      color: #000;
-      cursor: pointer;
-    }
-    #unstakeBtn {
-      background: transparent;
-      color: gold;
-      border: 2px solid gold;
-      cursor: pointer;
-    }
-    #stakeAmount, #stakeDuration {
+    .staking-box input, .staking-box select {
       background: #1c1c1c;
       color: gold;
       border: 1px solid #444;
     }
-    #stakeForm button {
+    .btn-gold {
       background: gold;
       color: #000;
       cursor: pointer;
     }
-    #shareButton {
-      display: inline-block;
-      margin: 30px auto;
-      padding: 12px 24px;
-      background: gold;
-      color: #000;
-      font-weight: bold;
-      border-radius: 6px;
-      text-decoration: none;
+    .btn-outline {
+      background: transparent;
+      color: gold;
+      border: 2px solid gold !important;
       cursor: pointer;
+    }
+    .staking-box button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .notice {
+      max-width: 900px;
+      margin: 0 auto 30px;
+      padding: 14px 18px;
+      border: 1px solid gold;
+      border-radius: 10px;
+      background: rgba(255, 215, 0, 0.08);
+      text-align: center;
+      line-height: 1.5;
+    }
+    .terms {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9em;
+    }
+    .terms th, .terms td {
+      border: 1px solid #555;
+      padding: 6px;
+      text-align: center;
+    }
+    .rules-list {
+      padding-left: 18px;
+      font-size: 0.9em;
+      line-height: 1.5;
+      color: #eee;
+    }
+    .rules-link {
+      display: block;
+      margin-top: 16px;
+      padding: 12px;
+      text-align: center;
+      font-weight: bold;
+      color: gold;
+      border: 2px solid gold;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+    .line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 4px 0;
+      font-size: 0.92em;
+      color: #eee;
+    }
+    .line b { color: gold; text-align: right; overflow-wrap: anywhere; }
+    .preview {
+      margin-top: 12px;
+      padding-top: 8px;
+      border-top: 1px solid #333;
+    }
+    .my-stakes {
+      max-width: 1000px;
+      margin: 40px auto;
+    }
+    .my-stakes h2 { text-align: center; }
+    .stake-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 20px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.8em;
+      font-weight: bold;
+      color: #000;
+      background: gold;
+    }
+    .badge.locked { background: #9ad; }
+    .badge.claimable { background: #6fdc8c; }
+    .badge.expired { background: #ff9f7a; }
+    .card-note {
+      margin: 10px 0 0;
+      font-size: 0.85em;
+      color: #ccc;
+      line-height: 1.45;
+    }
+    .empty {
+      text-align: center;
+      color: #bbb;
+    }
+    #walletAddress {
+      margin-top: 10px;
+      font-size: 0.85em;
+      overflow-wrap: anywhere;
+      text-align: center;
     }
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
         align-items: center;
       }
+      .column { width: 100%; }
     }
     /* Share modal */
     .modal {
@@ -143,50 +213,55 @@
 
   <header class="hero-header">
     <h1>IBITI Staking</h1>
-    <p>Stake your tokens and earn rewards</p>
+    <p>Lock IBITI for 1 to 12 months for a reward known in advance</p>
   </header>
 
+  <div class="notice" id="stakingNotice" hidden></div>
+
   <div class="container">
-    <!-- Left column -->
+    <!-- Terms -->
     <div class="column">
       <div class="staking-box">
-        <h3>🎁 Bonuses by lock period</h3>
-        <ul style="text-align: left;">
-          <li>3 months — NFT bonus</li>
-          <li>6 months — rare NFT</li>
-          <li>9 months — legendary NFT</li>
-          <li>12 months — epic NFT</li>
+        <h3>🎁 Rewards by term</h3>
+        <table class="terms">
+          <tr><th>Months</th><th>Reward</th><th>Early exit penalty</th><th>NFT</th></tr>
+          <tr><td>1</td><td>1%</td><td>1%</td><td>—</td></tr>
+          <tr><td>2</td><td>3%</td><td>3%</td><td>—</td></tr>
+          <tr><td>3</td><td>5%</td><td>5%</td><td>2 × 3%</td></tr>
+          <tr><td>4</td><td>7%</td><td>7%</td><td>—</td></tr>
+          <tr><td>5</td><td>10%</td><td>10%</td><td>—</td></tr>
+          <tr><td>6</td><td>12%</td><td>12%</td><td>2 × 5%</td></tr>
+          <tr><td>7</td><td>14%</td><td>14%</td><td>—</td></tr>
+          <tr><td>8</td><td>18%</td><td>18%</td><td>—</td></tr>
+          <tr><td>9</td><td>20%</td><td>20%</td><td>2 × 7%</td></tr>
+          <tr><td>10</td><td>22%</td><td>22%</td><td>—</td></tr>
+          <tr><td>11</td><td>25%</td><td>25%</td><td>—</td></tr>
+          <tr><td>12</td><td>30%</td><td>30%</td><td>2 × 10%</td></tr>
+        </table>
+        <ul class="rules-list">
+          <li>Percentages are of your stake for the whole term. A month is 30 days.</li>
+          <li><b>Early exit:</b> you pay the penalty and get no reward and no NFT.</li>
+          <li><b>30 days after the term:</b> take your stake with the reward and NFT, or renew.</li>
+          <li><b>After those 30 days:</b> the reward and NFT are lost, your stake stays yours with no time limit.</li>
         </ul>
-        <p style="font-size: 0.9em;">NFT rewards are granted only after the full staking period is completed.</p>
+        <a href="rules.html" class="rules-link">📘 Staking rules</a>
       </div>
-      <a href="rules.html" style="
-        display:block;
-        margin-top:20px;
-        padding:12px;
-        text-align:center;
-        font-weight:bold;
-        color:gold;
-        border:2px solid gold;
-        border-radius:8px;
-        text-decoration:none;
-        background:transparent;
-      ">📘 Staking rules</a>
     </div>
 
-    <!-- Center column -->
+    <!-- Stake -->
     <div class="column">
       <div class="staking-box">
-        <button id="connectWalletBtn">🔗 Connect wallet</button>
-        <div id="walletAddress" style="margin-top:10px;"></div>
-        <h3>Your staking</h3>
-        <div id="stakeInfo">Your stake: ...</div>
-        <div id="rewardInfo">Rewards: ...</div>
-        <div id="unlockInfo">Unlock date: ...</div>
+        <button id="connectWalletBtn" class="btn-gold">🔗 Connect wallet</button>
+        <div id="walletAddress"></div>
+        <div class="line"><span>Your balance</span><b id="ibitiBalance">—</b></div>
+        <div class="line"><span>Your staked total</span><b id="stakedTotal">—</b></div>
+        <div class="line"><span>Reward pool available</span><b id="poolFree">—</b></div>
+        <div class="line"><span>Minimum stake</span><b id="minStake">—</b></div>
 
         <form id="stakeForm">
-          <input type="number" id="stakeAmount" placeholder="Amount of IBITI" required min="0" />
+          <input type="number" id="stakeAmount" placeholder="Amount of IBITI" min="0" step="any" required />
           <select id="stakeDuration" required>
-            <option value="" disabled selected>Lock period (months)</option>
+            <option value="" disabled selected>Term (months)</option>
             <option value="1">1 month</option>
             <option value="2">2 months</option>
             <option value="3">3 months</option>
@@ -200,25 +275,24 @@
             <option value="11">11 months</option>
             <option value="12">12 months</option>
           </select>
-          <button type="submit">⚡ Stake</button>
+          <div class="preview" id="stakePreview" hidden>
+            <div class="line"><span>On time you receive</span><b id="previewOnTime"></b></div>
+            <div class="line"><span>Early exit you receive</span><b id="previewEarly"></b></div>
+          </div>
+          <button type="submit" id="stakeBtn" class="btn-gold" disabled>⚡ Stake</button>
         </form>
-
-        <button id="unstakeBtn">↩️ Unstake</button>
-      </div>
-    </div>
-
-    <!-- Right column -->
-    <div class="column">
-      <div class="staking-box">
-        <h3>📈 Rewards over time</h3>
-        <canvas id="rewardChart" style="width:100%; height:150px;"></canvas>
-        <p style="font-size: 0.9em;">The chart updates every 10 seconds.</p>
+        <p class="card-note">Your wallet asks for two confirmations: approval of the exact amount, then the stake. You need a little BNB for gas.</p>
       </div>
     </div>
   </div>
 
+  <section class="my-stakes" id="myStakes" hidden>
+    <h2>Your stakes</h2>
+    <div class="stake-list" id="stakeList"></div>
+  </section>
+
   <!-- Share + Home -->
-  <div style="text-align:center; margin-bottom: 10px;">
+  <div style="text-align:center; margin: 30px 0 10px;">
     <a id="shareButton" class="btn-small" style="margin-bottom: 10px;">Share</a><br>
     <a href="index.html" class="btn-small">← Home</a>
   </div>
@@ -275,112 +349,6 @@
     });
   </script>
 
-  <!-- Staking + wallet scripts -->
-  <!--<script type="module" src="js/staking.js"></script>
-  <!--<script type="module" src="js/wallet.js"></script>
-  <script>
-    if (window.afterWalletConnected) {
-      window.afterWalletConnected();
-    }
-  </script>
-  <script src="js/rewardChart.js"></script>
-
-  <!-- Wallet selector modal -->
-  <div id="walletModal" style="
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  ">
-    <div class="modal-content" style="
-      background: #111;
-      padding: 20px;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 320px;
-      text-align: center;
-      color: gold;
-      position: relative;
-    ">
-      <button class="close-btn" id="closeWalletModal" style="
-        background: transparent;
-        color: #fff;
-        font-size: 1.1rem;
-        position: absolute;
-        top: 15px;
-        right: 20px;
-        border: none;
-        cursor: pointer;
-      ">✕</button>
-      <h2>Select a wallet</h2>
-      <button id="btnInjected" style="
-        background: gold;
-        color: #000;
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 4px;
-        font-weight: bold;
-        cursor: pointer;
-        width: 100%;
-      ">MetaMask / Trust Wallet</button>
-      <button id="btnCoinbase" style="
-        background: #0052ff;
-        color: #fff;
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 4px;
-        font-weight: bold;
-        cursor: pointer;
-        width: 100%;
-      ">Coinbase Wallet</button>
-    </div>
-  </div>
-
-  <script>
-    const walletModal = document.getElementById("walletModal");
-    const openWalletBtn = document.getElementById("connectWalletBtn");
-    const closeWalletBtn = document.getElementById("closeWalletModal");
-
-    openWalletBtn?.addEventListener("click", e => {
-      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-      const hasInjected = Boolean(window.ethereum);
-      if (isMobile && !hasInjected) {
-        e.preventDefault();
-        Swal.fire({
-          icon: "info",
-          title: "Open inside your wallet",
-          html: "To connect, please open this site in the built-in browser of MetaMask or Trust Wallet.",
-          confirmButtonText: "OK",
-          allowOutsideClick: false
-        });
-        return;
-      }
-      walletModal.style.display = "flex";
-    });
-
-    closeWalletBtn?.addEventListener("click", () => {
-      walletModal.style.display = "none";
-    });
-
-    walletModal?.addEventListener("click", (e) => {
-      if (e.target === walletModal) walletModal.style.display = "none";
-    });
-
-    document.getElementById("btnInjected")?.addEventListener("click", () => {
-      walletModal.style.display = "none";
-      window.connectWallet?.();
-    });
-
-    document.getElementById("btnCoinbase")?.addEventListener("click", () => {
-      walletModal.style.display = "none";
-      window.connectViaCoinbase?.();
-    });
-  </script>
-
   <!-- Footer -->
   <footer>
     <p>&copy; 2025 IBITIcoin. All rights reserved.</p>
@@ -397,83 +365,8 @@
     <p><a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></p>
   </footer>
 
-  <style>
-  .ibiti-modal-backdrop{
-    position:fixed; inset:0; display:none; align-items:center; justify-content:center;
-    background:rgba(0,0,0,.72); z-index:9999; padding:18px;
-  }
-  .ibiti-modal{
-    width:min(520px,100%); border:1px solid rgba(247,208,0,0.25); border-radius:18px;
-    background:rgba(0,0,0,0.92); box-shadow:0 0 22px rgba(255,215,0,0.12);
-    padding:18px; color:#fff; font-family: Orbitron, system-ui, Arial, sans-serif;
-  }
-  .ibiti-modal h3{ margin:0 0 10px; color:#f7d000; }
-  .ibiti-modal p{ margin:0 0 10px; color:rgba(255,255,255,.82); line-height:1.55; font-size:13px; }
-  .ibiti-modal .btns{ display:flex; gap:10px; margin-top:12px; }
-  .ibiti-modal button{
-    flex:1; padding:12px 14px; border-radius:12px; cursor:pointer; font-weight:800;
-    border:1px solid rgba(247,208,0,0.25);
-    background:rgba(247,208,0,0.12); color:#f7d000;
-  }
-  .ibiti-modal button.secondary{
-    background:rgba(255,255,255,0.08); color:#fff;
-    border:1px solid rgba(255,255,255,0.12);
-  }
-</style>
-
-<div class="ibiti-modal-backdrop" id="ibitiNoticeBackdrop" role="dialog" aria-modal="true">
-  <div class="ibiti-modal">
-    <h3>Feature temporarily unavailable</h3>
-    <p>
-      This section is currently in <b>planned development
-      </b>.
-      Staking will begin according to the schedule and subsequent project updates.
-    </p>
-    <p>
-      Follow announcements only via our official website and social channels.
-      <br><b>Security:</b> admins never DM first — always verify links.
-    </p>
-    <div class="btns">
-      <button class="secondary" id="ibitiNoticeClose">OK</button>
-    </div>
-  </div>
-</div>
-
-<script>
-(function(){
-  const back = document.getElementById("ibitiNoticeBackdrop");
-  const closeBtn = document.getElementById("ibitiNoticeClose");
-
-  function openModal(){ back.style.display = "flex"; }
-  function closeModal(){ back.style.display = "none"; }
-
-  closeBtn?.addEventListener("click", closeModal);
-  back?.addEventListener("click", (e)=>{ if(e.target === back) closeModal(); });
-
-  // Перехват клика по кнопке Connect wallet (любое имя/разметка)
-  document.addEventListener("click", function(e){
-    const t = e.target.closest("button,a");
-    if(!t) return;
-
-    const text = (t.textContent || "").trim().toLowerCase();
-    const isConnect =
-      t.id === "connectWalletBtn" ||
-      t.id === "connectBtn" ||
-      t.classList.contains("connect-wallet") ||
-      t.hasAttribute("data-connect-wallet") ||
-      text === "connect wallet" ||
-      text === "подключить кошелёк" ||
-      text === "подключить кошелек";
-
-    if(!isConnect) return;
-
-    // стопаем любые другие обработчики, чтобы ничего не коннектилось
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    openModal();
-  }, true);
-})();
-</script>
-<script src="js/xmas.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/staking.js"></script>
+  <script src="js/xmas.js"></script>
 </body>
 </html>
