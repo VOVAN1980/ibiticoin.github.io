@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>IBITIcoin — Whitepaper (Full)</title>
-  <meta name="description" content="IBITIcoin (IBITI) full whitepaper: token, website promo router (UUPS), staking (periods & rewards), NFTs, fees, DAO, vesting, buyback, security, risks."/>
+  <meta name="description" content="IBITIcoin (IBITI) full whitepaper: fixed-supply token, team vesting, website sale, planned staking and NFT modules, security, risks."/>
 
   <style>
     :root{
@@ -155,6 +155,7 @@
       padding:12px;
       margin:10px 0;
     }
+  .kv li b,.kv p b{display:inline;margin:0}
   </style>
 
   <script>
@@ -204,7 +205,7 @@
           <div class="mini">Made to satisfy humans and reviewers: plain language + deep technical details.</div>
         </div>
         <div class="mini mono">
-          BNB Smart Chain • IBITI decimals: <b>8</b> • Website promo: <b>UUPS proxy</b>
+          BNB Smart Chain • IBITI decimals: <b>8</b> • Website sale: <b>fixed price, no proxy</b>
         </div>
       </div>
 
@@ -213,15 +214,15 @@
         <section class="hero" id="top" data-wp="abstract overview executive summary ibiti">
           <h1>Executive Summary</h1>
           <p class="lead">
-            IBITIcoin is a modular ecosystem on BNB Smart Chain built around the IBITI token and several utility modules:
-            staking (time-based), NFTs (collectible + discount NFTs), a fee module, a DAO module, vesting and sale modules,
-            a buyback manager, and a website purchase flow.
+            IBITIcoin is an infrastructure project on BNB Smart Chain built around the IBITI token and separate utility modules.
+            The token is deliberately minimal: fixed supply, no owner, no fees. Everything else lives in separate contracts
+            that use the token, while the token knows nothing about them.
           </p>
 
           <div class="callout">
-            <b>Key production feature:</b> the website purchase contract (Cash Promo Router) forwards USDT to the reserve wallet
-            immediately, then distributes IBITI rewards from a funded IBITI inventory. That means the router is designed to hold
-            ~0 USDT after buys, and all rules are on-chain.
+            <b>Live on mainnet:</b> the IBITI token, team vesting and the website sale.
+            <b>Deployed next, one by one:</b> staking, NFTs and the sell contract with the smart fee.
+            Each one gets its address here once it is deployed and verified.
           </div>
 
           <div class="pillRow">
@@ -231,7 +232,7 @@
           </div>
 
           <p class="small">
-            This paper describes what exists on-chain today. On-chain state is the source of truth.
+            This paper describes what exists on-chain today and, where marked, what is planned. On-chain state is the source of truth.
           </p>
         </section>
 
@@ -243,22 +244,20 @@
                 <li><a href="#goals">1) Goals & Design Principles</a></li>
                 <li><a href="#addresses">2) On-chain Addresses (Mainnet)</a></li>
                 <li><a href="#token">3) IBITI Token</a></li>
-                <li><a href="#market">4) Market & Price Reference</a></li>
-                <li><a href="#promo">5) Website Cash Promo + Referral Router (UUPS)</a></li>
-                <li><a href="#staking">6) Staking (Periods, Rewards, Expiry Rules)</a></li>
-                <li><a href="#nfts">7) NFTs (IBITINFT + DiscountNFT)</a></li>
-                <li><a href="#fees">8) Fee System (FeeManager)</a></li>
-                <li><a href="#dao">9) DAO Governance (DAOModule)</a></li>
+                <li><a href="#market">4) Market & Price</a></li>
+                <li><a href="#promo">5) Website Sale (IBITIPromoSale)</a></li>
+                <li><a href="#staking">6) Staking (Planned)</a></li>
+                <li><a href="#nfts">7) NFTs (Planned)</a></li>
               </ul>
             </div>
             <div>
               <ul>
-                <li><a href="#sale-vesting">10) Sale & Vesting (PhasedTokenSale, TeamVesting)</a></li>
-                <li><a href="#buyback">11) Buyback (BuybackManager)</a></li>
-                <li><a href="#security">12) Security, Admin Controls, Upgrade Boundaries</a></li>
-                <li><a href="#transparency">13) Transparency & Monitoring</a></li>
-                <li><a href="#risks">14) Risks & Limitations</a></li>
-                <li><a href="#faq">15) FAQ</a></li>
+                <li><a href="#fees">8) Smart Sell Fee (Planned)</a></li>
+                <li><a href="#buyback">9) Buyback (Deferred)</a></li>
+                <li><a href="#security">10) Security & Admin Controls</a></li>
+                <li><a href="#transparency">11) Transparency & Monitoring</a></li>
+                <li><a href="#risks">12) Risks & Limitations</a></li>
+                <li><a href="#faq">13) FAQ</a></li>
               </ul>
             </div>
           </div>
@@ -270,67 +269,76 @@
             <div class="kv">
               <b>For normal users</b>
               <ul>
-                <li>Buy IBITI via PancakeSwap (market) or via Website (promo flow).</li>
-                <li>Stake IBITI for fixed periods to earn known rewards.</li>
-                <li>Use NFTs for discounts / special utilities.</li>
+                <li>Buy IBITI on the website at a fixed price, with a bonus and a referral reward.</li>
+                <li>Trade on PancakeSwap once the pool has liquidity.</li>
+                <li>Stake IBITI and use NFTs once those modules are deployed.</li>
                 <li>Everything visible on-chain (no “trust me, bro”).</li>
               </ul>
             </div>
             <div class="kv">
               <b>For reviewers (BSC / listing)</b>
               <ul>
-                <li>Clear contracts and addresses.</li>
+                <li>Clear contracts and addresses, with verified source code.</li>
                 <li>Explicit money flow (USDT routing, inventory funding).</li>
-                <li>Upgrade boundaries are documented (what is upgradeable, what is not).</li>
-                <li>Risks stated plainly (liquidity, oracle/pair manipulation, admin power).</li>
+                <li>No proxies: live contracts cannot be upgraded.</li>
+                <li>Risks stated plainly (liquidity, admin power, no independent audit yet).</li>
               </ul>
             </div>
           </div>
 
           <details>
-            <summary><span>Why the two-buy model?</span> Market swaps + Website promo flow</summary>
+            <summary><span>Why the two-buy model?</span> Market swaps + Website sale</summary>
             <p class="small">
-              PancakeSwap is the open market. The website router is a controlled on-chain UX layer for promotions and referrals:
-              it does not replace the market, it provides a transparent “cashflow + bonus” path with strict limits and on-chain rules.
+              PancakeSwap is the open market. The website sale is a separate on-chain contract for promotions and referrals:
+              it does not replace the market, it provides a fixed-price path with a bonus, strict limits and on-chain rules.
+            </p>
+          </details>
+
+          <details>
+            <summary><span>Why is the token so small?</span> Modules live outside it</summary>
+            <p class="small">
+              A token contract cannot be changed after deployment, and scanners judge a token by its own code. Keeping staking, NFTs and
+              fees in separate contracts means each of them can be fixed or replaced by a new deployment, while the token stays the same.
             </p>
           </details>
         </section>
 
-        <section class="card" id="addresses" data-wp="addresses mainnet contracts proxy implementation modules">
+        <section class="card" id="addresses" data-wp="addresses mainnet contracts wallets modules vesting sale pool">
           <h2>2) On-chain Addresses (Mainnet)</h2>
           <p class="small">
-            Below are production addresses from project configuration. Use BscScan to verify code and inspect read functions.
+            Below are production addresses. Use BscScan to verify code and inspect read functions.
           </p>
 
           <table>
             <tr><th>Component</th><th>Address</th></tr>
+            <tr><td colspan="2"><b>Live contracts</b></td></tr>
             <tr><td>IBITI token</td><td class="mono"><code>0x71b552D3503fe20610aaA470A96E1838fae8381A</code></td></tr>
+            <tr><td>Team vesting</td><td class="mono"><code>0xC4bdF5b6d7688a7d5457A194ac1210ec34003604</code></td></tr>
+            <tr><td>Website sale</td><td class="mono"><code>0x42924EE213eF1943BE655c2C535FB72F52C64781</code></td></tr>
+
+            <tr><td colspan="2"><b>Market</b></td></tr>
             <tr><td>USDT (BSC)</td><td class="mono"><code>0x55d398326f99059fF775485246999027B3197955</code></td></tr>
             <tr><td>PancakeSwap V2 Router</td><td class="mono"><code>0x10ED43C718714eb63d5aA57B78B54704E256024E</code></td></tr>
-            <tr><td>IBITI/USDT Pair (price reference)</td><td class="mono"><code>0x5b39C5A553a7355eb47368a9Af5ec5aDB5C7e9d3</code> <span class="small">(Pool is created when liquidity is added)</span></td></tr>
-
-            <tr><td colspan="2"><b>Website Cash Promo</b></td></tr>
-            <tr><td>Sale contract (public entrypoint)</td><td class="mono"><code>0x42924EE213eF1943BE655c2C535FB72F52C64781</code></td></tr>
+            <tr><td>IBITI/USDT Pool</td><td class="mono"><code>0x5b39C5A553a7355eb47368a9Af5ec5aDB5C7e9d3</code> <span class="small">(Pool is created when liquidity is added)</span></td></tr>
 
             <tr><td colspan="2"><b>Operational wallets</b></td></tr>
             <tr><td>Liquidity wallet</td><td class="mono"><code>0xC00dC8E3F4647AAa4791AE58901eDDFE6095adA5</code></td></tr>
-            <tr><td>Reserve wallet</td><td class="mono"><code>0x9d8dd8b2cff7a17967fa0ef19ed5c0b3ebefde41</code></td></tr>
+            <tr><td>Reserve wallet</td><td class="mono"><code>0x9d8dd8B2CFF7A17967fA0eF19eD5C0b3EBeFDe41</code></td></tr>
             <tr><td>Vesting contract owner</td><td class="mono"><code>0x1841DE9b1c8bF5244675896b0F4FF96C9331596f</code></td></tr>
             <tr><td>Burn address</td><td class="mono"><code>0x000000000000000000000000000000000000dEaD</code></td></tr>
 
             <tr><td colspan="2"><b>Modules</b></td></tr>
-            <tr><td>FeeManager</td><td class="small">Not deployed yet</td></tr>
-            <tr><td>UserStatusManager</td><td class="small">Not deployed yet</td></tr>
             <tr><td>StakingModule</td><td class="small">Not deployed yet</td></tr>
             <tr><td>NFTDiscount (DiscountNFT)</td><td class="small">Not deployed yet</td></tr>
             <tr><td>IBITINFT</td><td class="small">Not deployed yet</td></tr>
             <tr><td>NFTSaleManager</td><td class="small">Not deployed yet</td></tr>
-            <tr><td>TeamVesting</td><td class="mono"><code>0xC4bdF5b6d7688a7d5457A194ac1210ec34003604</code></td></tr>
+            <tr><td>FeeManager</td><td class="small">Not deployed yet</td></tr>
+            <tr><td>UserStatusManager</td><td class="small">Not deployed yet</td></tr>
             <tr><td>BuybackManager</td><td class="small">Not deployed yet</td></tr>
           </table>
         </section>
 
-        <section class="card" id="token" data-wp="token ibiti decimals supply cap mint founder wallet treasury alias">
+        <section class="card" id="token" data-wp="token ibiti decimals supply burn no owner no fee no mint">
           <h2>3) IBITI Token (What it is)</h2>
 
           <div class="grid2">
@@ -339,7 +347,7 @@
               <ul>
                 <li>Network: BNB Smart Chain</li>
                 <li>Decimals: <b>8</b></li>
-                <li>Max supply cap: <b>100,000,000 IBITI</b> (with 8 decimals on-chain)</li>
+                <li>Total supply: <b>100,000,000 IBITI</b>, fixed at deployment</li>
                 <li>Token address: <code>0x71b5...381A</code></li>
               </ul>
             </div>
@@ -347,9 +355,8 @@
               <b>What the token is for</b>
               <ul>
                 <li>Medium of value inside IBITI ecosystem modules</li>
-                <li>Staking collateral (time-based rewards)</li>
-                <li>NFT purchase & discount mechanisms</li>
-                <li>Governance participation via DAO module</li>
+                <li>Staking (once deployed)</li>
+                <li>NFT purchase & discount mechanisms (once deployed)</li>
               </ul>
             </div>
           </div>
@@ -357,27 +364,28 @@
           <details>
             <summary><span>Technical details</span> (reviewer view)</summary>
             <ul class="small">
-              <li>Initial supply is minted at deployment up to the cap.</li>
-              <li>The system integrates modular contracts (fees, user status, bridge, staking, DAO, NFT discounts).</li>
-              <li>Key security pattern: sensitive actions are owner-gated; emergency pausing exists where implemented.</li>
+              <li>Standard ERC-20 with burn, built on OpenZeppelin Contracts 4.9.3 and compiled with solc 0.8.22.</li>
+              <li>The token has <b>no</b> owner, minting, pause, fees, blacklist, proxy or upgrade path.</li>
+              <li>Holders can burn their own tokens, or tokens within an allowance they were given.</li>
+              <li>USDT on BSC has 18 decimals and IBITI has 8, so every price in the system converts between them explicitly.</li>
             </ul>
           </details>
         </section>
 
-            <section class="card" id="tokenomics" data-wp="tokenomics supply cap treasury founderWallet address(this) frozen treasurySend reserve wallet liquidity marketing">
+            <section class="card" id="tokenomics" data-wp="tokenomics supply fixed burn reserve wallet liquidity marketing">
   <h2>3.1 Tokenomics & Supply Management</h2>
 
   <p class="lead">
-    IBITI has a fixed maximum supply of <b>100,000,000 IBITI</b> (8 decimals) on BNB Smart Chain.
-    The supply is minted at deployment to the token contract itself (the on-chain <b>Treasury</b>),
-    and then distributed via explicit treasury operations.
+    IBITI has a fixed supply of <b>100,000,000 IBITI</b> (8 decimals) on BNB Smart Chain.
+    The whole supply was created once, in the constructor, and sent straight to its recipients.
+    The token contract itself holds nothing and cannot create more.
   </p>
 
   <div class="grid2">
     <div class="kv">
       <b>Total Supply</b>
       <ul>
-        <li>Max supply cap: <b>100,000,000 IBITI</b></li>
+        <li>Total supply: <b>100,000,000 IBITI</b></li>
         <li>Decimals: <b>8</b></li>
         <li>Token address: <code>0x71b552D3503fe20610aaA470A96E1838fae8381A</code></li>
       </ul>
@@ -386,57 +394,52 @@
     <div class="kv">
       <b>Where tokens are held (on-chain)</b>
       <ul>
-        <li><b>Treasury</b> = the IBITI token contract itself (minted supply is held here).</li>
-        <li>Treasury is <b>frozen for normal transfers</b> (cannot be drained via standard transfer/transferFrom paths).</li>
-        <li>Project can move IBITI out of Treasury only via an explicit admin function:
-          <code>treasurySend(to, amount)</code>.
-        </li>
+        <li>On the wallets and the vesting contract listed in section 3.2.</li>
+        <li>They move by ordinary transfers, visible on-chain.</li>
+        <li>Supply can only go down, through burning.</li>
       </ul>
     </div>
   </div>
 
-  <div class="callout">
-    <b>Policy note (important):</b> technically, <code>treasurySend</code> can send to any address (owner-controlled).
-    The project policy is to use Treasury releases primarily to the <b>Reserve Wallet</b> to support liquidity,
-    promotions inventory, and future marketing operations. This policy is public and should be monitored on-chain.
-  </div>
-
   <details>
-    <summary><span>Why mint to Treasury (contract) instead of minting gradually?</span></summary>
+    <summary><span>Why mint everything at once?</span></summary>
     <p class="small">
-      Minting everything at deployment with a hard cap removes “future mint surprise”. Users can always verify the total supply.
-      Holding supply in the contract Treasury makes distribution operations auditable.
+      It removes “future mint surprise”: there is no function that could create more, so anyone can verify the total supply once and for all.
     </p>
   </details>
 </section>
 
-<section class="card" id="initial-allocation" data-wp="initial allocation 10 million vesting team treasury reserve marketing liquidity">
+<section class="card" id="initial-allocation" data-wp="initial allocation 70 20 10 vesting team reserve marketing liquidity holders">
   <h2>3.2 Initial Allocation (Genesis distribution)</h2>
 
   <p class="lead">
-    At launch, <b>10,000,000 IBITI</b> were allocated into the Team Vesting flow.
-    The remaining <b>90,000,000 IBITI</b> stayed in the on-chain Treasury to be released operationally to the Reserve wallet
-    for liquidity support and ecosystem needs.
+    The split is <b>70 / 20 / 10</b>: liquidity and exchanges, marketing and reserve, team vesting.
   </p>
+
+  <table>
+    <tr><th>Share</th><th>Amount (IBITI)</th><th>Held by</th></tr>
+    <tr><td>Liquidity, exchanges, listings</td><td>70,000,000</td><td>Liquidity wallet <code>0xC00d...adA5</code></td></tr>
+    <tr><td>Marketing and reserve</td><td>19,999,895.9835292</td><td>Reserve wallet <code>0x9d8d...De41</code></td></tr>
+    <tr><td>Team vesting</td><td>10,000,000</td><td>Vesting contract <code>0xC4bd...3604</code></td></tr>
+    <tr><td>Holders of the previous token version</td><td>104.0164708</td><td>4 addresses</td></tr>
+    <tr><td><b>Total</b></td><td><b>100,000,000</b></td><td></td></tr>
+  </table>
 
   <div class="grid2">
     <div class="kv">
-      <b>Genesis allocation (high level)</b>
+      <b>Liquidity wallet (70M)</b>
       <ul>
-        <li><b>Team vesting allocation:</b> 10,000,000 IBITI</li>
-        <li><b>Treasury operational inventory:</b> 90,000,000 IBITI</li>
+        <li>Added to the PancakeSwap pool gradually</li>
+        <li>Exchange and listing liquidity</li>
       </ul>
-      <p class="small">
-        Note: amounts are expressed in human units (IBITI). On-chain the token uses 8 decimals.
-      </p>
     </div>
 
     <div class="kv">
-      <b>Operational role of the 90M Treasury inventory</b>
+      <b>Reserve wallet (20M)</b>
       <ul>
-        <li>Funding liquidity operations (via Reserve wallet)</li>
-        <li>Funding promo inventories / reward pools when required</li>
-        <li>Future ecosystem and marketing use (transparent transfers)</li>
+        <li>1,000,000 IBITI went to the website sale</li>
+        <li>Marketing and ecosystem needs</li>
+        <li>Staking rewards, once staking is deployed</li>
       </ul>
     </div>
   </div>
@@ -444,73 +447,74 @@
   <details>
     <summary><span>On-chain clarity</span> — what reviewers can verify</summary>
     <ul class="small">
-      <li>Treasury balance is visible on the token contract address.</li>
-      <li>Any Treasury releases via <code>treasurySend</code> are on-chain transactions and can be tracked publicly.</li>
-      <li>Team vesting schedule is enforced by the TeamVesting contract.</li>
+      <li>The constructor arguments of the token show every recipient and amount.</li>
+      <li>The holders share comes out of marketing and reserve; the four addresses are listed in the project repository.</li>
+      <li>Balances and every later transfer are public.</li>
     </ul>
   </details>
 </section>
 
 
-<section class="card" id="team-vesting" data-wp="team vesting 20% immediate 30% 6 months 50% linear 3 year cliff 180 days beneficiary release schedule">
+<section class="card" id="team-vesting" data-wp="team vesting 20% immediate 30% 180 days 50% linear 1095 days 3 year cliff owner members release schedule">
   <h2>3.3 Team Vesting (on-chain schedule)</h2>
 
   <p class="lead">
-    Team allocation is governed by the TeamVesting contract with a strict release schedule:
-    <b>20% immediately</b> after start, <b>30% after 6 months</b>, and the remaining <b>50% linearly</b>
-    over <b>180 days</b> after a <b>3-year cliff</b>.
+    The team share sits in the vesting contract on one fixed schedule:
+    <b>20% at start</b>, <b>30% after 180 days</b>, and the remaining <b>50% linearly</b>
+    over <b>180 days</b> after <b>1095 days</b> (3 years).
   </p>
 
   <div class="kv">
-    <b>TeamVesting address</b>
+    <b>Vesting contract address</b>
     <div class="small mono"><code>0xC4bdF5b6d7688a7d5457A194ac1210ec34003604</code></div>
   </div>
 
   <h3>Schedule breakdown (for 10,000,000 IBITI allocation)</h3>
   <table>
-    <tr><th>Milestone</th><th>Vested %</th><th>Amount (IBITI)</th><th>When</th></tr>
-    <tr><td>TGE / Start</td><td>20%</td><td>2,000,000</td><td>Immediately at start timestamp</td></tr>
-    <tr><td>+ 6 months</td><td>+30%</td><td>3,000,000</td><td>180 days after start</td></tr>
-    <tr><td>After 3-year cliff</td><td>+ up to 50%</td><td>up to 5,000,000</td><td>Linear over 180 days after 3 years</td></tr>
-    <tr><td>Fully vested</td><td>100%</td><td>10,000,000</td><td>~3.5 years after start</td></tr>
+    <tr><th>Milestone</th><th>Unlocked %</th><th>Amount (IBITI)</th><th>When (UTC)</th></tr>
+    <tr><td>Start</td><td>20%</td><td>2,000,000</td><td>1 Nov 2026</td></tr>
+    <tr><td>+ 180 days</td><td>+30%</td><td>3,000,000</td><td>30 Apr 2027</td></tr>
+    <tr><td>After 1095 days</td><td>+ up to 50%</td><td>up to 5,000,000</td><td>Linear from 31 Oct 2029</td></tr>
+    <tr><td>Fully unlocked</td><td>100%</td><td>10,000,000</td><td>29 Apr 2030</td></tr>
   </table>
 
   <details>
     <summary><span>How release works</span> (mechanics)</summary>
     <ul class="small">
-      <li>Tokens must be deposited into the vesting contract (up to the allocation).</li>
-      <li><code>releasableAmount()</code> shows what is currently unlocked.</li>
-      <li><code>release()</code> transfers unlocked tokens to the beneficiary.</li>
-      <li>Contract is pausable (emergency control) and nonReentrant-protected.</li>
+      <li>Only the owner can pay out, only to addresses the owner has listed, and only what the schedule has unlocked.</li>
+      <li><code>addMember()</code> and <code>removeMember()</code> manage the list; <code>release(member, amount)</code> pays.</li>
+      <li><code>available()</code> shows what can be paid now; <code>unlockedAt(timestamp)</code> shows the schedule for any date.</li>
+      <li>The token, the allocation and the schedule are fixed in the contract and cannot be changed.</li>
+      <li>Ownership cannot be renounced, and transferring it takes two steps.</li>
     </ul>
   </details>
 </section>
 
 
-<section class="card" id="treasury-liquidity" data-wp="liquidity reserve wallet usdt from users forwarded immediately add liquidity pancake swap direct buys reserve policy">
-  <h2>3.4 Treasury & Liquidity Policy</h2>
+<section class="card" id="liquidity-policy" data-wp="liquidity reserve wallet usdt from users add liquidity pancake swap direct buys reserve policy approve">
+  <h2>3.4 Liquidity Policy</h2>
 
   <p class="lead">
-    Liquidity is supported primarily through the <b>Reserve Wallet</b>. The Reserve wallet receives USDT from website purchases
-    (forwarded in the same transaction by the Promo Router) and may also receive funds from direct PancakeSwap market activity.
+    Pool liquidity comes from the <b>Liquidity wallet</b> and is added gradually. The <b>Reserve wallet</b> receives USDT from website
+    purchases in the same transaction, and that USDT can also go into liquidity.
   </p>
 
   <div class="grid2">
     <div class="kv">
       <b>Reserve wallet (operations)</b>
-      <div class="small mono"><code>0x9d8dd8b2cff7a17967fa0ef19ed5c0b3ebefde41</code></div>
+      <div class="small mono"><code>0x9d8dd8B2CFF7A17967fA0eF19eD5C0b3EBeFDe41</code></div>
       <ul class="small">
-        <li>Receives USDT from website promo buys immediately.</li>
-        <li>Used to add liquidity and support operational needs.</li>
+        <li>Receives USDT from website buys immediately.</li>
+        <li>Used to support liquidity and operational needs.</li>
       </ul>
     </div>
 
     <div class="kv">
       <b>Liquidity approach (practical)</b>
       <ul class="small">
-        <li>When USDT arrives to Reserve, liquidity can be added promptly (policy: “as funds arrive”).</li>
-        <li>Liquidity is also supported indirectly via open market trading on PancakeSwap.</li>
-        <li>IBITI inventory for liquidity can be released from Treasury to Reserve when needed.</li>
+        <li>Liquidity is added as separate on-chain transactions.</li>
+        <li>Each operation approves the exact amounts to the router and resets the allowance to zero afterwards.</li>
+        <li>No permanent approvals are left on project wallets.</li>
       </ul>
     </div>
   </div>
@@ -519,37 +523,30 @@
     <summary><span>Website buy vs Pancake buy</span> — what’s the difference?</summary>
     <ul class="small">
       <li><b>PancakeSwap buy:</b> standard AMM swap, price determined by pool reserves, subject to slippage.</li>
-      <li><b>Website promo buy:</b> user pays USDT, USDT forwarded to Reserve, IBITI paid from router inventory plus promo bonus and optional referral reward.</li>
-      <li>Both are on-chain and publicly verifiable. The website flow is an on-chain UX layer for promotions and referrals.</li>
+      <li><b>Website buy:</b> fixed price, USDT goes to the Reserve wallet, IBITI is paid from the sale contract's balance plus a bonus and an optional referral reward.</li>
+      <li>Both are on-chain and publicly verifiable.</li>
     </ul>
-  </details>
-
-  <details>
-    <summary><span>Liquidity risk note</span></summary>
-    <p class="small">
-      Liquidity operations and reserve-based quoting depend on the depth of the IBITI/USDT pool.
-      Low liquidity increases slippage and makes reserve manipulation attacks cheaper.
-      The promo router includes limits and buyer-side slippage protection (<code>minIbitiOut</code>).
-    </p>
   </details>
 </section>
 
-        <section class="card" id="market" data-wp="market price reference pair reserves pancake v2 quote">
-          <h2>4) Market & Price Reference</h2>
+        <section class="card" id="market" data-wp="market price fixed price pool reserves pancake v2 quote">
+          <h2>4) Market & Price</h2>
           <p class="lead">
-            IBITI has an open market via PancakeSwap. The website promo router uses the IBITI/USDT pair reserves as an on-chain price reference.
+            There are two prices and they are independent. The website sale has a <b>fixed price</b> set in its contract: $0.10 per IBITI.
+            The PancakeSwap pool has a <b>market price</b> set by its reserves.
           </p>
 
           <div class="kv">
-            <b>Important: “pair reserves” are not magic truth</b>
+            <b>The pool</b>
             <p class="small">
-              Reserve-based pricing is standard in AMMs, but it can be manipulated in low liquidity.
-              That’s why the website router includes limits and slippage guards.
+              The pool address is known in advance, but the pool exists only once liquidity is added. It opens at $0.10.
+              After that the price moves with trading and can differ from the website price in either direction.
+              The website sale does not read the pool, so trades in the pool cannot change what the website pays out.
             </p>
           </div>
 
           <details>
-            <summary><span>How reserve quoting usually works</span> (AMM-style)</summary>
+            <summary><span>How a PancakeSwap quote works</span> (AMM-style)</summary>
             <div class="monoBlock"><pre>
 amountInWithFee = amountIn * (10000 - feeBps)
 amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
@@ -560,38 +557,36 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
           </details>
         </section>
 
-        <section class="card" id="promo" data-wp="promo router uups proxy cashflow reserve wallet liquidity pancake v2 pair quote mode fee bps referral bonus pool inventory receipt min max limits minOut transparency bscscan">
-  <h2>5) Website Cash Promo + Referral Router (UUPS)</h2>
+        <section class="card" id="promo" data-wp="promo sale website fixed price reserve wallet referral bonus inventory receipt min max limits minOut transparency bscscan">
+  <h2>5) Website Sale (IBITIPromoSale)</h2>
 
   <p class="lead">
-    IBITIcoin website purchases are executed by an on-chain smart contract (behind a UUPS proxy).
-    The router enables promo bonuses and referrals while keeping the payment flow transparent and auditable.
+    IBITIcoin website purchases are executed by a verified on-chain contract with a fixed price, a bonus and a referral reward.
+    There is no proxy: the logic cannot be upgraded.
   </p>
 
  <div class="callout">
-  <b>Promo is temporary:</b> the website promo can be turned off on-chain (promoActive=false or promoEndTime reached).
-  If promo is inactive, users can always buy IBITI directly on PancakeSwap.
+  <b>The sale is temporary:</b> it can be turned off on-chain (paused, promoActive=false or promoEndTime reached), and it ends when its stock runs out.
 </div>
 
   <div class="callout">
-    <b>Non-custodial USDT rule:</b> when you buy on the website, your USDT is forwarded to the <b>Reserve Wallet</b>
-    <b>in the same transaction</b>. The router is designed to end buys with ~0 USDT balance.
-    IBITI payouts are delivered from the router’s funded IBITI inventory (promo pool / inventory).
+    <b>Non-custodial USDT rule:</b> when you buy on the website, your USDT goes directly to the <b>Reserve Wallet</b>
+    <b>in the same transaction</b>. The sale contract never holds it.
+    IBITI payouts come from the contract's own funded balance.
   </div>
 
   <h3>5.1 Money flow (single purchase transaction)</h3>
   <div class="monoBlock"><pre>
-User USDT ── transferFrom ─► Promo Router (UUPS Proxy)
-Promo Router ── transfer ─► Reserve Wallet     (immediate forward)
-Promo Router ── transfer ─► Buyer: IBITI       (base amount + promo bonus)
-Promo Router ── transfer ─► Referrer: IBITI    (fixed reward, if eligible)
+Buyer USDT ──────► Reserve Wallet (directly)
+Sale contract IBITI ──► Buyer (purchased + 10% bonus)
+Sale contract IBITI ──► Referrer (1 IBITI, once)
 </pre></div>
 
   <div class="kv">
     <b>What this guarantees</b>
     <ul class="small">
-      <li>USDT is <b>not stored</b> on the router after a buy (it is forwarded immediately).</li>
-      <li>IBITI is paid from a <b>pre-funded</b> router inventory (bonus pool/inventory).</li>
+      <li>USDT is <b>never stored</b> on the sale contract.</li>
+      <li>IBITI is paid only from the contract's <b>pre-funded</b> balance. It cannot pull tokens from any wallet.</li>
       <li>All transfers are visible on-chain (token transfers per transaction hash).</li>
     </ul>
   </div>
@@ -600,13 +595,13 @@ Promo Router ── transfer ─► Referrer: IBITI    (fixed reward, if eligibl
 <ul>
   <li>Connect wallet → choose “Promo Buy” → enter USDT amount (and optional referrer)</li>
   <li><b>MetaMask may ask for 2 confirmations:</b></li>
-  <li class="small"><b>1) USDT Approve</b> — one-time (or when allowance is insufficient). It grants the router permission to spend your USDT.</li>
-  <li class="small"><b>2) Purchase</b> — the actual buy transaction. In this transaction USDT is forwarded to the Reserve Wallet and IBITI is delivered (base + bonus, and referral if eligible).</li>
+  <li class="small"><b>1) USDT Approve</b> — for the exact purchase amount, only when the allowance is insufficient. It lets the sale contract move that USDT.</li>
+  <li class="small"><b>2) Purchase</b> — the actual buy transaction. In this transaction USDT goes to the Reserve Wallet and IBITI is delivered (purchased amount + bonus, and referral if eligible).</li>
   <li>After confirmation the website generates an <b>IBITI Receipt</b> (purchase check) with the tx hash and links to BscScan.</li>
 </ul>
 
      <p class="small">
-      Note: the <b>Approve</b> is a separate transaction made by your wallet (allowance). Promo bonus/referral payouts are performed as token transfers during the <b>purchase transaction</b>.
+      Note: the <b>Approve</b> is a separate transaction made by your wallet. Bonus and referral payouts are token transfers during the <b>purchase transaction</b>.
     </p>
 
   <details>
@@ -619,7 +614,7 @@ Promo Router ── transfer ─► Referrer: IBITI    (fixed reward, if eligibl
       <li><b>Network</b> (Mainnet/Testnet) and <b>timestamp</b></li>
       <li><b>Buyer address</b> and <b>transaction hash</b></li>
       <li><b>Paid (USDT)</b></li>
-      <li><b>Market amount (IBITI)</b> + <b>Promo bonus (IBITI)</b> + <b>Total received (IBITI)</b></li>
+      <li><b>Purchased amount (IBITI)</b> + <b>Promo bonus (IBITI)</b> + <b>Total received (IBITI)</b></li>
       <li><b>Effective price</b> (USDT per IBITI)</li>
       <li><b>Links:</b> BscScan transaction + shareable receipt link</li>
       <li>Options to <b>copy</b>, <b>save image</b>, or <b>print</b> the receipt</li>
@@ -630,37 +625,36 @@ Promo Router ── transfer ─► Referrer: IBITI    (fixed reward, if eligibl
     </p>
   </details>
 
-  <h3>5.3 How the router determines your IBITI amount (pricing & quote)</h3>
+  <h3>5.3 How the contract determines your IBITI amount</h3>
   <p class="small">
-    The router uses the IBITI/USDT PancakeSwap pair reserves as a market reference (AMM-style quoting).
-    A buyer-provided <code>minIbitiOut</code> works as a slippage guard: if the expected IBITI output is below that value,
-    the transaction reverts.
+    The price is stored in the contract as USDT (18 decimals) per 1 whole IBITI. The buyer also passes <code>minIbitiOut</code>:
+    if the purchased amount is below it, the transaction reverts.
   </p>
 
-  <details>
-    <summary><span>Reserve-based quote (AMM-style)</span></summary>
-    <div class="monoBlock"><pre>
-amountInWithFee = amountIn * (10000 - feeBps)
-amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
+  <div class="monoBlock"><pre>
+purchased = USDT * 10^8 / price
+bonus     = purchased * bonusBps / 10000
 </pre></div>
-    <p class="small">
-      <code>quoteMode</code> and <code>feeBps</code> make the quoting rule explicit. The goal is transparent, on-chain pricing
-      aligned with the pool reserves, not a “manual price”.
-    </p>
-  </details>
+
+  <table>
+    <tr><th>You pay</th><th>Purchased</th><th>Bonus (10%)</th><th>You receive</th></tr>
+    <tr><td>10 USDT</td><td>100 IBITI</td><td>10 IBITI</td><td>110 IBITI</td></tr>
+    <tr><td>50 USDT</td><td>500 IBITI</td><td>50 IBITI</td><td>550 IBITI</td></tr>
+    <tr><td>100 USDT</td><td>1,000 IBITI</td><td>100 IBITI</td><td>1,100 IBITI</td></tr>
+  </table>
 
   <h3>5.4 Where your USDT goes after the buy (Reserve → Liquidity policy)</h3>
   <p class="small">
-    The promo router itself does <b>not</b> add liquidity. It forwards USDT to the <b>Reserve Wallet</b> immediately.
-    Liquidity is added by the Reserve Wallet via PancakeSwap as a <b>separate on-chain transaction</b>.
+    The sale contract does <b>not</b> add liquidity. USDT goes to the <b>Reserve Wallet</b> during the purchase.
+    Liquidity is added as a <b>separate on-chain transaction</b>.
   </p>
 
   <div class="grid2">
     <div class="kv">
       <b>Step A — Guaranteed (same transaction)</b>
       <ul class="small">
-        <li>USDT is forwarded to the <b>Reserve Wallet</b> immediately.</li>
-        <li>Router remains near <b>0 USDT</b> after buys by design.</li>
+        <li>USDT goes to the <b>Reserve Wallet</b> immediately.</li>
+        <li>The sale contract holds <b>0 USDT</b> by design.</li>
         <li>Anyone can verify this in token transfer logs per transaction.</li>
       </ul>
     </div>
@@ -668,64 +662,36 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
     <div class="kv">
       <b>Step B — Operational (separate transaction)</b>
       <ul class="small">
-        <li>Reserve Wallet can use received USDT to <b>add liquidity</b> to the IBITI/USDT pool on PancakeSwap.</li>
+        <li>Received USDT can be used to <b>add liquidity</b> to the IBITI/USDT pool on PancakeSwap.</li>
         <li>This happens as an <b>additional on-chain action</b> initiated by operations.</li>
-        <li>Policy goal: add liquidity promptly “as funds arrive”, but it is not an automatic on-chain guarantee.</li>
+        <li>It is a policy, not an automatic on-chain guarantee.</li>
       </ul>
     </div>
   </div>
 
-  <details>
-    <summary><span>Why liquidity is not added inside the buy transaction</span></summary>
-    <p class="small">
-      Liquidity operations require separate approvals, slippage settings, and timing decisions (pool state changes every block).
-      Keeping the buy transaction focused (forward USDT + deliver IBITI) reduces complexity and failure modes, while still keeping
-      liquidity additions fully traceable on-chain when performed by the Reserve Wallet.
-    </p>
-  </details>
-
-  <h3>5.5 Promo inventory (bonus pool) and accounting</h3>
+  <h3>5.5 Sale stock and accounting</h3>
   <p class="small">
-    IBITI payouts are limited by the router’s available IBITI inventory. The router maintains accounting counters so the website
-    can show “remaining promo pool” transparently and so anyone can monitor promo spending on-chain.
+    The sale contract was funded with <b>1,000,000 IBITI</b> by a plain transfer. A purchase that would need more than the contract
+    holds reverts. <code>poolRemaining()</code> returns the real balance, and <code>getStats()</code> returns the bonus and referral totals.
   </p>
 
-  <details>
-    <summary><span>Bonus pool accounting</span> (why UI numbers match reality)</summary>
-    <p class="small">
-      The router can track totals (e.g., pool total, spent counters) so the UI can display remaining promo inventory.
-      Regardless of accounting variables, IBITI transfers are always limited by the router’s actual IBITI token balance.
-    </p>
-  </details>
+  <h3>5.6 Key on-chain parameters</h3>
+  <table>
+    <tr><th>Parameter</th><th>Value</th><th>Can it change?</th></tr>
+    <tr><td><code>price</code></td><td>$0.10 per IBITI</td><td>By the owner, only while paused, between $0.001 and $10</td></tr>
+    <tr><td><code>minPaymentAmount</code> / <code>maxPaymentAmount</code></td><td>10 / 100 USDT per purchase</td><td>By the owner, only while paused</td></tr>
+    <tr><td><code>bonusBps</code></td><td>1000 (10%)</td><td>No</td></tr>
+    <tr><td><code>refReward</code></td><td>1 IBITI, once per buyer</td><td>No</td></tr>
+    <tr><td><code>reserveWallet</code></td><td><code>0x9d8d...De41</code></td><td>No</td></tr>
+    <tr><td><code>promoActive</code> / <code>promoEndTime</code></td><td>on / no end date</td><td>By the owner</td></tr>
+    <tr><td><code>pause</code> / <code>unpause</code></td><td>Emergency stop</td><td>By the owner</td></tr>
+  </table>
 
-  <h3>5.6 Key on-chain parameters (read from proxy)</h3>
-  <div class="grid2">
-    <div class="kv">
-      <b>Promo controls</b>
-      <ul>
-        <li><code>promoActive</code> (on/off)</li>
-        <li><code>promoEndTime</code> (optional end)</li>
-        <li><code>bonusBps</code> (e.g. 1000 = 10%)</li>
-        <li><code>refReward</code> (fixed IBITI reward)</li>
-      </ul>
-    </div>
-
-    <div class="kv">
-      <b>Safety controls</b>
-      <ul>
-        <li><code>minPaymentAmount</code> / <code>maxPaymentAmount</code></li>
-        <li><code>minIbitiOut</code> provided by buyer (slippage guard)</li>
-        <li><code>quoteMode</code> and <code>feeBps</code></li>
-        <li><code>minSpotPrice</code>/<code>maxSpotPrice</code> (optional bounds)</li>
-        <li><code>pause/unpause</code> (emergency stop)</li>
-      </ul>
-    </div>
-  </div>
-
-  <h3>5.7 UUPS upgrade boundary (what can be upgraded)</h3>
+  <h3>5.7 What the owner can and cannot do</h3>
   <p class="small">
-    The router is upgradeable via a UUPS proxy to patch critical issues. The proxy address stays the same, while the implementation
-    can be upgraded by an authorized account. Upgrade transactions are visible on-chain and can be monitored.
+    The owner can stop the sale, and while it is paused can change the price and limits and withdraw unsold IBITI.
+    The owner can also return other tokens sent to the contract by mistake, but not IBITI that way.
+    Ownership cannot be renounced, and transferring it takes two steps. The logic cannot be changed: a different rule means a new contract at a new address.
   </p>
 
   <details>
@@ -734,22 +700,26 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
       <li>Open the transaction hash in BscScan and review token transfers.</li>
       <li>Confirm USDT moved to the <b>Reserve Wallet</b> in the same transaction.</li>
       <li>Confirm IBITI transfers to the buyer (and referrer if applicable).</li>
-      <li>Confirm router USDT balance remains near 0 after the buy.</li>
+      <li>Confirm the sale contract's USDT balance is 0 after the buy.</li>
     </ul>
   </details>
 </section>
 
-        <section class="card" id="staking" data-wp="staking 1-12 months rewards penalties grace period expiry treasury nft rewards">
-          <h2>6) Staking (Periods, Rewards, Expiry Rules)</h2>
+        <section class="card" id="staking" data-wp="staking planned 1-12 months rewards penalties grace period nft rewards">
+          <h2>6) Staking (Planned)</h2>
+
+          <div class="callout">
+            <b>Not deployed yet.</b> Below is the planned design. Final rules are published with the deployed contract.
+          </div>
 
           <p class="lead">
             Staking in IBITI is intentionally simple: choose a duration (1–12 months) → lock tokens → claim later.
-            Rewards and penalties are deterministic and known in advance.
+            Rewards and penalties are known in advance.
           </p>
 
           <div class="grid2">
             <div class="kv">
-              <b>Time rules (from contract)</b>
+              <b>Time rules</b>
               <ul>
                 <li>Duration range: <b>1–12 months</b></li>
                 <li>Month length: <b>30 days</b></li>
@@ -757,10 +727,9 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
               </ul>
             </div>
             <div class="kv">
-              <b class="bad">Expiry rule (VERY important)</b>
+              <b>Reward funding</b>
               <p class="small">
-                If you do not claim within maturity + 180 days, your stake becomes <b>expired</b> and
-                principal is transferred to the treasury (forfeited). This is an explicit on-chain rule.
+                Rewards come from a separate funded reward pool, out of the marketing and reserve share. One user's stake never pays another user's reward.
               </p>
             </div>
           </div>
@@ -793,47 +762,32 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
           </table>
 
           <details>
-            <summary><span>Staking cashflow</span> (what happens to your tokens)</summary>
-            <ul class="small">
-              <li>When staking, IBITI is transferred to the staking contract and recorded as a stake entry.</li>
-              <li>When unstaking:
-                <ul>
-                  <li>Early: penalty is applied; payout is reduced.</li>
-                  <li>On-time (within grace): reward is applied; payout increases.</li>
-                  <li>Expired: principal is transferred to treasury and the stake is removed.</li>
-                </ul>
-              </li>
-              <li>If contract balance is insufficient for payout, it can auto-replenish by pulling from treasury
-                  via <code>transferFrom</code> (requires allowance).</li>
-            </ul>
-          </details>
-
-          <details>
             <summary><span>NFT rewards from staking</span> (3/6/9/12 months)</summary>
             <p class="small">
-              For selected durations, the contract mints “Jackpot” Discount NFTs via NFTDiscount’s <code>mintJackpot</code>.
-              Mint failures do not revert unstake (errors are caught), so users can still claim principal/reward.
+              For selected durations, staking rewards include non-transferable “Jackpot” Discount NFTs.
             </p>
           </details>
         </section>
 
-        <section class="card" id="nfts" data-wp="nft ibitinft discountnft nftdiscount expiry burn pandora jackpot non-transferable">
-          <h2>7) NFTs (Two Layers)</h2>
+        <section class="card" id="nfts" data-wp="nft planned ibitinft discountnft nftdiscount expiry burn pandora jackpot non-transferable">
+          <h2>7) NFTs (Planned)</h2>
+
+          <div class="callout">
+            <b>Not deployed yet.</b> Below is the planned design. Prices and final rules are published with the deployed contracts.
+          </div>
 
           <div class="grid2">
             <div class="kv">
               <b>IBITINFT (collectible/utility)</b>
               <ul>
                 <li>ERC-721 collection</li>
-                <li>Purchase with IBITI or USDT (depending on configuration)</li>
                 <li>Unique tokenURI enforced (anti-duplicate)</li>
-                <li>Monthly price update logic exists (sales threshold + growth rate)</li>
               </ul>
             </div>
             <div class="kv">
               <b>DiscountNFT (NFTDiscount)</b>
               <ul>
-                <li>ERC-721 discount NFTs</li>
+                <li>ERC-721 discount NFTs that lower the smart sell fee (section 8)</li>
                 <li>Most are <b>single-use</b>: use → burn</li>
                 <li>Many <b>expire</b> if unused (by level)</li>
                 <li>Pandora has special rules (no expiry)</li>
@@ -841,53 +795,47 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
             </div>
           </div>
 
-          <h3>7.1 Discount NFT levels & expiry (on-chain)</h3>
+          <h3>7.1 Discount NFT levels & expiry</h3>
           <table>
-            <tr><th>Level</th><th>Discount % mapping</th><th>Expiry if unused</th><th>Notes</th></tr>
+            <tr><th>Level</th><th>Discount %</th><th>Expiry if unused</th><th>Notes</th></tr>
             <tr><td>Normal</td><td>1%</td><td>30 days</td><td>Use → burn</td></tr>
             <tr><td>Rare</td><td>3% / 5% / 7%</td><td>90 days</td><td>Use → burn</td></tr>
             <tr><td>Legendary</td><td>10% / 15% / 25%</td><td>180 days</td><td>Use → burn</td></tr>
             <tr><td>Epic</td><td>50% / 75% / 100%</td><td>365 days</td><td>Use → burn</td></tr>
-            <tr><td>Jackpot</td><td>Custom (via mintJackpot)</td><td>365 days</td><td><b>Non-transferable</b></td></tr>
-            <tr><td>Pandora</td><td>Special</td><td><b>No expiry</b></td><td>Usage-limited</td></tr>
+            <tr><td>Jackpot</td><td>Staking reward</td><td>365 days</td><td><b>Non-transferable</b></td></tr>
+            <tr><td>Pandora</td><td>100%</td><td><b>No expiry</b></td><td>Usage-limited</td></tr>
           </table>
 
           <details>
-            <summary><span>Pandora usage rules</span> (important)</summary>
+            <summary><span>Pandora usage rules</span></summary>
             <p class="small">
-              Pandora NFTs do not expire, but usage is limited: the contract enforces a maximum of
+              Pandora NFTs do not expire, but usage is limited to a maximum of
               <b>10 uses per 360 days</b>. (This is a built-in anti-abuse throttle.)
             </p>
           </details>
-
-          <details>
-            <summary><span>Minting & payments</span></summary>
-            <ul class="small">
-              <li>Discount NFTs can be purchased using USDT or IBITI if payment token and price are configured.</li>
-              <li>Owner can withdraw accumulated payments from the NFTDiscount contract.</li>
-              <li>Staking contract is authorized to mint Jackpot rewards via NFTDiscount.</li>
-            </ul>
-          </details>
         </section>
 
-        <section class="card" id="fees" data-wp="fees feemanage volatility tiers discounts holding vip staking nftdiscount bounds">
-          <h2>8) Fee System (FeeManager)</h2>
+        <section class="card" id="fees" data-wp="fees smart fee feemanager sell contract user status vip whale staking nftdiscount bounds">
+          <h2>8) Smart Sell Fee (Planned)</h2>
+
+          <div class="callout">
+            <b>The token has no fee.</b> Transfers and PancakeSwap trades pay no IBITI fee. The smart fee applies only to someone who chooses
+            to sell IBITI to the project's own sell contract, which is <b>not deployed yet</b>.
+          </div>
+
           <p class="lead">
-            Fees are calculated by a dedicated FeeManager contract with configurable parameters and bounds.
-            The goal is to keep fee logic auditable and adjustable without hiding behavior inside “mystery math”.
+            The sell contract takes IBITI and pays USDT from its own stock. FeeManager calculates the fee for that sale, and a Discount NFT can lower it.
           </p>
 
           <div class="grid2">
             <div class="kv">
-              <b>What it can model</b>
+              <b>What makes up the fee</b>
               <ul>
-                <li>Base buy/sell fees</li>
-                <li>Holding-time discounts</li>
-                <li>VIP discounts</li>
-                <li>Staking discounts</li>
-                <li>Whale/size impacts</li>
-                <li>Volatility coefficient (tiers)</li>
-                <li>NFT discount integration</li>
+                <li>Base sell fee: 10%</li>
+                <li>Active stake: fee × 0.9</li>
+                <li>VIP status: −2 points</li>
+                <li>Whale-size sale: +3 points</li>
+                <li>Discount NFT: lowers the result</li>
               </ul>
             </div>
             <div class="kv">
@@ -895,8 +843,8 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
               <ul>
                 <li>Fee clamped by min/max bounds</li>
                 <li>Admin setters visible on-chain</li>
-                <li>Audit helpers (parameter sanity)</li>
-                <li>Pausable where implemented</li>
+                <li>UserStatusManager holds VIP and whale flags only; it cannot freeze or block tokens</li>
+                <li>The token does not read any of these contracts</li>
               </ul>
             </div>
           </div>
@@ -904,74 +852,15 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
           <details>
             <summary><span>Reality check</span> — fees are a policy tool, not a miracle</summary>
             <p class="small">
-              Fees can support sustainability and discourage abuse, but they do not remove market risk.
-              They must be tuned responsibly, and their impact should be monitored.
+              Final values are set at deployment. Fees can support sustainability and discourage abuse, but they do not remove market risk.
             </p>
           </details>
         </section>
 
-        <section class="card" id="dao" data-wp="dao governance proposals voting threshold max voters rewards">
-          <h2>9) DAO Governance (DAOModule)</h2>
+        <section class="card" id="buyback" data-wp="buyback burn burn address swap slippage reserve policy deferred">
+          <h2>9) Buyback (Deferred)</h2>
           <p class="lead">
-            The DAO module provides on-chain proposals and voting. It is intentionally scoped to avoid “governance can rug itself”.
-          </p>
-
-          <div class="kv">
-            <b>Core governance constraints (from module)</b>
-            <ul>
-              <li>Vote threshold: <b>100</b></li>
-              <li>Max voters per proposal: <b>500</b></li>
-              <li>Proposals have an end time and execution status</li>
-            </ul>
-          </div>
-
-          <details>
-            <summary><span>How governance is usually hardened</span> (future direction)</summary>
-            <p class="small">
-              Mature protocols often move admin powers into multisig + time-lock, and progressively expand DAO scope.
-              IBITI follows the same “start safe, expand carefully” philosophy.
-            </p>
-          </details>
-        </section>
-
-        <section class="card" id="sale-vesting" data-wp="vesting team vesting phased token sale rewards schedule cliff unlock">
-          <h2>10) Sale & Vesting (PhasedTokenSale, TeamVesting)</h2>
-          <p class="lead">
-            These modules formalize structured sale phases and long-term team vesting. The goal is transparent schedules, not “backroom unlocks”.
-          </p>
-
-          <div class="grid2">
-            <div class="kv">
-              <b>PhasedTokenSale</b>
-              <ul>
-                <li>Phases with explicit rules and caps</li>
-                <li>On-chain purchase logic</li>
-                <li>Reward distribution mechanics (where configured)</li>
-              </ul>
-            </div>
-            <div class="kv">
-              <b>TeamVesting</b>
-              <ul>
-                <li>Long-term vesting schedule</li>
-                <li>Withdraw rules enforced by contract</li>
-                <li>Vesting contract: <code>0xC4bd...3604</code></li>
-              </ul>
-            </div>
-          </div>
-
-          <details>
-            <summary><span>Why vesting matters to reviewers</span></summary>
-            <p class="small">
-              Vesting is one of the simplest “anti-dump-by-design” tools: it makes large allocations move on a schedule,
-              and it’s publicly verifiable.
-            </p>
-          </details>
-        </section>
-
-        <section class="card" id="buyback" data-wp="buyback burn burn address swap slippage reserve policy">
-          <h2>11) Buyback (BuybackManager)</h2>
-          <p class="lead">
-            BuybackManager can be used to acquire IBITI on the market and optionally burn tokens by sending them to the burn address.
+            BuybackManager is not deployed. If it is used later, it would acquire IBITI on the market and optionally burn it.
             This is an operational tool — not a guaranteed promise.
           </p>
 
@@ -979,28 +868,31 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
             <b>Key idea</b>
             <p class="small">
               If buybacks are used, they should be executed with slippage protections and transparent reporting.
-              Burn is verifiable (tokens sent to <code>0x...dEaD</code>).
+              Burn is verifiable on-chain.
             </p>
           </div>
         </section>
 
-        <section class="card" id="security" data-wp="security pausable reentrancy uups upgrade admin controls trust assumptions">
-          <h2>12) Security, Admin Controls, Upgrade Boundaries</h2>
+        <section class="card" id="security" data-wp="security pausable reentrancy admin controls trust assumptions no proxy hardware wallet">
+          <h2>10) Security & Admin Controls</h2>
 
           <div class="grid2">
             <div class="kv">
-              <b>What is upgradeable</b>
+              <b>Who controls what</b>
               <ul>
-                <li class="warn"><b>Website Promo Router</b>: UUPS proxy (upgradeable)</li>
-                <li>Most modules are standard deployments (non-proxy), unless explicitly proxied</li>
+                <li><b>Token:</b> nobody. It has no owner.</li>
+                <li><b>Vesting:</b> the owner pays out, only within the schedule.</li>
+                <li><b>Website sale:</b> the owner has the powers in section 5.7.</li>
+                <li>No live contract is behind a proxy, so none can be upgraded.</li>
               </ul>
             </div>
             <div class="kv">
-              <b>Emergency controls</b>
+              <b>Protections in place</b>
               <ul>
-                <li>Pausable patterns exist to stop interaction during critical events</li>
-                <li>Reentrancy guards exist in sensitive functions</li>
-                <li>Admin setters are visible on-chain and should be monitored</li>
+                <li>Source code verified on BscScan and public on GitHub</li>
+                <li>OpenZeppelin base contracts, reentrancy guard on purchases</li>
+                <li>Price bounds and decimals checks in the sale contract</li>
+                <li>Mainnet owner wallets are hardware wallets</li>
               </ul>
             </div>
           </div>
@@ -1008,34 +900,35 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
           <details>
             <summary><span>Trust model (honest version)</span></summary>
             <p class="small">
-              Some parameters are owner-controlled (promo bonus, limits, quote config, etc.). This is a trust assumption
-              until governance/multisig hardening is implemented. The upside: bugs can be patched faster. The downside: admin power must be monitored.
+              The website sale has an owner who can change its price and limits while it is paused and withdraw its unsold stock. This is a trust assumption.
+              The token, by contrast, has no owner: nobody can stop it, freeze an address or reverse a transfer, including in an emergency.
             </p>
           </details>
         </section>
 
-        <section class="card" id="transparency" data-wp="transparency monitoring events promo buy bonus pool remaining usdt balance">
-          <h2>13) Transparency & Monitoring</h2>
+        <section class="card" id="transparency" data-wp="transparency monitoring events promo buy stock remaining usdt balance vesting released">
+          <h2>11) Transparency & Monitoring</h2>
 
           <h3>What anyone can verify</h3>
           <ul>
-            <li><b>Promo router buys</b>: by watching the proxy events (e.g., PromoBuy).</li>
-            <li><b>USDT routing</b>: router should typically have ~0 USDT after buys (it forwards to reserve).</li>
-            <li><b>Pool health</b>: “remaining promo pool” can be read from on-chain counters/state.</li>
-            <li><b>Upgrades</b>: proxy upgrade transactions are visible on-chain.</li>
+            <li><b>Website buys</b>: by watching the contract events (<code>PromoBuy</code>).</li>
+            <li><b>USDT routing</b>: the sale contract holds 0 USDT; the Reserve wallet receives it.</li>
+            <li><b>Sale stock</b>: <code>poolRemaining()</code> returns the real balance.</li>
+            <li><b>Vesting</b>: <code>available()</code>, <code>released()</code> and <code>Released</code> events.</li>
+            <li><b>Supply</b>: <code>totalSupply()</code> can only go down.</li>
           </ul>
 
           <div class="kv">
             <b>Practical reviewer check</b>
             <p class="small">
-              After a website buy: reserve wallet USDT increases; router USDT balance stays near 0; router IBITI decreases by
-              base+bonus+ref amounts.
+              After a website buy: reserve wallet USDT increases; sale contract USDT stays at 0; sale contract IBITI decreases by
+              purchased + bonus + referral amounts.
             </p>
           </div>
         </section>
 
-        <section class="card" id="risks" data-wp="risks liquidity manipulation oracle admin upgrade staking expiry loss">
-          <h2>14) Risks & Limitations (Read This)</h2>
+        <section class="card" id="risks" data-wp="risks liquidity admin smart contract audit loss modules">
+          <h2>12) Risks & Limitations (Read This)</h2>
 
           <div class="dangerBox">
             <b class="bad">No hype.</b> DeFi is risky. Liquidity can be thin. Smart contracts can fail.
@@ -1044,69 +937,73 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
 
           <h3>Market & liquidity risk</h3>
           <ul>
+            <li>Until the pool has liquidity, there is no open market to sell IBITI.</li>
             <li>Low liquidity increases slippage and price volatility.</li>
-            <li>Large trades can move reserves quickly.</li>
+            <li>The market price can fall below the website price.</li>
           </ul>
 
-          <h3>Pair reserve manipulation risk</h3>
+          <h3>Smart contract risk</h3>
           <ul>
-            <li>Website quoting relies on pair reserves → manipulable in low liquidity.</li>
-            <li>Mitigations exist: buy limits, buyer minOut, optional spot bounds.</li>
+            <li>The contracts have tests and verified source code, but no independent third-party audit yet.</li>
+            <li>Contracts cannot be upgraded, so a bug can only be addressed by a new deployment.</li>
           </ul>
 
-          <h3>Admin / upgrade risk</h3>
+          <h3>Admin & wallet risk</h3>
           <ul>
-            <li>UUPS promo router is upgradeable by authorized admin — visible, but still power.</li>
-            <li>Parameter changes can affect behavior; monitoring is recommended.</li>
+            <li>The website sale's parameters can change while it is paused, as described in section 5.7.</li>
+            <li>The token cannot be paused or frozen, so stolen tokens cannot be recovered by the project.</li>
           </ul>
 
-          <h3 class="bad">Staking expiry risk</h3>
+          <h3>Planned modules</h3>
           <ul>
-            <li>If you ignore maturity + 180 days grace, stake expires and principal is forfeited to treasury.</li>
-            <li>This is not hidden. It is explicit on-chain behavior.</li>
+            <li>Staking, NFTs and the sell contract are not live. Their rules can change before deployment.</li>
           </ul>
         </section>
 
-        <section class="card" id="faq" data-wp="faq questions how buy promo staking expiry nft discount referral">
-          <h2>15) FAQ</h2>
+        <section class="card" id="faq" data-wp="faq questions how buy promo fee mint nft discount referral">
+          <h2>13) FAQ</h2>
 
           <details>
             <summary><span>Why have a website buy flow if Pancake exists?</span></summary>
             <p class="small">
-              Pancake is the open market. The website flow is a transparent on-chain “promo + referral + reserve-forwarding” router
-              with strict limits, designed for simple UX and promotions.
+              Pancake is the open market. The website flow is a fixed-price on-chain sale with a bonus, a referral reward and strict limits,
+              designed for simple UX and promotions.
             </p>
           </details>
 
          <details>
-  <summary><span>15) Where do my USDT go after buying on the website?</span></summary>
+  <summary><span>Where do my USDT go after buying on the website?</span></summary>
   <p class="small">
-    Your USDT is forwarded to the <b>Reserve Wallet</b> <b>in the same transaction</b>. The promo router is designed not to
-    custody USDT, so after buys its USDT balance should remain near 0.
+    Your USDT goes to the <b>Reserve Wallet</b> <b>in the same transaction</b>. The sale contract never holds it.
   </p>
   <p class="small">
     After the USDT reaches the Reserve Wallet, it can be used for liquidity operations (e.g., adding liquidity to the
-    IBITI/USDT pool on PancakeSwap). This liquidity step is typically executed as a <b>separate on-chain transaction</b>
-    from the Reserve Wallet and is fully traceable on-chain.
+    IBITI/USDT pool on PancakeSwap). This step is a <b>separate on-chain transaction</b> and is fully traceable.
   </p>
   <p class="small">
     <b>Receipt:</b> after a successful purchase the website shows an <b>IBITI Receipt</b> (a “check”) with transaction hash,
-    paid USDT, received IBITI (base + bonus), effective price, and direct links to BscScan.
+    paid USDT, received IBITI (purchased + bonus), effective price, and direct links to BscScan.
   </p>
 </details>
 
           <details>
-            <summary><span>What happens if I forget to unstake?</span></summary>
+            <summary><span>Does the token take a fee on transfers or trades?</span></summary>
             <p class="small">
-              You have maturity + 180 days grace. After that, the stake is expired and principal is transferred to treasury.
-              Put a reminder. Seriously.
+              No. The token has no fee at all. On PancakeSwap you pay only the pool's own swap fee and gas.
+            </p>
+          </details>
+
+          <details>
+            <summary><span>Can more IBITI be created?</span></summary>
+            <p class="small">
+              No. The token has no mint function and no owner. Supply can only go down, through burning.
             </p>
           </details>
 
           <details>
             <summary><span>Are Discount NFTs reusable?</span></summary>
             <p class="small">
-              Most discount NFTs are single-use (use → burn). Pandora is special: it does not expire but has a usage limit (10 per 360 days).
+              In the planned design, most discount NFTs are single-use (use → burn). Pandora is special: it does not expire but has a usage limit (10 per 360 days).
             </p>
           </details>
 
@@ -1131,7 +1028,7 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
 
       <div class="paneBody">
 
-        <input class="search" type="text" placeholder="Search in whitepaper (e.g., staking, expiry, referral, UUPS)..."
+        <input class="search" type="text" placeholder="Search in whitepaper (e.g., vesting, sale, referral, staking)..."
                oninput="wpSearch(this.value)" />
 
         <div class="card">
@@ -1143,14 +1040,12 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
             <a href="#tokenomics">Tokenomics & Supply</a>
             <a href="#initial-allocation">Initial Allocation</a>
             <a href="#team-vesting">Team Vesting</a>
-            <a href="#treasury-liquidity">Treasury & Liquidity</a>
+            <a href="#liquidity-policy">Liquidity Policy</a>
             <a href="#market">Market & Price</a>
-            <a href="#promo">Website Promo Router</a>
+            <a href="#promo">Website Sale</a>
             <a href="#staking">Staking</a>
             <a href="#nfts">NFTs</a>
-            <a href="#fees">Fees</a>
-            <a href="#dao">DAO</a>
-            <a href="#sale-vesting">Sale & Vesting</a>
+            <a href="#fees">Smart Sell Fee</a>
             <a href="#buyback">Buyback</a>
             <a href="#security">Security</a>
             <a href="#transparency">Transparency</a>
@@ -1166,47 +1061,45 @@ amountOut = (amountInWithFee * reserveOut) / (reserveIn*10000 + amountInWithFee)
             <div class="small mono"><code>IBITI</code> decimals: <b>8</b> • token: <code>0x71b5...381A</code></div>
           </div>
           <div class="kv">
-            <b>Website Promo</b>
+            <b>Website Sale</b>
             <div class="small mono"><code>0x4292...4781</code></div>
           </div>
           <div class="kv">
-            <b>Reserve wallet</b>
-            <div class="small mono"><code>0x9d8d...de41</code></div>
+            <b>Team Vesting</b>
+            <div class="small mono"><code>0xC4bd...3604</code></div>
           </div>
           <div class="kv">
-            <b>Promo swap path</b>
-            <div class="small mono"><code>USDT → IBITI</code></div>
-            <div class="small mono"><code>0x55d3...7955, 0x71b5...381A</code></div>
+            <b>Reserve wallet</b>
+            <div class="small mono"><code>0x9d8d...De41</code></div>
           </div>
         </div>
 
         <div class="card">
           <h2>How website buy works</h2>
           <div class="monoBlock"><pre>
-Pay USDT → forwarded to reserve (same tx)
-Get IBITI from router inventory:
-  base amount (pair quote)
-  + bonus (bonusBps)
-  + referral reward (fixed)
+Pay USDT → reserve wallet (same tx)
+Get IBITI from the sale contract:
+  purchased ($0.10 each)
+  + bonus (10%)
+  + referral (1 IBITI, once)
 </pre></div>
           <p class="small">
-            Reviewer check: router USDT balance stays near 0; reserve wallet receives USDT.
+            Reviewer check: sale contract USDT balance is 0; reserve wallet receives USDT.
           </p>
         </div>
 
         <div class="card">
-          <h2>Staking quick rules</h2>
+          <h2>Staking quick rules (planned)</h2>
           <ul class="small">
             <li>Durations: <b>1–12 months</b> (30 days per month)</li>
             <li>Grace: <b>180 days</b> after maturity</li>
-            <li class="bad"><b>Expired after grace</b> → principal sent to treasury</li>
             <li>Rewards/penalties: 1,3,5,7,10,12,14,18,20,22,25,30%</li>
             <li>3/6/9/12 months → default 2 reward NFTs (3/5/7/10%)</li>
           </ul>
         </div>
 
         <div class="card">
-          <h2>NFT quick rules</h2>
+          <h2>NFT quick rules (planned)</h2>
           <ul class="small">
             <li><b>Discount NFTs expire</b> if unused: 30/90/180/365 days (by level)</li>
             <li><b>Jackpot</b>: non-transferable</li>
@@ -1218,12 +1111,11 @@ Get IBITI from router inventory:
         <div class="card">
           <h2>BSC reviewer checklist</h2>
           <ul class="small">
-            <li class="ok">Proxy + Implementation verified</li>
-            <li>Read proxy params: bonusBps, refReward, limits, quote config</li>
-            <li>Verify USDT routing: reserve wallet receives USDT, router ≈0 USDT</li>
-            <li>Verify staking expiry/grace behavior on-chain</li>
-            <li>Verify NFTDiscount expiry and non-transferable Jackpot</li>
-            <li>Upgrades visible via proxy upgrade tx history</li>
+            <li class="ok">Token, vesting and sale contracts verified</li>
+            <li>Read sale params: price, bonusBps, refReward, limits</li>
+            <li>Verify USDT routing: reserve wallet receives USDT, sale contract 0 USDT</li>
+            <li>Read vesting: available(), released(), unlockedAt()</li>
+            <li>Token: no owner, no mint, no pause, no proxy</li>
           </ul>
         </div>
 
@@ -1249,7 +1141,7 @@ Get IBITI from router inventory:
     <li>Email: <a href="mailto:info@ibiticoin.com">info@ibiticoin.com</a></li>
   </ul>
 </div>
-        
+
    <div class="callout" style="margin-top:10px">
   <b>Security note:</b> always verify links from the official website and BscScan.
    </div>

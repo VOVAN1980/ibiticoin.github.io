@@ -270,7 +270,7 @@
     footer a { color: var(--accent); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
   </style>
-<style id="no-pool-yet">a[href*="pancakeswap.finance"],a[href*="dexscreener.com"],a[href*="coin-chart"],a[href*="calculator"],iframe[src*="dexscreener"],#buyPancakeBtn{display:none!important}</style>
+<style id="no-pool-yet">a[href*="pancakeswap.finance"],a[href*="dexscreener.com"],a[href*="coin-chart"],a[href*="calculator"],iframe[src*="dexscreener"],#buyPancakeBtn{display:none!important}.tab[data-mode="pancake"],#mode-pancake,.pool-only{display:none!important}#mode-promo{display:block!important}</style>
 </head>
 
 <body>
@@ -286,8 +286,8 @@
   </div>
 
   <h1>How to Buy IBITIcoin (IBITI)</h1>
-  <p>Choose your purchase route: limited-time Website Promo (with bonus/referral) or PancakeSwap (open market).</p>
-  <div class="pill">Network: BNB Smart Chain • Pair: IBITI / USDT • Token: 0x71b5…381A</div>
+  <p>Choose your purchase route: limited-time Website Promo (with bonus/referral)<span class="pool-only"> or PancakeSwap (open market)</span>.</p>
+  <div class="pill">Network: BNB Smart Chain • <span class="pool-only">Pair: IBITI / USDT • </span>Token: 0x71b5…381A</div>
 </header>
 
 <div class="container">
@@ -307,13 +307,13 @@
     <div class="mode active" id="mode-promo">
       <div class="callout">
         <b>What is Website Promo?</b><br/>
-        You buy IBITI directly on the official IBITIcoin website using an on-chain promo router (UUPS proxy).
-        It can provide a <b>bonus</b> and <b>referral reward</b> while keeping the USDT cashflow transparent on-chain.
+        You buy IBITI directly on the official IBITIcoin website using a verified on-chain sale contract at a fixed price.
+        It provides a <b>bonus</b> and a <b>referral reward</b> while keeping the USDT cashflow transparent on-chain.
       </div>
 
       <div class="callout callout-danger">
-        <b>Promo is temporary:</b> the promo can be disabled on-chain (promoActive=false or promoEndTime reached).
-        If promo is inactive, you can always buy IBITI via PancakeSwap (switch the tab above).
+        <b>Promo is temporary:</b> the promo can be disabled on-chain (paused, promoActive=false or promoEndTime reached).
+        <span class="pool-only">If promo is inactive, you can always buy IBITI via PancakeSwap (switch the tab above).</span>
       </div>
 
       <h3><span class="step-number">1</span>Prepare a Web3 wallet</h3>
@@ -343,13 +343,13 @@
 
       <h3><span class="step-number">5</span>Enter USDT amount (and optional referrer)</h3>
       <p>
-        Enter the amount of USDT you want to spend. Optionally paste a referrer address/link if you have one.
-        The router uses the IBITI/USDT pair as a market reference and applies promo rules on-chain.
+        Enter the amount of USDT you want to spend (10 to 100 USDT per purchase). Optionally paste a referrer address/link if you have one.
+        The contract uses a fixed price of $0.10 per IBITI and adds a 10% bonus on-chain.
       </p>
 
       <h3><span class="step-number">6</span>Confirm in MetaMask (usually 2 confirmations)</h3>
       <ul>
-        <li><b>1) USDT Approve</b> — one-time (or when allowance is insufficient). This grants the router permission to spend your USDT.</li>
+        <li><b>1) USDT Approve</b> — for the exact purchase amount, only when the allowance is insufficient. It lets the sale contract move that USDT.</li>
         <li><b>2) Purchase</b> — the actual buy transaction.</li>
       </ul>
       <p>
