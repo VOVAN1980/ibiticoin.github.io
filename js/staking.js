@@ -4,13 +4,11 @@
 
   const DECIMALS = 8;
   const LADDER = [1, 3, 5, 7, 10, 12, 14, 18, 20, 22, 25, 30];
-  const NFT_MONTHS = [3, 6, 9, 12];
   const Status = { Closed: 0, Locked: 1, Claimable: 2, Expired: 3 };
 
   const STAKING_ABI = [
     "function paused() view returns (bool)",
     "function token() view returns (address)",
-    "function nft() view returns (address)",
     "function minStake() view returns (uint256)",
     "function freeRewards() view returns (uint256)",
     "function stakeOf(address) view returns (uint256)",
@@ -48,7 +46,6 @@
   const fmt = (x) => `${ethers.formatUnits(x, DECIMALS).replace(/\.0$/, "")} IBITI`;
   const date = (ts) => new Date(Number(ts) * 1000).toLocaleString();
   const percent = (months) => LADDER[months - 1];
-  const nftText = (months) => (NFT_MONTHS.includes(months) ? "2 bonus NFTs" : "");
 
   const net = window.IBITI_CONFIG.getNet();
   const stakingAddress = net.staking;
@@ -60,7 +57,6 @@
   let freeRewards = 0n;
   let paused = true;
   let windowSeconds = 0n;
-  let nftBound = false;
 
   function notice(html) {
     const el = $("stakingNotice");
@@ -180,8 +176,7 @@
     $("stakePreview").hidden = !ready;
     if (ready) {
       const delta = (amount * BigInt(percent(months))) / 100n;
-      const nft = nftText(months);
-      $("previewOnTime").textContent = fmt(amount + delta) + (nft ? ` + ${nft}` : "");
+      $("previewOnTime").textContent = fmt(amount + delta);
       $("previewEarly").textContent = fmt(amount - delta);
     }
     $("stakeBtn").disabled = !isAddr(stakingAddress) || paused || !account || !ready;
@@ -194,7 +189,6 @@
     const months = Number(s.months);
     const windowEnd = maturity + windowSeconds;
     const label = { [Status.Locked]: ["In progress", "locked"], [Status.Claimable]: ["Ready to claim", "claimable"], [Status.Expired]: ["Reward lost", "expired"] }[status];
-    const nft = nftText(months);
 
     let note = "";
     let button = "Withdraw";
@@ -203,10 +197,9 @@
       note = `${days > 0 ? days : 0} day(s) left. Withdrawing now costs ${fmt(quote.penalty)} and you get no reward.`;
       button = "Withdraw early";
     } else if (status === Status.Claimable) {
-      note = `Take your reward${nft ? " and NFT" : ""} or renew before ${date(windowEnd)}.`;
-      if (nft && !nftBound) note += " The NFT contract is not connected yet: if you withdraw or renew now, you get the tokens but not the NFT.";
+      note = `Take your reward or renew before ${date(windowEnd)}.`;
     } else {
-      note = "The 30 days have passed, so the reward and NFT are lost. Your stake stays yours with no time limit.";
+      note = "The 30 days have passed, so the reward is lost. Your stake stays yours with no time limit.";
     }
 
     const options = LADDER.map((_, i) => `<option value="${i + 1}"${i + 1 === months ? " selected" : ""}>${i + 1} month${i ? "s" : ""}</option>`).join("");
@@ -218,7 +211,7 @@
         <div class="line"><span>Term</span><b>${months} month${months > 1 ? "s" : ""} (${percent(months)}%)</b></div>
         <div class="line"><span>Started</span><b>${date(s.start)}</b></div>
         <div class="line"><span>Term ends</span><b>${date(maturity)}</b></div>
-        <div class="line"><span>Withdraw now</span><b>${fmt(quote.payout)}${status === Status.Claimable && nft ? ` + ${nft}` : ""}</b></div>
+        <div class="line"><span>Withdraw now</span><b>${fmt(quote.payout)}</b></div>
         <p class="card-note">${note}</p>
         <button class="${status === Status.Locked ? "btn-outline" : "btn-gold"}" data-action="unstake">${button}</button>
         ${renewable ? `
@@ -249,12 +242,11 @@
     if (amount < minStake) return Swal.fire({ icon: "warning", title: "Amount too small", text: `The minimum stake is ${fmt(minStake)}.` });
     const reward = (amount * BigInt(percent(months))) / 100n;
     if (reward > freeRewards) return showError({ revert: { name: "RewardPoolExhausted" } });
-    const nft = nftText(months);
     const ok = await confirmAction("Stake IBITI?", `
       Stake <b>${fmt(amount)}</b> for <b>${months} month${months > 1 ? "s" : ""}</b>.<br><br>
-      On time you receive <b>${fmt(amount + reward)}</b>${nft ? ` + <b>${nft}</b>` : ""}.<br>
-      Early exit: you receive <b>${fmt(amount - reward)}</b>, no reward and no NFT.<br><br>
-      Claim within 30 days after the term, or the reward and NFT are lost.`);
+      On time you receive <b>${fmt(amount + reward)}</b>.<br>
+      Early exit: you receive <b>${fmt(amount - reward)}</b>, no reward.<br><br>
+      Claim within 30 days after the term, or the reward is lost.`);
     if (!ok) return;
     try {
       busy("Staking…");
@@ -273,7 +265,7 @@
     const q = await read.quoteUnstake(account, id);
     const status = Number(q.status);
     const text = status === Status.Locked
-      ? `<b>This is an early exit.</b><br><br>You receive <b>${fmt(q.payout)}</b>. The penalty is <b>${fmt(q.penalty)}</b>, and you get no reward and no NFT.`
+      ? `<b>This is an early exit.</b><br><br>You receive <b>${fmt(q.payout)}</b>. The penalty is <b>${fmt(q.penalty)}</b>, and you get no reward.`
       : `You receive <b>${fmt(q.payout)}</b>.`;
     if (!(await confirmAction("Withdraw?", text, status === Status.Locked ? "warning" : "question"))) return;
     try {
@@ -297,10 +289,9 @@
     const topUp = amount > available ? amount - available : 0n;
     const refund = available > amount ? available - amount : 0n;
     const change = topUp ? `You add <b>${fmt(topUp)}</b> from your wallet.<br>` : refund ? `<b>${fmt(refund)}</b> goes back to your wallet.<br>` : "";
-    const nft = nftText(months);
     const ok = await confirmAction("Renew?", `
       New stake: <b>${fmt(amount)}</b> for <b>${months} month${months > 1 ? "s" : ""}</b>.<br>${change}<br>
-      On time you receive <b>${fmt(amount + reward)}</b>${nft ? ` + <b>${nft}</b>` : ""}.`);
+      On time you receive <b>${fmt(amount + reward)}</b>.`);
     if (!ok) return;
     try {
       busy("Renewing…");
@@ -324,10 +315,7 @@
     }
     const rp = new ethers.JsonRpcProvider(net.rpcUrls[0]);
     read = new ethers.Contract(stakingAddress, STAKING_ABI, rp);
-    [windowSeconds, nftBound] = await Promise.all([
-      read.CLAIM_WINDOW(),
-      read.nft().then((a) => a !== ethers.ZeroAddress),
-    ]);
+    windowSeconds = await read.CLAIM_WINDOW();
     await refresh();
     $("connectWalletBtn").disabled = false;
 

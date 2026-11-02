@@ -228,7 +228,7 @@
             <div class="pill">Token (IBITI): <span class="mono">0x71b552D3503fe20610aaA470A96E1838fae8381A</span></div>
             <div class="pill">USDT (BSC): <span class="mono">0x55d398326f99059fF775485246999027B3197955</span></div>
             <div class="pill">Website Sale: <span class="mono">0x42924EE213eF1943BE655c2C535FB72F52C64781</span></div>
-            <div class="pill">Staking: <span class="mono">0x509e0CeaA5840304D2f33bC43e66Fa27ECDc0348</span></div>
+            <div class="pill">Staking: <span class="mono">0x82BA8720FBa8a6A939D078b9ed62afB9ABC3B426</span></div>
           </div>
 
           <p class="small">
@@ -315,7 +315,7 @@
             <tr><td>IBITI token</td><td class="mono"><code>0x71b552D3503fe20610aaA470A96E1838fae8381A</code></td></tr>
             <tr><td>Team vesting</td><td class="mono"><code>0xC4bdF5b6d7688a7d5457A194ac1210ec34003604</code></td></tr>
             <tr><td>Website sale</td><td class="mono"><code>0x42924EE213eF1943BE655c2C535FB72F52C64781</code></td></tr>
-            <tr><td>Staking</td><td class="mono"><code>0x509e0CeaA5840304D2f33bC43e66Fa27ECDc0348</code></td></tr>
+            <tr><td>Staking</td><td class="mono"><code>0x82BA8720FBa8a6A939D078b9ed62afB9ABC3B426</code></td></tr>
 
             <tr><td colspan="2"><b>Market</b></td></tr>
             <tr><td>USDT (BSC)</td><td class="mono"><code>0x55d398326f99059fF775485246999027B3197955</code></td></tr>
@@ -329,8 +329,8 @@
             <tr><td>Burn address</td><td class="mono"><code>0x000000000000000000000000000000000000dEaD</code></td></tr>
 
             <tr><td colspan="2"><b>Modules</b></td></tr>
-            <tr><td>NFT collection (IBITICollection)</td><td class="mono"><code>0x771Ad1baef4b7321F10F2549b6C1Bc34106120Ed</code></td></tr>
-            <tr><td>NFT sale (IBITINFTSale)</td><td class="mono"><code>0x92CFE8c739e6A1bE9bbc2971E5A7ba6747fccA1f</code></td></tr>
+            <tr><td>NFT collection (IBITICollection)</td><td class="mono"><code>0x37F535AF03966CEFa35Bd6fe1d481831d9bc3a67</code></td></tr>
+            <tr><td>NFT sale (IBITINFTSale)</td><td class="mono"><code>0x44E65077168De8Ff5EC6545857DAd2cB02310fe2</code></td></tr>
             <tr><td>BuybackManager</td><td class="small">Deferred, not deployed</td></tr>
           </table>
         </section>
@@ -701,7 +701,7 @@ bonus     = purchased * bonusBps / 10000
   </details>
 </section>
 
-        <section class="card" id="staking" data-wp="staking 1-12 months rewards penalties claim window renew nft rewards reward pool">
+        <section class="card" id="staking" data-wp="staking 1-12 months rewards penalties claim window renew reward pool">
           <h2>6) Staking</h2>
 
           <div class="callout">
@@ -735,9 +735,9 @@ bonus     = purchased * bonusBps / 10000
           <h3>6.1 What you receive</h3>
           <table>
             <tr><th>When you withdraw</th><th>You receive</th><th>Example: 1,000 IBITI for 12 months</th></tr>
-            <tr><td>Before the term ends</td><td>Stake minus penalty, no reward, no NFT</td><td>700 IBITI</td></tr>
-            <tr><td>Within 30 days after the term</td><td>Stake, reward and NFTs</td><td>1,300 IBITI + 2 NFTs</td></tr>
-            <tr><td>Later</td><td>Stake only, with no time limit; the reward and NFTs are lost</td><td>1,000 IBITI</td></tr>
+            <tr><td>Before the term ends</td><td>Stake minus penalty, no reward</td><td>700 IBITI</td></tr>
+            <tr><td>Within 30 days after the term</td><td>Stake and reward</td><td>1,300 IBITI</td></tr>
+            <tr><td>Later</td><td>Stake only, with no time limit; the reward is lost</td><td>1,000 IBITI</td></tr>
           </table>
 
           <h3>6.2 Reward / Penalty Schedule</h3>
@@ -751,27 +751,26 @@ bonus     = purchased * bonusBps / 10000
               <th>Term</th>
               <th>Reward % (on time)</th>
               <th>Penalty % (early)</th>
-              <th>NFT reward</th>
             </tr>
-            <tr><td>1 month</td><td>1%</td><td>1%</td><td>—</td></tr>
-            <tr><td>2 months</td><td>3%</td><td>3%</td><td>—</td></tr>
-            <tr><td>3 months</td><td>5%</td><td>5%</td><td>2 bonus NFTs</td></tr>
-            <tr><td>4 months</td><td>7%</td><td>7%</td><td>—</td></tr>
-            <tr><td>5 months</td><td>10%</td><td>10%</td><td>—</td></tr>
-            <tr><td>6 months</td><td>12%</td><td>12%</td><td>2 bonus NFTs</td></tr>
-            <tr><td>7 months</td><td>14%</td><td>14%</td><td>—</td></tr>
-            <tr><td>8 months</td><td>18%</td><td>18%</td><td>—</td></tr>
-            <tr><td>9 months</td><td>20%</td><td>20%</td><td>2 bonus NFTs</td></tr>
-            <tr><td>10 months</td><td>22%</td><td>22%</td><td>—</td></tr>
-            <tr><td>11 months</td><td>25%</td><td>25%</td><td>—</td></tr>
-            <tr><td>12 months</td><td>30%</td><td>30%</td><td>2 bonus NFTs</td></tr>
+            <tr><td>1 month</td><td>1%</td><td>1%</td></tr>
+            <tr><td>2 months</td><td>3%</td><td>3%</td></tr>
+            <tr><td>3 months</td><td>5%</td><td>5%</td></tr>
+            <tr><td>4 months</td><td>7%</td><td>7%</td></tr>
+            <tr><td>5 months</td><td>10%</td><td>10%</td></tr>
+            <tr><td>6 months</td><td>12%</td><td>12%</td></tr>
+            <tr><td>7 months</td><td>14%</td><td>14%</td></tr>
+            <tr><td>8 months</td><td>18%</td><td>18%</td></tr>
+            <tr><td>9 months</td><td>20%</td><td>20%</td></tr>
+            <tr><td>10 months</td><td>22%</td><td>22%</td></tr>
+            <tr><td>11 months</td><td>25%</td><td>25%</td></tr>
+            <tr><td>12 months</td><td>30%</td><td>30%</td></tr>
           </table>
 
           <details>
             <summary><span>Renewing</span> (a new term without withdrawing)</summary>
             <ul class="small">
               <li>After the term ends you can renew with a new amount and a new term. Before that, renewing is not possible.</li>
-              <li>Within the 30 days your reward and NFTs are yours and count towards the new stake. Later, only your stake counts.</li>
+              <li>Within the 30 days your reward is yours and counts towards the new stake. Later, only your stake counts.</li>
               <li>A lower amount sends the difference to your wallet; a higher amount adds the difference from your wallet.</li>
               <li>A renewal needs enough reward pool for the new reward. Withdrawing is always possible instead.</li>
             </ul>
@@ -787,17 +786,9 @@ bonus     = purchased * bonusBps / 10000
               <li>After the 30 days anyone can return the reserved reward to the pool. This does not move the stake and pays the caller nothing.</li>
             </ul>
           </details>
-
-          <details>
-            <summary><span>NFT rewards from staking</span> (3/6/9/12 months)</summary>
-            <p class="small">
-              Terms of 3, 6, 9 and 12 months earn 2 bonus NFTs from the collection (section 7.2). They are issued when you collect within the 30 days, while the card's edition lasts.
-              A failed NFT mint never blocks your tokens.
-            </p>
-          </details>
         </section>
 
-        <section class="card" id="nfts" data-wp="nft collection gallery card edition usdt pandora staking bonus royalty full collection book ibiticollection ibitinftsale">
+        <section class="card" id="nfts" data-wp="nft collection gallery card edition usdt pandora royalty full collection book ibiticollection ibitinftsale">
           <h2>7) NFT Collection</h2>
 
           <p class="lead">
@@ -818,9 +809,10 @@ bonus     = purchased * bonusBps / 10000
               <b>What is fixed on-chain</b>
               <ul>
                 <li>Each card has its own edition, which can be lowered but never raised</li>
-                <li>The price of each card is set in USDT and shown in the gallery; USDT goes straight to the reserve wallet</li>
+                <li>The price of each card is set once in USDT and can never change, up or down, not even by the owner; USDT goes straight to the reserve wallet</li>
                 <li>The contract has no burn or pause: the owner cannot take, burn or freeze an NFT</li>
-                <li>The sale is a separate contract, so it can be replaced without touching the collection</li>
+                <li>Cards are issued only by the sale contract, at the card's price. That contract is set once and cannot be replaced, and the contract has no other way to issue a card</li>
+                <li>The collection can never hold more than 12 cards: the 11 cards and the Full Collection</li>
                 <li>A resale on a marketplace that honours it pays 5% to the reserve wallet; the owner can change this, up to 10%</li>
               </ul>
             </div>
@@ -842,14 +834,7 @@ bonus     = purchased * bonusBps / 10000
             <tr><td>11</td><td>Pandora</td><td>Pandora</td></tr>
           </table>
 
-          <h3>7.2 Staking bonus</h3>
-          <p class="small">
-            A stake of 3, 6, 9 or 12 months held to the end earns 2 cards as a bonus: Awakening for 3 months, The First Gods and Kings for 6, Enlightenment for 9, The Age of Darkness and Faith for 12.
-            They are the same cards as those on sale and come out of the same edition, so you can keep them or sell them.
-            If a card's edition has run out by the time you collect, you receive your tokens without the NFT.
-          </p>
-
-          <h3>7.3 The Full Collection</h3>
+          <h3>7.2 The Full Collection</h3>
           <p class="small">
             A separate collector's item: all 11 cards together with the book. It is added to the same contract as a new card.
             The price will be announced later, and it is not on sale until then.
@@ -972,7 +957,6 @@ bonus     = purchased * bonusBps / 10000
           <h3>NFTs</h3>
           <ul>
             <li>NFTs are collectibles, and nothing guarantees that one can be resold at any price.</li>
-            <li>Staking bonus cards come out of the same editions as the cards on sale. Stakers can use up an edition and resell their cards below the gallery price.</li>
             <li>Card metadata is hosted on the project's website until it is moved to IPFS and frozen in the contract.</li>
           </ul>
         </section>
@@ -1013,7 +997,7 @@ bonus     = purchased * bonusBps / 10000
           <details>
             <summary><span>What happens if I forget about my stake?</span></summary>
             <p class="small">
-              You have 30 days after the term to take the reward and NFTs. After that they are lost, but your stake stays yours with no time limit.
+              You have 30 days after the term to take the reward. After that it is lost, but your stake stays yours with no time limit.
             </p>
           </details>
 
@@ -1027,7 +1011,7 @@ bonus     = purchased * bonusBps / 10000
           <details>
             <summary><span>Do NFTs expire or burn?</span></summary>
             <p class="small">
-              No. An NFT from the collection stays yours for good, and you can keep it or sell it, whether you bought it or earned it as a staking bonus.
+              No. An NFT from the collection stays yours for good, and you can keep it or sell it.
             </p>
           </details>
 
@@ -1121,9 +1105,8 @@ Get IBITI from the sale contract:
           <ul class="small">
             <li>Terms: <b>1–12 months</b> (30 days per month), minimum 100 IBITI</li>
             <li>Claim window: <b>30 days</b> after the term</li>
-            <li>Later: reward and NFTs lost, stake stays yours</li>
+            <li>Later: reward lost, stake stays yours</li>
             <li>Rewards/penalties: 1,3,5,7,10,12,14,18,20,22,25,30%</li>
-            <li>3/6/9/12 months → 2 bonus NFTs</li>
           </ul>
         </div>
 
@@ -1133,7 +1116,6 @@ Get IBITI from the sale contract:
             <li>Buy any time with <b>USDT</b>, while the edition lasts</li>
             <li><b>No expiry, no burning</b>: an NFT stays yours</li>
             <li>An edition can go down, never up</li>
-            <li><b>Staking bonus</b>: cards from the same editions, yours to keep or sell</li>
           </ul>
         </div>
 

@@ -44,9 +44,9 @@ This repository contains the **public frontend** (static HTML/CSS/JS) for ibitic
 | IBITI token | `0x71b552D3503fe20610aaA470A96E1838fae8381A` |
 | Team vesting | `0xC4bdF5b6d7688a7d5457A194ac1210ec34003604` |
 | Website sale | `0x42924EE213eF1943BE655c2C535FB72F52C64781` |
-| Staking | `0x509e0CeaA5840304D2f33bC43e66Fa27ECDc0348` |
-| NFT collection | `0x771Ad1baef4b7321F10F2549b6C1Bc34106120Ed` |
-| NFT sale | `0x92CFE8c739e6A1bE9bbc2971E5A7ba6747fccA1f` |
+| Staking | `0x82BA8720FBa8a6A939D078b9ed62afB9ABC3B426` |
+| NFT collection | `0x37F535AF03966CEFa35Bd6fe1d481831d9bc3a67` |
+| NFT sale | `0x44E65077168De8Ff5EC6545857DAd2cB02310fe2` |
 
 ---
 
