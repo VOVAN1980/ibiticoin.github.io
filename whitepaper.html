@@ -528,7 +528,7 @@
         <section class="card" id="market" data-wp="market price fixed price pool reserves pancake v2 quote">
           <h2>4) Market & Price</h2>
           <p class="lead">
-            There are two prices and they are independent. The website sale has a <b>fixed price</b> set in its contract: $0.10 per IBITI.
+            There are two prices and they are independent. The website sale has a <b>fixed price</b> set in its contract: $0.11 per IBITI, which comes to $0.10 with the 10% bonus.
             The PancakeSwap pool has a <b>market price</b> set by its reserves.
           </p>
 
@@ -634,9 +634,9 @@ bonus     = purchased * bonusBps / 10000
 
   <table>
     <tr><th>You pay</th><th>Purchased</th><th>Bonus (10%)</th><th>You receive</th></tr>
-    <tr><td>10 USDT</td><td>100 IBITI</td><td>10 IBITI</td><td>110 IBITI</td></tr>
-    <tr><td>50 USDT</td><td>500 IBITI</td><td>50 IBITI</td><td>550 IBITI</td></tr>
-    <tr><td>100 USDT</td><td>1,000 IBITI</td><td>100 IBITI</td><td>1,100 IBITI</td></tr>
+    <tr><td>10 USDT</td><td>90.91 IBITI</td><td>9.09 IBITI</td><td>100 IBITI</td></tr>
+    <tr><td>50 USDT</td><td>454.55 IBITI</td><td>45.45 IBITI</td><td>500 IBITI</td></tr>
+    <tr><td>100 USDT</td><td>909.09 IBITI</td><td>90.91 IBITI</td><td>1,000 IBITI</td></tr>
   </table>
 
   <h3>5.4 Where your USDT goes after the buy (Reserve → Liquidity policy)</h3>
@@ -674,7 +674,7 @@ bonus     = purchased * bonusBps / 10000
   <h3>5.6 Key on-chain parameters</h3>
   <table>
     <tr><th>Parameter</th><th>Value</th><th>Can it change?</th></tr>
-    <tr><td><code>price</code></td><td>$0.10 per IBITI</td><td>By the owner, only while paused, between $0.001 and $10</td></tr>
+    <tr><td><code>price</code></td><td>$0.11 per IBITI ($0.10 with the bonus)</td><td>By the owner, only while paused, between $0.001 and $10</td></tr>
     <tr><td><code>minPaymentAmount</code> / <code>maxPaymentAmount</code></td><td>10 / 100 USDT per purchase</td><td>By the owner, only while paused</td></tr>
     <tr><td><code>bonusBps</code></td><td>1000 (10%)</td><td>No</td></tr>
     <tr><td><code>refReward</code></td><td>1 IBITI, once per buyer</td><td>No</td></tr>
@@ -1091,7 +1091,7 @@ bonus     = purchased * bonusBps / 10000
           <div class="monoBlock"><pre>
 Pay USDT → reserve wallet (same tx)
 Get IBITI from the sale contract:
-  purchased ($0.10 each)
+  purchased ($0.11 each)
   + bonus (10%)
   + referral (1 IBITI, once)
 </pre></div>
