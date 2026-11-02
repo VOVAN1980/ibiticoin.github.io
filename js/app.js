@@ -85,15 +85,12 @@
     "function minPaymentAmount() view returns (uint256)",
     "function getStats() view returns (uint256 bonusPoolTotal, uint256 bonusSpent, uint256 refSpent)",
     "function poolRemaining() view returns (uint256)",
-    "function swapPath(uint256) view returns (address)",
-    "function buyWithReferral(uint256 paymentAmount, address referrer, uint256 minIbitiOut) external"
+    "function quoteBoughtAmount(uint256) view returns (uint256)",
+    "function buyWithReferral(uint256 paymentAmount, address referrer, uint256 minIbitiOut) external",
+    "error Slippage(uint256 bought, uint256 minOut)"
   ];
 
   // Pancake/Uniswap v2 router (quote only)
-  const DEX_ROUTER_ABI = [
-    "function getAmountsOut(uint256 amountIn, address[] path) view returns (uint256[] amounts)"
-  ];
-
   function net() {
     return window.IBITI_CONFIG.getNet();
   }
@@ -402,6 +399,17 @@ async function addTokenToWallet() {
     }
   }
 
+  function isSlippageError(e) {
+    if (e?.revert?.name === "Slippage") return true;
+    try {
+      const data = e?.data || e?.info?.error?.data;
+      const raw = typeof data === "string" ? data : data?.data;
+      return !!raw && new ethers.Interface(PROMO_ABI).parseError(raw)?.name === "Slippage";
+    } catch (_) {
+      return false;
+    }
+  }
+
   // ===== BUY PROMO =====
   async function buyPromo() {
     const netCfg = net();
@@ -426,6 +434,10 @@ async function addTokenToWallet() {
     const usdtDec = await usdt.decimals();
     const amount = ethers.parseUnits(String(amtNum), usdtDec);
 
+    // Цена на момент нажатия: если она вырастет до покупки, контракт её отклонит
+    const promo = new ethers.Contract(netCfg.promoRouter, PROMO_ABI, signer);
+    const minOut = await promo.quoteBoughtAmount(amount);
+
     // ✅ approve ONLY if needed (cuts confirmations)
     const needApprove = async () => {
       try {
@@ -438,35 +450,8 @@ async function addTokenToWallet() {
 
     if (await needApprove()) {
       toast("Approve USDT…");
-      const approveValue = netCfg.approveMax ? ethers.MaxUint256 : amount;
-      const txA = await usdt.approve(netCfg.promoRouter, approveValue);
+      const txA = await usdt.approve(netCfg.promoRouter, amount);
       await txA.wait();
-    }
-
-    const promo = new ethers.Contract(netCfg.promoRouter, PROMO_ABI, signer);
-
-    // slippage protection (optional)
-    let minOut = 0n;
-    try {
-      if (netCfg.pancakeRouter && isAddr(netCfg.pancakeRouter)) {
-        const dex = new ethers.Contract(netCfg.pancakeRouter, DEX_ROUTER_ABI, signer);
-
-        const path = [];
-        for (let i = 0; i < 6; i++) {
-          try { path.push(await promo.swapPath(i)); } catch (_) { break; }
-        }
-
-        if (path.length >= 2) {
-          const amounts = await dex.getAmountsOut(amount, path);
-          const boughtEst = amounts[amounts.length - 1];
-
-          const slBps = Number(netCfg.slippageBps || 300); // 3% default
-          const keepBps = BigInt(Math.max(0, 10000 - slBps));
-          minOut = (boughtEst * keepBps) / 10000n;
-        }
-      }
-    } catch (_) {
-      minOut = 0n;
     }
 
     toast("Buying with +10% bonus…");
@@ -591,7 +576,7 @@ async function addTokenToWallet() {
       }
       return buyPromo().catch((e) => {
         console.error(e);
-        toast(e?.shortMessage || e?.message || "Buy failed.");
+        toast(isSlippageError(e) ? "The price has changed. Check the new price and try again." : e?.shortMessage || e?.message || "Buy failed.");
       });
     });
 

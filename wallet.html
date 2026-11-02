@@ -66,12 +66,20 @@
   var p = new URLSearchParams(location.search);
   var redirect = p.get("redirect");
 
-  var shopUrl;
-  if (redirect) {
-    shopUrl = redirect;
-  } else {
+  // Только свой сайт: иначе ссылка с нашего домена могла бы увести в кошелёк на чужой
+  function safeRedirect(value) {
+    try {
+      var r = new URL(value, location.origin);
+      if (r.origin === location.origin || /^https:\/\/(www\.)?ibiticoin\.com$/.test(r.origin)) return r.toString();
+    } catch (e) {}
+    return null;
+  }
+
+  var shopUrl = redirect ? safeRedirect(redirect) : null;
+  if (!shopUrl) {
     var u = new URL(location.href);
     u.pathname = "/shop.html";
+    u.searchParams.delete("redirect");
     shopUrl = u.toString();
   }
 
