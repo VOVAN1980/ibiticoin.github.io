@@ -103,6 +103,25 @@
   };
 })();
 
+/* Wallet choice. TronLink and other extensions also take window.ethereum,
+   so MetaMask is picked by EIP-6963 first; otherwise window.ethereum as before. */
+(function () {
+  "use strict";
+
+  const announced = [];
+  window.addEventListener("eip6963:announceProvider", (e) => {
+    if (e && e.detail && e.detail.provider) announced.push(e.detail);
+  });
+  window.dispatchEvent(new Event("eip6963:requestProvider"));
+
+  window.ibitiWallet = function () {
+    const mm = announced.find((d) => d.info && d.info.rdns === "io.metamask");
+    if (mm) return mm.provider;
+    return window.ethereum || (announced[0] && announced[0].provider) || null;
+  };
+})();
+
+
 
 
 

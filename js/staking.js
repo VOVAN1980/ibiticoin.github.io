@@ -93,13 +93,13 @@
   // ===== Wallet =====
 
   async function ensureChain() {
-    const chainId = await window.ethereum.request({ method: "eth_chainId" });
+    const chainId = await window.ibitiWallet().request({ method: "eth_chainId" });
     if (chainId && chainId.toLowerCase() === net.chainIdHex.toLowerCase()) return;
     try {
-      await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: net.chainIdHex }] });
+      await window.ibitiWallet().request({ method: "wallet_switchEthereumChain", params: [{ chainId: net.chainIdHex }] });
     } catch (e) {
       if (!(e && (e.code === 4902 || String(e.message || "").includes("4902")))) throw e;
-      await window.ethereum.request({
+      await window.ibitiWallet().request({
         method: "wallet_addEthereumChain",
         params: [{
           chainId: net.chainIdHex,
@@ -113,7 +113,7 @@
   }
 
   async function connectWallet() {
-    if (!window.ethereum) {
+    if (!window.ibitiWallet()) {
       if (/android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent || "")) {
         const u = new URL("/wallet.html", location.origin);
         u.searchParams.set("redirect", location.href);
@@ -124,9 +124,9 @@
       return;
     }
     await ensureChain();
-    const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+    const accounts = await window.ibitiWallet().request({ method: "eth_requestAccounts" });
     if (!accounts || !accounts[0]) throw new Error("No account returned by the wallet.");
-    const signer = await new ethers.BrowserProvider(window.ethereum).getSigner();
+    const signer = await new ethers.BrowserProvider(window.ibitiWallet()).getSigner();
     account = await signer.getAddress();
     write = new ethers.Contract(stakingAddress, STAKING_ABI, signer);
     token = new ethers.Contract(net.ibiti, ERC20_ABI, signer);
@@ -330,9 +330,9 @@
       const id = Number(box.dataset.id);
       (action === "unstake" ? onUnstake(id) : onRenew(id, box)).catch(showError);
     });
-    if (window.ethereum && window.ethereum.on) {
-      window.ethereum.on("accountsChanged", () => location.reload());
-      window.ethereum.on("chainChanged", () => location.reload());
+    if (window.ibitiWallet() && window.ibitiWallet().on) {
+      window.ibitiWallet().on("accountsChanged", () => location.reload());
+      window.ibitiWallet().on("chainChanged", () => location.reload());
     }
   }
 

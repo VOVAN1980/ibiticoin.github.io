@@ -57,14 +57,14 @@
   }
 
   async function hasConnectedAccount() {
-    if (!window.ethereum) return false;
-    const accs = await window.ethereum.request({ method: "eth_accounts" });
+    if (!window.ibitiWallet()) return false;
+    const accs = await window.ibitiWallet().request({ method: "eth_accounts" });
     return !!(accs && accs[0]);
   }
 
   async function currentAccount() {
-    if (!window.ethereum) return null;
-    const accs = await window.ethereum.request({ method: "eth_accounts" });
+    if (!window.ibitiWallet()) return null;
+    const accs = await window.ibitiWallet().request({ method: "eth_accounts" });
     return accs && accs[0] ? accs[0] : null;
   }
 
@@ -161,19 +161,19 @@
   }
 
   async function ensureChain() {
-    if (!window.ethereum) throw new Error("No wallet detected (MetaMask/Trust Wallet/Binance Wallet).");
+    if (!window.ibitiWallet()) throw new Error("No wallet detected (MetaMask/Trust Wallet/Binance Wallet).");
     const target = net();
-    const chainId = await window.ethereum.request({ method: "eth_chainId" });
+    const chainId = await window.ibitiWallet().request({ method: "eth_chainId" });
     if (chainId && chainId.toLowerCase() === target.chainIdHex.toLowerCase()) return;
 
     try {
-      await window.ethereum.request({
+      await window.ibitiWallet().request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: target.chainIdHex }]
       });
     } catch (e) {
       if (e && (e.code === 4902 || String(e.message || "").includes("4902"))) {
-        await window.ethereum.request({
+        await window.ibitiWallet().request({
           method: "wallet_addEthereumChain",
           params: [{
             chainId: target.chainIdHex,
@@ -191,7 +191,7 @@
 
   async function getBrowserProviderSigner() {
     await ensureChain();
-    const bp = new ethers.BrowserProvider(window.ethereum);
+    const bp = new ethers.BrowserProvider(window.ibitiWallet());
     const signer = await bp.getSigner();
     return { bp, signer };
   }
@@ -258,7 +258,7 @@
   // ===== wallet connect =====
 async function connectWallet() {
   // ✅ Mobile / no-injected-wallet path: отправляем в твой wallet.html
-  if (!window.ethereum) {
+  if (!window.ibitiWallet()) {
     const isMobile = /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent || "");
     if (isMobile) {
       const u = new URL("/wallet.html", location.origin); // НЕ переименовываем: wallet.html
@@ -272,7 +272,7 @@ async function connectWallet() {
   // ✅ Normal path (desktop MetaMask / wallet in-app browser)
   await ensureChain();
 
-  const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+  const accounts = await window.ibitiWallet().request({ method: "eth_requestAccounts" });
   const addr = accounts && accounts[0] ? accounts[0] : null;
   if (!addr) throw new Error("No account returned by wallet.");
 
@@ -300,7 +300,7 @@ async function connectWallet() {
 
 async function addTokenToWallet() {
   // ✅ если не внутри кошелька — на мобиле перекинем в wallet.html
-  if (!window.ethereum) {
+  if (!window.ibitiWallet()) {
     const isMobile = /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent || "");
     if (isMobile) {
       const u = new URL("/wallet.html", location.origin);
@@ -311,7 +311,7 @@ async function addTokenToWallet() {
     throw new Error("No wallet detected. Open in MetaMask/Trust Wallet browser.");
   }
 
-  await window.ethereum.request({
+  await window.ibitiWallet().request({
     method: "wallet_watchAsset",
     params: {
       type: "ERC20",
@@ -655,7 +655,7 @@ async function addTokenToWallet() {
     if (overlay) overlay.addEventListener("click", closePancakeModal);
 
     // Init UI if wallet already connected (NO popups)
-    window.ethereum?.request({ method: "eth_accounts" })
+    window.ibitiWallet()?.request({ method: "eth_accounts" })
       .then(async (accs) => {
         if (!accs || !accs[0]) return;
         const addr = accs[0];

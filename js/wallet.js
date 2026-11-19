@@ -34,11 +34,11 @@
       : null;
 
     // switch chain если нужно (аккуратно)
-    if (window.ethereum && active && active.chainIdHex) {
+    if (window.ibitiWallet() && active && active.chainIdHex) {
       try {
-        const current = await window.ethereum.request({ method: "eth_chainId" });
+        const current = await window.ibitiWallet().request({ method: "eth_chainId" });
         if (String(current).toLowerCase() !== String(active.chainIdHex).toLowerCase()) {
-          await window.ethereum.request({
+          await window.ibitiWallet().request({
             method: "wallet_switchEthereumChain",
             params: [{ chainId: active.chainIdHex }]
           });
@@ -48,7 +48,7 @@
         const msg = String(e?.message || "");
         if (e?.code === 4902 || msg.includes("4902")) {
           try {
-            await window.ethereum.request({
+            await window.ibitiWallet().request({
               method: "wallet_addEthereumChain",
               params: [{
                 chainId: active.chainIdHex,
@@ -68,7 +68,7 @@
     }
 
     // connect provider/signer/account
-    window.provider = new ethers.BrowserProvider(window.ethereum);
+    window.provider = new ethers.BrowserProvider(window.ibitiWallet());
     window.signer = await window.provider.getSigner();
     window.selectedAccount = await window.signer.getAddress();
 
@@ -103,25 +103,25 @@
   async function connectWallet() {
     try {
       // если не внутри DApp браузера — на мобиле отправляем в wallet.html
-      if (!window.ethereum) {
+      if (!window.ibitiWallet()) {
         if (isMobile()) return goToWalletHtml();
         alert("Wallet provider not found. Open this page inside MetaMask/Trust wallet browser.");
         return;
       }
 
-      await window.ethereum.request({ method: "eth_requestAccounts" });
+      await window.ibitiWallet().request({ method: "eth_requestAccounts" });
       await initAfterConnect();
 
       // events (один раз)
       if (!window.__IBITI_WALLET_EVENTS__) {
         window.__IBITI_WALLET_EVENTS__ = true;
 
-        window.ethereum.on("accountsChanged", async (accs) => {
+        window.ibitiWallet().on("accountsChanged", async (accs) => {
           if (!accs?.length) return;
           await initAfterConnect();
         });
 
-        window.ethereum.on("chainChanged", async () => {
+        window.ibitiWallet().on("chainChanged", async () => {
           await initAfterConnect();
         });
       }
