@@ -84,6 +84,7 @@
   }
 
   async function connectWallet() {
+    if (!(await window.ibitiChooseWallet())) return;
     if (!window.ibitiWallet()) {
       if (/android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent || "")) {
         const u = new URL("/wallet.html", location.origin);

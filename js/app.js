@@ -257,6 +257,7 @@
 
   // ===== wallet connect =====
 async function connectWallet() {
+  if (!(await window.ibitiChooseWallet())) return;
   // ✅ Mobile / no-injected-wallet path: отправляем в твой wallet.html
   if (!window.ibitiWallet()) {
     const isMobile = /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent || "");

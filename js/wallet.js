@@ -102,6 +102,7 @@
 
   async function connectWallet() {
     try {
+      if (!(await window.ibitiChooseWallet())) return;
       // если не внутри DApp браузера — на мобиле отправляем в wallet.html
       if (!window.ibitiWallet()) {
         if (isMobile()) return goToWalletHtml();
