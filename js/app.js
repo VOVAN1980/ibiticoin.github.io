@@ -46,7 +46,7 @@
   }
 
   function setPurchaseEnabled(enabled) {
-    const ids = ["promoBuyButton", "buyPancakeBtn", "buyNftBtn"];
+    const ids = ["promoBuyButton", "buyPancakeBtn"];
     ids.forEach((id) => {
       const el = document.getElementById(id);
       if (!el) return;
